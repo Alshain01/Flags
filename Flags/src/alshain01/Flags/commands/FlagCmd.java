@@ -335,7 +335,7 @@ final class FlagCmd extends Common {
 		List<String> combinedHelp = new ArrayList<String>();
 		if(allowedFlagNames.size() == 0) { 
 			sender.sendMessage(Message.NoFlagFound.get()
-					.replaceAll("{Type}", Message.Flag.get().toLowerCase()));
+					.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
 			return true;
 		}
 		

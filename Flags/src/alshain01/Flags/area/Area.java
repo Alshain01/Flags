@@ -191,7 +191,9 @@ public abstract class Area implements Comparable<Area> {
 
 		final Set<String> trustedPlayers = Flags.getDataStore().readTrust(this,	flag);
 		if (!(this instanceof Default || this instanceof World)) {
-			trustedPlayers.addAll(getOwners());
+			for(String owner: getOwners()) {
+				trustedPlayers.add(owner.toLowerCase());
+			}
 		}
 		return trustedPlayers;
 	}
