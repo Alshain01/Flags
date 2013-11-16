@@ -118,9 +118,11 @@ public final class Director {
 		case GRIEF_PREVENTION:
 			final Plugin plugin = Flags.getInstance().getServer()
 					.getPluginManager().getPlugin("GriefPrevention");
-			if (Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) >= 7.8) {
+			float pluginVersion = Float.valueOf(plugin.getDescription().getVersion().substring(0, 3));
+
+			if (pluginVersion >= (float)7.8) {
 				return new GriefPreventionClaim78(location);
-			} else if (Float.valueOf(plugin.getDescription().getVersion().substring(0, 3)) == 7.7) {
+			} else if (pluginVersion == (float)7.7) {
 				return new GriefPreventionClaim(location);
 			}
 			Flags.getInstance().getLogger().warning("Unsupported Grief Prevention version detected. "
