@@ -9,7 +9,7 @@ commands:
   flag:
     description: Allows you to perform actions on flags.
     permission: flags.command.flag
-    usage: /flag <get|set|remove|trust|distrust|view|message|presentmessage|erase|charge|inherit|help>
+    usage: /flag <get|set|remove|trust|distrust|view|message|presentmessage|erasemessage|charge|inherit|help>
   
   bundle:
     description: Allows you to perform actions on bundles.
