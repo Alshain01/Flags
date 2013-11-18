@@ -65,12 +65,15 @@ public class Flags extends JavaPlugin {
 		// Update listener
 		@EventHandler(ignoreCancelled = true)
 		private void onPlayerJoin(PlayerJoinEvent e) {
-			if (e.getPlayer().hasPermission("flags.admin.notifyupdate")
-					&& updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
-				e.getPlayer()
-						.sendMessage(ChatColor.DARK_PURPLE
-								+ "The version of Flags that this server is running is out of date. "
-								+ "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
+			if (e.getPlayer().hasPermission("flags.admin.notifyupdate")) {
+				if(updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
+					e.getPlayer().sendMessage(ChatColor.DARK_PURPLE
+							+ "The version of Flags that this server is running is out of date. "
+							+ "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
+				} else if(updater.getResult() == UpdateResult.SUCCESS) {
+					e.getPlayer().sendMessage("[Flags] " + ChatColor.DARK_PURPLE
+							+ "An update to Flags has been downloaded and will be installed when the server is reloaded.");
+				}
 			}
 		}
 	}
@@ -124,7 +127,9 @@ public class Flags extends JavaPlugin {
 						+ "The version of Flags that this server is running is out of date. "
 						+ "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
 			} else if (updater.getResult() == UpdateResult.SUCCESS) {
-				Bukkit.getServer().reload();
+				Bukkit.getServer().getConsoleSender()
+				.sendMessage("[Flags] "	+ ChatColor.DARK_PURPLE
+					+ "An update to Flags has been downloaded and will be installed when the server is reloaded.");
 			}
 			getServer().getPluginManager().registerEvents(new FlagsListener(), Flags.getInstance());
 		}
@@ -132,7 +137,6 @@ public class Flags extends JavaPlugin {
 
 	protected static CustomYML messageStore;
 	protected static SystemType currentSystem = SystemType.WORLD;
-	//private static Flags instance;
 	private static DataStore dataStore;
 	private static Updater updater = null;
 	private static Economy economy = null;
