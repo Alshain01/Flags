@@ -113,20 +113,18 @@ public class Flags extends JavaPlugin {
 		@Override
 		public void run() {
 			// Update script
-			if (getConfig().getBoolean("Flags.Update.Check")) {
-				final String key = getConfig().getString("Flags.Update.ServerModsAPIKey");
-				updater = (getConfig().getBoolean("Flags.Update.Download"))
-					? new Updater(Flags.getInstance(), 65024, getFile(), Updater.UpdateType.DEFAULT, key, true)
-					: new Updater(Flags.getInstance(), 65024, getFile(), Updater.UpdateType.NO_DOWNLOAD, key, false);
+			final String key = getConfig().getString("Flags.Update.ServerModsAPIKey");
+			updater = (getConfig().getBoolean("Flags.Update.Download"))
+				? new Updater(Flags.getInstance(), 65024, getFile(), Updater.UpdateType.DEFAULT, key, true)
+				: new Updater(Flags.getInstance(), 65024, getFile(), Updater.UpdateType.NO_DOWNLOAD, key, false);
 
-				if (updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
-					Bukkit.getServer().getConsoleSender()
-							.sendMessage("[Flags] "	+ ChatColor.DARK_PURPLE
-											+ "The version of Flags that this server is running is out of date. "
-											+ "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
-				} else if (updater.getResult() == UpdateResult.SUCCESS) {
-					Bukkit.getServer().reload();
-				}
+			if (updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
+				Bukkit.getServer().getConsoleSender()
+					.sendMessage("[Flags] "	+ ChatColor.DARK_PURPLE
+						+ "The version of Flags that this server is running is out of date. "
+						+ "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
+			} else if (updater.getResult() == UpdateResult.SUCCESS) {
+				Bukkit.getServer().reload();
 			}
 			getServer().getPluginManager().registerEvents(new FlagsListener(), Flags.getInstance());
 		}
@@ -286,8 +284,10 @@ public class Flags extends JavaPlugin {
 		// Create the configuration file if it doesn't exist
 		saveDefaultConfig();
 		debug = getConfig().getBoolean("Flags.Debug");
-
-		new UpdateScheduler().runTaskTimer(this, 0, 1728000);
+		
+		if (getConfig().getBoolean("Flags.Update.Check")) {
+			new UpdateScheduler().runTaskTimer(this, 0, 1728000);
+		}
 		
 		borderPatrol = getConfig().getBoolean("Flags.BorderPatrol.Enable");
 
