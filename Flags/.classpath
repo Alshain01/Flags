@@ -16,5 +16,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/GriefPrevention-193.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/Regios.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
