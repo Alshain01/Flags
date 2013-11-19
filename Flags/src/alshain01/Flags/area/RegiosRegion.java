@@ -47,10 +47,17 @@ public class RegiosRegion extends Area {
 		region = ((RegiosAPI)plugin).getRegion(name);
 	}
 	
+	public static boolean hasRegion(Location location) {
+		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Regios");
+		if(plugin == null) {
+			return false;
+		}
+		return ((RegiosAPI)plugin).getRegion(location) != null;		
+	}
+	
 	@Override
-	public int compareTo(Area arg0) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int compareTo(Area a) {
+		return a instanceof RegiosRegion && a.getSystemID().equals(getSystemID()) ? 0 : 3;
 	}
 
 	@Override
@@ -79,13 +86,12 @@ public class RegiosRegion extends Area {
 
 	@Override
 	public World getWorld() {
-		return region.getWorld().getName();
+		return Bukkit.getWorld(region.getWorld().getName());
 	}
 
 	@Override
 	public boolean isArea() {
-		// TODO Auto-generated method stub
-		return false;
+		return region != null;
 	}
 
 }

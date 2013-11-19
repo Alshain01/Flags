@@ -84,6 +84,10 @@ public class FactionsTerritory extends Area implements Removable {
 				&& a.getSystemID().equals(getSystemID()) ? 0 : 3;
 	}
 
+	public static boolean hasTerritory(Location location) {
+		return BoardColls.get().getFactionAt(PS.valueOf(location)) != null;
+	}
+	
 	@Override
 	public String getAreaType() {
 		return SystemType.FACTIONS.getAreaType();

@@ -1,3 +1,4 @@
+package alshain01.Flags.area;
 /* Copyright 2013 Kevin Seiden. All rights reserved.
 
  This works is licensed under the Creative Commons Attribution-NonCommercial 3.0
@@ -22,7 +23,7 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package alshain01.Flags.area;
+
 
 import java.util.Set;
 
@@ -30,15 +31,17 @@ import net.milkbowl.vault.economy.EconomyResponse;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
+import org.bukkit.plugin.Plugin;
 
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
-import alshain01.Flags.SystemType;
 import alshain01.Flags.Message;
+import alshain01.Flags.SystemType;
 import alshain01.Flags.economy.EBaseValue;
 import alshain01.Flags.economy.EPurchaseType;
 import alshain01.Flags.economy.ETransactionType;
@@ -90,6 +93,83 @@ public abstract class Area implements Comparable<Area> {
 		player.sendMessage(Message.Error.get().replaceAll("\\{Error\\}",
 				r.errorMessage));
 		return false;
+	}
+	
+	/**
+	 * Gets an area from the data store at a specific location.
+	 * 
+	 * @param location
+	 *            The location to request an area.
+	 * @return An Area from the configured system or the world if no area is
+	 *         defined.
+	 */
+	public static Area getAt(Location location) {
+		if (!Area.hasArea(location)) {
+			return new World(location);
+		}
+		
+		Area area = null;
+		
+		switch (SystemType.getActive()) {
+		case GRIEF_PREVENTION:
+			final Plugin plugin = Flags.getInstance().getServer().getPluginManager().getPlugin("GriefPrevention");
+			final float pluginVersion = Float.valueOf(plugin.getDescription().getVersion().substring(0, 3));
+
+			if (pluginVersion >= (float)7.8) {
+				area = new GriefPreventionClaim78(location);
+			} else if (pluginVersion == (float)7.7) {
+				area = new GriefPreventionClaim(location);
+			}
+			break;
+		case WORLDGUARD:
+			area = new WorldGuardRegion(location);
+			break;
+		case RESIDENCE:
+			area = new ResidenceClaimedResidence(location);
+			break;
+		case INFINITEPLOTS:
+			area = new InfinitePlotsPlot(location);
+			break;
+		case FACTIONS:
+			area = new FactionsTerritory(location);
+			break;
+		case PLOTME:
+			area = new PlotMePlot(location);
+			break;
+		case REGIOS:
+			area = new RegiosRegion(location);
+			break;
+		default:
+			break;
+		}
+		return area != null && area.isArea() ? area : new World(location);
+	}
+	
+	/**
+	 * Gets whether there is a non world area that Flags can use at the location
+	 * 
+	 * @param location The location to check for an area
+	 * @return True if there is an area
+	 */
+	public static boolean hasArea(Location location) {
+		switch (SystemType.getActive()) {
+		case GRIEF_PREVENTION:
+			return GriefPreventionClaim.hasClaim(location);
+		case WORLDGUARD:
+			return WorldGuardRegion.hasRegion(location);
+		case RESIDENCE:
+			return ResidenceClaimedResidence.hasResidence(location);
+		case INFINITEPLOTS:
+			return InfinitePlotsPlot.hasPlot(location);
+		case FACTIONS:
+			return FactionsTerritory.hasTerritory(location);
+		case PLOTME:
+			return PlotMePlot.hasPlot(location);
+		case REGIOS:
+			return RegiosRegion.hasRegion(location);
+		default:
+			return false;
+		}
 	}
 
 	/**

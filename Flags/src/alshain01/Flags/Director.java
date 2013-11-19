@@ -36,25 +36,19 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
-import uk.co.jacekk.bukkit.infiniteplots.InfinitePlots;
-import uk.co.jacekk.bukkit.infiniteplots.plot.PlotLocation;
 import alshain01.Flags.area.Area;
 import alshain01.Flags.area.FactionsTerritory;
 import alshain01.Flags.area.GriefPreventionClaim;
 import alshain01.Flags.area.GriefPreventionClaim78;
 import alshain01.Flags.area.InfinitePlotsPlot;
 import alshain01.Flags.area.PlotMePlot;
+import alshain01.Flags.area.RegiosRegion;
 import alshain01.Flags.area.ResidenceClaimedResidence;
 import alshain01.Flags.area.World;
 import alshain01.Flags.area.WorldGuardRegion;
 
-import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.event.ResidenceDeleteEvent;
-import com.massivecraft.factions.entity.BoardColls;
 import com.massivecraft.factions.event.FactionsEventDisband;
-import com.massivecraft.mcore.ps.PS;
-import com.sk89q.worldguard.bukkit.WGBukkit;
-import com.worldcretornica.plotme.PlotManager;
 
 /**
  * Class for retrieving area system specific information.
@@ -113,7 +107,12 @@ public final class Director {
 	/*
 	 * Gets the area at a specific location if one exists, otherwise null
 	 */
+	@Deprecated
 	private static Area getArea(Location location) {
+		if (!Area.hasArea(location)) {
+			return new World(location);
+		}
+		
 		switch (SystemType.getActive()) {
 		case GRIEF_PREVENTION:
 			final Plugin plugin = Flags.getInstance().getServer()
@@ -139,6 +138,8 @@ public final class Director {
 			return new FactionsTerritory(location);
 		case PLOTME:
 			return new PlotMePlot(location);
+		case REGIOS:
+			return new RegiosRegion(location);
 		default:
 			return null;
 		}
@@ -193,6 +194,8 @@ public final class Director {
 		case PLOTME:
 			path = name.split("\\.");
 			return new PlotMePlot(Bukkit.getWorld(path[0]), path[1]);
+		case REGIOS:
+			return new RegiosRegion(name);
 		default:
 			return null;
 		}
@@ -200,21 +203,18 @@ public final class Director {
 
 	/**
 	 * Gets an area from the data store at a specific location.
-	 * 
+	 * @deprecated Uses Area.getAt(Location)
 	 * @param location
 	 *            The location to request an area.
 	 * @return An Area from the configured system or the world if no area is
 	 *         defined.
 	 */
+	@Deprecated
 	public static Area getAreaAt(Location location) {
 		// hasArea() and area.isArea() may not necessarily be the same for all
 		// systems,
 		// however hasArea() is faster than constructing an area object, and
 		// calling both has minimal impact.
-		// This is done purely for efficiency.
-		if (!hasArea(location)) {
-			return new World(location);
-		}
 		final Area area = getArea(location);
 		return area.isArea() ? area : new World(location);
 	}
@@ -287,30 +287,6 @@ public final class Director {
 	@Deprecated
 	public static String getSystemAreaType() {
 		return SystemType.getActive().getAreaType();
-	}
-
-	/*
-	 * Performs a fast check to see if an area is defined at a location
-	 */
-	private static boolean hasArea(Location location) {
-		switch (SystemType.getActive()) {
-		case GRIEF_PREVENTION:
-			return GriefPrevention.instance.dataStore.getClaimAt(location, false, null) != null;
-		case WORLDGUARD:
-			return WGBukkit.getRegionManager(location.getWorld())
-					.getApplicableRegions(location).size() != 0;
-		case RESIDENCE:
-			return Residence.getResidenceManager().getByLoc(location) != null;
-		case INFINITEPLOTS:
-			return InfinitePlots.getInstance().getPlotManager()
-					.getPlotAt(PlotLocation.fromWorldLocation(location)) != null;
-		case FACTIONS:
-			return BoardColls.get().getFactionAt(PS.valueOf(location)) != null;
-		case PLOTME:
-			return PlotManager.getPlotById(location) != null;
-		default:
-			return false;
-		}
 	}
 
 	/**

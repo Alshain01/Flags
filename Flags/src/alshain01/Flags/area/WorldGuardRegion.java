@@ -62,6 +62,10 @@ public class WorldGuardRegion extends Area implements Removable {
 		this.world = world;
 		region = WGBukkit.getRegionManager(world).getRegionExact(regionID);
 	}
+	
+	public static boolean hasRegion(Location location) {
+		return WGBukkit.getRegionManager(location.getWorld()).getApplicableRegions(location).size() != 0;
+	}
 
 	/**
 	 * 0 if the the worlds are the same, 3 if they are not.

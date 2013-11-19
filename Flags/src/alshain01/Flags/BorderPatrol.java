@@ -126,8 +126,8 @@ final class BorderPatrol implements Listener {
 
 		if (process) {
 			// Acquire the area moving to and the area moving from.
-			final Area areaTo = Director.getAreaAt(e.getTo());
-			final Area areaFrom = Director.getAreaAt(playerPrevMove.location);
+			final Area areaTo = Area.getAt(e.getTo());
+			final Area areaFrom = Area.getAt(playerPrevMove.location);
 
 			// If they are the same area, don't bother.
 			if (areaFrom.compareTo(areaTo) != 0) {

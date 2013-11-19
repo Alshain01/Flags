@@ -59,6 +59,15 @@ public class GriefPreventionClaim extends Area implements Removable, Siege,
 	public GriefPreventionClaim(long ID) {
 		claim = GriefPrevention.instance.dataStore.getClaim(ID);
 	}
+	
+	/**
+	 * Gets if there is a claim at the location.
+	 * 
+	 * @return True if a claim exists at the location.
+	 */
+	public static boolean hasClaim(Location location) {
+		return GriefPrevention.instance.dataStore.getClaimAt(location, false, null) != null;
+	}
 
 	/**
 	 * 0 if the the worlds are the same, 3 if they are not.

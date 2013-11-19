@@ -28,7 +28,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import alshain01.Flags.Message;
-import alshain01.Flags.Director;
 import alshain01.Flags.area.Area;
 import alshain01.Flags.area.Default;
 import alshain01.Flags.area.World;
@@ -48,7 +47,7 @@ abstract class Common {
 		} else if (location == ECommandLocation.WORLD) {
 			return new World((((Player)sender).getWorld()));
 		} else if (location == ECommandLocation.AREA) {
-			Area area = Director.getAreaAt(((Player)sender).getLocation());
+			Area area = Area.getAt(((Player)sender).getLocation());
 			return (area instanceof World) ? null : area;
 		}
 		// Invalid location selection

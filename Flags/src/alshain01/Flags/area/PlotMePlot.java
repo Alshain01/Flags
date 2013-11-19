@@ -70,10 +70,13 @@ public class PlotMePlot extends Area implements Removable {
 	 */
 	@Override
 	public int compareTo(Area a) {
-		return a instanceof PlotMePlot && a.getSystemID().equals(getSystemID()) ? 0
-				: 3;
+		return a instanceof PlotMePlot && a.getSystemID().equals(getSystemID()) ? 0	: 3;
 	}
 
+	public static boolean hasPlot(Location location) {
+		return PlotManager.getPlotById(location) != null;
+	}
+	
 	@Override
 	public String getAreaType() {
 		return SystemType.PLOTME.getAreaType();

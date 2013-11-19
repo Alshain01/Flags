@@ -89,6 +89,10 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 		return 3;
 	}
 
+	public static boolean hasResidence(Location location) {
+		return Residence.getResidenceManager().getByLoc(location) != null;
+	}
+	
 	@Override
 	public String getAreaType() {
 		return SystemType.RESIDENCE.getAreaType();

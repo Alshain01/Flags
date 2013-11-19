@@ -67,6 +67,10 @@ public class InfinitePlotsPlot extends Area implements Removable {
 				.getPlotAt(new PlotLocation(world.getName(), X, Z));
 	}
 
+	public static boolean hasPlot(Location location) {
+		return InfinitePlots.getInstance().getPlotManager().getPlotAt(PlotLocation.fromWorldLocation(location)) != null;
+	}
+	
 	/**
 	 * 0 if the the worlds are the same, 3 if they are not.
 	 * 
