@@ -325,7 +325,7 @@ public class Flags extends JavaPlugin {
 		setupEconomy();
 
 		// Load Mr. Clean
-		Director.enableMrClean(getServer().getPluginManager());
+		MrClean.enable(getServer().getPluginManager());
 
 		// Load Border Patrol
 		if (borderPatrol) {

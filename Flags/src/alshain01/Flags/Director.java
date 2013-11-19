@@ -25,16 +25,11 @@
 package alshain01.Flags;
 
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
-import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 
 import alshain01.Flags.area.Area;
 import alshain01.Flags.area.FactionsTerritory;
@@ -47,63 +42,12 @@ import alshain01.Flags.area.ResidenceClaimedResidence;
 import alshain01.Flags.area.World;
 import alshain01.Flags.area.WorldGuardRegion;
 
-import com.bekvon.bukkit.residence.event.ResidenceDeleteEvent;
-import com.massivecraft.factions.event.FactionsEventDisband;
-
 /**
  * Class for retrieving area system specific information.
  * 
  * @author Alshain01
  */
 public final class Director {
-	private static class FactionsCleaner implements Listener {
-		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-		private void onFactionDisband(FactionsEventDisband e) {
-			for (final org.bukkit.World world : Bukkit.getWorlds()) {
-				new FactionsTerritory(world, e.getFaction().getId()).remove();
-			}
-		}
-	}
-
-	private static class GriefPreventionCleaner implements Listener {
-		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-		private void onClaimDeleted(ClaimDeletedEvent e) {
-			// Cleanup the database, keep the file from growing too large.
-			new GriefPreventionClaim78(e.getClaim().getID()).remove();
-		}
-	}
-
-	private static class ResidenceCleaner implements Listener {
-		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-		private void onResidenceDelete(ResidenceDeleteEvent e) {
-			// Cleanup the database, keep the file from growing too large.
-			new ResidenceClaimedResidence(e.getResidence().getName()).remove();
-		}
-	}
-
-	/*
-	 * Database cleanup monitors
-	 */
-	protected static void enableMrClean(PluginManager pm) {
-		switch (SystemType.getActive()) {
-		case GRIEF_PREVENTION:
-			if (Float.valueOf(pm.getPlugin(SystemType.getActive().toString())
-					.getDescription().getVersion().substring(0, 3)) >= 7.8) {
-
-				pm.registerEvents(new GriefPreventionCleaner(),	Flags.getInstance());
-			}
-			break;
-		case RESIDENCE:
-			pm.registerEvents(new ResidenceCleaner(), Flags.getInstance());
-			break;
-		case FACTIONS:
-			pm.registerEvents(new FactionsCleaner(), Flags.getInstance());
-			break;
-		default:
-			break;
-		}
-	}
-
 	/*
 	 * Gets the area at a specific location if one exists, otherwise null
 	 */
@@ -156,11 +100,13 @@ public final class Director {
 	 * Factions = worldname.FactionID
 	 * PlotMe = worldname.PlotID
 	 * 
+	 * @deprecated Use Area.get(String)
 	 * @param name
 	 *            The system specific name of the area or world name
 	 * @return The Area requested, may be null in cases of invalid system
 	 *         selection.
 	 */
+	@Deprecated
 	public static Area getArea(String name) {
 		String[] path;
 		switch (SystemType.getActive()) {
@@ -292,11 +238,13 @@ public final class Director {
 	/**
 	 * Checks if a player is in Pvp combat that is being monitored by the system
 	 * 
+	 * @deprecated Use SystemType.getActive().inPvPCombat(Player)
 	 * @param player
 	 *            The player to request information for
 	 * @return True if the player is in pvp combat, false is not or if system is
 	 *         unsupported.
 	 */
+	@Deprecated
 	public static boolean inPvpCombat(Player player) {
 		return SystemType.getActive() != SystemType.GRIEF_PREVENTION ? false
 				: GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();

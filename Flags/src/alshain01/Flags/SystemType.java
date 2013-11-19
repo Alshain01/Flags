@@ -24,7 +24,10 @@
 
 package alshain01.Flags;
 
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 public enum SystemType {
 	DEFAULT("Default", "Default"),
@@ -93,5 +96,18 @@ public enum SystemType {
 	@Override
 	public String toString() {
 		return pluginName;
+	}
+	
+	/**
+	 * Checks if a player is in Pvp combat that is being monitored by the system
+	 * 
+	 * @param player
+	 *            The player to request information for
+	 * @return True if the player is in pvp combat, false is not or if system is
+	 *         unsupported.
+	 */
+	public boolean inPvpCombat(Player player) {
+		return this != SystemType.GRIEF_PREVENTION ? false
+				: GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
 	}
 }

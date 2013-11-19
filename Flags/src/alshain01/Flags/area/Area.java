@@ -139,10 +139,77 @@ public abstract class Area implements Comparable<Area> {
 		case REGIOS:
 			area = new RegiosRegion(location);
 			break;
+		case WORLD:
+			area = new World(location);
+			break;
 		default:
 			break;
 		}
 		return area != null && area.isArea() ? area : new World(location);
+	}
+	
+	/**
+	 * Gets an area by system specific name. The name is formatted based on the
+	 * system.
+	 * 
+	 * GriefPrevention = ID number
+	 * WorldGuard = worldname.regionname
+	 * Residence = Residence name OR ResidenceName.SubzoneName
+	 * InifitePlots = worldname.PlotLoc (X;Z)
+	 * Factions = worldname.FactionID
+	 * PlotMe = worldname.PlotID
+	 * 
+	 * @param name
+	 *            The system specific name of the area or world name
+	 * @return The Area requested, may be null in cases of invalid system
+	 *         selection.
+	 */
+	public static Area get(String name) {
+		String[] path;
+		Area area = null;
+		
+		switch (SystemType.getActive()) {
+		case GRIEF_PREVENTION:
+			final Plugin plugin = Flags.getInstance().getServer().getPluginManager().getPlugin("GriefPrevention");
+			final float pluginVersion = Float.valueOf(plugin.getDescription().getVersion().substring(0, 3));
+			final Long ID = Long.parseLong(name);
+			
+			if (pluginVersion >= (float)7.8) {
+				area = new GriefPreventionClaim78(ID);
+			} else if (pluginVersion == (float)7.7) {
+				area = new GriefPreventionClaim(ID);
+			}
+			break;
+		case RESIDENCE:
+			area = new ResidenceClaimedResidence(name);
+			break;
+		case WORLDGUARD:
+			path = name.split("\\.");
+			area = new WorldGuardRegion(Bukkit.getWorld(path[0]), path[1]);
+			break;
+		case INFINITEPLOTS:
+			path = name.split("\\.");
+			final String[] coords = path[1].split(";");
+			area = new InfinitePlotsPlot(Bukkit.getWorld(path[0]), Integer.valueOf(coords[0]), Integer.valueOf(coords[1]));
+			break;
+		case FACTIONS:
+			path = name.split("\\.");
+			area = new FactionsTerritory(Bukkit.getWorld(path[0]), path[1]);
+			break;
+		case PLOTME:
+			path = name.split("\\.");
+			area = new PlotMePlot(Bukkit.getWorld(path[0]), path[1]);
+			break;
+		case REGIOS:
+			area = new RegiosRegion(name);
+			break;
+		case WORLD:
+			area = new World(Bukkit.getWorld(name));
+			break;
+		default:
+			break;
+		}
+		return area;
 	}
 	
 	/**
