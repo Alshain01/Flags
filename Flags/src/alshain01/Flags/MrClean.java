@@ -1,6 +1,7 @@
 package alshain01.Flags;
 
 import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
+import net.jzx7.regiosapi.events.RegionDeleteEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -10,6 +11,7 @@ import org.bukkit.plugin.PluginManager;
 
 import alshain01.Flags.area.FactionsTerritory;
 import alshain01.Flags.area.GriefPreventionClaim78;
+import alshain01.Flags.area.RegiosRegion;
 import alshain01.Flags.area.ResidenceClaimedResidence;
 
 import com.bekvon.bukkit.residence.event.ResidenceDeleteEvent;
@@ -43,6 +45,14 @@ public class MrClean {
 		}
 	}
 
+	private static class RegiosCleaner implements Listener {
+		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+		private void onRegionDelete(RegionDeleteEvent e) {
+			// Cleanup the database, keep the file from growing too large.
+			new RegiosRegion(e.getRegion().getName()).remove();
+		}
+	}
+	
 	/*
 	 * Database cleanup monitors
 	 */
@@ -61,6 +71,8 @@ public class MrClean {
 		case FACTIONS:
 			pm.registerEvents(new FactionsCleaner(), Flags.getInstance());
 			break;
+		case REGIOS:
+			pm.registerEvents(new RegiosCleaner(), Flags.getInstance());
 		default:
 			break;
 		}

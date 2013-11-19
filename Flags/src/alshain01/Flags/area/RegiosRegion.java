@@ -12,9 +12,10 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
+import alshain01.Flags.Flags;
 import alshain01.Flags.SystemType;
 
-public class RegiosRegion extends Area {
+public class RegiosRegion extends Area implements Removable{
 	final Region region;
 	
 	/**
@@ -99,4 +100,8 @@ public class RegiosRegion extends Area {
 		return region != null;
 	}
 
+	@Override
+	public void remove() {
+		Flags.getDataStore().remove(this);
+	}
 }
