@@ -63,6 +63,11 @@ public class WorldGuardRegion extends Area implements Removable {
 		region = WGBukkit.getRegionManager(world).getRegionExact(regionID);
 	}
 	
+	/**
+	 * Gets if there is a region at the location.
+	 * 
+	 * @return True if a region exists at the location.
+	 */
 	public static boolean hasRegion(Location location) {
 		return WGBukkit.getRegionManager(location.getWorld()).getApplicableRegions(location).size() != 0;
 	}
@@ -94,10 +99,7 @@ public class WorldGuardRegion extends Area implements Removable {
 
 	@Override
 	public String getSystemID() {
-		if (!isArea()) {
-			return null;
-		}
-		return region.getId();
+		return !isArea() ? null : region.getId();
 	}
 
 	@Override

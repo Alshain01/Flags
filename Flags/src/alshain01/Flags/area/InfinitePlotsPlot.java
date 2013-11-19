@@ -67,6 +67,11 @@ public class InfinitePlotsPlot extends Area implements Removable {
 				.getPlotAt(new PlotLocation(world.getName(), X, Z));
 	}
 
+	/**
+	 * Gets if there is a plot at the location.
+	 * 
+	 * @return True if a territory exists at the plot.
+	 */
 	public static boolean hasPlot(Location location) {
 		return InfinitePlots.getInstance().getPlotManager().getPlotAt(PlotLocation.fromWorldLocation(location)) != null;
 	}

@@ -9,7 +9,7 @@ Flags:
   #
   # If no system is discovered, you will be limited to world flags only.
   #
-  AreaPlugins: [Factions, GriefPrevention, InfinitePlots, PlotMe, Residence, WorldGuard]
+  AreaPlugins: [Factions, GriefPrevention, InfinitePlots, PlotMe, Regios, Residence, WorldGuard]
   #
   # Disable this to improve performance. However, any flag module using it will not
   # receive notice that a player is changing areas.

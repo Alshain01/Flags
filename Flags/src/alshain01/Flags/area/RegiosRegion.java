@@ -47,6 +47,11 @@ public class RegiosRegion extends Area {
 		region = ((RegiosAPI)plugin).getRegion(name);
 	}
 	
+	/**
+	 * Gets if there is a region at the location.
+	 * 
+	 * @return True if a region exists at the location.
+	 */
 	public static boolean hasRegion(Location location) {
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Regios");
 		if(plugin == null) {

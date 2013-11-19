@@ -73,6 +73,11 @@ public class PlotMePlot extends Area implements Removable {
 		return a instanceof PlotMePlot && a.getSystemID().equals(getSystemID()) ? 0	: 3;
 	}
 
+	/**
+	 * Gets if there is a plot at the location.
+	 * 
+	 * @return True if a plot exists at the location.
+	 */
 	public static boolean hasPlot(Location location) {
 		return PlotManager.getPlotById(location) != null;
 	}

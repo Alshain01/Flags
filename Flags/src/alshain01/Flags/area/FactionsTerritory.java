@@ -84,6 +84,11 @@ public class FactionsTerritory extends Area implements Removable {
 				&& a.getSystemID().equals(getSystemID()) ? 0 : 3;
 	}
 
+	/**
+	 * Gets if there is a territory at the location.
+	 * 
+	 * @return True if a territory exists at the location.
+	 */
 	public static boolean hasTerritory(Location location) {
 		return BoardColls.get().getFactionAt(PS.valueOf(location)) != null;
 	}

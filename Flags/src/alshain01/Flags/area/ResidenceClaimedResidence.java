@@ -89,6 +89,11 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 		return 3;
 	}
 
+	/**
+	 * Gets if there is a residence at the location.
+	 * 
+	 * @return True if a residence exists at the location.
+	 */
 	public static boolean hasResidence(Location location) {
 		return Residence.getResidenceManager().getByLoc(location) != null;
 	}
