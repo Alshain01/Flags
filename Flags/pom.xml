@@ -84,7 +84,7 @@
 		
 		<repository>
 			<id>jacekk-repo</id>
-			<url>http://bukkit.jacekk.co.uk:8000/plugin/repository/project/InfinitePlots/</url>
+			<url>http://bukkit.jacekk.co.uk:8000/plugin/repository/project/</url>
 		</repository>
 		
 		<repository>
@@ -94,7 +94,7 @@
 		
 		<repository>
 			<id>mcstats-repo</id>
-			<url>http://repo.mcstats.org/content/groups/public/</url>
+			<url>http://bukkit.jacekk.co.uk:8000/plugin/repository/everything/</url>
 		</repository>
 	</repositories>
   
