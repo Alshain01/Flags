@@ -77,13 +77,13 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 		}
 
 		ClaimedResidence testRes = ((ResidenceClaimedResidence)a).getResidence();
-		if (residence == testRes) {
+		if (residence.equals(testRes)) {
 			return 0;
-		} else if (residence.getParent() == testRes) {
+		} else if (residence.getParent().equals(testRes)) {
 			return -1;
-		} else if (testRes.getParent() == residence) {
+		} else if (testRes.getParent().equals(residence)) {
 			return 1;
-		} else if (residence.getParent() != null && residence.getParent() == testRes.getParent()) {
+		} else if (residence.getParent() != null && residence.getParent().equals(testRes.getParent())) {
 			return 2;
 		}
 		return 3;

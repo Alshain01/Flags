@@ -81,13 +81,13 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 		}
 		
 		Claim testClaim = ((GriefPreventionClaim78)a).getClaim();
-		if(claim == testClaim) {
+		if(claim.equals(testClaim)) {
 			return 0;
-		} else if (claim.parent == testClaim) {
+		} else if (claim.parent.equals(testClaim)) {
 			return -1;
-		} else if (testClaim.parent == claim) {
+		} else if (testClaim.parent.equals(claim)) {
 			return 1;
-		} else if (claim.parent != null && claim.parent == testClaim.parent) {
+		} else if (claim.parent != null && claim.parent.equals(testClaim.parent)) {
 			return 2;
 		}
 		return 3;
@@ -132,7 +132,7 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 			return false;
 		}
 
-		if(claim.parent == ((GriefPreventionClaim78)area).getClaim()) { return true; }
+		if(claim.parent.equals(((GriefPreventionClaim78)area).getClaim())) { return true; }
 		return false;
 	}
 

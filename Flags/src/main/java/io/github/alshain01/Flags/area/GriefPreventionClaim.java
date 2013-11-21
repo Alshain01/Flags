@@ -80,7 +80,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege,
 			return 3;
 		}
 		
-		return (claim == ((GriefPreventionClaim)a).getClaim()) ? 0 : 3;
+		return (claim.equals(((GriefPreventionClaim)a).getClaim())) ? 0 : 3;
 	}
 
 	@Override

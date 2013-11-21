@@ -43,8 +43,7 @@ public class WorldGuardRegion extends Area implements Removable {
 	public WorldGuardRegion(Location location) {
 		world = location.getWorld();
 		ProtectedRegion tempRegion = null;
-		final ApplicableRegionSet regionSet = WGBukkit.getRegionManager(
-				location.getWorld()).getApplicableRegions(location);
+		final ApplicableRegionSet regionSet = WGBukkit.getRegionManager(location.getWorld()).getApplicableRegions(location);
 		if (regionSet != null) {
 			int currentPriority = -2147483648;
 
