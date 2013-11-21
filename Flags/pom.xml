@@ -42,7 +42,7 @@
 							<relocations>
 								<relocation>
 									<pattern>org.mcstats</pattern>
-									<shadedPattern>io.github.alshain01.Flags.mcstats</shadedPattern>
+									<shadedPattern>io.github.alshain01.Flags.metrics</shadedPattern>
 								</relocation>
 							</relocations>
 						</configuration>
