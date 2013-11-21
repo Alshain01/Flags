@@ -34,12 +34,15 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<createDependencyReducedPom>false</createDependencyReducedPom>
-							<shadedGroupFilter>org.mcstats</shadedGroupFilter>
+							<artifactSet>
+  								<includes>
+    								<include>org.mcstats.bukkit:metrics</include>
+  								</includes>
+							</artifactSet>
 							<relocations>
 								<relocation>
 									<pattern>org.mcstats</pattern>
-									<shadedPattern>io.github.alshain01.flags</shadedPattern>
+									<shadedPattern>io.github.alshain01.Flags.metrics</shadedPattern>
 								</relocation>
 							</relocations>
 						</configuration>
@@ -78,23 +81,23 @@
 		</repository>
 		
 		<repository>
+			<id>Plugin Metrics</id>
+			<url>http://repo.mcstats.org/content/repositories/public</url>
+		</repository>
+		
+		<repository>
 			<id>vault-repo</id>
 			<url>http://ci.herocraftonline.com/plugin/repository/everything</url>
 		</repository>
 		
 		<repository>
 			<id>jacekk-repo</id>
-			<url>http://bukkit.jacekk.co.uk:8000/plugin/repository/project/</url>
+			<url>http://bukkit.jacekk.co.uk:8000/plugin/repository/everything</url>
 		</repository>
 		
 		<repository>
 			<id>sk89q-repo</id>
 			<url>http://maven.sk89q.com/repo/</url>
-		</repository>
-		
-		<repository>
-			<id>mcstats-repo</id>
-			<url>http://bukkit.jacekk.co.uk:8000/plugin/repository/everything/</url>
 		</repository>
 	</repositories>
   
@@ -103,8 +106,14 @@
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
 			<version>1.6.4-R1.0</version>
-			<optional>false</optional>
     	</dependency>
+    	
+    	<dependency>
+			<groupId>org.mcstats.bukkit</groupId>
+			<artifactId>metrics</artifactId>
+			<version>R7</version>
+			<scope>compile</scope>
+		</dependency>
     	
     	<dependency>
 			<groupId>net.milkbowl.vault</groupId>
@@ -112,14 +121,7 @@
 			<version>1.2.27</version>
 			<optional>true</optional>
     	</dependency>
-    	
-		<dependency>
-			<groupId>org.mcstats.bukkit</groupId>
-			<artifactId>metrics</artifactId>
-			<version>R7</version>
-			<optional>false</optional>
-		</dependency>
-		
+
     	<dependency>
 			<groupId>uk.co.jacekk.bukkit</groupId>
 			<artifactId>infiniteplots</artifactId>
