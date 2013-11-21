@@ -14,6 +14,21 @@
     	<plugins>
     	
 			<plugin>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <additionalProjectnatures>
+                        <projectnature>org.eclipse.m2e.core.maven2Nature</projectnature>
+                    </additionalProjectnatures>
+                    <buildcommands>
+                        <buildcommand>org.eclipse.jdt.core.javabuilder</buildcommand>
+                        <buildcommand>org.eclipse.m2e.core.maven2Builder</buildcommand>
+                    </buildcommands>
+                    <useProjectReferences>false</useProjectReferences>
+                </configuration>
+            </plugin>
+    	
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
@@ -26,7 +41,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.1</version>
+				<version>1.5</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -34,15 +49,11 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<artifactSet>
-  								<includes>
-    								<include>org.mcstats.bukkit:metrics</include>
-  								</includes>
-							</artifactSet>
+							<minimizeJar>true</minimizeJar>
 							<relocations>
 								<relocation>
 									<pattern>org.mcstats</pattern>
-									<shadedPattern>io.github.alshain01.Flags.metrics</shadedPattern>
+									<shadedPattern>io.github.alshain01.Flags.mcstats</shadedPattern>
 								</relocation>
 							</relocations>
 						</configuration>
@@ -111,7 +122,7 @@
     	<dependency>
 			<groupId>org.mcstats.bukkit</groupId>
 			<artifactId>metrics</artifactId>
-			<version>R7</version>
+			<version>R6</version>
 			<scope>compile</scope>
 		</dependency>
     	
