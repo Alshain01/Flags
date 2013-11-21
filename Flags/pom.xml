@@ -90,12 +90,12 @@
 			<id>bukkit-repo</id>
 			<url>http://repo.bukkit.org/content/groups/public/</url>
 		</repository>
-		
+		<!--
 		<repository>
 			<id>Plugin Metrics</id>
 			<url>http://repo.mcstats.org/content/repositories/public</url>
 		</repository>
-		
+		-->
 		<repository>
 			<id>vault-repo</id>
 			<url>http://ci.herocraftonline.com/plugin/repository/everything</url>
@@ -118,14 +118,14 @@
 			<artifactId>bukkit</artifactId>
 			<version>1.6.4-R1.0</version>
     	</dependency>
-    	
+    	<!--
     	<dependency>
 			<groupId>org.mcstats.bukkit</groupId>
 			<artifactId>metrics</artifactId>
 			<version>R7</version>
 			<scope>compile</scope>
 		</dependency>
-    	
+    	-->
     	<dependency>
 			<groupId>net.milkbowl.vault</groupId>
 			<artifactId>Vault</artifactId>

@@ -26,13 +26,12 @@ package io.github.alshain01.Flags.metrics;
 
 import io.github.alshain01.Flags.Flags;
 import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.metrics.Metrics.Graph;
 
 import java.io.IOException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import org.mcstats.Metrics.Graph;
-import org.mcstats.Metrics;
 
 public class MetricsManager {
 	public static void StartMetrics(Plugin plugin) {
