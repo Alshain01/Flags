@@ -24,7 +24,7 @@
 
 package io.github.alshain01.Flags.economy;
 
-import io.github.alshain01.Flags.Flags;
+import org.bukkit.Bukkit;
 
 /**
  * Enumeration for handling the BaseFlagValue setting
@@ -38,7 +38,7 @@ public enum EBaseValue {
 	 * @return True if the BaseFlagValue is set to this type.
 	 */
 	public boolean isSet() {
-		final String message = Flags.getInstance().getConfig()
+		final String message = Bukkit.getServer().getPluginManager().getPlugin("Flags").getConfig()
 				.getString("Flags.Economy.BaseValue");
 		return message.equalsIgnoreCase(toString()) ? true : false;
 	}

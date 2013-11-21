@@ -3,43 +3,33 @@
  This works is licensed under the Creative Commons Attribution-NonCommercial 3.0
 
  You are Free to:
-    to Share — to copy, distribute and transmit the work
-    to Remix — to adapt the work
+    to Share ï¿½ to copy, distribute and transmit the work
+    to Remix ï¿½ to adapt the work
 
  Under the following conditions:
-    Attribution — You must attribute the work in the manner specified by the author (but not in any way that suggests that they endorse you or your use of the work).
-    Non-commercial — You may not use this work for commercial purposes.
+    Attribution ï¿½ You must attribute the work in the manner specified by the author (but not in any way that suggests that they endorse you or your use of the work).
+    Non-commercial ï¿½ You may not use this work for commercial purposes.
 
  With the understanding that:
-    Waiver — Any of the above conditions can be waived if you get permission from the copyright holder.
-    Public Domain — Where the work or any of its elements is in the public domain under applicable law, that status is in no way affected by the license.
-    Other Rights — In no way are any of the following rights affected by the license:
+    Waiver ï¿½ Any of the above conditions can be waived if you get permission from the copyright holder.
+    Public Domain ï¿½ Where the work or any of its elements is in the public domain under applicable law, that status is in no way affected by the license.
+    Other Rights ï¿½ In no way are any of the following rights affected by the license:
         Your fair dealing or fair use rights, or other applicable copyright exceptions and limitations;
         The author's moral rights;
         Rights other persons may have either in the work itself or in how the work is used, such as publicity or privacy rights.
 
- Notice — For any reuse or distribution, you must make clear to others the license terms of this work. The best way to do this is with a link to this web page.
+ Notice ï¿½ For any reuse or distribution, you must make clear to others the license terms of this work. The best way to do this is with a link to this web page.
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
 package io.github.alshain01.Flags;
 
 import io.github.alshain01.Flags.area.Area;
-import io.github.alshain01.Flags.area.FactionsTerritory;
-import io.github.alshain01.Flags.area.GriefPreventionClaim;
-import io.github.alshain01.Flags.area.GriefPreventionClaim78;
-import io.github.alshain01.Flags.area.InfinitePlotsPlot;
-import io.github.alshain01.Flags.area.PlotMePlot;
-import io.github.alshain01.Flags.area.RegiosRegion;
-import io.github.alshain01.Flags.area.ResidenceClaimedResidence;
 import io.github.alshain01.Flags.area.World;
-import io.github.alshain01.Flags.area.WorldGuardRegion;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 /**
  * Class for retrieving area system specific information.
@@ -52,40 +42,7 @@ public final class Director {
 	 */
 	@Deprecated
 	private static Area getArea(Location location) {
-		if (!Area.hasArea(location)) {
-			return new World(location);
-		}
-		
-		switch (SystemType.getActive()) {
-		case GRIEF_PREVENTION:
-			final Plugin plugin = Flags.getInstance().getServer()
-					.getPluginManager().getPlugin("GriefPrevention");
-			float pluginVersion = Float.valueOf(plugin.getDescription().getVersion().substring(0, 3));
-
-			if (pluginVersion >= (float)7.8) {
-				return new GriefPreventionClaim78(location);
-			} else if (pluginVersion == (float)7.7) {
-				return new GriefPreventionClaim(location);
-			}
-			Flags.getInstance().getLogger().warning("Unsupported Grief Prevention version detected. "
-					+ "Shutting down integrated support. Only world flags will be available.");
-			Flags.currentSystem = SystemType.WORLD;
-			return null;
-		case WORLDGUARD:
-			return new WorldGuardRegion(location);
-		case RESIDENCE:
-			return new ResidenceClaimedResidence(location);
-		case INFINITEPLOTS:
-			return new InfinitePlotsPlot(location);
-		case FACTIONS:
-			return new FactionsTerritory(location);
-		case PLOTME:
-			return new PlotMePlot(location);
-		case REGIOS:
-			return new RegiosRegion(location);
-		default:
-			return null;
-		}
+		return Area.getAt(location);
 	}
 
 	/**
@@ -107,43 +64,7 @@ public final class Director {
 	 */
 	@Deprecated
 	public static Area getArea(String name) {
-		String[] path;
-		switch (SystemType.getActive()) {
-		case GRIEF_PREVENTION:
-			final Plugin plugin = Flags.getInstance().getServer()
-					.getPluginManager().getPlugin("GriefPrevention");
-			if (Float.valueOf(plugin.getDescription().getVersion()) >= 7.8) {
-				final Long ID = Long.parseLong(name);
-				return new GriefPreventionClaim78(ID);
-			} else if (Float.valueOf(plugin.getDescription().getVersion()) == 7.7) {
-				final Long ID = Long.parseLong(name);
-				return new GriefPreventionClaim(ID);
-			}
-			Flags.getInstance().getLogger().warning("Unsupported Grief Prevention version detected. "
-					+ "Shutting down integrated support. Only world flags will be available.");
-			Flags.currentSystem = SystemType.WORLD;
-			return null;
-		case RESIDENCE:
-			return new ResidenceClaimedResidence(name);
-		case WORLDGUARD:
-			path = name.split("\\.");
-			return new WorldGuardRegion(Bukkit.getWorld(path[0]), path[1]);
-		case INFINITEPLOTS:
-			path = name.split("\\.");
-			final String[] coords = path[1].split(";");
-			return new InfinitePlotsPlot(Bukkit.getWorld(path[0]),
-					Integer.valueOf(coords[0]), Integer.valueOf(coords[1]));
-		case FACTIONS:
-			path = name.split("\\.");
-			return new FactionsTerritory(Bukkit.getWorld(path[0]), path[1]);
-		case PLOTME:
-			path = name.split("\\.");
-			return new PlotMePlot(Bukkit.getWorld(path[0]), path[1]);
-		case REGIOS:
-			return new RegiosRegion(name);
-		default:
-			return null;
-		}
+		return Area.get(name);
 	}
 
 	/**

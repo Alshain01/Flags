@@ -88,8 +88,7 @@ public abstract class Area implements Comparable<Area> {
 		}
 
 		// Something went wrong if we made it this far.
-		Flags.getInstance().getLogger()
-				.severe(String.format("An error occured: %s", r.errorMessage));
+		Flags.severe(String.format("An error occured: %s", r.errorMessage));
 		player.sendMessage(Message.Error.get().replaceAll("\\{Error\\}",
 				r.errorMessage));
 		return false;
@@ -112,7 +111,7 @@ public abstract class Area implements Comparable<Area> {
 		
 		switch (SystemType.getActive()) {
 		case GRIEF_PREVENTION:
-			final Plugin plugin = Flags.getInstance().getServer().getPluginManager().getPlugin("GriefPrevention");
+			final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention");
 			final float pluginVersion = Float.valueOf(plugin.getDescription().getVersion().substring(0, 3));
 
 			if (pluginVersion >= (float)7.8) {
@@ -170,7 +169,7 @@ public abstract class Area implements Comparable<Area> {
 		
 		switch (SystemType.getActive()) {
 		case GRIEF_PREVENTION:
-			final Plugin plugin = Flags.getInstance().getServer().getPluginManager().getPlugin("GriefPrevention");
+			final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention");
 			final float pluginVersion = Float.valueOf(plugin.getDescription().getVersion().substring(0, 3));
 			final Long ID = Long.parseLong(name);
 			

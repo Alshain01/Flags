@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import com.bekvon.bukkit.residence.event.ResidenceDeleteEvent;
@@ -55,23 +56,24 @@ public class MrClean {
 	/*
 	 * Database cleanup monitors
 	 */
-	protected static void enable(PluginManager pm) {
+	protected static void enable(Plugin plugin) {
+		PluginManager pm = plugin.getServer().getPluginManager();
 		switch (SystemType.getActive()) {
 		case GRIEF_PREVENTION:
 			if (Float.valueOf(pm.getPlugin(SystemType.getActive().toString())
 					.getDescription().getVersion().substring(0, 3)) >= 7.8) {
 
-				pm.registerEvents(new GriefPreventionCleaner(),	Flags.getInstance());
+				pm.registerEvents(new GriefPreventionCleaner(),	plugin);
 			}
 			break;
 		case RESIDENCE:
-			pm.registerEvents(new ResidenceCleaner(), Flags.getInstance());
+			pm.registerEvents(new ResidenceCleaner(), plugin);
 			break;
 		case FACTIONS:
-			pm.registerEvents(new FactionsCleaner(), Flags.getInstance());
+			pm.registerEvents(new FactionsCleaner(), plugin);
 			break;
 		case REGIOS:
-			pm.registerEvents(new RegiosCleaner(), Flags.getInstance());
+			pm.registerEvents(new RegiosCleaner(), plugin);
 		default:
 			break;
 		}

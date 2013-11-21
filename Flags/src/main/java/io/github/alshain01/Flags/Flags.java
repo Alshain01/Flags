@@ -45,6 +45,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -86,7 +87,7 @@ public class Flags extends JavaPlugin {
 		@Override
 		public void run() {
 			for (final String b : Flags.getDataStore().readBundles()) {
-				Debug("Registering Bundle Permission:" + b);
+				log("Registering Bundle Permission:" + b, true);
 				final Permission perm = new Permission("flags.bundle." + b,
 						"Grants ability to use the bundle " + b,
 						PermissionDefault.FALSE);
@@ -94,8 +95,8 @@ public class Flags extends JavaPlugin {
 				Bukkit.getServer().getPluginManager().addPermission(perm);
 			}
 
-			if (!debug && checkAPI("1.3.2")) {
-				MetricsManager.StartMetrics();
+			if (!debugOn && checkAPI("1.3.2")) {
+				MetricsManager.StartMetrics(Bukkit.getServer().getPluginManager().getPlugin("Flags"));
 			}
 
 			// Check the handlers to see if anything is registered for Border
@@ -117,9 +118,10 @@ public class Flags extends JavaPlugin {
 		public void run() {
 			// Update script
 			final String key = getConfig().getString("Flags.Update.ServerModsAPIKey");
+			final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Flags");
 			updater = (getConfig().getBoolean("Flags.Update.Download"))
-				? new Updater(Flags.getInstance(), 65024, getFile(), Updater.UpdateType.DEFAULT, key, true)
-				: new Updater(Flags.getInstance(), 65024, getFile(), Updater.UpdateType.NO_DOWNLOAD, key, false);
+				? new Updater(plugin, 65024, getFile(), Updater.UpdateType.DEFAULT, key, true)
+				: new Updater(plugin, 65024, getFile(), Updater.UpdateType.NO_DOWNLOAD, key, false);
 
 			if (updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
 				Bukkit.getServer().getConsoleSender()
@@ -131,7 +133,7 @@ public class Flags extends JavaPlugin {
 				.sendMessage("[Flags] "	+ ChatColor.DARK_PURPLE
 					+ "An update to Flags has been downloaded and will be installed when the server is reloaded.");
 			}
-			getServer().getPluginManager().registerEvents(new FlagsListener(), Flags.getInstance());
+			getServer().getPluginManager().registerEvents(new FlagsListener(), plugin);
 		}
 	}
 
@@ -140,7 +142,7 @@ public class Flags extends JavaPlugin {
 	private static DataStore dataStore;
 	private static Updater updater = null;
 	private static Economy economy = null;
-	private static boolean debug = false;
+	private static boolean debugOn = false;
 
 	private static Registrar flagRegistrar = new Registrar();
 
@@ -165,18 +167,54 @@ public class Flags extends JavaPlugin {
 	}
 
 	/**
-	 * Sends a debug message through the Flags logger if the plug-in is a
-	 * development build.
+	 * Sends a log message through the Flags logger.
 	 * 
 	 * @param message
-	 *            The debug message
+	 *            The message
+	 * @param debug
+	 * 			  Specifies if the message is a debug message
 	 */
-	public static final void Debug(String message) {
-		if (debug) {
-			getInstance().getLogger().info("DEBUG: " + message);
+	public static final void log(String message, boolean debug) {
+		if(debug && !debugOn) {
+			return;
 		}
+		
+		if (debug) {
+			message += "DEBUG: ";
+		}
+		Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().info(message);
 	}
-
+	
+	/**
+	 * Sends a severe message through the Flags logger.
+	 * 
+	 * @param message
+	 *            The message
+	 */
+	public static final void severe(String message) {
+		Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().severe(message);
+	}
+	
+	/**
+	 * Sends a warning message through the Flags logger.
+	 * 
+	 * @param message
+	 *            The message
+	 */
+	public static final void warn(String message) {
+		Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().warning(message);
+	}
+	
+	/**
+	 * Sends a log message through the Flags logger.
+	 * 
+	 * @param message
+	 *            The message
+	 */
+	public static void log(String message) {
+		log(message, false);
+	}
+	
 	/**
 	 * Gets the status of the border patrol event listener. (i.e
 	 * PlayerChangedAreaEvent)
@@ -207,15 +245,6 @@ public class Flags extends JavaPlugin {
 	}
 
 	/**
-	 * Gets the static instance of Flags.
-	 * 
-	 * @return The vault economy.
-	 */
-	public static Flags getInstance() {
-		return (Flags)Bukkit.getPluginManager().getPlugin("Flags");
-	}
-
-	/**
 	 * Gets the registrar for this instance of Flags.
 	 * 
 	 * @return The flag registrar.
@@ -231,9 +260,9 @@ public class Flags extends JavaPlugin {
 		final List<?> pluginList = getConfig().getList("Flags.AreaPlugins");
 
 		for(Object o : pluginList) {
-			Debug("Testing Plugin: " + (String) o);
+			log("Testing Plugin: " + (String) o, true);
 			if (pm.isPluginEnabled((String) o)) {
-				Debug("Plugin Found: " + (String) o);
+				log("Plugin Found: " + (String) o, true);
 				return SystemType.getByName((String) o);
 			}
 		}
@@ -289,7 +318,7 @@ public class Flags extends JavaPlugin {
 	public void onEnable() {
 		// Create the configuration file if it doesn't exist
 		saveDefaultConfig();
-		debug = getConfig().getBoolean("Flags.Debug");
+		debugOn = getConfig().getBoolean("Flags.Debug");
 		
 		if (getConfig().getBoolean("Flags.Update.Check")) {
 			new UpdateScheduler().runTaskTimer(this, 0, 1728000);
@@ -327,12 +356,13 @@ public class Flags extends JavaPlugin {
 		setupEconomy();
 
 		// Load Mr. Clean
-		MrClean.enable(getServer().getPluginManager());
+		MrClean.enable(this);
 
 		// Load Border Patrol
 		if (borderPatrol) {
-			Debug("Registering for PlayerMoveEvent");
-			getServer().getPluginManager().registerEvents(new BorderPatrol(), this);
+			log("Registering for PlayerMoveEvent", true);
+			BorderPatrol bp = new BorderPatrol(getConfig().getInt("Flags.BorderPatrol.EventDivisor"), getConfig().getInt("Flags.BorderPatrol.TimeDivisor"));
+			getServer().getPluginManager().registerEvents(bp, this);
 		}
 
 		// Schedule tasks to perform after server is running
@@ -345,8 +375,8 @@ public class Flags extends JavaPlugin {
 	 * 
 	 * @return True if the economy was successfully configured.
 	 */
-	private boolean setupEconomy() {
-		if (!getServer().getPluginManager().isPluginEnabled("Vault")) {
+	private static boolean setupEconomy() {
+		if (!Bukkit.getServer().getPluginManager().isPluginEnabled("Vault")) {
 			return false;
 		}
 		final RegisteredServiceProvider<Economy> economyProvider = Bukkit

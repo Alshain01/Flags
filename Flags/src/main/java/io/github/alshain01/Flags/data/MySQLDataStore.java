@@ -73,7 +73,7 @@ public final class MySQLDataStore implements SQLDataStore {
 	
 	private void executeStatement(String statement) {
 		try {
-			Flags.Debug("[SQL Statement] " + statement);
+			Flags.log("[SQL Statement] " + statement, true);
 			Statement SQL = connection.createStatement();
 			SQL.execute(statement);
 		} catch (SQLException e) {
@@ -83,7 +83,7 @@ public final class MySQLDataStore implements SQLDataStore {
 	
 	private ResultSet executeQuery(String query) {
 		try {
-			Flags.Debug("[SQL Query] " + query);
+			Flags.log("[SQL Query] " + query, true);
 			Statement SQL = connection.createStatement();
 			return SQL.executeQuery(query);
 		} catch (SQLException e) {

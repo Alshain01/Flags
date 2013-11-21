@@ -30,14 +30,14 @@ import io.github.alshain01.Flags.SystemType;
 import java.io.IOException;
 
 import org.bukkit.Bukkit;
-
+import org.bukkit.plugin.Plugin;
 import org.mcstats.Metrics.Graph;
 import org.mcstats.Metrics;
 
 public class MetricsManager {
-	public static void StartMetrics() {
+	public static void StartMetrics(Plugin plugin) {
 		try {
-			final Metrics metrics = new Metrics(Flags.getInstance());
+			final Metrics metrics = new Metrics(plugin);
 
 			// Land System Graph
 			final Graph systemGraph = metrics.createGraph("Land System");
@@ -97,7 +97,7 @@ public class MetricsManager {
 
 			// Auto Update settings
 			final Graph updateGraph = metrics.createGraph("Update Configuration");
-			if (!Flags.getInstance().getConfig()
+			if (!plugin.getConfig()
 					.getBoolean("Flags.Update.Check")) {
 				updateGraph.addPlotter(new Metrics.Plotter("No Updates") {
 					@Override
@@ -105,7 +105,7 @@ public class MetricsManager {
 						return 1;
 					}
 				});
-			} else if (!Flags.getInstance().getConfig()
+			} else if (!plugin.getConfig()
 					.getBoolean("Flags.Update.Download")) {
 				updateGraph
 						.addPlotter(new Metrics.Plotter("Check for Updates") {
@@ -143,7 +143,7 @@ public class MetricsManager {
 
 			metrics.start();
 		} catch (final IOException e) {
-			Flags.getInstance().getLogger().info(e.getMessage());
+			plugin.getLogger().info(e.getMessage());
 		}
 	}
 

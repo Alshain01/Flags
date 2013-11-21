@@ -24,7 +24,7 @@
 
 package io.github.alshain01.Flags.economy;
 
-import io.github.alshain01.Flags.Flags;
+import org.bukkit.Bukkit;
 
 /**
  * Enumeration for handling the purchasable product type
@@ -61,7 +61,7 @@ public enum EPurchaseType {
 	 * @return True if the refund setting is true for this type
 	 */
 	public boolean isRefundable() {
-		return Flags.getInstance().getConfig()
+		return Bukkit.getServer().getPluginManager().getPlugin("Flags").getConfig()
 				.getBoolean("Flags.Economy.Refund." + toString());
 	}
 }

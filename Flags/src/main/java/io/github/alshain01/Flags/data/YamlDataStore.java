@@ -205,7 +205,7 @@ public final class YamlDataStore implements DataStore {
 				if (system == SystemType.GRIEF_PREVENTION || SystemType.getActive() == SystemType.RESIDENCE) {
 					cSec = cYml.getConfig().getConfigurationSection(SystemType.getActive().toString() + "Data");
 					
-					Flags.Debug("Updating World Names " + cSec.getCurrentPath());
+					Flags.log("Updating World Names " + cSec.getCurrentPath(), true);
 					final Set<String> keys = cSec.getKeys(true);
 					for (final String k : keys) {
 	
@@ -244,7 +244,7 @@ public final class YamlDataStore implements DataStore {
 				final String[] fileArray = {"data", "default", "world"};
 				for(final String s : fileArray) {
 					cYml = getYml(s);
-					Flags.Debug("Updating Boolean " + cYml.getConfig().getCurrentPath());
+					Flags.log("Updating Boolean " + cYml.getConfig().getCurrentPath(), true);
 					Set<String> keys = cYml.getConfig().getKeys(true);
 					for (final String k : keys) {
 						if (k.contains("Value") || k.contains("InheritParent")) {
@@ -255,17 +255,17 @@ public final class YamlDataStore implements DataStore {
 				}
 				
 				//Remove "Data" from the root heading.
-				Flags.Debug(SystemType.getActive().toString() + "Data");
+				Flags.log(SystemType.getActive().toString() + "Data", true);
 				cYml = getYml("data");
 				cSec = getYml("data").getConfig().getConfigurationSection(SystemType.getActive().toString() + "Data");
 				getYml("data").getConfig().createSection(SystemType.getActive().toString());
 				ConfigurationSection newCSec = getYml("data").getConfig().getConfigurationSection(SystemType.getActive().toString());
-				Flags.Debug("Moving " + cSec.getCurrentPath() + " to " + newCSec.getCurrentPath());
+				Flags.log("Moving " + cSec.getCurrentPath() + " to " + newCSec.getCurrentPath(), true);
 				Set<String> keys = cSec.getKeys(true);
 				for (final String k : keys) {
 					if (k.contains("Value") || k.contains("Message")
 							|| k.contains("Trust") || k.contains("InheritParent")) {
-							Flags.Debug("Moving " + k);
+							Flags.log("Moving " + k, true);
 							newCSec.set(k , cSec.get(k));
 							cSec.set(k, null);
 							cYml.saveConfig();
