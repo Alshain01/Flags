@@ -31,8 +31,8 @@ import java.io.IOException;
 
 import org.bukkit.Bukkit;
 
-import org.mcstats.Metrics;
 import org.mcstats.Metrics.Graph;
+import org.mcstats.Metrics;
 
 public class MetricsManager {
 	public static void StartMetrics() {
