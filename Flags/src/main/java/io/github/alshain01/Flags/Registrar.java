@@ -3,22 +3,22 @@
  This works is licensed under the Creative Commons Attribution-NonCommercial 3.0
 
  You are Free to:
-    to Share — to copy, distribute and transmit the work
-    to Remix — to adapt the work
+    to Share ï¿½ to copy, distribute and transmit the work
+    to Remix ï¿½ to adapt the work
 
  Under the following conditions:
-    Attribution — You must attribute the work in the manner specified by the author (but not in any way that suggests that they endorse you or your use of the work).
-    Non-commercial — You may not use this work for commercial purposes.
+    Attribution ï¿½ You must attribute the work in the manner specified by the author (but not in any way that suggests that they endorse you or your use of the work).
+    Non-commercial ï¿½ You may not use this work for commercial purposes.
 
  With the understanding that:
-    Waiver — Any of the above conditions can be waived if you get permission from the copyright holder.
-    Public Domain — Where the work or any of its elements is in the public domain under applicable law, that status is in no way affected by the license.
-    Other Rights — In no way are any of the following rights affected by the license:
+    Waiver ï¿½ Any of the above conditions can be waived if you get permission from the copyright holder.
+    Public Domain ï¿½ Where the work or any of its elements is in the public domain under applicable law, that status is in no way affected by the license.
+    Other Rights ï¿½ In no way are any of the following rights affected by the license:
         Your fair dealing or fair use rights, or other applicable copyright exceptions and limitations;
         The author's moral rights;
         Rights other persons may have either in the work itself or in how the work is used, such as publicity or privacy rights.
 
- Notice — For any reuse or distribution, you must make clear to others the license terms of this work. The best way to do this is with a link to this web page.
+ Notice ï¿½ For any reuse or distribution, you must make clear to others the license terms of this work. The best way to do this is with a link to this web page.
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 
 public final class Registrar {
 	ConcurrentHashMap<String, Flag> flagStore = new ConcurrentHashMap<String, Flag>();
@@ -166,5 +167,63 @@ public final class Registrar {
 
 		flagStore.put(name, flag);
 		return flag;
+	}
+	
+	/**
+	 * Registers a set of flags from a formatted yml file
+	 * 
+	 * @param yaml
+	 *            The ModuleYML file containing the flags
+	 * @param group
+	 *            The group the flags belong in.
+	 * @return The set of flags if the flags were successfully registered. May be null or empty.
+	 */
+	public Set<Flag> register(ModuleYML yaml, String group) {
+		if(yaml == null || group == null) {
+			return null;
+		}
+		
+		Set<Flag> flags = new HashSet<Flag>();
+		for (final String f : yaml.getModuleData().getConfigurationSection("Flag").getKeys(false)) {
+			final ConfigurationSection data = yaml.getModuleData().getConfigurationSection("Flag." + f);
+	
+			// We don't want to register flags that aren't supported.
+			// It would just muck up the help menu.
+			// Null value is assumed to support all versions.
+			final String api = data.getString("MinimumAPI");
+			if (api != null && !Flags.checkAPI(api)) {
+				continue;
+			}
+	
+			// The description that appears when using help commands.
+			final String desc = data.getString("Description");
+			if(desc == null) {
+				continue;
+			}
+	
+			final boolean def = data.isSet("Default") ? data.getBoolean("Default") : true;
+
+			final boolean isPlayer = data.isSet("Default") ? data.getBoolean("Player") : false;
+	
+			// The default message players get while in the area.
+			final String area = data.getString("AreaMessage");
+	
+			// The default message players get while in an world.
+			final String world = data.getString("WorldMessage");
+			
+			if(isPlayer && (area == null || world == null)) {
+				continue;
+			}
+			
+			// Register it!
+			// Be sure to send a plug-in name or group description for the help command!
+			// It can be this.getName() or another string.
+			if (isPlayer) {
+				register(f, desc, def, group, area, world);
+			} else {
+				register(f, desc, def, group);
+			}
+		}
+		return flags;
 	}
 }

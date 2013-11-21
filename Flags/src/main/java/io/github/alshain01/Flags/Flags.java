@@ -58,11 +58,126 @@ import org.bukkit.scheduler.BukkitRunnable;
  * @author Alshain01
  */
 public class Flags extends JavaPlugin {
+	protected static CustomYML messageStore;
+	protected static SystemType currentSystem = SystemType.WORLD;
+	private static DataStore dataStore;
+	private static Updater updater = null;
+	private static Economy economy = null;
+	private static boolean debugOn = false;
 
+	private static Registrar flagRegistrar = new Registrar();
+
+	private static boolean borderPatrol = false;
+	
+	/**
+	 * Called when this plug-in is enabled
+	 */
+	@Override
+	public void onEnable() {
+		// Create the configuration file if it doesn't exist
+		saveDefaultConfig();
+		debugOn = getConfig().getBoolean("Flags.Debug");
+		
+		if (getConfig().getBoolean("Flags.Update.Check")) {
+			new UpdateScheduler().runTaskTimer(this, 0, 1728000);
+		}
+		
+		borderPatrol = getConfig().getBoolean("Flags.BorderPatrol.Enable");
+
+		// Create the specific implementation of DataStore
+		(messageStore = new CustomYML(this, "message.yml")).saveDefaultConfig();
+
+		// TODO: Add sub-interface for SQL
+		dataStore = new YamlDataStore(this);
+		// New installation
+		if (!dataStore.create(this)) {
+			getLogger().warning("Failed to create database schema. Shutting down Flags.");
+			getServer().getPluginManager().disablePlugin(this);
+			return;
+		}
+
+		// Find the first available land management system
+		currentSystem = findSystem(getServer().getPluginManager());
+		getLogger().info(currentSystem == SystemType.WORLD ? "No system detected. Only world flags will be available."
+						: currentSystem.getDisplayName() + " detected. Enabling integrated support.");
+
+		// Check for older database and import as necessary.
+		if (currentSystem == SystemType.GRIEF_PREVENTION
+				&& !getServer().getPluginManager().isPluginEnabled("GriefPreventionFlags")) {
+			GPFImport.importGPF();
+		}
+		
+		dataStore.update(this);
+		
+		
+		// Enable Vault support
+		setupEconomy();
+
+		// Load Mr. Clean
+		MrClean.enable(this);
+
+		// Load Border Patrol
+		if (borderPatrol) {
+			log("Registering for PlayerMoveEvent", true);
+			BorderPatrol bp = new BorderPatrol(getConfig().getInt("Flags.BorderPatrol.EventDivisor"), getConfig().getInt("Flags.BorderPatrol.TimeDivisor"));
+			getServer().getPluginManager().registerEvents(bp, this);
+		}
+
+		// Schedule tasks to perform after server is running
+		new onServerEnabledTask().runTask(this);
+		getLogger().info("Flags Has Been Enabled.");
+	}
+	
+	/**
+	 * Executes the given command, returning its success
+	 * 
+	 * @param sender
+	 *            Source of the command
+	 * @param cmd
+	 *            Command which was executed
+	 * @param label
+	 *            Alias of the command which was used
+	 * @param args
+	 *            Passed command arguments
+	 * @return true if a valid command, otherwise false
+	 * 
+	 */
+	@Override
+	public boolean onCommand(CommandSender sender,
+			org.bukkit.command.Command cmd, String label, String[] args) {
+		if (cmd.getName().equalsIgnoreCase("flag")) {
+			return Command.onFlagCommand(sender, args);
+		}
+
+		if (cmd.getName().equalsIgnoreCase("bundle")) {
+			return Command.onBundleCommand(sender, args);
+		}
+		return false;
+	}
+
+	/**
+	 * Called when this plug-in is disabled
+	 */
+	@Override
+	public void onDisable() {
+		// if(dataStore instanceof SQLDataStore) {
+		// ((SQLDataStore)dataStore).close(); }
+		
+		// Static cleanup
+		economy = null;
+		dataStore = null;
+		updater = null;
+		messageStore = null;
+		flagRegistrar = null;
+		currentSystem = null;
+		
+		getLogger().info("Flags Has Been Disabled.");
+	}
+	
 	/*
 	 * Contains event listeners required for plugin maintenance.
 	 */
-	private static class FlagsListener implements Listener {
+	private class FlagsListener implements Listener {
 		// Update listener
 		@EventHandler(ignoreCancelled = true)
 		private void onPlayerJoin(PlayerJoinEvent e) {
@@ -136,17 +251,6 @@ public class Flags extends JavaPlugin {
 			getServer().getPluginManager().registerEvents(new FlagsListener(), plugin);
 		}
 	}
-
-	protected static CustomYML messageStore;
-	protected static SystemType currentSystem = SystemType.WORLD;
-	private static DataStore dataStore;
-	private static Updater updater = null;
-	private static Economy economy = null;
-	private static boolean debugOn = false;
-
-	private static Registrar flagRegistrar = new Registrar();
-
-	private static boolean borderPatrol = false;
 
 	/**
 	 * Checks if the provided string represents a version number that is equal
@@ -267,107 +371,6 @@ public class Flags extends JavaPlugin {
 			}
 		}
 		return SystemType.WORLD;
-	}
-
-	/**
-	 * Executes the given command, returning its success
-	 * 
-	 * @param sender
-	 *            Source of the command
-	 * @param cmd
-	 *            Command which was executed
-	 * @param label
-	 *            Alias of the command which was used
-	 * @param args
-	 *            Passed command arguments
-	 * @return true if a valid command, otherwise false
-	 * 
-	 */
-	@Override
-	public boolean onCommand(CommandSender sender,
-			org.bukkit.command.Command cmd, String label, String[] args) {
-		if (cmd.getName().equalsIgnoreCase("flag")) {
-			return Command.onFlagCommand(sender, args);
-		}
-
-		if (cmd.getName().equalsIgnoreCase("bundle")) {
-			return Command.onBundleCommand(sender, args);
-		}
-		return false;
-	}
-
-	/**
-	 * Called when this plug-in is disabled
-	 */
-	@Override
-	public void onDisable() {
-		// if(dataStore instanceof SQLDataStore) {
-		// ((SQLDataStore)dataStore).close(); }
-		economy = null;
-		dataStore = null;
-		updater = null;
-		messageStore = null;
-		flagRegistrar = null;
-		getLogger().info("Flags Has Been Disabled.");
-	}
-
-	/**
-	 * Called when this plug-in is enabled
-	 */
-	@Override
-	public void onEnable() {
-		// Create the configuration file if it doesn't exist
-		saveDefaultConfig();
-		debugOn = getConfig().getBoolean("Flags.Debug");
-		
-		if (getConfig().getBoolean("Flags.Update.Check")) {
-			new UpdateScheduler().runTaskTimer(this, 0, 1728000);
-		}
-		
-		borderPatrol = getConfig().getBoolean("Flags.BorderPatrol.Enable");
-
-		// Create the specific implementation of DataStore
-		(messageStore = new CustomYML(this, "message.yml")).saveDefaultConfig();
-
-		// TODO: Add sub-interface for SQL
-		dataStore = new YamlDataStore(this);
-		// New installation
-		if (!dataStore.create(this)) {
-			getLogger().warning("Failed to create database schema. Shutting down Flags.");
-			getServer().getPluginManager().disablePlugin(this);
-			return;
-		}
-
-		// Find the first available land management system
-		currentSystem = findSystem(getServer().getPluginManager());
-		getLogger().info(currentSystem == SystemType.WORLD ? "No system detected. Only world flags will be available."
-						: currentSystem.getDisplayName() + " detected. Enabling integrated support.");
-
-		// Check for older database and import as necessary.
-		if (currentSystem == SystemType.GRIEF_PREVENTION
-				&& !getServer().getPluginManager().isPluginEnabled("GriefPreventionFlags")) {
-			GPFImport.importGPF();
-		}
-		
-		dataStore.update(this);
-		
-		
-		// Enable Vault support
-		setupEconomy();
-
-		// Load Mr. Clean
-		MrClean.enable(this);
-
-		// Load Border Patrol
-		if (borderPatrol) {
-			log("Registering for PlayerMoveEvent", true);
-			BorderPatrol bp = new BorderPatrol(getConfig().getInt("Flags.BorderPatrol.EventDivisor"), getConfig().getInt("Flags.BorderPatrol.TimeDivisor"));
-			getServer().getPluginManager().registerEvents(bp, this);
-		}
-
-		// Schedule tasks to perform after server is running
-		new onServerEnabledTask().runTask(this);
-		getLogger().info("Flags Has Been Enabled.");
 	}
 
 	/*
