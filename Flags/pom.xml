@@ -110,6 +110,11 @@
 			<id>sk89q-repo</id>
 			<url>http://maven.sk89q.com/repo/</url>
 		</repository>
+		
+		<repository>
+            <id>SacredCoding</id>
+            <url>http://repo.sacredlabyrinth.net:8081/artifactory/snapshots</url>
+        </repository>
 	</repositories>
   
 	<dependencies>
@@ -131,6 +136,23 @@
 			<artifactId>Vault</artifactId>
 			<version>1.2.27</version>
 			<optional>true</optional>
+    	</dependency>
+    	
+    	<dependency>
+			<groupId>net.sacredlabyrinth.Phaed</groupId>
+			<artifactId>PreciousStones</artifactId>
+			<version>9.6.2-SNAPSHOT</version>
+			<optional>true</optional>
+			<exclusions>
+	    		<exclusion>
+          			<groupId>org.mcstats</groupId>
+          			<artifactId>metrics</artifactId>
+        		</exclusion>
+				<exclusion>
+          			<groupId>joda-time</groupId>
+          			<artifactId>joda-time</artifactId>
+        		</exclusion>
+        	</exclusions>
     	</dependency>
 
     	<dependency>

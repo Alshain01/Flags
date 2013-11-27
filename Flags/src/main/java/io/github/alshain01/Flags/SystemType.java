@@ -38,7 +38,8 @@ public enum SystemType {
 	INFINITEPLOTS("InfinitePlots", "InfinitePlots"),
 	FACTIONS("Factions", "Factions"),
 	PLOTME("PlotMe", "PlotMe"),
-	REGIOS("Regios", "Regios");
+	REGIOS("Regios", "Regios"),
+	PRECIOUSSTONES("PreciousStones", "PreciousStones");
 
 	/**
 	 * Gets the enumeration that matches the case sensitive plugin.yml name.
