@@ -40,6 +40,56 @@
 	</repositories>
 
 	<dependencies>
+	<!-- Non-Maven Dependencies -->
+		<dependency>
+			<groupId>me.ryanhamshire.GriefPrevention</groupId>
+			<artifactId>GriefPrevention</artifactId>
+			<systemPath>C:\Users\Kevin Seiden\workspace\GriefPrevention-193.jar</systemPath>
+			<version>7.8</version>
+			<scope>system</scope>
+		</dependency>
+	
+		<dependency>
+			<groupId>com.worldcretornica.plotme</groupId>
+			<artifactId>PlotMe</artifactId>
+			<systemPath>C:\Users\Kevin Seiden\workspace\PlotMe.jar</systemPath>
+			<version>0.13b</version>
+			<scope>system</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.massivecraft.factions</groupId>
+			<artifactId>Factions</artifactId>
+			<systemPath>C:\Users\Kevin Seiden\workspace\Factions.jar</systemPath>
+			<version>2.2.2</version>
+			<scope>system</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.massivecraft.mcore</groupId>
+			<artifactId>MCore</artifactId>
+			<systemPath>C:\Users\Kevin Seiden\workspace\mcore.jar</systemPath>
+			<version>6.9.1</version>
+			<scope>system</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.bekvon.bukkit.residence</groupId>
+			<artifactId>Residence</artifactId>
+			<systemPath>C:\Users\Kevin Seiden\workspace\Residence.jar</systemPath>
+			<version>2.6.6.6</version>
+			<scope>system</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.jzx7.regiosapi</groupId>
+			<artifactId>Regios</artifactId>
+			<systemPath>C:\Users\Kevin Seiden\workspace\Regios.jar</systemPath>
+			<version>5.9.9</version>
+			<scope>system</scope>
+		</dependency>
+
+	<!-- Maven Dependencies -->
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
