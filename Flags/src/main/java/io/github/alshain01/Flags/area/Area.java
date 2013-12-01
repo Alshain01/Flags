@@ -135,6 +135,9 @@ public abstract class Area implements Comparable<Area> {
 		case PLOTME:
 			area = new PlotMePlot(location);
 			break;
+		case PRECIOUSSTONES:
+			area = new PreciousStonesField(location);
+			break;
 		case REGIOS:
 			area = new RegiosRegion(location);
 			break;
@@ -153,7 +156,9 @@ public abstract class Area implements Comparable<Area> {
 	 * 
 	 * GriefPrevention = ID number
 	 * WorldGuard = worldname.regionname
+	 * Regios = Region name
 	 * Residence = Residence name OR ResidenceName.SubzoneName
+	 * PreciousStones = worldname.ID
 	 * InifitePlots = worldname.PlotLoc (X;Z)
 	 * Factions = worldname.FactionID
 	 * PlotMe = worldname.PlotID
@@ -195,6 +200,10 @@ public abstract class Area implements Comparable<Area> {
 			path = name.split("\\.");
 			area = new FactionsTerritory(Bukkit.getWorld(path[0]), path[1]);
 			break;
+		case PRECIOUSSTONES:
+			path = name.split("\\.");
+			area = new PreciousStonesField(Bukkit.getWorld(path[0]), Long.valueOf(path[1]));
+			break;
 		case PLOTME:
 			path = name.split("\\.");
 			area = new PlotMePlot(Bukkit.getWorld(path[0]), path[1]);
@@ -229,6 +238,8 @@ public abstract class Area implements Comparable<Area> {
 			return InfinitePlotsPlot.hasPlot(location);
 		case FACTIONS:
 			return FactionsTerritory.hasTerritory(location);
+		case PRECIOUSSTONES:
+			return PreciousStonesField.hasField(location);
 		case PLOTME:
 			return PlotMePlot.hasPlot(location);
 		case REGIOS:
