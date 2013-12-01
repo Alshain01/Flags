@@ -121,7 +121,7 @@
     	<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.7.2-R0.1-SNAPSHOT</version>
+			<version>LATEST</version>
     	</dependency>
     	<!--
     	<dependency>
@@ -134,7 +134,7 @@
     	<dependency>
 			<groupId>net.milkbowl.vault</groupId>
 			<artifactId>Vault</artifactId>
-			<version>1.2.27</version>
+			<version>LATEST</version>
 			<optional>true</optional>
     	</dependency>
     	
@@ -171,7 +171,7 @@
 		<dependency>
 			<groupId>com.sk89q</groupId>
 			<artifactId>worldguard</artifactId>
-			<version>5.8.1-SNAPSHOT</version>
+			<version>LATEST</version>
 			<optional>true</optional>
 			<exclusions>
 	    		<exclusion>
