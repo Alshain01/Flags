@@ -32,13 +32,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.permissions.Permissible;
 
 public class World extends Area {
-	private final static HashSet<String> owners = new HashSet<String>(Arrays.asList("world"));
-	private final org.bukkit.World world;
+	private final String worldName;
 
 	/**
 	 * Creates an instance of World based on a Bukkit Location
@@ -57,7 +57,21 @@ public class World extends Area {
 	 *            The Bukkit world
 	 */
 	public World(org.bukkit.World world) {
-		this.world = world;
+		this.worldName = world.getName();
+	}
+	
+	/**
+	 * Creates an instance of World based on a Bukkit World name
+	 * 
+	 * @param world
+	 *            The Bukkit world
+	 */
+	public World(String worldName) {
+		if(Bukkit.getWorld(worldName) != null) {
+			this.worldName = worldName;
+		} else {
+			this.worldName = null;
+		}
 	}
 
 	/**
@@ -67,7 +81,7 @@ public class World extends Area {
 	 */
 	@Override
 	public int compareTo(Area a) {
-		return a instanceof World && a.getSystemID().equals(world.getName()) ? 0 : 3;
+		return a instanceof World && a.getSystemID().equals(worldName) ? 0 : 3;
 	}
 
 	@Override
@@ -86,7 +100,7 @@ public class World extends Area {
 		if (parse) {
 			message = message
 					.replaceAll("\\{AreaType\\}", SystemType.WORLD.getAreaType().toLowerCase())
-					.replaceAll("\\{World\\}", world.getName());
+					.replaceAll("\\{World\\}", worldName);
 			message = ChatColor.translateAlternateColorCodes('&', message);
 		}
 		return message;
@@ -94,12 +108,12 @@ public class World extends Area {
 
 	@Override
 	public Set<String> getOwners() {
-		return owners;
+		return new HashSet<String>(Arrays.asList("world"));
 	}
 
 	@Override
 	public String getSystemID() {
-		return world.getName();
+		return worldName;
 	}
 
 	@Override
@@ -113,7 +127,7 @@ public class World extends Area {
 
 	@Override
 	public org.bukkit.World getWorld() {
-		return world;
+		return worldName != null ? Bukkit.getWorld(worldName) : null;
 	}
 
 	@Override
@@ -128,7 +142,7 @@ public class World extends Area {
 
 	@Override
 	public boolean isArea() {
-		return world != null;
+		return worldName != null;
 	}
 
 	@Override
