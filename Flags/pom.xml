@@ -204,7 +204,6 @@
 		</site>
 	</distributionManagement>
 -->
-
 	<properties>
 		<dependencydir>C:\build_libraries</dependencydir>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
