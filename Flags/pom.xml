@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.alshain01</groupId>
 	<artifactId>Flags</artifactId>
-	<version>1.3.0</version>
+	<version>1.3.0-SNAPSHOT</version>
 	<name>Flags</name>
 	<description>Allows you to set flags to alter game behavior in specific areas.</description>
 	<url>http://dev.bukkit.org/bukkit-plugins/flags/</url> 
@@ -44,9 +44,10 @@
 		<dependency>
 			<groupId>me.ryanhamshire.GriefPrevention</groupId>
 			<artifactId>GriefPrevention</artifactId>
-			<systemPath>${dependencydir}\GriefPrevention-193.jar</systemPath>
+			<systemPath>${dependencydir}\GriefPrevention-197.jar</systemPath>
 			<version>7.8</version>
 			<scope>system</scope>
+			<optional>true</optional>
 		</dependency>
 	
 		<dependency>
@@ -55,6 +56,7 @@
 			<systemPath>${dependencydir}\PlotMe.jar</systemPath>
 			<version>0.13b</version>
 			<scope>system</scope>
+			<optional>true</optional>
 		</dependency>
 		
 		<dependency>
@@ -63,6 +65,7 @@
 			<systemPath>${dependencydir}\Factions.jar</systemPath>
 			<version>2.2.2</version>
 			<scope>system</scope>
+			<optional>true</optional>
 		</dependency>
 
 		<dependency>
@@ -71,6 +74,7 @@
 			<systemPath>${dependencydir}\mcore.jar</systemPath>
 			<version>6.9.1</version>
 			<scope>system</scope>
+			<optional>true</optional>
 		</dependency>
 		
 		<dependency>
@@ -79,6 +83,7 @@
 			<systemPath>${dependencydir}\Residence.jar</systemPath>
 			<version>2.6.6.6</version>
 			<scope>system</scope>
+			<optional>true</optional>
 		</dependency>
 		
 		<dependency>
@@ -87,6 +92,7 @@
 			<systemPath>${dependencydir}\Regios.jar</systemPath>
 			<version>5.9.9</version>
 			<scope>system</scope>
+			<optional>true</optional>
 		</dependency>
 
 	<!-- Maven Dependencies -->
@@ -196,21 +202,27 @@
 		<url>https://github.com/alshain01/flags</url>
 		<tag>master</tag>
 	</scm>
-<!--
+
 	<distributionManagement>
-		<site>
-			<id>flags-upload</id>
-			<url>ftp://pages.suddenlink.net/flags</url>
-		</site>
+		<repository>
+			<id>flags-repo</id>
+			<name>Flags Repository</name>
+			<url>ftp://pages.suddenlink.net/flags/repository</url>
+		</repository>
+    	<snapshotRepository>
+        	<id>flags-snapshot</id>
+        	<name>Flags Snapshot Repository</name>
+        	<url>ftp://pages.suddenlink.net/flags/snapshot</url>
+    	</snapshotRepository>
 	</distributionManagement>
--->
+
 	<properties>
 		<dependencydir>C:\build_libraries</dependencydir>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<build>
-		<defaultGoal>clean package install</defaultGoal>
+		<defaultGoal>clean package install deploy</defaultGoal>
 		<finalName>${project.name}</finalName>
 		<sourceDirectory>src/main/java</sourceDirectory>
 
@@ -264,6 +276,14 @@
 			</plugin>
 -->
 		</plugins>
+
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ftp</artifactId>
+				<version>2.4</version>
+			</extension>
+		</extensions>
 
 		<resources>
 			<resource>
