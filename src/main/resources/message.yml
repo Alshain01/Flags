@@ -1,0 +1,78 @@
+Message:
+  # Translations and Color {Value}
+  ValueColorTrue: '&aTrue'
+  ValueColorFalse: '&cFalse'
+  
+  #Command Types {Type}
+  Flag: 'Flag'
+  Bundle: 'Bundle'
+  
+  #Generic Group {Group}
+  Index: 'Index'
+  
+  # System specific area types {AreaType}
+  Default: 'Default'
+  World: 'World'
+  Factions: 'Territory'
+  GriefPrevention: 'Claim'
+  InfinitePlots: 'Plot'
+  PlotMe: 'Plot'
+  Regios: 'Region'
+  Residence: 'Residence'
+  WorldGuard: 'Region'
+
+  # Other Translations
+  Message: 'Message'
+  Error: '&cAn error occured - {Error}'
+  
+  # Error Messages
+  NoConsoleError: '&cThis command cannot be performed from the console.'
+  SetTrustError: '&cFailed to set trust for one or more players.'
+  RemoveTrustError: '&cFailed to remove trust for one or more players.'
+  SetMultipleFlagsError: '&cFailed to set one or more flags.'
+  RemoveAllFlagsError: '&cFailed to remove one or more flags.'
+  EraseBundleError: '&cFailed to erase bundle.'
+  AddBundleError: '&cFailed to find one or more flags. Aborting addition.'
+  BundlePermError: '&cYou do not have permission to edit bundles.'
+  PricePermError: '&cYou do not have permission to edit prices.'
+  SubdivisionError: '&cStand in the subdivision you wish to set inheritance for.'
+  NoSystemError: '&cNo land system available. Area actions are disabled.'
+  NoFlagFound: '&cThere are no {Type}s defined on this server.'
+  NoAreaError: '&cStand in the {AreaType} you wish to set a flag in.'
+  InvalidFlagError: '&e{RequestedName} &cis not a valid {Type}.'
+  PlayerFlagError: '&e{Flag} &cis not a player flag.'
+  InvalidTrustError: '&e{Flag} &chas no players with {AreaType} trust.'
+  FlagPermError: '&cYou do not have permission to use that {Type}.'
+  AreaPermError: '&cYou do not have permission to set a {Type} in &6{OwnerName}&c''s {AreaType}.'
+  WorldPermError: '&cYou do not have permission to set a {Type} in the {AreaType}.'
+  EconomyError: '&cThere is no economy installed on this server.'
+  
+  # Command Messages
+  GetFlag: '&bThe {AreaType} flag &e{Flag} &bis {Value}.'
+  GetAllFlags: '&bThe following {AreaType} flags are set: &e'
+  SetFlag: '&bSet {AreaType} flag &e{Flag} &bto {Value}.'
+  RemoveFlag: '&bReturned the {AreaType} flag &e{Flag} &bto the inheritied value.'
+  RemoveAllFlags: '&bReturned all flags in the {AreaType} to the inherited value.'
+  GetTrust: '&bThe following players have {AreaType} &e{Flag} &btrust: &e'
+  SetTrust: '&bAdded the player(s) to the {AreaType} trust list for &e{Flag}&b.'
+  RemoveTrust: '&bRemoved the player(s) from the {AreaType} trust list for &e{Flag}&b.'
+  SetInherited: '&bSet subdivision inheritance to {Value}.'
+  GetBundle: '&e{Bundle}&b: {Value}'
+  SetBundle: '&bSet all {AreaType} flags in the bundle &e{Bundle} &bto {Value}.'
+  RemoveBundle: '&bReturned all {AreaType} flags in the bundle &e{Bundle} &bto the inherited setting.'
+  UpdateBundle: '&bThe bundle &e{Bundle} &bwas updated.'
+  EraseBundle: '&bThe bundle &e{Bundle} &bwas erased.'
+  
+  #Economy MEssages
+  SetPrice: '&bSet the {PurchaseType} price for &e{Flag} &bto &a{Price}&b.'
+  GetPrice: '&bThe price for the {PurchaseType} &e{Flag} &bis &a{Price}&b.'
+  LowFunds: '&cThe {PurchaseType} &e{Flag} &ccosts &a{Price}&c. You do not have enough funds.'
+  Withdraw: '&a{Price} &bhas been withdrawn from your account.'
+  Deposit: '&a{Price} &bhas been deposited to your account.'
+  
+  # Help Messages
+  HelpHeader: '&6---------&f {Type}: {Group} ({Page}/{TotalPages})&6--------------------'
+  HelpInfo: '&7Use /{Type} help [n] to get page n of <10>s.'
+  GroupHelpInfo: '&7Below is a list of all {Type} commands:'
+  HelpTopic: '&6{Topic}&f: {Description}'
+  GroupHelpDescription: Lists all flags for {Group}.

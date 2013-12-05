@@ -1,0 +1,54 @@
+Flags:
+  # This sets the search order for land allocation systems  
+  # If you have only one system installed, you do not need to change this.
+  #
+  # If you have more than one system installed, change the order so the system
+  # that you wish Flags to use appears first.
+  #
+  # DO NOT ALTER THE NAMES
+  #
+  # If no system is discovered, you will be limited to world flags only.
+  #
+  AreaPlugins: [Factions, GriefPrevention, InfinitePlots, PlotMe, Regios, Residence, WorldGuard]
+  #
+  # Disable this to improve performance. However, any flag module using it will not
+  # receive notice that a player is changing areas.
+  #
+  # Divisors:
+  # Decrease these to make the border crossing based events react faster.
+  # Increase them to reduce event execution time.  It may help reduce lag on busy servers.
+  # Setting these to 1 will process every event.  Do not set lower than 1, use only whole numbers.
+  #
+  BorderPatrol:
+    Enable: true
+    EventDivisor: 10
+    TimeDivisor: 500
+  #
+  # PLUGIN: Player will be charged when the new flag value differs from default provided by the flag module or plugin.
+  # DEFAULT: Player will be charged when the new flag value differs from operator defined default value.
+  # ALWAYS: Player is always charged for setting the flag value.
+  #
+  # Refund allows the player to gain back the cost of the flag if the value is set
+  # to the PLUGIN or DEFAULT value.  If BaseValue is ALWAYS, refunds will only
+  # be given if the flag is removed.
+  # WARNING: Players will always be refunded the current price, 
+  #          even if they bought it at a different price.
+  #
+  Economy:
+    BaseValue: PLUGIN
+    Refund:
+      Flag: true
+      Message: false
+  #
+  # Check for updates and notify the console or download and install (Check must be true to auto update)
+  # ServerModsAPIKey is optional and can be found here https://dev.bukkit.org/home/servermods-apikey/  
+  # DO NOT SHARE WITH ANYONE!  The API key will only be uploaded to BukkitDev, not the author of this plugin.
+  #
+  Update:
+    Check: true
+    Download: false
+    ServerModsAPIKey: null
+  #
+  # Puts the plugin in debug mode.
+  #
+  Debug: false

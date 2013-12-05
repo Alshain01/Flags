@@ -1,0 +1,8 @@
+# Configure the price for flags and messages when using an economy system.
+# Item is assumed free if not listed.
+# --Example--
+# Price:
+#  Flag:
+#    NotifyEnter: '100'
+#  Message:
+#    NotifyEnter: '2500.5'
