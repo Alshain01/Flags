@@ -124,7 +124,7 @@ public class Flags extends JavaPlugin {
 		}
 
 		// Schedule tasks to perform after server is running
-		new onServerEnabledTask().runTask(this);
+		new onServerEnabledTask(this.getConfig().getBoolean("Metrics.Enabled")).runTask(this);
 		getLogger().info("Flags Has Been Enabled.");
 	}
 	
@@ -199,6 +199,12 @@ public class Flags extends JavaPlugin {
 	 * first server tick.
 	 */
 	private class onServerEnabledTask extends BukkitRunnable {
+        private onServerEnabledTask(boolean mcstats) {
+            this.mcstats = mcstats;
+        }
+
+        private boolean mcstats = true;
+
 		@Override
 		public void run() {
 			for (final String b : Flags.getDataStore().readBundles()) {
