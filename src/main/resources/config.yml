@@ -49,6 +49,11 @@ Flags:
     Download: false
     ServerModsAPIKey: null
   #
+  # Enable or Disable MCStats metrics logging
+  #
+  Metrics:
+    Enabled: true
+  #
   # Puts the plugin in debug mode.
   #
   Debug: false
