@@ -124,7 +124,7 @@ public class Flags extends JavaPlugin {
 		}
 
 		// Schedule tasks to perform after server is running
-		new onServerEnabledTask(this.getConfig().getBoolean("Metrics.Enabled")).runTask(this);
+		new onServerEnabledTask(this.getConfig().getBoolean("Flags.Metrics.Enabled")).runTask(this);
 		getLogger().info("Flags Has Been Enabled.");
 	}
 	
