@@ -39,7 +39,7 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
 final class BundleCmd extends Common {
-	protected static boolean get(Player player, ECommandLocation location, String bundleName) {
+	protected static void get(Player player, ECommandLocation location, String bundleName) {
 		Area area = getArea(player, location);
 		Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName);
 		
@@ -47,17 +47,16 @@ final class BundleCmd extends Common {
 				|| !Validate.isBundle(player, bundle, bundleName)
 				|| !Validate.isBundlePermitted(player, area)
 				|| !Validate.isBundlePermitted(player, bundleName))
-		{ return true; }
+		{ return; }
 
 		for(Flag flag : bundle) {
     		player.sendMessage(Message.GetBundle.get()
     				.replaceAll("\\{Bundle\\}", flag.getName())
     				.replaceAll("\\{Value\\}", getValue(area.getValue(flag, false))));
 		}
-		return true;
 	}
 	
-	protected static boolean set(Player player, ECommandLocation location, String bundleName, Boolean value) {
+	protected static void set(Player player, ECommandLocation location, String bundleName, Boolean value) {
 		boolean success = true;
 		Area area = getArea(player, location);
 		Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName);
@@ -66,7 +65,7 @@ final class BundleCmd extends Common {
 				|| !Validate.isBundle(player, bundle, bundleName)
 				|| !Validate.isBundlePermitted(player, area)
 				|| !Validate.isBundlePermitted(player, bundleName))
-		{ return true; }
+		{ return; }
 		
 		for(Flag flag : bundle) {
         	if(!area.setValue(flag, value, player)) { success = false; }
@@ -76,10 +75,9 @@ final class BundleCmd extends Common {
     			.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
     			.replaceAll("\\{Bundle\\}", bundleName)
     			.replaceAll("\\{Value\\}", getValue(value).toLowerCase()));
-        return true;
 	}
 	
-	protected static boolean remove(Player player, ECommandLocation location, String bundleName) {
+	protected static void remove(Player player, ECommandLocation location, String bundleName) {
 		boolean success = true;
 		Area area = getArea(player, location);
 		Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName);
@@ -88,7 +86,7 @@ final class BundleCmd extends Common {
 				|| !Validate.isBundle(player, bundle, bundleName)
 				|| !Validate.isBundlePermitted(player, area)
 				|| !Validate.isBundlePermitted(player, bundleName))
-		{ return true; }
+		{ return; }
 		
 		for (Flag flag : bundle) {
     		if (!area.setValue(flag, null, player)) { success = false; }
@@ -97,11 +95,10 @@ final class BundleCmd extends Common {
 		player.sendMessage((success ? Message.RemoveBundle.get() : Message.RemoveAllFlags.get())
 				.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
 				.replaceAll("\\{Bundle\\}", bundleName));
-    	return true;
 	}
 	
-	protected static boolean add(CommandSender sender, String bundleName, Set<String> flags) {
-		if(sender instanceof Player && !Validate.canEditBundle((Player)sender)){ return true; }
+	protected static void add(CommandSender sender, String bundleName, Set<String> flags) {
+		if(sender instanceof Player && !Validate.canEditBundle(sender)){ return; }
 	
 		Flag flag;
 		Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName);
@@ -119,7 +116,7 @@ final class BundleCmd extends Common {
 			flag = Flags.getRegistrar().getFlagIgnoreCase(f);
         	if (flag == null) {
         		sender.sendMessage(Message.AddBundleError.get());
-        		return true;
+        		return;
        		}
         	bundle.add(flag);
 		}
@@ -127,34 +124,33 @@ final class BundleCmd extends Common {
 		Flags.getDataStore().writeBundle(bundleName, bundle);
 		sender.sendMessage(Message.UpdateBundle.get()
 				.replaceAll("\\{Bundle\\}", bundleName));
-		return true;
 	}
 	
-	protected static boolean delete(CommandSender sender, String bundleName, Set<String> flags) {
-		if(sender instanceof Player && !Validate.canEditBundle((Player)sender)){ return true; }
+	protected static void delete(CommandSender sender, String bundleName, Set<String> flags) {
+		if(sender instanceof Player && !Validate.canEditBundle(sender)){ return; }
 		
 		boolean success = true;
 		Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName.toLowerCase());
 		
-		if(!Validate.isBundle(sender, bundle, bundleName)) { return true; }
+		if(!Validate.isBundle(sender, bundle, bundleName)) { return; }
 
-		for(Flag flag : bundle) {
-    		if (!bundle.remove(flag)) { success = false; }
+		for(String s : flags) {
+            Flag flag = Flags.getRegistrar().getFlag(s);
+            if (flag == null || !bundle.remove(flag)) { success = false; }
 		}
 		Flags.getDataStore().writeBundle(bundleName, bundle);
 		
 		sender.sendMessage((success ? Message.UpdateBundle.get() : Message.RemoveAllFlags.get())
 				.replaceAll("\\{Bundle\\}", bundleName));
-		return true;
 	}
 	
-	protected static boolean erase(CommandSender sender, String bundleName) {
-		if(sender instanceof Player && !Validate.canEditBundle((Player)sender)){ return true; }
+	protected static void erase(CommandSender sender, String bundleName) {
+		if(sender instanceof Player && !Validate.canEditBundle(sender)){ return; }
 		
 		Set<String> bundles = Flags.getDataStore().readBundles();
 		if (bundles == null || bundles.size() == 0 || !bundles.contains(bundleName)) {
 			sender.sendMessage(Message.EraseBundleError.get());
-			return true;
+			return;
 		}
 		
 		Flags.getDataStore().writeBundle(bundleName, null);
@@ -162,22 +158,19 @@ final class BundleCmd extends Common {
 		
 		sender.sendMessage(Message.EraseBundle.get()
 				.replaceAll("\\{Bundle\\}", bundleName));
-		return true;
 	}
 	
-	protected static boolean help (CommandSender sender, int page) {
+	protected static void help (CommandSender sender, int page) {
 		Set<String> bundles = Flags.getDataStore().readBundles();
 		if (bundles == null || bundles.size() == 0) { 
 			sender.sendMessage(Message.NoFlagFound.get()
 					.replaceAll("\\{Type\\}", Message.Bundle.get()));
-			return true; 
+			return;
 		}
-		
-		int total = 1;
 		
 		//Get total pages: 1 header per page
 		//9 flags per page, except on the first which has a usage line and 8 flags
-		total = ((bundles.size() + 1) / 9);
+		int total = ((bundles.size() + 1) / 9);
 		if ((bundles.size() + 1) % 9 != 0) { 
 			total++; // Add the last page, if the last page is not full (less than 9 flags) 
 		}
@@ -194,13 +187,13 @@ final class BundleCmd extends Common {
 				.replaceAll("\\{Type\\}", Message.Bundle.get()));
 		
 		// Setup for only displaying 10 lines at a time
-		int linecount = 1;
+		int lineCount = 1;
 		
 		// Usage line.  Displays only on the first page.
 		if (page == 1) {
 			sender.sendMessage(Message.HelpInfo.get()
 					.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
-			linecount++;
+			lineCount++;
 		}
 		
 		// Because the first page has 1 less flag count than the rest, 
@@ -234,12 +227,11 @@ final class BundleCmd extends Common {
 					.replaceAll("\\{Topic\\}", bundleArray[loop])
 					.replaceAll("\\{Description\\}", description.toString()));
 
-			linecount++;
+			lineCount++;
 			
-			if (linecount > 9) {
-				return true; // Page is full, we're done
+			if (lineCount > 9) {
+				return; // Page is full, we're done
 			}
 		}
-		return true; // Last page wasn't full (that's ok)
 	}
 }

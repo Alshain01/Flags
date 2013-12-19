@@ -54,12 +54,12 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 
 	/**
 	 * Creates an instance of GriefPreventionClaim78 based on a claim ID and
-	 * subclaimID
+	 * sub-claimID
 	 * 
 	 * @param ID
 	 *            The claim ID
 	 * @param subID
-	 *            The subclaim ID
+	 *            The sub-claim ID
 	 */
 	public GriefPreventionClaim78(long ID, long subID) {
 		super(ID);
@@ -105,11 +105,7 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 
 	@Override
 	public boolean isInherited() {
-		if (claim == null || claim.parent == null) {
-			return false;
-		}
-
-		return Flags.getDataStore().readInheritance(this);
+        return claim != null && claim.parent != null && Flags.getDataStore().readInheritance(this);
 	}
 
 	@Override
@@ -128,12 +124,8 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 
 	@Override
 	public boolean isParent(Area area) {
-		if(!(area instanceof GriefPreventionClaim78) || claim.parent == null) {
-			return false;
-		}
-
-		if(claim.parent.equals(((GriefPreventionClaim78)area).getClaim())) { return true; }
-		return false;
+        return area instanceof GriefPreventionClaim78 && claim.parent != null
+            && claim.parent.equals(((GriefPreventionClaim78)area).getClaim());
 	}
 
 	@Override

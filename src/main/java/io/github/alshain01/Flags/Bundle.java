@@ -39,7 +39,7 @@ public final class Bundle {
 	 *            The bundle name to retrieve
 	 * @return A list containing the bundle. Null if it doesn't exist.
 	 */
-	public final static Set<Flag> getBundle(String bundle) {
+	public static Set<Flag> getBundle(String bundle) {
 		return Flags.getDataStore().readBundle(bundle);
 	}
 
@@ -48,7 +48,7 @@ public final class Bundle {
 	 * 
 	 * @return A set of bundles names configured on the server.
 	 */
-	public final static Set<String> getBundleNames() {
+	public static Set<String> getBundleNames() {
 		return Flags.getDataStore().readBundles();
 	}
 
@@ -59,7 +59,7 @@ public final class Bundle {
 	 *            A string bundle name.
 	 * @return True if the string is a valid bundle name.
 	 */
-	public final static boolean isBundle(String bundle) {
+	public static boolean isBundle(String bundle) {
 		return getBundleNames().contains(bundle.toLowerCase());
 	}
 
@@ -71,7 +71,7 @@ public final class Bundle {
 	 * @param flags
 	 *            A list of flags in the bundle. (does not verify validity)
 	 */
-	public final static void setBundle(String name, Set<Flag> flags) {
+	public static void setBundle(String name, Set<Flag> flags) {
 		Flags.getDataStore().writeBundle(name, flags);
 	}
 

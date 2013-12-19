@@ -68,7 +68,7 @@ public class Default extends Area {
 	/**
 	 * Creates an instance of Default based on a Bukkit World name
 	 * 
-	 * @param world
+	 * @param worldName
 	 *            The Bukkit world
 	 */
 	public Default(String worldName) {

@@ -36,6 +36,7 @@ import org.bukkit.entity.Player;
  * 
  * @author Alshain01
  */
+@SuppressWarnings("ALL")
 public final class Director {
 	/*
 	 * Gets the area at a specific location if one exists, otherwise null
@@ -50,11 +51,11 @@ public final class Director {
 	 * system.
 	 * 
 	 * GriefPrevention = ID number
-	 * WorldGuard = worldname.regionname
-	 * Residence = Residence name OR ResidenceName.SubzoneName
-	 * InifitePlots = worldname.PlotLoc (X;Z)
-	 * Factions = worldname.FactionID
-	 * PlotMe = worldname.PlotID
+	 * WorldGuard = WorldName.RegionName
+	 * Residence = Residence name OR ResidenceName.Sub-zoneName
+	 * InfinitePlots = WorldName.PlotLoc (X;Z)
+	 * Factions = WorldName.FactionID
+	 * PlotMe = WorldName.PlotID
 	 * 
 	 * @deprecated Use Area.get(String)
 	 * @param name
@@ -81,7 +82,7 @@ public final class Director {
 		// systems,
 		// however hasArea() is faster than constructing an area object, and
 		// calling both has minimal impact.
-		final Area area = getArea(location);
+		final Area area = Area.getAt(location);
 		return area.isArea() ? area : new World(location);
 	}
 
@@ -166,8 +167,8 @@ public final class Director {
 	 */
 	@Deprecated
 	public static boolean inPvpCombat(Player player) {
-		return SystemType.getActive() != SystemType.GRIEF_PREVENTION ? false
-				: GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
+		return SystemType.getActive() == SystemType.GRIEF_PREVENTION
+                && GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
 	}
 
 	private Director() {

@@ -78,13 +78,10 @@ public class RegiosRegion extends Area implements Removable{
 	 * @return True if a region exists at the location.
 	 */
 	public static boolean hasRegion(Location location) {
-		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Regios");
-		if(plugin == null) {
-			return false;
-		}
-		return ((RegiosAPI)plugin).getRegion(location) != null;		
+        Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Regios");
+        return plugin != null && ((RegiosAPI)plugin).getRegion(location) != null;
 	}
-	
+
 	@Override
 	public int compareTo(Area a) {
 		return a instanceof RegiosRegion && a.getSystemID().equals(getSystemID()) ? 0 : 3;

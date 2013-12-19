@@ -244,11 +244,11 @@ public final class MySQLDataStore implements SQLDataStore {
 		// Clear out any existing version of this bundle.
 		deleteBundle(bundleName);
 		
-		Iterator<Flag> iter = flags.iterator();
-		while(iter.hasNext()) {
-			Flag flag = iter.next();
-			values.append("('" + bundleName + "','" + flag.getName() + "')");
-			if(iter.hasNext()) {
+		Iterator<Flag> iterator = flags.iterator();
+		while(iterator.hasNext()) {
+			Flag flag = iterator.next();
+			values.append("('").append(bundleName).append("','").append(flag.getName()).append("')");
+			if(iterator.hasNext()) {
 				values.append(",");
 			}
 		}
@@ -330,10 +330,7 @@ public final class MySQLDataStore implements SQLDataStore {
 		ResultSet results = executeQuery(queryString); 
 		
 		try {
-			if(results.next()) {
-				return results.getBoolean("FlagValue");
-			}
-			return true;
+			return !results.next() || results.getBoolean("FlagValue");
 		} catch (SQLException ex){
 			SqlError(ex.getMessage());
 		}
@@ -351,7 +348,6 @@ public final class MySQLDataStore implements SQLDataStore {
 		executeStatement("INSERT INTO " + tableName + "(WorldName, AreaID, AreaSubID, FlagName, FlagValue) VALUES ('" 
 				+ area.getWorld().getName() + "','" + area.getSystemID() + "','" + subID + "','InheritParent'," + value + ")"	
 				+ "ON DUPLICATE KEY UPDATE FlagValue=" + value + ";");
-		return;
 	}
 	
 	@Override

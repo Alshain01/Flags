@@ -76,7 +76,7 @@ final class BorderPatrol implements Listener {
 	
 	private static int eventsDivisor;
 	private static int timeDivisor;
-	private static ConcurrentHashMap<String, PreviousMove> moveStore = 
+	private static final ConcurrentHashMap<String, PreviousMove> moveStore =
 			new ConcurrentHashMap<String, PreviousMove>();
 	private static int eventCalls = 0;
 

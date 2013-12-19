@@ -108,7 +108,7 @@ public enum SystemType {
 	 *         unsupported.
 	 */
 	public boolean inPvpCombat(Player player) {
-		return this != SystemType.GRIEF_PREVENTION ? false
-				: GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
+		return this == SystemType.GRIEF_PREVENTION
+                && GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
 	}
 }

@@ -45,7 +45,7 @@ class ImportYML {
 		this.dataFile = dataFile;
 	}
 
-	// Get's the custom config file.
+	// Gets the custom config file.
 	protected FileConfiguration getCustomConfig() {
 		if (customConfig == null) {
 			reloadCustomConfig();

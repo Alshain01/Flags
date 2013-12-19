@@ -76,7 +76,7 @@ public final class Flag {
 	/**
 	 * Gets the bypass permission string.
 	 * 
-	 * @return The bypass permission string (flags.bypass.flagname)
+	 * @return The bypass permission string (flags.bypass.FlagName)
 	 */
 	public Permission getBypassPermission() {
 		final Permission perm = new Permission("flags.bypass." + name,
@@ -142,7 +142,7 @@ public final class Flag {
 	/**
 	 * Gets the flag permission string.
 	 * 
-	 * @return The permission string (flags.flagtype.flagname)
+	 * @return The permission string (flags.flag.FlagType)
 	 */
 	public Permission getPermission() {
 		final Permission perm = new Permission("flags.flag." + name,

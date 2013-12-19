@@ -319,11 +319,7 @@ public final class YamlDataStore implements DataStore {
 		final String path = area.getType().toString() + "." + area.getWorld().getName() + "." + area.getSystemID() + "."	+ ((Subdivision) area).getSystemSubID() + ".InheritParent";
 		
 		final FileConfiguration cYml = getYml(path).getConfig();
-		if (!cYml.isSet(path)) {
-			return true;
-		}
-
-		return cYml.getBoolean(path);
+		return !cYml.isSet(path) || cYml.getBoolean(path);
 	}
 
 	@Override
@@ -337,11 +333,7 @@ public final class YamlDataStore implements DataStore {
 		final CustomYML cYml = getYml(path);
 		
 		if (value == null) {
-			if(cYml.getConfig().isSet(path)) {
-				value = !cYml.getConfig().getBoolean(path);
-			} else {
-				value = false;
-			}
+            value = cYml.getConfig().isSet(path) && !cYml.getConfig().getBoolean(path);
 		}
 		
 		cYml.getConfig().set(path, value);

@@ -45,7 +45,6 @@ public class MessageChangedEvent extends Event implements Cancellable {
 	 * Static HandlerList for FlagSetEvent
 	 * 
 	 * @return A list of event handlers, stored per-event.
-	 *         Based on lahwran's fevents
 	 */
 	public static HandlerList getHandlerList() {
 		return handlers;
@@ -95,8 +94,7 @@ public class MessageChangedEvent extends Event implements Cancellable {
 	/**
 	 * HandlerList for FlagSetEvent
 	 * 
-	 * @return A list of event handlers, stored per-event. Based on lahwran's
-	 *         fevents
+	 * @return A list of event handlers, stored per-event.
 	 */
 	@Override
 	public HandlerList getHandlers() {

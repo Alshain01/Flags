@@ -43,16 +43,15 @@ public class PlayerChangedAreaEvent extends Event implements Cancellable {
 	/**
 	 * Static HandlerList for GlobalFlagSetEvent
 	 * 
-	 * @return A list of event handlers, stored per-event. 
-	 * 		   Based on lahwran's fevents
+	 * @return A list of event handlers, stored per-event.
 	 */
 	public static HandlerList getHandlerList() {
 		return handlers;
 	}
 
-	Area area;
-	Player player;
-	Area exitArea;
+	final Area area;
+	final Player player;
+	final Area exitArea;
 
 	boolean cancel = false;
 
@@ -90,8 +89,7 @@ public class PlayerChangedAreaEvent extends Event implements Cancellable {
 	/**
 	 * HandlerList for GlobalFlagSetEvent
 	 * 
-	 * @return A list of event handlers, stored per-event. Based on lahwran's
-	 *         fevents
+	 * @return A list of event handlers, stored per-event.
 	 */
 	@Override
 	public HandlerList getHandlers() {

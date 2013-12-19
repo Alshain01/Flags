@@ -124,7 +124,7 @@ final class Validate {
 	
 	protected static boolean isBundlePermitted(Permissible p, Object o) {
 		if(o instanceof String) {
-			if(p.hasPermission("flags.bundle." + (String)o)) { return true; }
+			if(p.hasPermission("flags.bundle." + o)) { return true; }
 			if(p instanceof CommandSender) {
 				((CommandSender)p).sendMessage(Message.FlagPermError.get()
 						.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));

@@ -38,18 +38,18 @@ import org.json.simple.JSONValue;
 
 final class Updater {
 
-    private Plugin plugin;
-    private UpdateType type;
+    private final Plugin plugin;
+    private final UpdateType type;
     private String versionName;
     private String versionLink;
     private String versionType;
     private String versionGameVersion;
 
-    private boolean announce; // Whether to announce file downloads
+    private final boolean announce; // Whether to announce file downloads
 
     private URL url; // Connecting to RSS
-    private File file; // The plugin's file
-    private Thread thread; // Updater thread
+    private final File file; // The plugin's file
+    private final Thread thread; // Updater thread
 
     private int id = -1; // Project's Curse ID
     private String apiKey = null; // BukkitDev ServerMods API key
@@ -62,7 +62,7 @@ final class Updater {
 
     private static final String[] NO_UPDATE_TAG = { "-ALPHA", "-BETA", "-SNAPSHOT" }; // If the version number contains one of these, don't update.
     private static final int BYTE_SIZE = 1024; // Used for downloading files
-    private String updateFolder;// The folder that downloads will be placed in
+    private final String updateFolder;// The folder that downloads will be placed in
     private Updater.UpdateResult result = Updater.UpdateResult.SUCCESS; // Used for determining the outcome of the update process
 
     /**

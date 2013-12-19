@@ -43,7 +43,7 @@ public enum EPurchaseType {
 		return null;
 	}
 
-	char alias;
+	final char alias;
 
 	EPurchaseType(char alias) {
 		this.alias = alias;

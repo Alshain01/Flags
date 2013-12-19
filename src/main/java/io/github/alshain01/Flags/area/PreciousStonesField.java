@@ -169,11 +169,7 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
 
 	@Override
 	public boolean isInherited() {
-		if (field == null || !field.isChild()) {
-			return false;
-		}
-
-		return Flags.getDataStore().readInheritance(this);
+		return field != null && field.isChild() && Flags.getDataStore().readInheritance(this);
 	}
 
 	@Override
@@ -192,12 +188,8 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
 
 	@Override
 	public boolean isParent(Area area) {
-		if(!(area instanceof PreciousStonesField) || field == null || !field.isParent()) {
-			return false;
-		}
-		
-		if(field.getChildren().contains((PreciousStonesField)area)) { return true; }
-		return false;
+		return area instanceof PreciousStonesField && field != null
+                && field.isParent() && field.getChildren().contains(area);
 	}
 
 	@Override

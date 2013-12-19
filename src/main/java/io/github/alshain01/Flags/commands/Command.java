@@ -94,7 +94,6 @@ public final class Command {
 		}
 
 		// Get the flag if required.
-
 		if(command.requiresFlag != null) {
 			if(command.requiresFlag || (!command.requiresFlag && args.length >= 3)) {
 				flag = Flags.getRegistrar().getFlagIgnoreCase(args[2]);
@@ -148,11 +147,8 @@ public final class Command {
 				break;
 			case CHARGE:
 				final EPurchaseType t = EPurchaseType.get(args[1]);
-				if (t == null) { 
-					success = false; 
-				} else {
-					success = (args.length > 3) ? FlagCmd.setPrice(sender, t, flag, args[3]) : FlagCmd.getPrice(sender, t, flag);
-				}
+                success = (t != null) &&
+                        (args.length > 3) ? FlagCmd.setPrice(sender, t, flag, args[3]) : FlagCmd.getPrice(sender, t, flag);
 				break;
 		}
 		
@@ -221,35 +217,29 @@ public final class Command {
 		
 		switch(command) {
 			case HELP:
-				success = BundleCmd.help(sender, getPage(args));
+				BundleCmd.help(sender, getPage(args));
 				break;
 			case GET:
-				success = BundleCmd.get((Player)sender, location, bundle);
+				BundleCmd.get((Player)sender, location, bundle);
 				break;
 			case SET:
 				Boolean value = getValue(args, 3);
-				success = (value == null) ? false :
-					BundleCmd.set((Player)sender, location, bundle, getValue(args, 3));
+				if(value != null) { BundleCmd.set((Player)sender, location, bundle, getValue(args, 3)); }
 				break;
 			case REMOVE:
-				success = BundleCmd.remove((Player)sender, location, bundle);
+				BundleCmd.remove((Player)sender, location, bundle);
 				break;
 			case ADD:
 				for (int x = 2; x < args.length; x++) {	flags.add(args[x]);	}
-				success = BundleCmd.add((Player)sender, bundle, flags);
+				BundleCmd.add(sender, bundle, flags);
 				break;
 			case DELETE:
 				for (int x = 2; x < args.length; x++) {	flags.add(args[x]);	}
-				success = BundleCmd.delete(sender, bundle, flags);
+				BundleCmd.delete(sender, bundle, flags);
 				break;
 			case ERASE:
-				success = BundleCmd.erase(sender, bundle);
+				BundleCmd.erase(sender, bundle);
 				break;
-		}
-		
-		if(!success) {
-			Flags.log("Command Unsuccessful", true);
-			sender.sendMessage(command.getHelp());
 		}
 		return true;
 	}
@@ -306,8 +296,8 @@ public final class Command {
 	/**
 	 * Returns a true, false, or null value from the argument
 	 * 
-	 * @param args
-	 * @return
+	 * @param args The argument to check for a Boolean value
+	 * @return The Boolean value
 	 */
 	private static Boolean getValue(String[] args, int argument) {
 		if (args.length > argument) {

@@ -50,7 +50,7 @@ public final class CustomYML {
 		this.dataFile = dataFile;
 	}
 
-	// Get's the custom config file.
+	// Gets the custom config file.
 	public FileConfiguration getConfig() {
 		if (customConfig == null) {
 			reload();

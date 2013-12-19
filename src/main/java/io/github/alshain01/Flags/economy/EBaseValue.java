@@ -40,6 +40,6 @@ public enum EBaseValue {
 	public boolean isSet() {
 		final String message = Bukkit.getServer().getPluginManager().getPlugin("Flags").getConfig()
 				.getString("Flags.Economy.BaseValue");
-		return message.equalsIgnoreCase(toString()) ? true : false;
+		return message.equalsIgnoreCase(toString());
 	}
 }

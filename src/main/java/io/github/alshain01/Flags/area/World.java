@@ -63,7 +63,7 @@ public class World extends Area {
 	/**
 	 * Creates an instance of World based on a Bukkit World name
 	 * 
-	 * @param world
+	 * @param worldName
 	 *            The Bukkit world
 	 */
 	public World(String worldName) {

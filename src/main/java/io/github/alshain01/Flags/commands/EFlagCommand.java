@@ -38,12 +38,12 @@ enum EFlagCommand {
 	HELP ('h', 1, 2, false, null, "Help [group] [page]"),
 	INHERIT('i', 1, 1, false, null, "Inherit [true|false]");
 	
-	char alias;
-	int requiredArgs;
-	int optionalArgs; //-1 for infinite
-	boolean requiresLocation;
-	Boolean requiresFlag; // null if flag isn't even an optional arg.
-	String help;
+	final char alias;
+	final int requiredArgs;
+	final int optionalArgs; //-1 for infinite
+	final boolean requiresLocation;
+	final Boolean requiresFlag; // null if flag isn't even an optional arg.
+	final String help;
 	
 	//Note: requiredArgs INCLUDES the command action
 	EFlagCommand(char alias, int requiredArgs, int optionalArgs, boolean hasLocation, Boolean requiresFlag, String help) {

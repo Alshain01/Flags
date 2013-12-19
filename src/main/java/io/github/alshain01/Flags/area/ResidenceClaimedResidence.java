@@ -136,11 +136,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 
 	@Override
 	public boolean isInherited() {
-		if (residence == null || residence.getParent() == null) {
-			return false;
-		}
-
-		return Flags.getDataStore().readInheritance(this);
+		return residence != null && residence.getParent() != null && Flags.getDataStore().readInheritance(this);
 	}
 
 	@Override
@@ -172,12 +168,8 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 
 	@Override
 	public boolean isParent(Area area) {
-		if(!(area instanceof ResidenceClaimedResidence) || residence.getParent() == null) {
-			return false;
-		}
-
-		if(residence.getParent() == ((ResidenceClaimedResidence)area).getResidence()) { return true; }
-		return false;
+		return area instanceof ResidenceClaimedResidence && residence.getParent() != null &&
+            residence.getParent().equals(((ResidenceClaimedResidence)area).getResidence());
 	}
 
 	@Override

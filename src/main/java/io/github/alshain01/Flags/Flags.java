@@ -149,10 +149,7 @@ public class Flags extends JavaPlugin {
 			return Command.onFlagCommand(sender, args);
 		}
 
-		if (cmd.getName().equalsIgnoreCase("bundle")) {
-			return Command.onBundleCommand(sender, args);
-		}
-		return false;
+		return (cmd.getName().equalsIgnoreCase("bundle") && Command.onBundleCommand(sender, args));
 	}
 
 	/**
@@ -199,11 +196,11 @@ public class Flags extends JavaPlugin {
 	 * first server tick.
 	 */
 	private class onServerEnabledTask extends BukkitRunnable {
-        private onServerEnabledTask(boolean mcstats) {
-            this.mcstats = mcstats;
+        private onServerEnabledTask(boolean mcStats) {
+            this.mcStats = mcStats;
         }
 
-        private boolean mcstats = true;
+        private boolean mcStats = true;
 
 		@Override
 		public void run() {
@@ -273,7 +270,7 @@ public class Flags extends JavaPlugin {
 		final int CompareBuild = Integer.valueOf(version.substring(4, 5));
 
 		return (APIVersion > CompareVersion 
-				|| APIVersion == CompareVersion	&& APIBuild >= CompareBuild) ? true : false;
+				|| APIVersion == CompareVersion	&& APIBuild >= CompareBuild);
 	}
 
 	/**
@@ -284,7 +281,7 @@ public class Flags extends JavaPlugin {
 	 * @param debug
 	 * 			  Specifies if the message is a debug message
 	 */
-	public static final void log(String message, boolean debug) {
+	public static void log(String message, boolean debug) {
 		if(debug && !debugOn) {
 			return;
 		}
@@ -301,7 +298,7 @@ public class Flags extends JavaPlugin {
 	 * @param message
 	 *            The message
 	 */
-	public static final void severe(String message) {
+	public static void severe(String message) {
 		Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().severe(message);
 	}
 	
@@ -311,7 +308,7 @@ public class Flags extends JavaPlugin {
 	 * @param message
 	 *            The message
 	 */
-	public static final void warn(String message) {
+	public static void warn(String message) {
 		Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().warning(message);
 	}
 	
@@ -370,9 +367,9 @@ public class Flags extends JavaPlugin {
 		final List<?> pluginList = getConfig().getList("Flags.AreaPlugins");
 
 		for(Object o : pluginList) {
-			log("Testing Plugin: " + (String) o, true);
+			log("Testing Plugin: " + o, true);
 			if (pm.isPluginEnabled((String) o)) {
-				log("Plugin Found: " + (String) o, true);
+				log("Plugin Found: " + o, true);
 				return SystemType.getByName((String) o);
 			}
 		}

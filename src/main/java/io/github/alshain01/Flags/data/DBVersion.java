@@ -25,9 +25,9 @@
 package io.github.alshain01.Flags.data;
 
 public class DBVersion {
-	public int major;
-	public int minor;
-	public int build;
+	public final int major;
+	public final int minor;
+	public final int build;
 
 	DBVersion(int major, int minor, int build) {
 		this.major = major;

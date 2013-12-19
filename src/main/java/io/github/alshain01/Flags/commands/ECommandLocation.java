@@ -27,7 +27,7 @@ package io.github.alshain01.Flags.commands;
 enum ECommandLocation {
 	AREA('a'), WORLD('w'), DEFAULT('d');
 
-	char alias;
+	final char alias;
 	
 	ECommandLocation(char alias) {
 		this.alias = alias;

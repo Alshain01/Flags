@@ -63,7 +63,7 @@ public final class GPFImport {
 		return data.getCustomConfig().getString("data.database.version");
 	}
 
-	private static final void importData(ImportYML data, String header) {
+	private static void importData(ImportYML data, String header) {
 		if (data.getCustomConfig().getString(header) != null) {
 			// Get a deep list of all the values to parse through.
 			final Set<String> keys = data.getCustomConfig()

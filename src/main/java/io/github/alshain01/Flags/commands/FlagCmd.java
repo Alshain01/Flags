@@ -49,7 +49,7 @@ final class FlagCmd extends Common {
 	protected static boolean get(Player player, ECommandLocation location, Flag flag) {
 		// Acquire the area
 		Area area = getArea(player, location);
-		if(!Validate.isArea(player, area)) { return false; };
+		if(!Validate.isArea(player, area)) { return false; }
 
 		// Return the single flag requested
 		if (flag != null) {
@@ -86,13 +86,13 @@ final class FlagCmd extends Common {
 		return true;
 	}
 	
-	protected static boolean set(Player player, ECommandLocation location, Flag flag, Boolean value) {
+	protected static void set(Player player, ECommandLocation location, Flag flag, Boolean value) {
 		// Acquire the area
 		Area area = getArea(player, location);
 		if(!Validate.isArea(player, area)
 				|| !Validate.isPermitted(player, flag) 
 				|| !Validate.isPermitted(player, area))
-			{ return true; }
+			{ return; }
 			
 		// Acquire the value (maybe)
 		if(value == null) {	value = !area.getValue(flag, false); }
@@ -104,24 +104,22 @@ final class FlagCmd extends Common {
     				.replaceAll("\\{Flag\\}", flag.getName())
     				.replaceAll("\\{Value\\}", getValue(value).toLowerCase()));
     	}
-        return true;
 	}
 	
-	protected static boolean remove(Player player, ECommandLocation location, Flag flag) {
+	protected static void remove(Player player, ECommandLocation location, Flag flag) {
 		// Acquire the area
 		Area area = getArea(player, location);
-		if(!Validate.isArea(player, area) || !Validate.isPermitted(player, area)) { return true; }
+		if(!Validate.isArea(player, area) || !Validate.isPermitted(player, area)) { return; }
 		
 		// Removing single flag type
 		if (flag != null) {
-			if (!Validate.isPermitted(player, flag)) { return true; }
+			if (!Validate.isPermitted(player, flag)) { return; }
 			
 			if(area.setValue(flag, null, player)) {
 				player.sendMessage(Message.RemoveFlag.get()
 						.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
 						.replaceAll("\\{Flag\\}", flag.getName()));
 			}
-			return true;
 		}
 		
 		// Removing all flags if the player has permission
@@ -136,7 +134,6 @@ final class FlagCmd extends Common {
 		
 		player.sendMessage((success ? Message.RemoveAllFlags.get() : Message.RemoveAllFlagsError.get())
 				.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase()));
-		return true;
 	}
 	
 	/*
@@ -189,7 +186,7 @@ final class FlagCmd extends Common {
 		return true;
 	}
 	
-	protected static boolean distrust(Player player, ECommandLocation location, Flag flag, Set<String> playerList) {
+	protected static void distrust(Player player, ECommandLocation location, Flag flag, Set<String> playerList) {
 		boolean success = true;
 		Area area = getArea(player, location);
 		
@@ -197,10 +194,10 @@ final class FlagCmd extends Common {
 				|| !Validate.isArea(player, area)
 				|| !Validate.isPermitted(player, flag)
 				|| !Validate.isPermitted(player, area))
-			{ return true; }
+			{ return; }
 		
 		Set<String> trustList = area.getTrustList(flag);
-		if(!Validate.isTrustList(player, trustList, area.getAreaType(), flag.getName())) { return true; }
+		if(!Validate.isTrustList(player, trustList, area.getAreaType(), flag.getName())) { return; }
 		
 		for(String p : playerList.size() != 0 ? playerList : trustList) {
 			if (area.getOwners().contains(p)) { continue; }
@@ -210,7 +207,6 @@ final class FlagCmd extends Common {
 		player.sendMessage((success ? Message.RemoveTrust.get() : Message.RemoveTrustError.get())
 				.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
 				.replaceAll("\\{Flag\\}", flag.getName()));
-		return true;
 	}
 
 	/*
@@ -233,66 +229,62 @@ final class FlagCmd extends Common {
 		return true;
 	}
 
-	protected static boolean message(Player player, ECommandLocation location, Flag flag, String message) {
+	protected static void message(Player player, ECommandLocation location, Flag flag, String message) {
 		Area area = getArea(player, location);
 		
 		if(!Validate.isPlayerFlag(player, flag) 
 				|| !Validate.isArea(player, area)
 				|| !Validate.isPermitted(player, area)
 				|| !Validate.isPermitted(player, flag))
-		{ return true; }
+		{ return; }
 				
 		if(area.setMessage(flag, message, player)) {
 			player.sendMessage(area.getMessage(flag, player.getName()));
 		}
-		return true;
 	}
 
-	protected static boolean erase(Player player, ECommandLocation location, Flag flag) {
+	protected static void erase(Player player, ECommandLocation location, Flag flag) {
 		Area area = getArea(player, location);
 		
 		if(!Validate.isPlayerFlag(player, flag) 
 				|| !Validate.isArea(player, area)
 				|| !Validate.isPermitted(player, area)
 				|| !Validate.isPermitted(player, flag))
-		{ return true; }
+		{ return; }
 
 		
 		if (area.setMessage(flag, null, player)) {
 			player.sendMessage(area.getMessage(flag, player.getName()));
 		}
-		return true;
 	}
 	
 	/*
 	 * Inheritance Command Handlers
 	 */
-	protected static boolean inherit(Player player, Boolean value) {
+	protected static void inherit(Player player, Boolean value) {
 		Area area = getArea(player, ECommandLocation.AREA);
-		if(!Validate.isArea(player, area) || !Validate.isSubdivision(player, area)) { return true; }
+		if(!Validate.isArea(player, area) || !Validate.isSubdivision(player, area)) { return; }
 	
 		((Subdivision)area).setInherited(value);
 		player.sendMessage(Message.SetInherited.get()
 				.replaceAll("\\{Value\\}", getValue(((Subdivision)area).isInherited()).toLowerCase()));
-		return true;		
 	}
 	
 	/*
 	 * Price Command Handlers
 	 */
-	protected static boolean getPrice(CommandSender sender, EPurchaseType type, Flag flag) {
-		if(!Validate.hasEconomy(sender)) { return true; }
+	protected static void getPrice(CommandSender sender, EPurchaseType type, Flag flag) {
+		if(!Validate.hasEconomy(sender)) { return; }
 		
 		sender.sendMessage(Message.GetPrice.get()
 				.replaceAll("\\{PurchaseType\\}", type.getLocal().toLowerCase())
 				.replaceAll("\\{Flag\\}", flag.getName())
 				.replaceAll("\\{Price\\}", Flags.getEconomy().format(flag.getPrice(type))));
-		return true;
 	}
 	
 	protected static boolean setPrice(CommandSender sender, EPurchaseType type, Flag flag, String price) {
 		if(!Validate.hasEconomy(sender)) { return true; }
-		if((sender instanceof Player) && !Validate.canEditPrice((Player)sender)) { return true; }
+		if((sender instanceof Player) && !Validate.canEditPrice(sender)) { return true; }
 
 		double p;
 		try { p = Double.valueOf(price); } 
@@ -309,7 +301,7 @@ final class FlagCmd extends Common {
 	/*
 	 * Help Command Handlers
 	 */
-	protected static boolean help (CommandSender sender, int page, String group) {
+	protected static void help (CommandSender sender, int page, String group) {
 		Registrar registrar = Flags.getRegistrar();
 		List<String> groupNames = new ArrayList<String>();
 		List<String> allowedFlagNames = new ArrayList<String>();
@@ -321,7 +313,7 @@ final class FlagCmd extends Common {
 			// Add flags for the requested group only
 			if(group == null || group.equalsIgnoreCase(flag.getGroup())) {
 				// Only show flags that can be used.
-				if(((Player)sender).hasPermission(flag.getPermission())){
+				if((sender).hasPermission(flag.getPermission())){
 					allowedFlagNames.add(flag.getName());
 					// Add the group, but only once and only if a group hasn't been requested
 					if(group == null && !groupNames.contains(flag.getGroup())) {
@@ -336,7 +328,7 @@ final class FlagCmd extends Common {
 		if(allowedFlagNames.size() == 0) { 
 			sender.sendMessage(Message.NoFlagFound.get()
 					.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
-			return true;
+			return;
 		}
 		
 		// Show them alphabetically and group them together for easier coding
@@ -373,14 +365,14 @@ final class FlagCmd extends Common {
 				.replaceAll("\\{Type\\}", Message.Flag.get()));
 		
 		// Setup for only displaying 10 lines at a time (including the header)
-		int linecount = 0;
+		int lineCount = 0;
 		
 		// Usage line.
 		if (page == 1) {
 			if(group == null) {
 				sender.sendMessage(Message.HelpInfo.get()
 						.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
-				linecount++;
+				lineCount++;
 			} else {
 				sender.sendMessage(Message.GroupHelpInfo.get()
 						.replaceAll("\\{Type\\}", registrar.getFlag(combinedHelp.get(0)).getGroup()));
@@ -405,11 +397,10 @@ final class FlagCmd extends Common {
 						.replaceAll("\\{Description\\}", registrar.getFlag(combinedHelp.get(position)).getDescription()));
 			}
 			
-			if(++linecount == 9) {
-				return true;
+			if(++lineCount == 9) {
+				return;
 			}
 			position++;
 		}
-		return true;
 	}
 }

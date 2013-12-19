@@ -53,8 +53,7 @@ public abstract class Area implements Comparable<Area> {
 	 * Checks to make sure the player can afford the item. If false, the player
 	 * is automatically notified.
 	 */
-	private static boolean isFundingAvailable(EPurchaseType product, Flag flag,
-			Player player) {
+	private static boolean isFundingLow(EPurchaseType product, Flag flag, Player player) {
 		final double price = flag.getPrice(product);
 
 		if (price > Flags.getEconomy().getBalance(player.getName())) {
@@ -64,9 +63,9 @@ public abstract class Area implements Comparable<Area> {
 							product.getLocal().toLowerCase())
 					.replaceAll("\\{Price\\}", Flags.getEconomy().format(price))
 					.replaceAll("\\{Flag\\}", flag.getName()));
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	/*
@@ -87,7 +86,7 @@ public abstract class Area implements Comparable<Area> {
 		}
 
 		// Something went wrong if we made it this far.
-		Flags.severe(String.format("An error occured: %s", r.errorMessage));
+		Flags.severe(String.format("An error occurred: %s", r.errorMessage));
 		player.sendMessage(Message.Error.get().replaceAll("\\{Error\\}",
 				r.errorMessage));
 		return false;
@@ -154,13 +153,13 @@ public abstract class Area implements Comparable<Area> {
 	 * system.
 	 * 
 	 * GriefPrevention = ID number
-	 * WorldGuard = worldname.regionname
+	 * WorldGuard = WorldName.RegionName
 	 * Regios = Region name
-	 * Residence = Residence name OR ResidenceName.SubzoneName
-	 * PreciousStones = worldname.ID
-	 * InifitePlots = worldname.PlotLoc (X;Z)
-	 * Factions = worldname.FactionID
-	 * PlotMe = worldname.PlotID
+	 * Residence = Residence name OR ResidenceName.Sub-zoneName
+	 * PreciousStones = WorldName.ID
+	 * InfinitePlots = WorldName.PlotLoc (X;Z)
+	 * Factions = WorldName.FactionID
+	 * PlotMe = WorldName.PlotID
 	 * 
 	 * @param name
 	 *            The system specific name of the area or world name
@@ -192,8 +191,8 @@ public abstract class Area implements Comparable<Area> {
 			break;
 		case INFINITEPLOTS:
 			path = name.split("\\.");
-			final String[] coords = path[1].split(";");
-			area = new InfinitePlotsPlot(Bukkit.getWorld(path[0]), Integer.valueOf(coords[0]), Integer.valueOf(coords[1]));
+			final String[] coordinates = path[1].split(";");
+			area = new InfinitePlotsPlot(Bukkit.getWorld(path[0]), Integer.valueOf(coordinates[0]), Integer.valueOf(coordinates[1]));
 			break;
 		case FACTIONS:
 			path = name.split("\\.");
@@ -303,7 +302,7 @@ public abstract class Area implements Comparable<Area> {
 	 * @param flag
 	 *            The flag to retrieve the message for.
 	 * @param playerName
-	 *            The player name to insert into the messsage.
+	 *            The player name to insert into the message.
 	 * @return The message associated with the flag.
 	 */
 	public final String getMessage(Flag flag, String playerName) {
@@ -366,12 +365,11 @@ public abstract class Area implements Comparable<Area> {
 	 *         defaults if not defined.
 	 */
 	public Boolean getValue(Flag flag, boolean absolute) {
-		Boolean value = null;
 		if (!isArea()) {
-			return value;
+			return null;
 		}
 
-		value = Flags.getDataStore().readFlag(this, flag);
+		Boolean value = Flags.getDataStore().readFlag(this, flag);
 		if (absolute) {
 			return value;
 		}
@@ -400,15 +398,15 @@ public abstract class Area implements Comparable<Area> {
 
 		if (p instanceof HumanEntity
 				&& getOwners().contains(((HumanEntity) p).getName())) {
-			return p.hasPermission("flags.command.bundle.set") ? true : false;
+			return p.hasPermission("flags.command.bundle.set");
 		}
 
 		if (this instanceof Administrator
 				&& ((Administrator) this).isAdminArea()) {
-			return p.hasPermission("flags.area.bundle.admin") ? true : false;
+			return p.hasPermission("flags.area.bundle.admin");
 		}
 
-		return p.hasPermission("flags.area.bundle.others") ? true : false;
+		return p.hasPermission("flags.area.bundle.others");
 	}
 
 	/**
@@ -425,19 +423,19 @@ public abstract class Area implements Comparable<Area> {
 
 		if (p instanceof HumanEntity
 				&& getOwners().contains(((HumanEntity) p).getName())) {
-			return p.hasPermission("flags.command.flag.set") ? true : false;
+			return p.hasPermission("flags.command.flag.set");
 		}
 
 		if (this instanceof Administrator
 				&& ((Administrator) this).isAdminArea()) {
-			return p.hasPermission("flags.area.flag.admin") ? true : false;
+			return p.hasPermission("flags.area.flag.admin");
 		}
 
-		return p.hasPermission("flags.area.flag.others") ? true : false;
+		return p.hasPermission("flags.area.flag.others");
 	}
 
 	/**
-	 * Checks if area exists on the server and is flaggable.
+	 * Checks if area exists on the server and cam be flagged.
 	 * 
 	 * @return true if the area exists.
 	 */
@@ -481,8 +479,8 @@ public abstract class Area implements Comparable<Area> {
 				// (if they are just correcting caps, don't charge, I hate
 				// discouraging bad spelling & grammar)
 				if (!getMessage(flag, false).equalsIgnoreCase(message)) {
-					if (!isFundingAvailable(EPurchaseType.Message, flag,
-							(Player) sender)) {
+					if (isFundingLow(EPurchaseType.Message, flag,
+                            (Player) sender)) {
 						return false;
 					}
 					transaction = ETransactionType.Withdraw;
@@ -620,8 +618,8 @@ public abstract class Area implements Comparable<Area> {
 									((Player) sender).getLocation().getWorld())
 									.getValue(flag, true))) {
 				// The flag is being set, see if the player can afford it.
-				if (!isFundingAvailable(EPurchaseType.Flag, flag,
-						(Player) sender)) {
+				if (isFundingLow(EPurchaseType.Flag, flag,
+                        (Player) sender)) {
 					return false;
 				}
 				transaction = ETransactionType.Withdraw;

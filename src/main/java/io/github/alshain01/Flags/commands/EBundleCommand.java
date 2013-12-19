@@ -33,12 +33,12 @@ enum EBundleCommand {
 	DELETE ('d', 3, -1, false, true, "Delete <bundle> <flag> [flag]..."),
 	ERASE ('e', 2, 0, false, true, "Erase <bundle>");
 	
-	char alias;
-	int requiredArgs;
-	int optionalArgs; //-1 for infinite
-	boolean requiresLocation;
-	Boolean requiresBundle; // null if bundle isn't even an optional arg.
-	String help;
+	final char alias;
+	final int requiredArgs;
+	final int optionalArgs; //-1 for infinite
+	final boolean requiresLocation;
+	final Boolean requiresBundle; // null if bundle isn't even an optional arg.
+	final String help;
 	
 	EBundleCommand(char alias, int requiredArgs, int optionalArgs, boolean hasLocation, Boolean requiresBundle, String help) {
 		this.alias = alias;
