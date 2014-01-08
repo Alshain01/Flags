@@ -146,8 +146,8 @@ public final class GPFImport {
 
 				if (flagName.contains("inheritparent")) {
 					if (area instanceof Subdivision
-							&& ((GriefPreventionClaim78) area).isSubdivision()) {
-						((GriefPreventionClaim78) area).setInherited(true);
+							&& ((Subdivision) area).isSubdivision()) {
+						((Subdivision) area).setInherited(true);
 					}
 					continue;
 				}
@@ -171,10 +171,15 @@ public final class GPFImport {
 				importData(world, "world");
 			}
 			final File gpFolder = new File(dataFolder);
-			for (final File file : gpFolder.listFiles()) {
-				file.delete();
-			}
-			new File(dataFolder).delete();
+            File[] files = gpFolder.listFiles();
+            if(files != null && files.length > 0) {
+                for (final File file : files) {
+                    //noinspection ResultOfMethodCallIgnored
+                    file.delete();
+                }
+                //noinspection ResultOfMethodCallIgnored
+                new File(dataFolder).delete();
+            }
 		}
 	}
 

@@ -112,8 +112,8 @@ final class BorderPatrol implements Listener {
 		}
 
 		eventCalls = 0;
-		PreviousMove playerPrevMove = null;
-		boolean process = false;
+		PreviousMove playerPrevMove;
+		boolean process;
 
 		if (!moveStore.containsKey(e.getPlayer().getName())) {
 			// New player data, process it immediately.

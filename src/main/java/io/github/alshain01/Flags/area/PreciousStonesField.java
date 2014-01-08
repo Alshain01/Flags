@@ -189,7 +189,7 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
 	@Override
 	public boolean isParent(Area area) {
 		return area instanceof PreciousStonesField && field != null
-                && field.isParent() && field.getChildren().contains(area);
+                && field.isParent() && field.getChildren().contains(((PreciousStonesField)area).getField());
 	}
 
 	@Override

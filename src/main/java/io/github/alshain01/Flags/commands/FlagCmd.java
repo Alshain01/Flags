@@ -139,7 +139,7 @@ final class FlagCmd extends Common {
 	/*
 	 * Trust Command Handlers
 	 */
-	protected static boolean viewTrust(Player player, ECommandLocation location, Flag flag) {
+	protected static void viewTrust(Player player, ECommandLocation location, Flag flag) {
 		boolean first = true;
 		StringBuilder message;
 		Area area = getArea(player, location);
@@ -147,7 +147,7 @@ final class FlagCmd extends Common {
 		
 		if(!Validate.isPlayerFlag(player, flag) 
 				|| !Validate.isArea(player, area)
-				|| !Validate.isTrustList(player, trustList, area.getAreaType(), flag.getName())) { return true; }
+				|| !Validate.isTrustList(player, trustList, area.getAreaType(), flag.getName())) { return; }
 
 		// List all set flags
 		message = new StringBuilder(Message.GetTrust.get()					
@@ -162,7 +162,6 @@ final class FlagCmd extends Common {
 	
 		message.append(".");
 		player.sendMessage(message.toString());
-		return true;
 	}
 	
 	protected static boolean trust(Player player, ECommandLocation location, Flag flag, Set<String> playerList) {

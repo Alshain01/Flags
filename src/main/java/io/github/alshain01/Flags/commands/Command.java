@@ -30,6 +30,7 @@ import io.github.alshain01.Flags.Message;
 import io.github.alshain01.Flags.SystemType;
 import io.github.alshain01.Flags.economy.EPurchaseType;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -95,7 +96,7 @@ public final class Command {
 
 		// Get the flag if required.
 		if(command.requiresFlag != null) {
-			if(command.requiresFlag || (!command.requiresFlag && args.length >= 3)) {
+			if(command.requiresFlag || args.length >= 3) {
 				flag = Flags.getRegistrar().getFlagIgnoreCase(args[2]);
 				if (!Validate.isFlag(sender, flag, args[2])) { return true; }
 			}
@@ -104,22 +105,27 @@ public final class Command {
 		// Process the command
 		switch(command) {
 			case HELP:
-				success = FlagCmd.help(sender, getPage(args), getGroup(args));
+				FlagCmd.help(sender, getPage(args), getGroup(args));
+                success = true;
 				break;
 			case INHERIT:
-				success = FlagCmd.inherit((Player)sender, getValue(args, 1));
+				FlagCmd.inherit((Player)sender, getValue(args, 1));
+                success = true;
 				break;
 			case GET:
 				success = FlagCmd.get((Player)sender, location, flag);
 				break;
 			case SET:
-				success = FlagCmd.set((Player)sender, location, flag, getValue(args, 3));
+				FlagCmd.set((Player)sender, location, flag, getValue(args, 3));
+                success = true;
 				break;
 			case REMOVE:
-				success = FlagCmd.remove((Player)sender, location, flag);
+				FlagCmd.remove((Player)sender, location, flag);
+                success = true;
 				break;
 			case VIEWTRUST:
-				success = FlagCmd.viewTrust((Player)sender, location, flag);
+				FlagCmd.viewTrust((Player)sender, location, flag);
+                success = true;
 				break;
 			case TRUST:
 				players = getPlayers(args, command.requiredArgs - 1);
@@ -127,7 +133,8 @@ public final class Command {
 				break;
 			case DISTRUST:
 				if(args.length > command.requiredArgs) { players = getPlayers(args, command.requiredArgs); } // Players can be omitted to distrust all
-				success = FlagCmd.distrust((Player)sender, location, flag, players);
+				FlagCmd.distrust((Player)sender, location, flag, players);
+                success = true;
 				break;
 			case PRESENTMESSAGE:
 				success = FlagCmd.presentMessage((Player)sender, location, flag);
@@ -140,15 +147,21 @@ public final class Command {
 					if (x < args.length - 1) {	message.append(" "); }
 				}
 				
-				success = FlagCmd.message((Player)sender, location, flag, message.toString());
+				FlagCmd.message((Player)sender, location, flag, message.toString());
+                success = true;
 				break;
 			case ERASEMESSAGE:
-				success = FlagCmd.erase((Player)sender, location, flag);
+				FlagCmd.erase((Player)sender, location, flag);
+                success = true;
 				break;
 			case CHARGE:
 				final EPurchaseType t = EPurchaseType.get(args[1]);
-                success = (t != null) &&
-                        (args.length > 3) ? FlagCmd.setPrice(sender, t, flag, args[3]) : FlagCmd.getPrice(sender, t, flag);
+                if (t != null && args.length > 3) {
+                    FlagCmd.setPrice(sender, t, flag, args[3]);
+                } else {
+                    FlagCmd.getPrice(sender, t, flag);
+                }
+                success = true;
 				break;
 		}
 		
@@ -174,9 +187,7 @@ public final class Command {
 		
 		ECommandLocation location = null;
 		String bundle = null;
-		boolean success = false;
-		Set<String> flags = new HashSet<String>();
-		
+
 		// Check argument length (-1 means infinite optional args)
 		if(args.length < command.requiredArgs
 				|| (command.optionalArgs > 0 && args.length > command.requiredArgs + command.optionalArgs)) { 
@@ -208,8 +219,8 @@ public final class Command {
 		}
 		
 		if(command.requiresBundle != null) {
-			if(command.requiresBundle || (!command.requiresBundle && args.length >= 3)) {
-				bundle = (command.requiresLocation) ? bundle = args[2] : args[1];
+			if(command.requiresBundle || args.length >= 3) {
+				bundle = (command.requiresLocation) ? args[2] : args[1];
 			}
 		}
 		
@@ -230,12 +241,10 @@ public final class Command {
 				BundleCmd.remove((Player)sender, location, bundle);
 				break;
 			case ADD:
-				for (int x = 2; x < args.length; x++) {	flags.add(args[x]);	}
-				BundleCmd.add(sender, bundle, flags);
+				BundleCmd.add(sender, bundle, new HashSet<String>(Arrays.asList(args).subList(2, args.length)));
 				break;
 			case DELETE:
-				for (int x = 2; x < args.length; x++) {	flags.add(args[x]);	}
-				BundleCmd.delete(sender, bundle, flags);
+				BundleCmd.delete(sender, bundle, new HashSet<String>(Arrays.asList(args).subList(2, args.length)));
 				break;
 			case ERASE:
 				BundleCmd.erase(sender, bundle);
@@ -251,9 +260,7 @@ public final class Command {
 	 * @return A list of players
 	 */
 	private static Set<String> getPlayers(String[] args, int start) {
-		Set<String> players = new HashSet<String>();
-		for(int a = start; a < args.length; a++) { players.add(args[a]); }
-		return players;
+		return new HashSet<String>(Arrays.asList(args).subList(start, args.length));
 	}
 	
 	/**
@@ -284,7 +291,8 @@ public final class Command {
 		
 		// Either group or page was omitted, which one?
 		try {
-			Integer.valueOf(args[1]);
+            //noinspection ResultOfMethodCallIgnored
+            Integer.parseInt(args[1]);
 		} catch (Exception e) {
 			// It was a string.
 			return args[1];

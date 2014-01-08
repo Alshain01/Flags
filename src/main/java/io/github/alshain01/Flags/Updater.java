@@ -35,7 +35,7 @@ import org.json.simple.JSONValue;
 * @author Gravity
 * @version 2.0
 */
-
+@SuppressWarnings("ALL")
 final class Updater {
 
     private final Plugin plugin;
@@ -270,6 +270,7 @@ final class Updater {
                     fout.close();
                 }
             } catch (final Exception ex) {
+                this.plugin.getLogger().warning("Failed to close data file.");
             }
         }
     }

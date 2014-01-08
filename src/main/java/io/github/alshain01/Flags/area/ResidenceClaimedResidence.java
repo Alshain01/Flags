@@ -114,8 +114,10 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 
 	@Override
 	public String getSystemID() {
-		return residence != null && residence.getParent() != null
-				? residence.getParent().getName() : residence.getName();
+        if(residence != null) {
+		    return residence.getParent() != null ? residence.getParent().getName() : residence.getName();
+        }
+        return null;
 	}
 
 	@Override

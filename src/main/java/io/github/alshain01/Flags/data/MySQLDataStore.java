@@ -318,7 +318,7 @@ public final class MySQLDataStore implements SQLDataStore {
 		if(!(area instanceof Subdivision) || ((Subdivision)area).isSubdivision()) {
 			return false;
 		}
-		String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
+		String subID = (((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
 		String tableName = (area instanceof Default) ? "Default" : area.getType().toString();
 		
 		String queryString = "SELECT * FROM " + tableName + "WHERE WorldName='" + area.getWorld().getName() + "'";

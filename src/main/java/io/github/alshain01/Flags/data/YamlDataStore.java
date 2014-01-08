@@ -77,11 +77,11 @@ public final class YamlDataStore implements DataStore {
 	private void deleteBundle(String name) {
 		final String path = "Bundle." + name;
 		final CustomYML cYml = getYml(path);
-		cYml.getConfig().set("Bundle." + name, (String) null);
+		cYml.getConfig().set("Bundle." + name, null);
 		cYml.saveConfig();
 	}
 
-	private boolean exists(JavaPlugin plugin) {
+    private boolean exists(JavaPlugin plugin) {
 		final File fileObject = new File(plugin.getDataFolder()	+ "\\default.yml");
 		return fileObject.exists();
 	}
@@ -199,7 +199,7 @@ public final class YamlDataStore implements DataStore {
 		final DBVersion ver = readVersion();
 		if (ver.major <= 1 && ver.minor <= 2 && ver.build < 2) {
 			CustomYML cYml = getYml("data");
-			ConfigurationSection cSec = null;
+			ConfigurationSection cSec;
 			SystemType system = SystemType.getActive();
 			if(cYml.getConfig().isConfigurationSection(SystemType.getActive().toString() + "Data")) { 
 				if (system == SystemType.GRIEF_PREVENTION || SystemType.getActive() == SystemType.RESIDENCE) {
@@ -303,7 +303,7 @@ public final class YamlDataStore implements DataStore {
 		final CustomYML cYml = getYml(path);
 
 		if (value == null) {
-			cYml.getConfig().set(path, (String) null);
+			cYml.getConfig().set(path, null);
 		} else {
 			cYml.getConfig().set(path, value);
 		}
