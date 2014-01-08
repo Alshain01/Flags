@@ -26,9 +26,7 @@ package io.github.alshain01.Flags;
 
 import io.github.alshain01.Flags.Updater.UpdateResult;
 import io.github.alshain01.Flags.commands.Command;
-import io.github.alshain01.Flags.data.CustomYML;
-import io.github.alshain01.Flags.data.DataStore;
-import io.github.alshain01.Flags.data.YamlDataStore;
+import io.github.alshain01.Flags.data.*;
 import io.github.alshain01.Flags.events.PlayerChangedAreaEvent;
 import io.github.alshain01.Flags.importer.GPFImport;
 import io.github.alshain01.Flags.metrics.MetricsManager;
@@ -87,8 +85,12 @@ public class Flags extends JavaPlugin {
 		// Create the specific implementation of DataStore
 		(messageStore = new CustomYML(this, "message.yml")).saveDefaultConfig();
 
-		// TODO: Add sub-interface for SQL
-		dataStore = new YamlDataStore(this);
+        if(getConfig().getString("Flags.Database.Type").equalsIgnoreCase("MYSQL")) {
+		    dataStore = new MySQLDataStore(this);
+        } else {
+            dataStore = new YamlDataStore(this);
+        }
+
 		// New installation
 		if (!dataStore.create(this)) {
 			getLogger().warning("Failed to create database schema. Shutting down Flags.");
@@ -157,8 +159,9 @@ public class Flags extends JavaPlugin {
 	 */
 	@Override
 	public void onDisable() {
-		// if(dataStore instanceof SQLDataStore) {
-		// ((SQLDataStore)dataStore).close(); }
+		if(dataStore instanceof SQLDataStore) {
+             ((SQLDataStore)dataStore).close();
+        }
 		
 		// Static cleanup
 		economy = null;

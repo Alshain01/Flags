@@ -386,27 +386,78 @@ public final class MySQLDataStore implements SQLDataStore {
 
 	@Override
 	public Set<String> readTrust(Area area, Flag flag) {
-/*		String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
+		String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
 		String tableName = (area instanceof Default) ? "Default" : area.getType().toString();
 		tableName += "Trust";
-		
-		String queryString = "SELECT * FROM " + tableName + "WHERE WorldName='" + area.getWorld().getName() + "'";
+
+        String selectString = "SELECT * FROM " + tableName
+                + "WHERE WorldName='" + area.getWorld().getName()
+                + "' AND FlagName='" + flag.getName() + "'";
+		String idString = " AND AreaID=" + area.getSystemID() + " AND AreaSubID=" + subID;
+
+        StringBuilder queryString = new StringBuilder(selectString);
 		if(!(area instanceof Default || area instanceof World)) {
-				queryString += " AND AreaID='" + area.getSystemID() + "' AND AreaSubID=" + subID;
+			queryString.append(idString);
 		}
-		queryString += " AND FlagName=" + flag.getName() + ";";*/
-		// TODO Auto-generated method stub
-		return null;
+		queryString.append(";");
+
+        ResultSet results = executeQuery(queryString.toString());
+
+        try {
+            Set<String> trustList = new HashSet<String>();
+            while(results.next()) {
+                trustList.add(results.getString("Trustee"));
+            }
+            return trustList;
+        } catch (SQLException ex){
+            SqlError(ex.getMessage());
+        }
+		return new HashSet<String>();
 	}
 	
 	@Override
 	public void writeTrust(Area area, Flag flag, Set<String> players) {
-		// TODO Auto-generated method stub
-		
-	}
+        String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
+        String tableName = (area instanceof Default) ? "Default" : area.getType().toString();
+        tableName += "Trust";
+
+        // Delete the old list to be replaced
+        String selectString = "DELETE FROM " + tableName
+                + "WHERE WorldName='" + area.getWorld().getName()
+                + "' AND FlagName='" + flag.getName() + "'";
+        String idString = " AND AreaID=" + area.getSystemID() + " AND AreaSubID=" + subID;
+
+        StringBuilder queryString = new StringBuilder(selectString);
+        if(!(area instanceof Default || area instanceof World)) {
+            queryString.append(idString);
+        }
+        queryString.append(";");
+
+        executeStatement(queryString.toString());
+        for(String p : players) {
+            if(area instanceof Default || area instanceof World) {
+                executeStatement("INSERT INTO " + tableName + "(WorldName, FlagName, Trustee) VALUES('"
+                        + area.getWorld().getName() + "','" + flag.getName() + "','" + p + "');");
+            } else {
+                executeStatement("INSERT INTO " + tableName + "(WorldName, AreaID, AreaSubID, FlagName, Trustee) VALUES('"
+                    + area.getWorld().getName() + "','" + area.getSystemID() + "','" + subID + "','" + flag.getName() + "','" + p + "');");
+            }
+        }
+    }
 
 	@Override
 	public void remove(Area area) {
-		// TODO Auto-generated method stub
+        String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
+        String tableName = (area instanceof Default) ? "Default" : area.getType().toString();
+
+        StringBuilder deleteString = new StringBuilder("DELETE FROM " + tableName + " WHERE WorldName='" + area.getWorld().getName() + "' AND AreaID=" + area.getSystemID());
+
+        if(subID != null) {
+            deleteString.append(" AND SubID=" + subID);
+        }
+
+        deleteString.append(";");
+
+        executeStatement(deleteString.toString());
 	}
 }

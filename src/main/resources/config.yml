@@ -1,4 +1,11 @@
 Flags:
+  # Sets the database type, valid types are YAML and MYSQL
+  # Url, user, and password must be set for SQL Connections.
+  Database:
+    Type: YAML
+    Url: none
+    User: none
+    Password: none
   # This sets the search order for land allocation systems  
   # If you have only one system installed, you do not need to change this.
   #
