@@ -216,7 +216,7 @@ public class Flags extends JavaPlugin {
 				Bukkit.getServer().getPluginManager().addPermission(perm);
 			}
 
-			if (!debugOn && checkAPI("1.3.2")) {
+			if (mcStats && !debugOn && checkAPI("1.3.2")) {
 				MetricsManager.StartMetrics(Bukkit.getServer().getPluginManager().getPlugin("Flags"));
 			}
 

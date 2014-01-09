@@ -51,13 +51,13 @@ public final class MySQLDataStore implements SQLDataStore {
 	String url = null;
 	String user = null;
 	String password = null;
-	
+
 	private boolean initialize(JavaPlugin plugin) {
 		// Connect to the database.
 		url = plugin.getConfig().getString(plugin.getName() + ".Database.Url");
 		user = plugin.getConfig().getString(plugin.getName() + ".Database.Username");
 		password = plugin.getConfig().getString(plugin.getName() + ".Database.Password");
-		
+
 		try {
 			connection = DriverManager.getConnection(url, user, password);
 			return true;
@@ -144,11 +144,7 @@ public final class MySQLDataStore implements SQLDataStore {
 		}
 		return true;
 	}
-	
-	public void createDataTable(JavaPlugin plugin) {
-		
-	}
-	
+
 	public boolean exists() {
 		// We need to create the system specific table 
 		// in case it changed since the database was created.
@@ -453,7 +449,8 @@ public final class MySQLDataStore implements SQLDataStore {
         StringBuilder deleteString = new StringBuilder("DELETE FROM " + tableName + " WHERE WorldName='" + area.getWorld().getName() + "' AND AreaID=" + area.getSystemID());
 
         if(subID != null) {
-            deleteString.append(" AND SubID=" + subID);
+            deleteString.append(" AND SubID=");
+            deleteString.append(subID);
         }
 
         deleteString.append(";");

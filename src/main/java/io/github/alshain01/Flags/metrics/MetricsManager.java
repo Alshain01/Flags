@@ -27,7 +27,6 @@ package io.github.alshain01.Flags.metrics;
 import io.github.alshain01.Flags.Flags;
 import io.github.alshain01.Flags.SystemType;
 import io.github.alshain01.Flags.metrics.Metrics.Graph;
-import io.github.alshain01.Flags.metrics.Metrics;
 
 import java.io.IOException;
 
