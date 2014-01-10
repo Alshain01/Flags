@@ -48,16 +48,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MySQLDataStore implements SQLDataStore {
 	Connection connection = null;
-	String url = null;
-	String user = null;
-	String password = null;
+    String url, user, password;
 
-	private boolean initialize(JavaPlugin plugin) {
+	private boolean connect(String url, String user, String password) {
 		// Connect to the database.
-		url = plugin.getConfig().getString(plugin.getName() + ".Database.Url");
-		user = plugin.getConfig().getString(plugin.getName() + ".Database.Username");
-		password = plugin.getConfig().getString(plugin.getName() + ".Database.Password");
-
 		try {
 			connection = DriverManager.getConnection(url, user, password);
 			return true;
@@ -65,8 +59,8 @@ public final class MySQLDataStore implements SQLDataStore {
 			SqlError(e.getMessage());
 			return false;
 		}
-	}	
-	
+	}
+
 	private void SqlError(String error) {
 		GriefPrevention.instance.getLogger().warning("SQL DataStore Error: " + error);
 	}
@@ -92,8 +86,12 @@ public final class MySQLDataStore implements SQLDataStore {
 		}
 	}
 	
-	public MySQLDataStore(JavaPlugin plugin) {
-		initialize(plugin);
+	public MySQLDataStore(String url, String user, String password) {
+        this.url = url;
+        this.password = password;
+        this.user = user;
+
+		connect(url, user, password);
 	}
 	
 	@Override
@@ -106,7 +104,7 @@ public final class MySQLDataStore implements SQLDataStore {
 	}
 	
 	@Override
-	public boolean reload(JavaPlugin plugin) {
+	public boolean reload() {
 		// Close the connection and reconnect.
 		try {
 			if(!(this.connection == null) && !this.connection.isClosed()) {
@@ -117,7 +115,7 @@ public final class MySQLDataStore implements SQLDataStore {
 			return false;
 		}
 
-		return initialize(plugin);
+		return connect(url, user, password);
 	}
 	
 	@Override

@@ -85,8 +85,11 @@ public class Flags extends JavaPlugin {
 		// Create the specific implementation of DataStore
 		(messageStore = new CustomYML(this, "message.yml")).saveDefaultConfig();
 
-        if(getConfig().getString("Flags.Database.Type").equalsIgnoreCase("MYSQL")) {
-		    dataStore = new MySQLDataStore(this);
+        String url = getConfig().getString("Flags.Database.Url");
+        if(url.contains("mysql")) {
+            String user = getConfig().getString("Flags.Database.User");
+            String pw = getConfig().getString("Flags.Database.Password");
+		    dataStore = new MySQLDataStore(url, user, pw);
         } else {
             dataStore = new YamlDataStore(this);
         }

@@ -17,13 +17,14 @@ Message:
   GriefPrevention: 'Claim'
   InfinitePlots: 'Plot'
   PlotMe: 'Plot'
+  PreciousStones: 'Field'
   Regios: 'Region'
   Residence: 'Residence'
   WorldGuard: 'Region'
 
   # Other Translations
   Message: 'Message'
-  Error: '&cAn error occured - {Error}'
+  Error: '&cAn error occurred - {Error}'
   
   # Error Messages
   NoConsoleError: '&cThis command cannot be performed from the console.'

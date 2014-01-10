@@ -51,7 +51,7 @@ public interface DataStore {
 
 	public DBVersion readVersion();
 
-	public boolean reload(JavaPlugin plugin);
+	public boolean reload();
 
 	public void remove(Area area);
 

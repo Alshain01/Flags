@@ -179,7 +179,7 @@ public final class YamlDataStore implements DataStore {
 	}
 
 	@Override
-	public boolean reload(JavaPlugin plugin) {
+	public boolean reload() {
 		data.reload();
 		def.reload();
 		world.reload();
