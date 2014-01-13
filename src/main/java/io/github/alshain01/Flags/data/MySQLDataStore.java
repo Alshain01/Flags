@@ -62,12 +62,12 @@ public final class MySQLDataStore implements SQLDataStore {
 	}
 
 	private void SqlError(String error) {
-		GriefPrevention.instance.getLogger().warning("SQL DataStore Error: " + error);
+		Flags.severe("SQL DataStore Error: " + error);
 	}
 	
 	private void executeStatement(String statement) {
+        Flags.log("[SQL Statement] " + statement, true);
 		try {
-			Flags.log("[SQL Statement] " + statement, true);
 			Statement SQL = connection.createStatement();
 			SQL.execute(statement);
 		} catch (SQLException e) {
@@ -76,8 +76,8 @@ public final class MySQLDataStore implements SQLDataStore {
 	}
 	
 	private ResultSet executeQuery(String query) {
+        Flags.log("[SQL Query] " + query, true);
 		try {
-			Flags.log("[SQL Query] " + query, true);
 			Statement SQL = connection.createStatement();
 			return SQL.executeQuery(query);
 		} catch (SQLException e) {
@@ -133,12 +133,12 @@ public final class MySQLDataStore implements SQLDataStore {
 		if(!exists()) {
 			executeStatement("CREATE TABLE IF NOT EXISTS Version (Major INT, Minor INT, Build INT);");
 			executeStatement("INSERT INTO Version (Major, Minor, Build) VALUES (1,3,0);");
-			executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(25), FlagName VARCHAR(25), CONSTRAINT pk_BundleEntry PRIMARY KEY (BundleName, FlagName));");
-			executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(25), ProductType VARCHAR(25), Cost DOUBLE), CONSTRAINT pk_FlagType PRIMARY KEY (FlagName, ProductType);");
-			executeStatement("CREATE TABLE IF NOT EXISTS World (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
-			executeStatement("CREATE TABLE IF NOT EXISTS WorldTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50 CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldTrust, FlagName)));");
-			executeStatement("CREATE TABLE IF NOT EXISTS Default (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), CONSTRAINT pk_DefaultFlag PRIMARY KEY (WorldName, FlagName));");
-			executeStatement("CREATE TABLE IF NOT EXISTS DefaultTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50) CONSTRAINT pk_DefaultTrust PRIMARY KEY (WorldName, FlagName));");
+			executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(25), FlagName VARCHAR(25), CONSTRAINT pk_BundleEntry PRIMARY KEY ('BundleName', 'FlagName'));");
+			executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(25), ProductType VARCHAR(25), Cost DOUBLE), CONSTRAINT pk_FlagType PRIMARY KEY ('FlagName', 'ProductType');");
+			executeStatement("CREATE TABLE IF NOT EXISTS World (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY ('WorldName', 'FlagName'));");
+			executeStatement("CREATE TABLE IF NOT EXISTS WorldTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50 CONSTRAINT pk_WorldFlag PRIMARY KEY ('WorldName', 'FlagName')));");
+			executeStatement("CREATE TABLE IF NOT EXISTS Default (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), CONSTRAINT pk_DefaultFlag PRIMARY KEY ('WorldName', 'FlagName'));");
+			executeStatement("CREATE TABLE IF NOT EXISTS DefaultTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50) CONSTRAINT pk_DefaultTrust PRIMARY KEY ('WorldName', 'FlagName'));");
 		}
 		return true;
 	}
@@ -146,15 +146,17 @@ public final class MySQLDataStore implements SQLDataStore {
 	public boolean exists() {
 		// We need to create the system specific table 
 		// in case it changed since the database was created.
-		executeStatement("CREATE TABLE IF NOT EXISTS " + SystemType.getActive().toString() 
-				+ "(WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
-				+ "FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), "
-				+ "CONSTRAINT pk_AreaFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName);");
-		executeStatement("CREATE TABLE IF NOT EXISTS " + SystemType.getActive().toString() + "Trust (WorldName VARCHAR(50), AreaID VARCHAR(50), "
-				+ "AreaSubID VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50) "
-				+ "CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
+        if(SystemType.getActive() != SystemType.WORLD) {
+		    executeStatement("CREATE TABLE IF NOT EXISTS " + SystemType.getActive().toString()
+				    + "(WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
+				    + "FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), "
+				    + "CONSTRAINT pk_AreaFlag PRIMARY KEY ('WorldName', 'AreaID', 'AreaSubID', 'FlagName');");
+		    executeStatement("CREATE TABLE IF NOT EXISTS " + SystemType.getActive().toString() + "Trust (WorldName VARCHAR(50), AreaID VARCHAR(50), "
+				    + "AreaSubID VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50) "
+				    + "CONSTRAINT pk_WorldFlag PRIMARY KEY ('WorldName', 'AreaID', 'AreaSubID', 'FlagName'));");
+        }
 		
-		ResultSet results = 
+		ResultSet results =
 				executeQuery("SELECT * FROM information_schema.tables "
 						+ "WHERE table_schema = 'FlagsData' AND table_name = 'Version' LIMIT 1;");
 		

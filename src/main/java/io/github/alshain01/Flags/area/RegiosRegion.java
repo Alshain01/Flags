@@ -50,7 +50,7 @@ public class RegiosRegion extends Area implements Removable{
 	 */
 	public RegiosRegion(Location location) {
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Regios");
-		if(plugin == null) {
+		if(plugin == null || !((RegiosAPI)plugin).isInRegion(location)) {
 			region = null;
 			return;
 		}
@@ -79,7 +79,7 @@ public class RegiosRegion extends Area implements Removable{
 	 */
 	public static boolean hasRegion(Location location) {
         Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Regios");
-        return plugin != null && ((RegiosAPI)plugin).getRegion(location) != null;
+        return plugin != null && ((RegiosAPI)plugin).isInRegion(location);
 	}
 
 	@Override

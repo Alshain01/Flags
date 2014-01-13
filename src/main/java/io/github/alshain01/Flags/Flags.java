@@ -293,7 +293,7 @@ public class Flags extends JavaPlugin {
 		}
 		
 		if (debug) {
-			message += "DEBUG: ";
+			message = "DEBUG: " + message;
 		}
 		Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().info(message);
 	}
