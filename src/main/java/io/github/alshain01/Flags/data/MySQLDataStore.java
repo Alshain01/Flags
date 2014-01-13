@@ -133,12 +133,12 @@ public final class MySQLDataStore implements SQLDataStore {
 		if(!exists()) {
 			executeStatement("CREATE TABLE IF NOT EXISTS Version (Major INT, Minor INT, Build INT);");
 			executeStatement("INSERT INTO Version (Major, Minor, Build) VALUES (1,3,0);");
-			executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(25), FlagName VARCHAR(25), CONSTRAINT pk_BundleEntry PRIMARY KEY ('BundleName', 'FlagName'));");
-			executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(25), ProductType VARCHAR(25), Cost DOUBLE), CONSTRAINT pk_FlagType PRIMARY KEY ('FlagName', 'ProductType');");
-			executeStatement("CREATE TABLE IF NOT EXISTS World (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY ('WorldName', 'FlagName'));");
-			executeStatement("CREATE TABLE IF NOT EXISTS WorldTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50 CONSTRAINT pk_WorldFlag PRIMARY KEY ('WorldName', 'FlagName')));");
-			executeStatement("CREATE TABLE IF NOT EXISTS Default (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), CONSTRAINT pk_DefaultFlag PRIMARY KEY ('WorldName', 'FlagName'));");
-			executeStatement("CREATE TABLE IF NOT EXISTS DefaultTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50) CONSTRAINT pk_DefaultTrust PRIMARY KEY ('WorldName', 'FlagName'));");
+			executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(25), FlagName VARCHAR(25), CONSTRAINT pk_BundleEntry PRIMARY KEY (BundleName, FlagName));");
+			executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(25), ProductType VARCHAR(25), Cost DOUBLE, CONSTRAINT pk_FlagType PRIMARY KEY (FlagName, ProductType);");
+			executeStatement("CREATE TABLE IF NOT EXISTS World (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
+			executeStatement("CREATE TABLE IF NOT EXISTS WorldTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName)));");
+			executeStatement("CREATE TABLE IF NOT EXISTS Default (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), CONSTRAINT pk_DefaultFlag PRIMARY KEY (WorldName, FlagName));");
+			executeStatement("CREATE TABLE IF NOT EXISTS DefaultTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_DefaultTrust PRIMARY KEY (WorldName, FlagName));");
 		}
 		return true;
 	}
@@ -152,7 +152,7 @@ public final class MySQLDataStore implements SQLDataStore {
 				    + "FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), "
 				    + "CONSTRAINT pk_AreaFlag PRIMARY KEY ('WorldName', 'AreaID', 'AreaSubID', 'FlagName');");
 		    executeStatement("CREATE TABLE IF NOT EXISTS " + SystemType.getActive().toString() + "Trust (WorldName VARCHAR(50), AreaID VARCHAR(50), "
-				    + "AreaSubID VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50) "
+				    + "AreaSubID VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), "
 				    + "CONSTRAINT pk_WorldFlag PRIMARY KEY ('WorldName', 'AreaID', 'AreaSubID', 'FlagName'));");
         }
 		
