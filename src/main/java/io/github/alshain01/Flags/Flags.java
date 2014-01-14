@@ -59,6 +59,7 @@ public class Flags extends JavaPlugin {
 	protected static CustomYML messageStore;
 	protected static SystemType currentSystem = SystemType.WORLD;
 	private static DataStore dataStore;
+    private static DataStoreType dataStoreType;
 	private static Updater updater = null;
 	private static Economy economy = null;
 	private static boolean debugOn = false;
@@ -96,20 +97,8 @@ public class Flags extends JavaPlugin {
 			GPFImport.importGPF();
 		}
 
-        String url = getConfig().getString("Flags.Database.Url");
-        if(url.contains("jdbc")) {
-            String user = getConfig().getString("Flags.Database.User");
-            String pw = getConfig().getString("Flags.Database.Password");
-            if(url.contains("mysql")) {
-                dataStore = new MySQLDataStore(url, user, pw);
-            } else if(url.contains("jtds")) { // Microsoft SQL
-                dataStore = new MSSQLDataStore(url, user, pw);
-            } else {
-                dataStore = new YamlDataStore(this);
-            }
-        } else {
-            dataStore = new YamlDataStore(this);
-        }
+        dataStoreType = DataStoreType.get(getConfig().getString("Flags.Database.Url"));
+        dataStore = dataStoreType.getDataStore(this);
 
         // New installation
         if (!dataStore.create(this)) {
@@ -332,7 +321,11 @@ public class Flags extends JavaPlugin {
 	public static void log(String message) {
 		log(message, false);
 	}
-	
+
+    public DataStoreType getDataStoreType() {
+        return dataStoreType;
+    }
+
 	/**
 	 * Gets the status of the border patrol event listener. (i.e
 	 * PlayerChangedAreaEvent)

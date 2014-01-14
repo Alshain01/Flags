@@ -20,7 +20,6 @@ public class MSSQLDataStore extends SQLDataStore {
         connect(url, user, password);
     }
 
-
     @Override
     public boolean create(JavaPlugin plugin) {
         // BIT BASED BOOLEAN

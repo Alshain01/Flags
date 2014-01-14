@@ -76,6 +76,15 @@ public class MetricsManager {
 				});
 			}
 
+            // Database Type
+            final Graph dbGraph = metrics.createGraph("Data Storage Type");
+            dbGraph.addPlotter(new Metrics.Plotter(((Flags)plugin).getDataStoreType().getName()) {
+                @Override
+                public int getValue() {
+                    return 1;
+                }
+            });
+
 			// Border Patrol Status
 			final Graph bpGraph = metrics.createGraph("BorderPatrol Enabled");
 			if (Flags.getBorderPatrolEnabled()) {
