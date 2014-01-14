@@ -85,22 +85,6 @@ public class Flags extends JavaPlugin {
 		// Create the specific implementation of DataStore
 		(messageStore = new CustomYML(this, "message.yml")).saveDefaultConfig();
 
-        String url = getConfig().getString("Flags.Database.Url");
-        if(url.contains("mysql")) {
-            String user = getConfig().getString("Flags.Database.User");
-            String pw = getConfig().getString("Flags.Database.Password");
-		    dataStore = new MySQLDataStore(url, user, pw);
-        } else {
-            dataStore = new YamlDataStore(this);
-        }
-
-		// New installation
-		if (!dataStore.create(this)) {
-			getLogger().warning("Failed to create database schema. Shutting down Flags.");
-			getServer().getPluginManager().disablePlugin(this);
-			return;
-		}
-
 		// Find the first available land management system
 		currentSystem = findSystem(getServer().getPluginManager());
 		getLogger().info(currentSystem == SystemType.WORLD ? "No system detected. Only world flags will be available."
@@ -111,7 +95,22 @@ public class Flags extends JavaPlugin {
 				&& !getServer().getPluginManager().isPluginEnabled("GriefPreventionFlags")) {
 			GPFImport.importGPF();
 		}
-		
+
+        String url = getConfig().getString("Flags.Database.Url");
+        if(url.contains("mysql")) {
+            String user = getConfig().getString("Flags.Database.User");
+            String pw = getConfig().getString("Flags.Database.Password");
+            dataStore = new MySQLDataStore(url, user, pw);
+        } else {
+            dataStore = new YamlDataStore(this);
+        }
+
+        // New installation
+        if (!dataStore.create(this)) {
+            getLogger().warning("Failed to create database schema. Shutting down Flags.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 		dataStore.update(this);
 		
 		

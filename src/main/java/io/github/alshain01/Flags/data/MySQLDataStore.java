@@ -42,8 +42,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
-
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MySQLDataStore implements SQLDataStore {
@@ -134,10 +132,10 @@ public final class MySQLDataStore implements SQLDataStore {
 			executeStatement("CREATE TABLE IF NOT EXISTS Version (Major INT, Minor INT, Build INT);");
 			executeStatement("INSERT INTO Version (Major, Minor, Build) VALUES (1,3,0);");
 			executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(25), FlagName VARCHAR(25), CONSTRAINT pk_BundleEntry PRIMARY KEY (BundleName, FlagName));");
-			executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(25), ProductType VARCHAR(25), Cost DOUBLE, CONSTRAINT pk_FlagType PRIMARY KEY (FlagName, ProductType);");
-			executeStatement("CREATE TABLE IF NOT EXISTS World (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
-			executeStatement("CREATE TABLE IF NOT EXISTS WorldTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName)));");
-			executeStatement("CREATE TABLE IF NOT EXISTS Default (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), CONSTRAINT pk_DefaultFlag PRIMARY KEY (WorldName, FlagName));");
+			executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(25), ProductType VARCHAR(25), Cost DOUBLE, CONSTRAINT pk_FlagType PRIMARY KEY (FlagName, ProductType));");
+			executeStatement("CREATE TABLE IF NOT EXISTS WorldFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
+			executeStatement("CREATE TABLE IF NOT EXISTS WorldTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
+			executeStatement("CREATE TABLE IF NOT EXISTS DefaultFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), CONSTRAINT pk_DefaultFlag PRIMARY KEY (WorldName, FlagName));");
 			executeStatement("CREATE TABLE IF NOT EXISTS DefaultTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_DefaultTrust PRIMARY KEY (WorldName, FlagName));");
 		}
 		return true;
@@ -148,17 +146,17 @@ public final class MySQLDataStore implements SQLDataStore {
 		// in case it changed since the database was created.
         if(SystemType.getActive() != SystemType.WORLD) {
 		    executeStatement("CREATE TABLE IF NOT EXISTS " + SystemType.getActive().toString()
-				    + "(WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
+				    + "Flags (WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
 				    + "FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), "
-				    + "CONSTRAINT pk_AreaFlag PRIMARY KEY ('WorldName', 'AreaID', 'AreaSubID', 'FlagName');");
+				    + "CONSTRAINT pk_AreaFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
 		    executeStatement("CREATE TABLE IF NOT EXISTS " + SystemType.getActive().toString() + "Trust (WorldName VARCHAR(50), AreaID VARCHAR(50), "
 				    + "AreaSubID VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), "
-				    + "CONSTRAINT pk_WorldFlag PRIMARY KEY ('WorldName', 'AreaID', 'AreaSubID', 'FlagName'));");
+				    + "CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
         }
 		
 		ResultSet results =
 				executeQuery("SELECT * FROM information_schema.tables "
-						+ "WHERE table_schema = 'FlagsData' AND table_name = 'Version' LIMIT 1;");
+						+ "WHERE table_schema = 'flagsdata' AND table_name = 'Version' LIMIT 1;");
 		
 		try {
 			return results.next();
@@ -277,17 +275,15 @@ public final class MySQLDataStore implements SQLDataStore {
 	
 	@Override
 	public Boolean readFlag(Area area, Flag flag) {
-		String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
-		String tableName = (area instanceof Default) ? "Default" : area.getType().toString();
-		
-		String queryString = "SELECT * FROM " + tableName + "WHERE WorldName='" + area.getWorld().getName() + "'";
-		if(!(area instanceof Default || area instanceof World)) {
-				queryString += " AND AreaID='" + area.getSystemID() + "' AND AreaSubID=" + subID;
-		}
-		queryString += " AND FlagName=" + flag.getName() + ";";
-		
-		ResultSet results = executeQuery(queryString); 
-		
+        StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Flags WHERE WorldName='%world%'");
+        if(!(area instanceof Default || area instanceof World)) {
+            selectString.append(" AND AreaID='%area%' AND AreaSubID='%sub%'");
+        }
+        selectString.append(" AND FlagName='%flag%';");
+
+		ResultSet results = executeQuery(areaBuilder(selectString.toString(), area)
+                .replaceAll("%flag%", flag.getName()));
+
 		try {
 			if(results.next()) {
 				return results.getBoolean("FlagValue");
@@ -301,12 +297,20 @@ public final class MySQLDataStore implements SQLDataStore {
 
 	@Override
 	public void writeFlag(Area area, Flag flag, Boolean value) {
-		String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
-		String tableName = (area instanceof Default) ? "Default" : area.getType().toString();
-		
-		executeStatement("INSERT INTO " + tableName + "(WorldName, AreaID, AreaSubID, FlagName, FlagValue) VALUES ('" 
-				+ area.getWorld().getName() + "','" + area.getSystemID() + "'," + subID + ",'" + flag.getName() + "'," + value + ")"	
-				+ "ON DUPLICATE KEY UPDATE FlagValue=" + value + ";");
+        String insertString;
+
+        if((area instanceof World) || (area instanceof Default)) {
+            insertString = "INSERT INTO %table%Flags (WorldName, FlagName, FlagValue)"
+                    + " VALUES ('%world%', '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
+        } else {
+            insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue)"
+                    + " VALUES ('%world%', '%area%', '%sub%', '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
+        }
+
+
+        executeStatement(areaBuilder(insertString, area)
+                .replaceAll("%flag%", flag.getName())
+                .replaceAll("%value%", String.valueOf(value)));
 	}
 
 	@Override
@@ -314,16 +318,10 @@ public final class MySQLDataStore implements SQLDataStore {
 		if(!(area instanceof Subdivision) || ((Subdivision)area).isSubdivision()) {
 			return false;
 		}
-		String subID = (((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
-		String tableName = (area instanceof Default) ? "Default" : area.getType().toString();
-		
-		String queryString = "SELECT * FROM " + tableName + "WHERE WorldName='" + area.getWorld().getName() + "'";
-		if(!(area instanceof Default || area instanceof World)) {
-				queryString += " AND AreaID=" + area.getSystemID() + " AND AreaSubID=" + subID;
-		}
-		queryString += " AND FlagName='InheritParent';";
-		
-		ResultSet results = executeQuery(queryString); 
+
+        String selectString = "SELECT * FROM %table%Flags WHERE WorldName='%world%' AND AreaID='%area%' AND AreaSubID='%sub%' AND FlagName='InheritParent';";
+
+		ResultSet results = executeQuery(areaBuilder(selectString, area));
 		
 		try {
 			return !results.next() || results.getBoolean("FlagValue");
@@ -338,27 +336,25 @@ public final class MySQLDataStore implements SQLDataStore {
 		if(!(area instanceof Subdivision) || !((Subdivision)area).isSubdivision()) {
 			return;
 		}
-		String subID = "'" + ((Subdivision)area).getSystemSubID() + "'";
-		String tableName = (area instanceof Default) ? "Default" : area.getType().toString();
-		
-		executeStatement("INSERT INTO " + tableName + "(WorldName, AreaID, AreaSubID, FlagName, FlagValue) VALUES ('" 
-				+ area.getWorld().getName() + "','" + area.getSystemID() + "','" + subID + "','InheritParent'," + value + ")"	
-				+ "ON DUPLICATE KEY UPDATE FlagValue=" + value + ";");
+
+        String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue) "
+                + "VALUES ('%world%', '%area%', '%sub%', 'InheritParent', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
+
+        executeStatement(areaBuilder(insertString, area)
+                .replaceAll("%value%", String.valueOf(value)));
 	}
 	
 	@Override
 	public String readMessage(Area area, Flag flag) {
-		String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
-		String tableName = (area instanceof Default) ? "Default" : area.getType().toString();
-		
-		String queryString = "SELECT * FROM " + tableName + "WHERE WorldName='" + area.getWorld().getName() + "'";
-		if(!(area instanceof Default || area instanceof World)) {
-				queryString += " AND AreaID='" + area.getSystemID() + "' AND AreaSubID=" + subID;
-		}
-		queryString += " AND FlagName=" + flag.getName() + ";";
-		
-		ResultSet results = executeQuery(queryString); 
-		
+		StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Flags WHERE WorldName='%world%'");
+        if(!(area instanceof Default || area instanceof World)) {
+            selectString.append(" AND AreaID='%area%' AND AreaSubID='%sub%'");
+        }
+        selectString.append(" AND FlagName='%flag%';");
+
+		ResultSet results = executeQuery(areaBuilder(selectString.toString(), area)
+                .replaceAll("%flag%", flag.getName()));
+
 		try {
 			if(results.next()) {
 				return results.getString("FlagMessage");
@@ -372,32 +368,27 @@ public final class MySQLDataStore implements SQLDataStore {
 
 	@Override
 	public void writeMessage(Area area, Flag flag, String message) {
-		String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
-		String tableName = (area instanceof Default) ? "Default" : area.getType().toString();
-		
-		executeStatement("INSERT INTO " + tableName + "(WorldName, AreaID, AreaSubID, FlagName, FlagMessage) VALUES ('" 
-				+ area.getWorld().getName() + "','" + area.getSystemID() + "'," + subID + ",'" + flag.getName() + "','" + message + "')"	
-				+ "ON DUPLICATE KEY UPDATE FlagMessage='" + message + "';");
+        String insertString;
+        if(area instanceof Default || area instanceof World) {
+            insertString = "INSERT INTO %table%Flags (WorldName, FlagName, FlagMessage) VALUES ('%world%', '%flag%', '%message%') ON DUPLICATE KEY UPDATE FlagMessage='%message%';";
+        } else {
+            insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID. FlagName, FlagMessage) VALUES ('%world%', '%area%', '%sub%', '%flag%', '%message%') ON DUPLICATE KEY UPDATE FlagMessage='%message%';";
+        }
+		executeStatement(areaBuilder(insertString, area)
+                .replaceAll("%flag%", flag.getName())
+                .replaceAll("%message%", message));
 	}
 
 	@Override
 	public Set<String> readTrust(Area area, Flag flag) {
-		String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
-		String tableName = (area instanceof Default) ? "Default" : area.getType().toString();
-		tableName += "Trust";
+        StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Trust WHERE WorldName='%world%' AND FlagName='%flag%'");
+        if(!(area instanceof Default || area instanceof World)) {
+            selectString.append(" AND AreaID='%area%' AND AreaSubID='%sub%'");
+        }
+        selectString.append(";");
 
-        String selectString = "SELECT * FROM " + tableName
-                + "WHERE WorldName='" + area.getWorld().getName()
-                + "' AND FlagName='" + flag.getName() + "'";
-		String idString = " AND AreaID=" + area.getSystemID() + " AND AreaSubID=" + subID;
-
-        StringBuilder queryString = new StringBuilder(selectString);
-		if(!(area instanceof Default || area instanceof World)) {
-			queryString.append(idString);
-		}
-		queryString.append(";");
-
-        ResultSet results = executeQuery(queryString.toString());
+        ResultSet results = executeQuery(areaBuilder(selectString.toString(), area)
+            .replaceAll("%flag%", flag.getName()));
 
         try {
             Set<String> trustList = new HashSet<String>();
@@ -413,48 +404,48 @@ public final class MySQLDataStore implements SQLDataStore {
 	
 	@Override
 	public void writeTrust(Area area, Flag flag, Set<String> players) {
-        String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
-        String tableName = (area instanceof Default) ? "Default" : area.getType().toString();
-        tableName += "Trust";
-
         // Delete the old list to be replaced
-        String selectString = "DELETE FROM " + tableName
-                + "WHERE WorldName='" + area.getWorld().getName()
-                + "' AND FlagName='" + flag.getName() + "'";
-        String idString = " AND AreaID=" + area.getSystemID() + " AND AreaSubID=" + subID;
-
-        StringBuilder queryString = new StringBuilder(selectString);
+        StringBuilder deleteString = new StringBuilder("DELETE FROM %table%Trust WHERE WorldName='%world%' AND FlagName='%flag%'");
         if(!(area instanceof Default || area instanceof World)) {
-            queryString.append(idString);
+            deleteString.append(" AND AreaID='%area%' AND AreaSubID='%sub%'");
         }
-        queryString.append(";");
+        deleteString.append(";");
 
-        executeStatement(queryString.toString());
+        executeStatement(areaBuilder(deleteString.toString(), area)
+                .replaceAll("%flag%", flag.getName()));
+
         for(String p : players) {
+            String insertString;
             if(area instanceof Default || area instanceof World) {
-                executeStatement("INSERT INTO " + tableName + "(WorldName, FlagName, Trustee) VALUES('"
-                        + area.getWorld().getName() + "','" + flag.getName() + "','" + p + "');");
+                insertString = "INSERT INTO %table%Trust (WorldName, FlagName, Trustee) VALUES('%world%', '%flag%', '%player%');";
             } else {
-                executeStatement("INSERT INTO " + tableName + "(WorldName, AreaID, AreaSubID, FlagName, Trustee) VALUES('"
-                    + area.getWorld().getName() + "','" + area.getSystemID() + "','" + subID + "','" + flag.getName() + "','" + p + "');");
+                insertString = "INSERT INTO %table%Trust (WorldName, AreaID, AreaSubID, FlagName, Trustee) VALUES('%world%', '%area%', '%sub%', '%flag%', '%player%');";
             }
+
+            executeStatement(areaBuilder(insertString, area)
+                .replaceAll("%flag%", flag.getName())
+                .replaceAll("%player%", p));
         }
     }
 
 	@Override
 	public void remove(Area area) {
-        String subID = (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : null;
-        String tableName = (area instanceof Default) ? "Default" : area.getType().toString();
+        String deleteString = "DELETE FROM %table%%type% WHERE WorldName='%world%' AND AreaID='%area%' AND SubID='%sub%';";
+        executeStatement(areaBuilder(deleteString, area)
+                .replaceAll("%type%", "Flags"));
 
-        StringBuilder deleteString = new StringBuilder("DELETE FROM " + tableName + " WHERE WorldName='" + area.getWorld().getName() + "' AND AreaID=" + area.getSystemID());
-
-        if(subID != null) {
-            deleteString.append(" AND SubID=");
-            deleteString.append(subID);
-        }
-
-        deleteString.append(";");
-
-        executeStatement(deleteString.toString());
+        executeStatement(areaBuilder(deleteString, area)
+                .replaceAll("%type%", "Trust"));
 	}
+
+    private String areaBuilder(String query, Area area) {
+        return query.replaceAll("%table%", area.getType().toString())
+                .replaceAll("%world%", area.getWorld().getName())
+                .replaceAll("%area%", area.getSystemID())
+                .replaceAll("%sub%", getSubID(area));
+    }
+
+    private String getSubID(Area area) {
+        return (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : "null";
+    }
 }
