@@ -39,9 +39,29 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public abstract class SQLDataStore implements DataStore {
+public class SQLDataStore implements DataStore {
     private Connection connection = null;
     protected String url, user, password;
+
+    protected SQLDataStore() { }
+
+    private String getSubID(Area area) {
+        return (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : "null";
+    }
+
+
+    protected String areaBuilder(String query, Area area) {
+        return query.replaceAll("%table%", area.getType().toString())
+                .replaceAll("%world%", area.getWorld().getName())
+                .replaceAll("%area%", area.getSystemID())
+                .replaceAll("%sub%", getSubID(area));
+    }
+
+    public SQLDataStore(String url, String user, String pw) {
+        this.url = url;
+        this.user = user;
+        this.password = pw;
+    }
 
     protected boolean connect(String url, String user, String password) {
         // Connect to the database.
@@ -447,16 +467,5 @@ public abstract class SQLDataStore implements DataStore {
 
         executeStatement(areaBuilder(deleteString, area)
                 .replaceAll("%type%", "Trust"));
-    }
-
-    protected String areaBuilder(String query, Area area) {
-        return query.replaceAll("%table%", area.getType().toString())
-                .replaceAll("%world%", area.getWorld().getName())
-                .replaceAll("%area%", area.getSystemID())
-                .replaceAll("%sub%", getSubID(area));
-    }
-
-    private String getSubID(Area area) {
-        return (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : "null";
     }
 }

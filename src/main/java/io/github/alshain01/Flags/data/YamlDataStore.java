@@ -82,7 +82,7 @@ public final class YamlDataStore implements DataStore {
 	}
 
     private boolean exists(JavaPlugin plugin) {
-		final File fileObject = new File(plugin.getDataFolder()	+ "\\default.yml");
+		final File fileObject = new File(plugin.getDataFolder(), "default.yml");
 		return fileObject.exists();
 	}
 

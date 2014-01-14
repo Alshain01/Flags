@@ -3,7 +3,7 @@ package io.github.alshain01.Flags.data;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public enum DataStoreType {
-    YAML("yaml", "YAML"), MSSQL("jtdc", "Microsoft SQL"), MySQL("mysql", "MySQL");
+    YAML("yaml", "YAML"), MSSQL("jtdc", "Microsoft SQL"), MySQL("mysql", "MySQL"), POSTGRESQL("postgresql", "PostgreSQL");
 
     String identifier;
     String niceName;
@@ -36,6 +36,8 @@ public enum DataStoreType {
                 return new MySQLDataStore(url, user, pw);
             case MSSQL:
                 return new MSSQLDataStore(url, user, pw);
+            case POSTGRESQL:
+                return new SQLDataStore(url, user, pw);
             default:
                 return new YamlDataStore(plugin);
         }

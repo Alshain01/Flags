@@ -59,7 +59,7 @@ public class Flags extends JavaPlugin {
 	protected static CustomYML messageStore;
 	protected static SystemType currentSystem = SystemType.WORLD;
 	private static DataStore dataStore;
-    private static DataStoreType dataStoreType;
+    private static DataStoreType dataStoreType = DataStoreType.YAML;
 	private static Updater updater = null;
 	private static Economy economy = null;
 	private static boolean debugOn = false;
@@ -107,7 +107,6 @@ public class Flags extends JavaPlugin {
             return;
         }
 		dataStore.update(this);
-		
 		
 		// Enable Vault support
 		setupEconomy();
@@ -163,11 +162,12 @@ public class Flags extends JavaPlugin {
 		// Static cleanup
 		economy = null;
 		dataStore = null;
+        dataStoreType = null;
 		updater = null;
 		messageStore = null;
 		flagRegistrar = null;
 		currentSystem = null;
-		
+
 		getLogger().info("Flags Has Been Disabled.");
 	}
 	
