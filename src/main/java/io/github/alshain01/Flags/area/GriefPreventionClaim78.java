@@ -83,9 +83,9 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 		Claim testClaim = ((GriefPreventionClaim78)a).getClaim();
 		if(claim.equals(testClaim)) {
 			return 0;
-		} else if (claim.parent.equals(testClaim)) {
+		} else if (claim.parent != null && claim.parent.equals(testClaim)) {
 			return -1;
-		} else if (testClaim.parent.equals(claim)) {
+		} else if (testClaim.parent != null && testClaim.parent.equals(claim)) {
 			return 1;
 		} else if (claim.parent != null && claim.parent.equals(testClaim.parent)) {
 			return 2;
