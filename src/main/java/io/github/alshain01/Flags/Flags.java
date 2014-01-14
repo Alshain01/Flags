@@ -97,10 +97,16 @@ public class Flags extends JavaPlugin {
 		}
 
         String url = getConfig().getString("Flags.Database.Url");
-        if(url.contains("mysql")) {
+        if(url.contains("jdbc")) {
             String user = getConfig().getString("Flags.Database.User");
             String pw = getConfig().getString("Flags.Database.Password");
-            dataStore = new MySQLDataStore(url, user, pw);
+            if(url.contains("mysql")) {
+                dataStore = new MySQLDataStore(url, user, pw);
+            } else if(url.contains("jtds")) { // Microsoft SQL
+                dataStore = new MSSQLDataStore(url, user, pw);
+            } else {
+                dataStore = new YamlDataStore(this);
+            }
         } else {
             dataStore = new YamlDataStore(this);
         }

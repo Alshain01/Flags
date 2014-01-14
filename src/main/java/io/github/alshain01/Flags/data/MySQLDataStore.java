@@ -25,6 +25,7 @@
 package io.github.alshain01.Flags.data;
 
 import io.github.alshain01.Flags.SystemType;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -44,13 +45,7 @@ public final class MySQLDataStore extends SQLDataStore {
 		// in case it changed since the database was created.
         // i.e. Grief Prevention was removed and WorldGuard was installed.
         if(SystemType.getActive() != SystemType.WORLD) {
-		    executeStatement("CREATE TABLE IF NOT EXISTS " + SystemType.getActive().toString()
-				    + "Flags (WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
-				    + "FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), "
-				    + "CONSTRAINT pk_AreaFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
-		    executeStatement("CREATE TABLE IF NOT EXISTS " + SystemType.getActive().toString() + "Trust (WorldName VARCHAR(50), AreaID VARCHAR(50), "
-				    + "AreaSubID VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), "
-				    + "CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
+            createSystemDB();
         }
 
         String[] connection = url.split("/");

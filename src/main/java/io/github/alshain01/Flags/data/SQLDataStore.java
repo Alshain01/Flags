@@ -54,31 +54,6 @@ public abstract class SQLDataStore implements DataStore {
         }
     }
 
-    protected void SqlError(String error) {
-        Flags.severe("SQL DataStore Error: " + error);
-    }
-
-    protected void executeStatement(String statement) {
-        Flags.log("[SQL Statement] " + statement, true);
-        try {
-            Statement SQL = connection.createStatement();
-            SQL.execute(statement);
-        } catch (SQLException e) {
-            SqlError(e.getMessage());
-        }
-    }
-
-    protected ResultSet executeQuery(String query) {
-        Flags.log("[SQL Query] " + query, true);
-        try {
-            Statement SQL = connection.createStatement();
-            return SQL.executeQuery(query);
-        } catch (SQLException e) {
-            SqlError(e.getMessage());
-            return null;
-        }
-    }
-
     public void close() {
         try {
             connection.close();
@@ -111,47 +86,29 @@ public abstract class SQLDataStore implements DataStore {
         }
     }
 
-    @Override
-    public boolean create(JavaPlugin plugin) {
-        if(!exists()) {
-            executeStatement("CREATE TABLE IF NOT EXISTS Version (Major INT, Minor INT, Build INT);");
-            executeStatement("INSERT INTO Version (Major, Minor, Build) VALUES (1,3,0);");
-            executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(25), FlagName VARCHAR(25), CONSTRAINT pk_BundleEntry PRIMARY KEY (BundleName, FlagName));");
-            executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(25), ProductType VARCHAR(25), Cost DOUBLE, CONSTRAINT pk_FlagType PRIMARY KEY (FlagName, ProductType));");
-            executeStatement("CREATE TABLE IF NOT EXISTS WorldFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
-            executeStatement("CREATE TABLE IF NOT EXISTS WorldTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
-            executeStatement("CREATE TABLE IF NOT EXISTS DefaultFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), CONSTRAINT pk_DefaultFlag PRIMARY KEY (WorldName, FlagName));");
-            executeStatement("CREATE TABLE IF NOT EXISTS DefaultTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_DefaultTrust PRIMARY KEY (WorldName, FlagName));");
-        }
-        return true;
+    protected void SqlError(String error) {
+        Flags.severe("SQL DataStore Error: " + error);
     }
 
-    public boolean exists() {
-        // We need to create the system specific table
-        // in case it changed since the database was created.
-        if(SystemType.getActive() != SystemType.WORLD) {
-            executeStatement("CREATE TABLE IF NOT EXISTS " + SystemType.getActive().toString()
-                    + "Flags (WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
-                    + "FlagName VARCHAR(25), FlagValue BOOL, FlagMessage VARCHAR(255), "
-                    + "CONSTRAINT pk_AreaFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
-            executeStatement("CREATE TABLE IF NOT EXISTS " + SystemType.getActive().toString() + "Trust (WorldName VARCHAR(50), AreaID VARCHAR(50), "
-                    + "AreaSubID VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), "
-                    + "CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
-        }
-
-        String[] connection = url.split("/");
-
-        ResultSet results =
-                executeQuery("SELECT * FROM information_schema.tables "
-                        + "WHERE table_schema = '%database%' AND table_name = 'Version' FETCH FIRST 1 ROWS ONLY;"
-                        .replaceAll("%database%", connection[connection.length-1]));
-
+    protected void executeStatement(String statement) {
+        Flags.log("[SQL Statement] " + statement, true);
         try {
-            return results.next();
+            Statement SQL = connection.createStatement();
+            SQL.execute(statement);
         } catch (SQLException e) {
             SqlError(e.getMessage());
         }
-        return false;
+    }
+
+    protected ResultSet executeQuery(String query) {
+        Flags.log("[SQL Query] " + query, true);
+        try {
+            Statement SQL = connection.createStatement();
+            return SQL.executeQuery(query);
+        } catch (SQLException e) {
+            SqlError(e.getMessage());
+            return null;
+        }
     }
 
     @Override
@@ -175,9 +132,68 @@ public abstract class SQLDataStore implements DataStore {
         // Nothing to update at this time
     }
 
+    //TODO: Implementation Specific (BOOLEAN)
+    @Override
+    public boolean create(JavaPlugin plugin) {
+        // STANDARD BOOLEAN
+        // OVERRIDE for Implementation Specific
+        if(!exists()) {
+            executeStatement("CREATE TABLE IF NOT EXISTS Version (Major INT, Minor INT, Build INT);");
+            executeStatement("INSERT INTO Version (Major, Minor, Build) VALUES (1,3,0);");
+            executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(25), FlagName VARCHAR(25), CONSTRAINT pk_BundleEntry PRIMARY KEY (BundleName, FlagName));");
+            executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(25), ProductType VARCHAR(25), Cost DOUBLE, CONSTRAINT pk_FlagType PRIMARY KEY (FlagName, ProductType));");
+            executeStatement("CREATE TABLE IF NOT EXISTS WorldFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
+            executeStatement("CREATE TABLE IF NOT EXISTS WorldTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
+            executeStatement("CREATE TABLE IF NOT EXISTS DefaultFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), CONSTRAINT pk_DefaultFlag PRIMARY KEY (WorldName, FlagName));");
+            executeStatement("CREATE TABLE IF NOT EXISTS DefaultTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_DefaultTrust PRIMARY KEY (WorldName, FlagName));");
+        }
+        return true;
+    }
+
+    //TODO: Implementation Specific (BOOLEAN)
+    protected void createSystemDB() {
+        // STANDARD BOOLEAN
+        // OVERRIDE for Implementation Specific
+        executeStatement("CREATE TABLE IF NOT EXISTS " + SystemType.getActive().toString()
+                + "Flags (WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
+                + "FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), "
+                + "CONSTRAINT pk_AreaFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
+
+        executeStatement("CREATE TABLE IF NOT EXISTS " + SystemType.getActive().toString()
+                + "Trust (WorldName VARCHAR(50), AreaID VARCHAR(50), "
+                + "AreaSubID VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), "
+                + "CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
+    }
+
+    //TODO: Implementation Specific (ROW LIMITING)
+    public boolean exists() {
+        // We always need to create the system specific table
+        // in case it changed since the database was created.
+        // i.e. Grief Prevention was removed and WorldGuard was installed.
+        if(SystemType.getActive() != SystemType.WORLD) {
+            createSystemDB();
+        }
+
+        String[] connection = url.split("/");
+
+        // STANDARD ROW LIMITING
+        // OVERRIDE for Implementation Specific
+        ResultSet results =
+                executeQuery("SELECT * FROM information_schema.tables "
+                        + "WHERE table_schema = '%database%' AND table_name = 'Version' FETCH FIRST 1 ROWS ONLY;"
+                        .replaceAll("%database%", connection[connection.length-1]));
+
+        try {
+            return results.next();
+        } catch (SQLException e) {
+            SqlError(e.getMessage());
+        }
+        return false;
+    }
+
     @Override
     public Set<String> readBundles() {
-        final ResultSet results = executeQuery("SELECT DISTINCT BundleName FROM Bundle");
+        final ResultSet results = executeQuery("SELECT DISTINCT BundleName FROM Bundle;");
         Set<String> bundles = new HashSet<String>();
 
         try {
@@ -214,6 +230,7 @@ public abstract class SQLDataStore implements DataStore {
         executeStatement("DELETE FROM Bundle WHERE BundleName='" + name + "';");
     }
 
+    //TODO: Oracle doesn't support standard for inserting multiple rows
     @Override
     public void writeBundle(String bundleName, Set<Flag> flags) {
         if (flags == null || flags.size() == 0) {
@@ -287,6 +304,7 @@ public abstract class SQLDataStore implements DataStore {
         return null;
     }
 
+    //TODO: Implementation Specific (BOOLEAN)
     @Override
     public void writeFlag(Area area, Flag flag, Boolean value) {
         String insertString;
@@ -323,6 +341,7 @@ public abstract class SQLDataStore implements DataStore {
         return true;
     }
 
+    //TODO: Implementation Specific (BOOLEAN)
     @Override
     public void writeInheritance(Area area, Boolean value) {
         if(!(area instanceof Subdivision) || !((Subdivision)area).isSubdivision()) {
@@ -430,7 +449,7 @@ public abstract class SQLDataStore implements DataStore {
                 .replaceAll("%type%", "Trust"));
     }
 
-    private String areaBuilder(String query, Area area) {
+    protected String areaBuilder(String query, Area area) {
         return query.replaceAll("%table%", area.getType().toString())
                 .replaceAll("%world%", area.getWorld().getName())
                 .replaceAll("%area%", area.getSystemID())
