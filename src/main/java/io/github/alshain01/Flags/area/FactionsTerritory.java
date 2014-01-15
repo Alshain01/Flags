@@ -25,7 +25,7 @@
 package io.github.alshain01.Flags.area;
 
 import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.System;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -95,7 +95,7 @@ public class FactionsTerritory extends Area implements Removable {
 	
 	@Override
 	public String getAreaType() {
-		return SystemType.FACTIONS.getAreaType();
+		return System.FACTIONS.getAreaType();
 	}
 
 	public Faction getFaction() {
@@ -128,7 +128,7 @@ public class FactionsTerritory extends Area implements Removable {
 	}
 
 	@Override
-	public SystemType getType() {
-		return SystemType.FACTIONS;
+	public System getType() {
+		return System.FACTIONS;
 	}
 }

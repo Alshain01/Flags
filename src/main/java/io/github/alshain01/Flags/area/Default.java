@@ -24,9 +24,8 @@
 
 package io.github.alshain01.Flags.area;
 
-import io.github.alshain01.Flags.Flag;
-import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.*;
+import io.github.alshain01.Flags.System;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -91,7 +90,7 @@ public class Default extends Area {
 
 	@Override
 	public String getAreaType() {
-		return SystemType.DEFAULT.getAreaType();
+		return io.github.alshain01.Flags.System.DEFAULT.getAreaType();
 	}
 
 	/**
@@ -150,7 +149,7 @@ public class Default extends Area {
 	}
 
 	@Override
-	public SystemType getType() {
-		return SystemType.DEFAULT;
+	public System getType() {
+		return System.DEFAULT;
 	}
 }

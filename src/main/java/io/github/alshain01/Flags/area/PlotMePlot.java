@@ -24,8 +24,8 @@
 
 package io.github.alshain01.Flags.area;
 
-import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.*;
+import io.github.alshain01.Flags.System;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -84,7 +84,7 @@ public class PlotMePlot extends Area implements Removable {
 	
 	@Override
 	public String getAreaType() {
-		return SystemType.PLOTME.getAreaType();
+		return System.PLOTME.getAreaType();
 	}
 
 	@Override
@@ -117,7 +117,7 @@ public class PlotMePlot extends Area implements Removable {
 	}
 
 	@Override
-	public SystemType getType() {
-		return SystemType.PLOTME;
+	public System getType() {
+		return io.github.alshain01.Flags.System.PLOTME;
 	}
 }

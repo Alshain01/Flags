@@ -24,8 +24,7 @@
 
 package io.github.alshain01.Flags.data;
 
-import io.github.alshain01.Flags.SystemType;
-import org.bukkit.plugin.java.JavaPlugin;
+import io.github.alshain01.Flags.System;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -44,7 +43,7 @@ public final class MySQLDataStore extends SQLDataStore {
 		// We always need to create the system specific table
 		// in case it changed since the database was created.
         // i.e. Grief Prevention was removed and WorldGuard was installed.
-        if(SystemType.getActive() != SystemType.WORLD) {
+        if(System.getActive() != System.WORLD) {
             createSystemDB();
         }
 

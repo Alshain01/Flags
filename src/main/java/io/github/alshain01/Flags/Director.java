@@ -43,7 +43,7 @@ public final class Director {
 	 */
 	@Deprecated
 	private static Area getArea(Location location) {
-		return Area.getAt(location);
+		return System.getActive().getAreaAt(location);
 	}
 
 	/**
@@ -57,7 +57,7 @@ public final class Director {
 	 * Factions = WorldName.FactionID
 	 * PlotMe = WorldName.PlotID
 	 * 
-	 * @deprecated Use Area.get(String)
+	 * @deprecated Use System.getActive().getArea(String)
 	 * @param name
 	 *            The system specific name of the area or world name
 	 * @return The Area requested, may be null in cases of invalid system
@@ -65,12 +65,12 @@ public final class Director {
 	 */
 	@Deprecated
 	public static Area getArea(String name) {
-		return Area.get(name);
+		return System.getActive().getArea(name);
 	}
 
 	/**
 	 * Gets an area from the data store at a specific location.
-	 * @deprecated Uses Area.getAt(Location)
+	 * @deprecated Uses System.getActive().getAreaAt(Location)
 	 * @param location
 	 *            The location to request an area.
 	 * @return An Area from the configured system or the world if no area is
@@ -82,7 +82,7 @@ public final class Director {
 		// systems,
 		// however hasArea() is faster than constructing an area object, and
 		// calling both has minimal impact.
-		final Area area = Area.getAt(location);
+		final Area area = System.getActive().getAreaAt(location);
 		return area.isArea() ? area : new World(location);
 	}
 
@@ -149,17 +149,17 @@ public final class Director {
 	 * Area.getAreaType() instead.
 	 * 
 	 * @return The user friendly name.
-	 * @deprecated Use SystemType.getActive().getAreaType()
+	 * @deprecated Use System.getActive().getAreaType()
 	 */
 	@Deprecated
 	public static String getSystemAreaType() {
-		return SystemType.getActive().getAreaType();
+		return System.getActive().getAreaType();
 	}
 
 	/**
 	 * Checks if a player is in Pvp combat that is being monitored by the system
 	 * 
-	 * @deprecated Use SystemType.getActive().inPvPCombat(Player)
+	 * @deprecated Use System.getActive().inPvPCombat(Player)
 	 * @param player
 	 *            The player to request information for
 	 * @return True if the player is in pvp combat, false is not or if system is
@@ -167,7 +167,7 @@ public final class Director {
 	 */
 	@Deprecated
 	public static boolean inPvpCombat(Player player) {
-		return SystemType.getActive() == SystemType.GRIEF_PREVENTION
+		return System.getActive() == System.GRIEF_PREVENTION
                 && GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
 	}
 

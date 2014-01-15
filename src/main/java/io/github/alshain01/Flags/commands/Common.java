@@ -24,7 +24,7 @@
 
 package io.github.alshain01.Flags.commands;
 
-import io.github.alshain01.Flags.Message;
+import io.github.alshain01.Flags.*;
 import io.github.alshain01.Flags.area.Area;
 import io.github.alshain01.Flags.area.Default;
 import io.github.alshain01.Flags.area.World;
@@ -47,7 +47,7 @@ abstract class Common {
 		} else if (location == ECommandLocation.WORLD) {
 			return new World((((Player)sender).getWorld()));
 		} else if (location == ECommandLocation.AREA) {
-			Area area = Area.getAt(((Player)sender).getLocation());
+			Area area = io.github.alshain01.Flags.System.getActive().getAreaAt(((Player) sender).getLocation());
 			return (area instanceof World) ? null : area;
 		}
 		// Invalid location selection

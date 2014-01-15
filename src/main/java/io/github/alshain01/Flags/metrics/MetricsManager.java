@@ -24,8 +24,8 @@
 
 package io.github.alshain01.Flags.metrics;
 
-import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.*;
+import io.github.alshain01.Flags.System;
 import io.github.alshain01.Flags.metrics.Metrics.Graph;
 
 import java.io.IOException;
@@ -40,8 +40,8 @@ public class MetricsManager {
 
 			// Land System Graph
 			final Graph systemGraph = metrics.createGraph("Land System");
-			for (final SystemType system : SystemType.values()) {
-				if (SystemType.getActive() == system) {
+			for (final System system : System.values()) {
+				if (System.getActive() == system) {
 					systemGraph.addPlotter(new Metrics.Plotter(system.getDisplayName()) {
 						@Override
 						public int getValue() {
@@ -54,8 +54,8 @@ public class MetricsManager {
 			// Land System by PlayersGraph
 			final Graph systemPlayersGraph = metrics
 					.createGraph("Land System by Players");
-			for (final SystemType system : SystemType.values()) {
-				if (SystemType.getActive() == system) {
+			for (final System system : io.github.alshain01.Flags.System.values()) {
+				if (System.getActive() == system) {
 					systemPlayersGraph.addPlotter(new Metrics.Plotter(system.getDisplayName()) {
 						@Override
 						public int getValue() {

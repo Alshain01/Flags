@@ -27,7 +27,7 @@ package io.github.alshain01.Flags.commands;
 import io.github.alshain01.Flags.Flag;
 import io.github.alshain01.Flags.Flags;
 import io.github.alshain01.Flags.Message;
-import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.System;
 import io.github.alshain01.Flags.economy.EPurchaseType;
 
 import java.util.Arrays;
@@ -81,7 +81,7 @@ public final class Command {
 			}
 			
 			// Make sure we can set flags at that location
-			if (SystemType.getActive() == SystemType.WORLD && (location == ECommandLocation.AREA || location == ECommandLocation.DEFAULT)) {
+			if (System.getActive() == System.WORLD && (location == ECommandLocation.AREA || location == ECommandLocation.DEFAULT)) {
 				sender.sendMessage(Message.NoSystemError.get());
 				return true;
 			}
@@ -214,7 +214,7 @@ public final class Command {
 			}
 			
 			// Make sure we can set flags at that location
-			if (SystemType.getActive() == SystemType.WORLD && (location == ECommandLocation.AREA || location == ECommandLocation.DEFAULT)) {
+			if (System.getActive() == System.WORLD && (location == ECommandLocation.AREA || location == ECommandLocation.DEFAULT)) {
 				sender.sendMessage(Message.NoSystemError.get());
 				return true;
 			}

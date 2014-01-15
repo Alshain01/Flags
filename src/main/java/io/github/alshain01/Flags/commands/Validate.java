@@ -24,10 +24,7 @@
 
 package io.github.alshain01.Flags.commands;
 
-import io.github.alshain01.Flags.Flag;
-import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.Message;
-import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.*;
 import io.github.alshain01.Flags.area.Area;
 import io.github.alshain01.Flags.area.Default;
 import io.github.alshain01.Flags.area.Subdivision;
@@ -44,7 +41,7 @@ final class Validate {
 	protected static boolean isArea(CommandSender cs, Area a) {
 		if(a == null || !a.isArea()) {
 			cs.sendMessage(Message.NoAreaError.get()
-					.replaceAll("\\{AreaType\\}", SystemType.getActive().getAreaType().toLowerCase()));
+					.replaceAll("\\{AreaType\\}", io.github.alshain01.Flags.System.getActive().getAreaType().toLowerCase()));
 			return false;
 		}
 		return true;

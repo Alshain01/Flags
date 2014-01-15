@@ -57,7 +57,7 @@ import org.bukkit.scheduler.BukkitRunnable;
  */
 public class Flags extends JavaPlugin {
 	protected static CustomYML messageStore;
-	protected static SystemType currentSystem = SystemType.WORLD;
+	protected static System currentSystem = System.WORLD;
 	private static DataStore dataStore;
     private static DataStoreType dataStoreType = DataStoreType.YAML;
 	private static Updater updater = null;
@@ -88,11 +88,11 @@ public class Flags extends JavaPlugin {
 
 		// Find the first available land management system
 		currentSystem = findSystem(getServer().getPluginManager());
-		getLogger().info(currentSystem == SystemType.WORLD ? "No system detected. Only world flags will be available."
+		getLogger().info(currentSystem == System.WORLD ? "No system detected. Only world flags will be available."
 						: currentSystem.getDisplayName() + " detected. Enabling integrated support.");
 
 		// Check for older database and import as necessary.
-		if (currentSystem == SystemType.GRIEF_PREVENTION
+		if (currentSystem == System.GRIEF_PREVENTION
 				&& !getServer().getPluginManager().isPluginEnabled("GriefPreventionFlags")) {
 			GPFImport.importGPF();
 		}
@@ -377,17 +377,17 @@ public class Flags extends JavaPlugin {
 	/*
 	 * Acquires the land management plugin.
 	 */
-	private SystemType findSystem(PluginManager pm) {
+	private System findSystem(PluginManager pm) {
 		final List<?> pluginList = getConfig().getList("Flags.AreaPlugins");
 
 		for(Object o : pluginList) {
 			log("Testing Plugin: " + o, true);
 			if (pm.isPluginEnabled((String) o)) {
 				log("Plugin Found: " + o, true);
-				return SystemType.getByName((String) o);
+				return System.getByName((String) o);
 			}
 		}
-		return SystemType.WORLD;
+		return System.WORLD;
 	}
 
 	/*

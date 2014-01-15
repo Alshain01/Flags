@@ -24,9 +24,8 @@
 
 package io.github.alshain01.Flags.area;
 
-import io.github.alshain01.Flags.Flag;
-import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.*;
+import io.github.alshain01.Flags.System;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -86,7 +85,7 @@ public class World extends Area {
 
 	@Override
 	public String getAreaType() {
-		return SystemType.WORLD.getAreaType();
+		return System.WORLD.getAreaType();
 	}
 
 	@Override
@@ -99,7 +98,7 @@ public class World extends Area {
 
 		if (parse) {
 			message = message
-					.replaceAll("\\{AreaType\\}", SystemType.WORLD.getAreaType().toLowerCase())
+					.replaceAll("\\{AreaType\\}", System.WORLD.getAreaType().toLowerCase())
 					.replaceAll("\\{World\\}", worldName);
 			message = ChatColor.translateAlternateColorCodes('&', message);
 		}
@@ -146,7 +145,7 @@ public class World extends Area {
 	}
 
 	@Override
-	public SystemType getType() {
-		return SystemType.WORLD;
+	public System getType() {
+		return io.github.alshain01.Flags.System.WORLD;
 	}
 }

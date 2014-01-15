@@ -24,8 +24,8 @@
 
 package io.github.alshain01.Flags.area;
 
-import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.*;
+import io.github.alshain01.Flags.System;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -89,7 +89,7 @@ public class RegiosRegion extends Area implements Removable{
 
 	@Override
 	public String getAreaType() {
-		return SystemType.REGIOS.getAreaType();
+		return System.REGIOS.getAreaType();
 	}
 	
 	public Region getRegion() {
@@ -102,8 +102,8 @@ public class RegiosRegion extends Area implements Removable{
 	}
 
 	@Override
-	public SystemType getType() {
-		return SystemType.REGIOS;
+	public System getType() {
+		return io.github.alshain01.Flags.System.REGIOS;
 	}
 
 	@Override

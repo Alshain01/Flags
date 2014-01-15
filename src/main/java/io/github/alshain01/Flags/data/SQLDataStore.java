@@ -24,9 +24,8 @@
 
 package io.github.alshain01.Flags.data;
 
-import io.github.alshain01.Flags.Flag;
-import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.*;
+import io.github.alshain01.Flags.System;
 import io.github.alshain01.Flags.area.Area;
 import io.github.alshain01.Flags.area.Default;
 import io.github.alshain01.Flags.area.Subdivision;
@@ -174,12 +173,12 @@ public class SQLDataStore implements DataStore {
     protected void createSystemDB() {
         // STANDARD BOOLEAN
         // OVERRIDE for Implementation Specific
-        executeStatement("CREATE TABLE IF NOT EXISTS " + SystemType.getActive().toString()
+        executeStatement("CREATE TABLE IF NOT EXISTS " + System.getActive().toString()
                 + "Flags (WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
                 + "FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), "
                 + "CONSTRAINT pk_AreaFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
 
-        executeStatement("CREATE TABLE IF NOT EXISTS " + SystemType.getActive().toString()
+        executeStatement("CREATE TABLE IF NOT EXISTS " + io.github.alshain01.Flags.System.getActive().toString()
                 + "Trust (WorldName VARCHAR(50), AreaID VARCHAR(50), "
                 + "AreaSubID VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), "
                 + "CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
@@ -190,7 +189,7 @@ public class SQLDataStore implements DataStore {
         // We always need to create the system specific table
         // in case it changed since the database was created.
         // i.e. Grief Prevention was removed and WorldGuard was installed.
-        if(SystemType.getActive() != SystemType.WORLD) {
+        if(System.getActive() != System.WORLD) {
             createSystemDB();
         }
 

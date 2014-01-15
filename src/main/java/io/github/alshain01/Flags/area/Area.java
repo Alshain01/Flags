@@ -27,7 +27,7 @@ package io.github.alshain01.Flags.area;
 import io.github.alshain01.Flags.Flag;
 import io.github.alshain01.Flags.Flags;
 import io.github.alshain01.Flags.Message;
-import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.System;
 import io.github.alshain01.Flags.economy.EBaseValue;
 import io.github.alshain01.Flags.economy.EPurchaseType;
 import io.github.alshain01.Flags.economy.ETransactionType;
@@ -41,12 +41,10 @@ import net.milkbowl.vault.economy.EconomyResponse;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
-import org.bukkit.plugin.Plugin;
 
 public abstract class Area implements Comparable<Area> {
 	/*
@@ -92,22 +90,22 @@ public abstract class Area implements Comparable<Area> {
 		return false;
 	}
 	
-	/**
+/*	*//**
 	 * Gets an area from the data store at a specific location.
 	 * 
 	 * @param location
 	 *            The location to request an area.
 	 * @return An Area from the configured system or the world if no area is
 	 *         defined.
-	 */
-	public static Area getAt(Location location) {
+	 *//*
+	public static Area getAreaAt(Location location) {
 		if (!Area.hasArea(location)) {
 			return new World(location);
 		}
 		
 		Area area = null;
 		
-		switch (SystemType.getActive()) {
+		switch (System.getActive()) {
 		case GRIEF_PREVENTION:
 			final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention");
 			final float pluginVersion = Float.valueOf(plugin.getDescription().getVersion().substring(0, 3));
@@ -146,9 +144,9 @@ public abstract class Area implements Comparable<Area> {
 			break;
 		}
 		return area != null && area.isArea() ? area : new World(location);
-	}
+	}*/
 	
-	/**
+/*	*//**
 	 * Gets an area by system specific name. The name is formatted based on the
 	 * system.
 	 * 
@@ -165,12 +163,12 @@ public abstract class Area implements Comparable<Area> {
 	 *            The system specific name of the area or world name
 	 * @return The Area requested, may be null in cases of invalid system
 	 *         selection.
-	 */
+	 *//*
 	public static Area get(String name) {
 		String[] path;
 		Area area = null;
 		
-		switch (SystemType.getActive()) {
+		switch (System.getActive()) {
 		case GRIEF_PREVENTION:
 			final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention");
 			final float pluginVersion = Float.valueOf(plugin.getDescription().getVersion().substring(0, 3));
@@ -216,16 +214,16 @@ public abstract class Area implements Comparable<Area> {
 			break;
 		}
 		return area;
-	}
+	}*/
 	
-	/**
+/*	*//**
 	 * Gets whether there is a non world area that Flags can use at the location
 	 * 
 	 * @param location The location to check for an area
 	 * @return True if there is an area
-	 */
+	 *//*
 	public static boolean hasArea(Location location) {
-		switch (SystemType.getActive()) {
+		switch (System.getActive()) {
 		case GRIEF_PREVENTION:
 			return GriefPreventionClaim.hasClaim(location);
 		case WORLDGUARD:
@@ -245,7 +243,7 @@ public abstract class Area implements Comparable<Area> {
 		default:
 			return false;
 		}
-	}
+	}*/
 
 	/**
 	 * Gets the friendly name of the area type.
@@ -322,7 +320,7 @@ public abstract class Area implements Comparable<Area> {
 	 * 
 	 * @return The LandSystem that created this object (null for Default)
 	 */
-	public abstract SystemType getType();
+	public abstract System getType();
 
 	/**
 	 * Gets the land system's ID for this area.

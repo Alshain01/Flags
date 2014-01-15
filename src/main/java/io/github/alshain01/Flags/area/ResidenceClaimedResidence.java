@@ -24,8 +24,8 @@
 
 package io.github.alshain01.Flags.area;
 
-import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.*;
+import io.github.alshain01.Flags.System;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -100,7 +100,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	
 	@Override
 	public String getAreaType() {
-		return SystemType.RESIDENCE.getAreaType();
+		return io.github.alshain01.Flags.System.RESIDENCE.getAreaType();
 	}
 
 	@Override
@@ -164,8 +164,8 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	}
 
 	@Override
-	public SystemType getType() {
-		return SystemType.RESIDENCE;
+	public System getType() {
+		return System.RESIDENCE;
 	}
 
 	@Override

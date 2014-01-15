@@ -24,8 +24,8 @@
 
 package io.github.alshain01.Flags.area;
 
-import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.*;
+import io.github.alshain01.Flags.System;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -85,7 +85,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege,
 
 	@Override
 	public String getAreaType() {
-		return SystemType.GRIEF_PREVENTION.getAreaType();
+		return System.GRIEF_PREVENTION.getAreaType();
 	}
 
 	public Claim getClaim() {
@@ -134,7 +134,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege,
 	}
 
 	@Override
-	public SystemType getType() {
-		return SystemType.GRIEF_PREVENTION;
+	public System getType() {
+		return io.github.alshain01.Flags.System.GRIEF_PREVENTION;
 	}
 }

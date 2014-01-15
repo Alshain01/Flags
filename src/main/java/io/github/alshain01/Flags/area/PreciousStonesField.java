@@ -24,8 +24,8 @@
 
 package io.github.alshain01.Flags.area;
 
-import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.*;
+import io.github.alshain01.Flags.System;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -123,7 +123,7 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
 
 	@Override
 	public String getAreaType() {
-		return SystemType.PRECIOUSSTONES.getAreaType();
+		return System.PRECIOUSSTONES.getAreaType();
 	}
 
 	@Override
@@ -132,8 +132,8 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
 	}
 
 	@Override
-	public SystemType getType() {
-		return SystemType.PRECIOUSSTONES;
+	public io.github.alshain01.Flags.System getType() {
+		return System.PRECIOUSSTONES;
 	}
 
 	@Override

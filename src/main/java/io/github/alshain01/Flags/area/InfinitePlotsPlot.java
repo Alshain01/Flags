@@ -25,7 +25,7 @@
 package io.github.alshain01.Flags.area;
 
 import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.System;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -90,7 +90,7 @@ public class InfinitePlotsPlot extends Area implements Removable {
 
 	@Override
 	public String getAreaType() {
-		return SystemType.INFINITEPLOTS.getAreaType();
+		return System.INFINITEPLOTS.getAreaType();
 	}
 
 	@Override
@@ -124,7 +124,7 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	}
 
 	@Override
-	public SystemType getType() {
-		return SystemType.INFINITEPLOTS;
+	public System getType() {
+		return System.INFINITEPLOTS;
 	}
 }

@@ -82,9 +82,9 @@ public class MrClean {
 	 */
 	protected static void enable(Plugin plugin) {
 		PluginManager pm = plugin.getServer().getPluginManager();
-		switch (SystemType.getActive()) {
+		switch (System.getActive()) {
 		case GRIEF_PREVENTION:
-			if (Float.valueOf(pm.getPlugin(SystemType.getActive().toString())
+			if (Float.valueOf(pm.getPlugin(System.getActive().toString())
 					.getDescription().getVersion().substring(0, 3)) >= 7.8) {
 
 				pm.registerEvents(new GriefPreventionCleaner(),	plugin);

@@ -24,9 +24,8 @@
 
 package io.github.alshain01.Flags.data;
 
-import io.github.alshain01.Flags.Flag;
-import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.*;
+import io.github.alshain01.Flags.System;
 import io.github.alshain01.Flags.area.Area;
 import io.github.alshain01.Flags.area.Default;
 import io.github.alshain01.Flags.area.Subdivision;
@@ -200,10 +199,10 @@ public final class YamlDataStore implements DataStore {
 		if (ver.major <= 1 && ver.minor <= 2 && ver.build < 2) {
 			CustomYML cYml = getYml("data");
 			ConfigurationSection cSec;
-			SystemType system = SystemType.getActive();
-			if(cYml.getConfig().isConfigurationSection(SystemType.getActive().toString() + "Data")) { 
-				if (system == SystemType.GRIEF_PREVENTION || SystemType.getActive() == SystemType.RESIDENCE) {
-					cSec = cYml.getConfig().getConfigurationSection(SystemType.getActive().toString() + "Data");
+			System system = System.getActive();
+			if(cYml.getConfig().isConfigurationSection(System.getActive().toString() + "Data")) {
+				if (system == System.GRIEF_PREVENTION || System.getActive() == System.RESIDENCE) {
+					cSec = cYml.getConfig().getConfigurationSection(System.getActive().toString() + "Data");
 					
 					Flags.log("Updating World Names " + cSec.getCurrentPath(), true);
 					final Set<String> keys = cSec.getKeys(true);
@@ -215,7 +214,7 @@ public final class YamlDataStore implements DataStore {
 							final String id = k.split("\\.")[0];
 							String world;
 	
-							if (SystemType.getActive() == SystemType.GRIEF_PREVENTION) {
+							if (System.getActive() == System.GRIEF_PREVENTION) {
 								world = GriefPrevention.instance.dataStore
 										.getClaim(Long.valueOf(id))
 										.getGreaterBoundaryCorner().getWorld()
@@ -255,11 +254,11 @@ public final class YamlDataStore implements DataStore {
 				}
 				
 				//Remove "Data" from the root heading.
-				Flags.log(SystemType.getActive().toString() + "Data", true);
+				Flags.log(System.getActive().toString() + "Data", true);
 				cYml = getYml("data");
-				cSec = getYml("data").getConfig().getConfigurationSection(SystemType.getActive().toString() + "Data");
-				getYml("data").getConfig().createSection(SystemType.getActive().toString());
-				ConfigurationSection newCSec = getYml("data").getConfig().getConfigurationSection(SystemType.getActive().toString());
+				cSec = getYml("data").getConfig().getConfigurationSection(System.getActive().toString() + "Data");
+				getYml("data").getConfig().createSection(System.getActive().toString());
+				ConfigurationSection newCSec = getYml("data").getConfig().getConfigurationSection(System.getActive().toString());
 				Flags.log("Moving " + cSec.getCurrentPath() + " to " + newCSec.getCurrentPath(), true);
 				Set<String> keys = cSec.getKeys(true);
 				for (final String k : keys) {
@@ -271,7 +270,7 @@ public final class YamlDataStore implements DataStore {
 							cYml.saveConfig();
 					}
 				}
-				cYml.getConfig().set(SystemType.getActive().toString() + "Data", null);
+				cYml.getConfig().set(io.github.alshain01.Flags.System.getActive().toString() + "Data", null);
 				cYml.saveConfig();
 			}
 			writeVersion(new DBVersion(1, 2, 2));

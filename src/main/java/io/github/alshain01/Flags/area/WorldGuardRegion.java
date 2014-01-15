@@ -24,8 +24,8 @@
 
 package io.github.alshain01.Flags.area;
 
-import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.*;
+import io.github.alshain01.Flags.System;
 
 import java.util.Set;
 
@@ -84,7 +84,7 @@ public class WorldGuardRegion extends Area implements Removable {
 
 	@Override
 	public String getAreaType() {
-		return SystemType.WORLDGUARD.getAreaType();
+		return io.github.alshain01.Flags.System.WORLDGUARD.getAreaType();
 	}
 
 	@Override
@@ -117,7 +117,7 @@ public class WorldGuardRegion extends Area implements Removable {
 	}
 
 	@Override
-	public SystemType getType() {
-		return SystemType.WORLDGUARD;
+	public System getType() {
+		return System.WORLDGUARD;
 	}
 }
