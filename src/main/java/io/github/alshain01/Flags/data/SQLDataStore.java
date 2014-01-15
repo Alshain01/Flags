@@ -315,7 +315,9 @@ public class SQLDataStore implements DataStore {
 
         try {
             if(results.next()) {
-                return results.getBoolean("FlagValue");
+                boolean value = results.getBoolean("FlagValue");
+                if (results.wasNull()) { return null; }
+                return value;
             }
             return null;
         } catch (SQLException ex){
@@ -400,10 +402,15 @@ public class SQLDataStore implements DataStore {
     @Override
     public void writeMessage(Area area, Flag flag, String message) {
         String insertString;
-        if(area instanceof Default || area instanceof World) {
-            insertString = "INSERT INTO %table%Flags (WorldName, FlagName, FlagMessage) VALUES ('%world%', '%flag%', '%message%') ON DUPLICATE KEY UPDATE FlagMessage='%message%';";
+        if (message == null) {
+            message = "null";
         } else {
-            insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID. FlagName, FlagMessage) VALUES ('%world%', '%area%', '%sub%', '%flag%', '%message%') ON DUPLICATE KEY UPDATE FlagMessage='%message%';";
+            message = "'" + message + "'";
+        }
+        if(area instanceof Default || area instanceof World) {
+            insertString = "INSERT INTO %table%Flags (WorldName, FlagName, FlagMessage) VALUES ('%world%', '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
+        } else {
+            insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID. FlagName, FlagMessage) VALUES ('%world%', '%area%', '%sub%', '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
         }
         executeStatement(areaBuilder(insertString, area)
                 .replaceAll("%flag%", flag.getName())
@@ -412,11 +419,11 @@ public class SQLDataStore implements DataStore {
 
     @Override
     public Set<String> readTrust(Area area, Flag flag) {
-        StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Trust WHERE WorldName='%world%' AND FlagName='%flag%'");
+        StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Trust WHERE WorldName='%world%'");
         if(!(area instanceof Default || area instanceof World)) {
             selectString.append(" AND AreaID='%area%' AND AreaSubID='%sub%'");
         }
-        selectString.append(";");
+        selectString.append(" AND FlagName='%flag%';");
 
         ResultSet results = executeQuery(areaBuilder(selectString.toString(), area)
                 .replaceAll("%flag%", flag.getName()));
@@ -436,14 +443,13 @@ public class SQLDataStore implements DataStore {
     @Override
     public void writeTrust(Area area, Flag flag, Set<String> players) {
         // Delete the old list to be replaced
-        StringBuilder deleteString = new StringBuilder("DELETE FROM %table%Trust WHERE WorldName='%world%' AND FlagName='%flag%'");
+        StringBuilder deleteString = new StringBuilder("DELETE FROM %table%Trust WHERE WorldName='%world%'");
         if(!(area instanceof Default || area instanceof World)) {
             deleteString.append(" AND AreaID='%area%' AND AreaSubID='%sub%'");
         }
-        deleteString.append(";");
+        deleteString.append(" AND FlagName='%flag%';");
 
-        executeStatement(areaBuilder(deleteString.toString(), area)
-                .replaceAll("%flag%", flag.getName()));
+        executeStatement(areaBuilder(deleteString.toString(), area).replaceAll("%flag%", flag.getName()));
 
         for(String p : players) {
             String insertString;

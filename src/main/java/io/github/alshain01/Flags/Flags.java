@@ -322,6 +322,16 @@ public class Flags extends JavaPlugin {
 		log(message, false);
 	}
 
+    /**
+     * Sends a debug message through the Flags logger.
+     *
+     * @param message
+     *            The message
+     */
+    public static void debug(String message) {
+        log(message, true);
+    }
+
     public DataStoreType getDataStoreType() {
         return dataStoreType;
     }

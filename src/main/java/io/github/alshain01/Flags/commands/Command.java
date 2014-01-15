@@ -132,7 +132,9 @@ public final class Command {
 				success = FlagCmd.trust((Player)sender, location, flag, players);
 				break;
 			case DISTRUST:
-				if(args.length > command.requiredArgs) { players = getPlayers(args, command.requiredArgs); } // Players can be omitted to distrust all
+				if(args.length > command.requiredArgs) {
+                    Flags.debug("Players found in command.");
+                    players = getPlayers(args, command.requiredArgs); } // Players can be omitted to distrust all
 				FlagCmd.distrust((Player)sender, location, flag, players);
                 success = true;
 				break;
@@ -166,7 +168,7 @@ public final class Command {
 		}
 		
 		if(!success) { 
-			Flags.log("Command Unsuccessful", true);
+			Flags.debug("Command Unsuccessful");
 			sender.sendMessage(command.getHelp());
 		}
 		return true;
@@ -260,6 +262,7 @@ public final class Command {
 	 * @return A list of players
 	 */
 	private static Set<String> getPlayers(String[] args, int start) {
+        Flags.debug((new HashSet<String>(Arrays.asList(args).subList(start, args.length)).toString()));
 		return new HashSet<String>(Arrays.asList(args).subList(start, args.length));
 	}
 	

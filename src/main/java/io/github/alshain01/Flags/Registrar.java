@@ -201,8 +201,7 @@ public final class Registrar {
 				continue;
 			}
 	
-			final boolean def = data.isSet("Default") && data.getBoolean("Default");
-
+			final boolean def = !data.isSet("Default") || data.getBoolean("Default");
 			final boolean isPlayer = data.isSet("Player") && data.getBoolean("Player");
 	
 			// The default message players get while in the area.

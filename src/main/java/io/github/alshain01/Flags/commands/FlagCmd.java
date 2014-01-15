@@ -120,6 +120,7 @@ final class FlagCmd extends Common {
 						.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
 						.replaceAll("\\{Flag\\}", flag.getName()));
 			}
+            return;
 		}
 		
 		// Removing all flags if the player has permission
@@ -186,6 +187,7 @@ final class FlagCmd extends Common {
 	}
 	
 	protected static void distrust(Player player, ECommandLocation location, Flag flag, Set<String> playerList) {
+        Flags.debug("Starting Distrust");
 		boolean success = true;
 		Area area = getArea(player, location);
 		
@@ -193,13 +195,20 @@ final class FlagCmd extends Common {
 				|| !Validate.isArea(player, area)
 				|| !Validate.isPermitted(player, flag)
 				|| !Validate.isPermitted(player, area))
-			{ return; }
+			{
+                Flags.debug("Failed validation");
+                return; }
 		
 		Set<String> trustList = area.getTrustList(flag);
-		if(!Validate.isTrustList(player, trustList, area.getAreaType(), flag.getName())) { return; }
-		
-		for(String p : playerList.size() != 0 ? playerList : trustList) {
-			if (area.getOwners().contains(p)) { continue; }
+        Flags.debug("Trust List " + trustList.toString());
+		if(!Validate.isTrustList(player, trustList, area.getAreaType(), flag.getName())) {
+            Flags.debug("Failed trust list validation");
+            return; }
+
+        //If playerList is empty, remove everyone
+		for(String p : playerList.isEmpty() ? trustList : playerList) {
+			//if (area.getOwners().contains(p)) { continue; }
+            Flags.debug("Removing " + p);
 			if (!area.setTrust(flag, p, false, player)) { success = false; }
 		}
 

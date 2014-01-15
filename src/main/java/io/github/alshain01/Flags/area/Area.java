@@ -453,8 +453,7 @@ public abstract class Area implements Comparable<Area> {
 	 *            or console.
 	 * @return True if successful
 	 */
-	public final boolean setMessage(Flag flag, String message,
-			CommandSender sender) {
+	public final boolean setMessage(Flag flag, String message, CommandSender sender) {
 		if (!isArea()) {
 			return false;
 		}
@@ -498,8 +497,7 @@ public abstract class Area implements Comparable<Area> {
 			}
 		}
 
-		final MessageChangedEvent event = new MessageChangedEvent(this, flag,
-				message, sender);
+		final MessageChangedEvent event = new MessageChangedEvent(this, flag, message, sender);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
 			return false;
@@ -511,9 +509,6 @@ public abstract class Area implements Comparable<Area> {
 					(Player) sender)) {
 				return true;
 			}
-		}
-		if (message != null) {
-			message = message.replaceAll("�", "&");
 		}
 		Flags.getDataStore().writeMessage(this, flag, message);
 		return true;
@@ -533,14 +528,12 @@ public abstract class Area implements Comparable<Area> {
 	 *            or console.
 	 * @return True if successful.
 	 */
-	public final boolean setTrust(Flag flag, String trustee, boolean trusted,
-			CommandSender sender) {
+	public final boolean setTrust(Flag flag, String trustee, boolean trusted, CommandSender sender) {
 		if (!isArea()) {
 			return false;
 		}
 
-		final Set<String> trustList = Flags.getDataStore()
-				.readTrust(this, flag);
+		final Set<String> trustList = Flags.getDataStore().readTrust(this, flag);
 
 		// Set player to trusted.
 		if (trusted) {
@@ -561,19 +554,22 @@ public abstract class Area implements Comparable<Area> {
 			return true;
 		}
 
+        Flags.log("Removing Player from trust", true);
 		// Remove player from trusted.
 		if (!trustList.contains(trustee.toLowerCase())) {
+            Flags.log("Player not found in trust list", true);
 			return false;
 		}
 
-		final TrustChangedEvent event = 
-				new TrustChangedEvent(this, flag, trustee, false, sender);
+		final TrustChangedEvent event = new TrustChangedEvent(this, flag, trustee, false, sender);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
+            Flags.log("TrustChangedEvent Cancelled", true);
 			return false;
 		}
-
+        Flags.log("Removing " + trustee.toLowerCase(), true);
 		trustList.remove(trustee.toLowerCase());
+        Flags.log("Writing trust list to data store", true);
 		Flags.getDataStore().writeTrust(this, flag, trustList);
 		return true;
 	}

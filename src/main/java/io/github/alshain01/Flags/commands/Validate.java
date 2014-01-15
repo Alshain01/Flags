@@ -44,7 +44,7 @@ final class Validate {
 	protected static boolean isArea(CommandSender cs, Area a) {
 		if(a == null || !a.isArea()) {
 			cs.sendMessage(Message.NoAreaError.get()
-					.replaceAll("\\{AreaType\\}", SystemType.getActive().getAreaType()));
+					.replaceAll("\\{AreaType\\}", SystemType.getActive().getAreaType().toLowerCase()));
 			return false;
 		}
 		return true;
