@@ -155,7 +155,7 @@ public final class Flag {
 	 * Gets the price of the flag or message.
 	 * 
 	 * @param type
-	 *            The PurchaseType to get for this flag
+	 *            The PurchaseType to getType for this flag
 	 * @return The price of the purchase.
 	 */
 	public double getPrice(EPurchaseType type) {

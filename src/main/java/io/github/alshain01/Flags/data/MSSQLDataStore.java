@@ -116,4 +116,9 @@ public class MSSQLDataStore extends SQLDataStore {
         executeStatement(areaBuilder(insertString, area)
                 .replaceAll("%value%", bitValue));
     }
+
+    @Override
+    public DataStoreType getType() {
+        return DataStoreType.MSSQL;
+    }
 }

@@ -78,7 +78,7 @@ public class MetricsManager {
 
             // Database Type
             final Graph dbGraph = metrics.createGraph("Data Storage Type");
-            dbGraph.addPlotter(new Metrics.Plotter(((Flags)plugin).getDataStoreType().getName()) {
+            dbGraph.addPlotter(new Metrics.Plotter(Flags.getDataStore().getType().getName()) {
                 @Override
                 public int getValue() {
                     return 1;

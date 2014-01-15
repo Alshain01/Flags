@@ -59,7 +59,6 @@ public class Flags extends JavaPlugin {
 	protected static CustomYML messageStore;
 	protected static System currentSystem = System.WORLD;
 	private static DataStore dataStore;
-    private static DataStoreType dataStoreType = DataStoreType.YAML;
 	private static Updater updater = null;
 	private static Economy economy = null;
 	private static boolean debugOn = false;
@@ -97,8 +96,7 @@ public class Flags extends JavaPlugin {
 			GPFImport.importGPF();
 		}
 
-        dataStoreType = DataStoreType.get(getConfig().getString("Flags.Database.Url"));
-        dataStore = dataStoreType.getDataStore(this);
+        dataStore = DataStoreType.getType(getConfig().getString("Flags.Database.Url")).getDataStore(this);
 
         // New installation
         if (!dataStore.create(this)) {
@@ -162,7 +160,6 @@ public class Flags extends JavaPlugin {
 		// Static cleanup
 		economy = null;
 		dataStore = null;
-        dataStoreType = null;
 		updater = null;
 		messageStore = null;
 		flagRegistrar = null;
@@ -330,10 +327,6 @@ public class Flags extends JavaPlugin {
      */
     public static void debug(String message) {
         log(message, true);
-    }
-
-    public DataStoreType getDataStoreType() {
-        return dataStoreType;
     }
 
 	/**

@@ -204,10 +204,10 @@ public final class Registrar {
 			final boolean def = !data.isSet("Default") || data.getBoolean("Default");
 			final boolean isPlayer = data.isSet("Player") && data.getBoolean("Player");
 	
-			// The default message players get while in the area.
+			// The default message players getType while in the area.
 			final String area = data.getString("AreaMessage");
 	
-			// The default message players get while in an world.
+			// The default message players getType while in an world.
 			final String world = data.getString("WorldMessage");
 			
 			if(isPlayer && (area == null || world == null)) {

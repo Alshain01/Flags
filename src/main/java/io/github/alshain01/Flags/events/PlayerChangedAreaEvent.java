@@ -63,7 +63,7 @@ public class PlayerChangedAreaEvent extends Event implements Cancellable {
 	 * @param area
 	 *            The area involved with the event
 	 * @param areaLeft
-	 *            The area the player left to get to this area
+	 *            The area the player left to getType to this area
 	 */
 	public PlayerChangedAreaEvent(Player player, Area area, Area areaLeft) {
 		this.area = area;

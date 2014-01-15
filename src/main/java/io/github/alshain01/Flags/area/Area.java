@@ -164,7 +164,7 @@ public abstract class Area implements Comparable<Area> {
 	 * @return The Area requested, may be null in cases of invalid system
 	 *         selection.
 	 *//*
-	public static Area get(String name) {
+	public static Area getType(String name) {
 		String[] path;
 		Area area = null;
 		

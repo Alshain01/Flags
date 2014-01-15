@@ -49,7 +49,7 @@ public final class MySQLDataStore extends SQLDataStore {
 
         String[] connection = url.split("/");
 
-        // Result Limiting, requires MySQL exclusively
+        // Result Limiting, requires MYSQL exclusively
 		ResultSet results =
 				executeQuery("SELECT * FROM information_schema.tables "
 						+ "WHERE table_schema = '%database%' AND table_name = 'Version' LIMIT 1;"
@@ -62,4 +62,9 @@ public final class MySQLDataStore extends SQLDataStore {
 		}
 		return false;
 	}
+
+    @Override
+    public DataStoreType getType() {
+        return DataStoreType.MYSQL;
+    }
 }

@@ -68,4 +68,6 @@ public interface DataStore {
 	public void writePrice(Flag flag, EPurchaseType type, double price);
 
 	public void writeTrust(Area area, Flag flag, Set<String> players);
+
+    public DataStoreType getType();
 }

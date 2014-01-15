@@ -473,4 +473,9 @@ public class SQLDataStore implements DataStore {
         executeStatement(areaBuilder(deleteString, area)
                 .replaceAll("%type%", "Trust"));
     }
+
+    @Override
+    public DataStoreType getType() {
+        return DataStoreType.POSTGRESQL;
+    }
 }

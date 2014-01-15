@@ -377,4 +377,9 @@ public final class YamlDataStore implements DataStore {
 				version.major + "." + version.minor + "." + version.build);
 		cYml.saveConfig();
 	}
+
+    @Override
+    public DataStoreType getType() {
+        return DataStoreType.YAML;
+    }
 }

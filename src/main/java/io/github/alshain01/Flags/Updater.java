@@ -58,7 +58,7 @@ final class Updater {
     private static final String TYPE_VALUE = "releaseType"; // Gets remote file's release type
     private static final String VERSION_VALUE = "gameVersion"; // Gets remote file's build version
     private static final String QUERY = "/servermods/files?projectIds="; // Path to GET
-    private static final String HOST = "https://api.curseforge.com"; // Slugs will be appended to this to get to the project's RSS feed
+    private static final String HOST = "https://api.curseforge.com"; // Slugs will be appended to this to getType to the project's RSS feed
 
     private static final String[] NO_UPDATE_TAG = { "-ALPHA", "-BETA", "-SNAPSHOT" }; // If the version number contains one of these, don't update.
     private static final int BYTE_SIZE = 1024; // Used for downloading files
@@ -130,7 +130,7 @@ final class Updater {
 *
 * @param plugin The plugin that is checking for an update.
 * @param id The dev.bukkit.org id of the project
-* @param file The file that the plugin is running from, get this by doing this.getFile() from within your main class.
+* @param file The file that the plugin is running from, getType this by doing this.getFile() from within your main class.
 * @param type Specify the type of update this will be. See {@link UpdateType}
 * @param announce True if the program should announce the progress of new updates in console
 */
