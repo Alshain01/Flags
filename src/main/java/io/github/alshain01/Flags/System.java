@@ -48,11 +48,12 @@ public enum System {
 
 	GRIEF_PREVENTION("GriefPrevention",	"Grief Prevention") {
         public Area getAreaAt(Location location) {
+            if(!hasArea(location)) { return new World(location); }
+
             final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention");
             final float pluginVersion = Float.valueOf(plugin.getDescription().getVersion().substring(0, 3));
 
-            if (pluginVersion >= (float)7.8) { return new GriefPreventionClaim78(location); }
-            return new GriefPreventionClaim(location);
+            return pluginVersion >= (float)7.8 ? new GriefPreventionClaim78(location) : new GriefPreventionClaim(location);
         }
 
         public Area getArea(String name) {
@@ -68,7 +69,10 @@ public enum System {
     } ,
 
 	WORLDGUARD("WorldGuard", "WorldGuard") {
-        public Area getAreaAt(Location location) { return new WorldGuardRegion(location); }
+        public Area getAreaAt(Location location) {
+            if(!hasArea(location)) { return new World(location); }
+            return new WorldGuardRegion(location);
+        }
 
         public Area getArea(String name) {
             String path[] = name.split("\\.");
@@ -79,13 +83,19 @@ public enum System {
     },
 
 	RESIDENCE("Residence", "Residence") {
-        public Area getAreaAt(Location location) { return new ResidenceClaimedResidence(location); }
+        public Area getAreaAt(Location location) {
+            if(!hasArea(location)) { return new World(location); }
+            return new ResidenceClaimedResidence(location);
+        }
         public Area getArea(String name) { return new ResidenceClaimedResidence(name); }
         public boolean hasArea(Location location) { return ResidenceClaimedResidence.hasResidence(location); }
     },
 
 	INFINITEPLOTS("InfinitePlots", "InfinitePlots") {
-        public Area getAreaAt(Location location) { return new InfinitePlotsPlot(location); }
+        public Area getAreaAt(Location location) {
+            if(!hasArea(location)) { return new World(location); }
+            return new InfinitePlotsPlot(location);
+        }
 
         public Area getArea(String name) {
             String path[] = name.split("\\.");
@@ -97,7 +107,10 @@ public enum System {
     },
 
 	FACTIONS("Factions", "Factions") {
-        public Area getAreaAt(Location location) { return new FactionsTerritory(location); }
+        public Area getAreaAt(Location location) {
+            if(!hasArea(location)) { return new World(location); }
+            return new FactionsTerritory(location);
+        }
 
         public Area getArea(String name) {
             String path[] = name.split("\\.");
@@ -108,7 +121,10 @@ public enum System {
     },
 
 	PLOTME("PlotMe", "PlotMe") {
-        public Area getAreaAt(Location location) { return new PlotMePlot(location); }
+        public Area getAreaAt(Location location) {
+            if(!hasArea(location)) { return new World(location); }
+            return new PlotMePlot(location);
+        }
 
         public Area getArea(String name) {
             String path[] = name.split("\\.");
@@ -119,13 +135,19 @@ public enum System {
     },
 
 	REGIOS("Regios", "Regios") {
-        public Area getAreaAt(Location location) { return new RegiosRegion(location); }
+        public Area getAreaAt(Location location) {
+            if(!hasArea(location)) { return new World(location); }
+            return new RegiosRegion(location);
+        }
         public Area getArea(String name) { return new RegiosRegion(name); }
         public boolean hasArea(Location location) { return RegiosRegion.hasRegion(location); }
     },
 
 	PRECIOUSSTONES("PreciousStones", "PreciousStones"){
-        public Area getAreaAt(Location location) { return new PreciousStonesField(location); }
+        public Area getAreaAt(Location location) {
+            if(!hasArea(location)) { return new World(location); }
+            return new PreciousStonesField(location);
+        }
 
         public Area getArea(String name) {
             String path[] = name.split("\\.");
