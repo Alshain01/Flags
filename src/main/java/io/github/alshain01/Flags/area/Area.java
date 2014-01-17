@@ -84,7 +84,7 @@ public abstract class Area implements Comparable<Area> {
 		}
 
 		// Something went wrong if we made it this far.
-		Flags.severe(String.format("An error occurred: %s", r.errorMessage));
+		Flags.severe(String.format("[Economy Error] %s", r.errorMessage));
 		player.sendMessage(Message.Error.get().replaceAll("\\{Error\\}",
 				r.errorMessage));
 		return false;
@@ -121,15 +121,18 @@ public abstract class Area implements Comparable<Area> {
 	 */
 	public String getMessage(Flag flag, boolean parse) {
 		if (!isArea()) {
+            Flags.debug("Invalid Area Provided: Get Message Cancelled");
 			return null;
 		}
 		String message = Flags.getDataStore().readMessage(this, flag);
 
 		if (message == null) {
+            Flags.debug("Message is null, getting default message");
 			message = new Default(getWorld()).getMessage(flag);
 		}
 
 		if (parse) {
+            Flags.debug("Parsing color codes and dynamic replacement strings.");
 			message = message.replaceAll("\\{AreaType\\}",
 					getAreaType().toLowerCase()).replaceAll("\\{Owner\\}",
 					getOwners().toArray()[0].toString());
@@ -297,7 +300,9 @@ public abstract class Area implements Comparable<Area> {
 	 * @return True if successful
 	 */
 	public final boolean setMessage(Flag flag, String message, CommandSender sender) {
+        Flags.debug("Setting Flag Message");
 		if (!isArea()) {
+            Flags.debug("Invalid Area Provided: Message Not Set");
 			return false;
 		}
 
@@ -313,27 +318,33 @@ public abstract class Area implements Comparable<Area> {
 				&& !(this instanceof Administrator && ((Administrator) this)
 						.isAdminArea())) // No charge for admin areas
 		{
-
+            Flags.debug("Economy Transaction Configured");
 			// Check to make sure we aren't removing the message
 			if (message != null) {
+                Flags.debug("Message was not null");
 				// Check to make sure the message isn't identical to what we
 				// have
 				// (if they are just correcting caps, don't charge, I hate
 				// discouraging bad spelling & grammar)
 				if (!getMessage(flag, false).equalsIgnoreCase(message)) {
+                    Flags.debug("Message is not the same as datastore value");
 					if (isFundingLow(EPurchaseType.Message, flag,
                             (Player) sender)) {
+                        Flags.debug("Player cannot afford transaction.  Message set cancelled.");
 						return false;
 					}
 					transaction = ETransactionType.Withdraw;
 				}
 			} else {
+                Flags.debug("Message was null/removing message");
 				// Check whether or not to refund the account
 				if (EPurchaseType.Message.isRefundable()) {
+                    Flags.debug("Purchase is refundable");
 					// Make sure the message we are refunding isn't identical to
 					// the default message
 					if (!getMessage(flag, false).equals(
 							flag.getDefaultAreaMessage())) {
+                        Flags.debug("Message is not the same as datastore value");
 						transaction = ETransactionType.Deposit;
 					}
 				}
@@ -343,17 +354,22 @@ public abstract class Area implements Comparable<Area> {
 		final MessageChangedEvent event = new MessageChangedEvent(this, flag, message, sender);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
+            Flags.debug("MessageChangedEvent Cancelled");
 			return false;
 		}
 
 		// Delay making the transaction in case the event is cancelled.
 		if (transaction != null) {
+            Flags.debug("Economy Transaction Ready");
 			if (!makeTransaction(transaction, EPurchaseType.Message, flag,
 					(Player) sender)) {
+                Flags.debug("Failed to make transaction");
 				return true;
 			}
 		}
+
 		Flags.getDataStore().writeMessage(this, flag, message);
+        Flags.debug("Set Message Completed");
 		return true;
 	}
 
@@ -380,7 +396,9 @@ public abstract class Area implements Comparable<Area> {
 
 		// Set player to trusted.
 		if (trusted) {
+            Flags.debug("Adding Player to Trust");
 			if (trustList.contains(trustee.toLowerCase())) {
+                Flags.debug("Trusted Player already in trust list.");
 				return false;
 			}
 			trustList.add(trustee.toLowerCase());
@@ -389,6 +407,7 @@ public abstract class Area implements Comparable<Area> {
 					new TrustChangedEvent(this, flag, trustee, true, sender);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 			if (event.isCancelled()) {
+                Flags.debug("TrustChangedEvent Cancelled");
 				return false;
 			}
 
@@ -397,22 +416,21 @@ public abstract class Area implements Comparable<Area> {
 			return true;
 		}
 
-        Flags.log("Removing Player from trust", true);
+        Flags.debug("Removing Player from Trust");
 		// Remove player from trusted.
 		if (!trustList.contains(trustee.toLowerCase())) {
-            Flags.log("Player not found in trust list", true);
+            Flags.debug("Player not found in Trust list");
 			return false;
 		}
 
 		final TrustChangedEvent event = new TrustChangedEvent(this, flag, trustee, false, sender);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
-            Flags.log("TrustChangedEvent Cancelled", true);
+            Flags.debug("TrustChangedEvent Cancelled");
 			return false;
 		}
-        Flags.log("Removing " + trustee.toLowerCase(), true);
+
 		trustList.remove(trustee.toLowerCase());
-        Flags.log("Writing trust list to data store", true);
 		Flags.getDataStore().writeTrust(this, flag, trustList);
 		return true;
 	}

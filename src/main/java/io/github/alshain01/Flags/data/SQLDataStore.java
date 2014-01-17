@@ -106,11 +106,11 @@ public class SQLDataStore implements DataStore {
     }
 
     protected void SqlError(String error) {
-        Flags.severe("SQL DataStore Error: " + error);
+        Flags.severe("[SQL DataStore Error] " + error);
     }
 
     protected void executeStatement(String statement) {
-        Flags.log("[SQL Statement] " + statement, true);
+        Flags.debug("[SQL Statement] " + statement);
         try {
             Statement SQL = connection.createStatement();
             SQL.execute(statement);
@@ -120,7 +120,7 @@ public class SQLDataStore implements DataStore {
     }
 
     protected ResultSet executeQuery(String query) {
-        Flags.log("[SQL Query] " + query, true);
+        Flags.debug("[SQL Query] " + query);
         try {
             Statement SQL = connection.createStatement();
             return SQL.executeQuery(query);
@@ -391,6 +391,7 @@ public class SQLDataStore implements DataStore {
             if(results.next()) {
                 return results.getString("FlagMessage");
             }
+            Flags.debug("Found no SQL results for query");
             return null;
         } catch (SQLException ex){
             SqlError(ex.getMessage());
@@ -400,12 +401,15 @@ public class SQLDataStore implements DataStore {
 
     @Override
     public void writeMessage(Area area, Flag flag, String message) {
+        Flags.debug("Writing Message to SQL DataStore");
         String insertString;
         if (message == null) {
             message = "null";
         } else {
             message = "'" + message + "'";
         }
+        Flags.debug("Writing message: " + message);
+
         if(area instanceof Default || area instanceof World) {
             insertString = "INSERT INTO %table%Flags (WorldName, FlagName, FlagMessage) VALUES ('%world%', '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
         } else {

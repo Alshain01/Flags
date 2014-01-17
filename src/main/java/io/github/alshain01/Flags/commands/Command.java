@@ -66,7 +66,7 @@ public final class Command {
 		// Check argument length (-1 means infinite optional args)
 		if(args.length < command.requiredArgs
 				|| (command.optionalArgs > 0 && args.length > command.requiredArgs + command.optionalArgs)) {
-			Flags.log("Command Argument Count Error", true);
+			Flags.debug("Command Argument Count Error");
 			sender.sendMessage(command.getHelp());
 			return true;
 		}
@@ -75,7 +75,7 @@ public final class Command {
 		if(command.requiresLocation) {
 			location = ECommandLocation.get(args[1]);
 			if(location == null) {
-				Flags.log("Command Location Error", true);
+				Flags.debug("Command Location Error");
 				sender.sendMessage(command.getHelp());
 				return true;
 			}
@@ -193,7 +193,7 @@ public final class Command {
 		// Check argument length (-1 means infinite optional args)
 		if(args.length < command.requiredArgs
 				|| (command.optionalArgs > 0 && args.length > command.requiredArgs + command.optionalArgs)) { 
-			Flags.log("Command Argument Count Error", true);
+			Flags.debug("Command Argument Count Error");
 			sender.sendMessage(command.getHelp());
 			return true;
 		}
@@ -202,7 +202,7 @@ public final class Command {
 		if(command.requiresLocation) {
 			location = ECommandLocation.get(args[1]);
 			if(location == null) {
-				Flags.log("Command Location Error", true);
+				Flags.debug("Command Location Error");
 				sender.sendMessage(command.getHelp());
 				return true;
 			}

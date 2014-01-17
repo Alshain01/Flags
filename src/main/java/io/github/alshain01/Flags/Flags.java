@@ -77,6 +77,7 @@ public class Flags extends JavaPlugin {
 		debugOn = getConfig().getBoolean("Flags.Debug");
 		
 		if (getConfig().getBoolean("Flags.Update.Check")) {
+            debug("Enabling Update Scheduler");
 			new UpdateScheduler().runTaskTimer(this, 0, 1728000);
 		}
 		
@@ -87,7 +88,7 @@ public class Flags extends JavaPlugin {
 
 		// Find the first available land management system
 		currentSystem = findSystem(getServer().getPluginManager());
-		getLogger().info(currentSystem == System.WORLD ? "No system detected. Only world flags will be available."
+		log(currentSystem == System.WORLD ? "No system detected. Only world flags will be available."
 						: currentSystem.getDisplayName() + " detected. Enabling integrated support.");
 
 		// Check for older database and import as necessary.
@@ -100,7 +101,7 @@ public class Flags extends JavaPlugin {
 
         // New installation
         if (!dataStore.create(this)) {
-            getLogger().warning("Failed to create database schema. Shutting down Flags.");
+            severe("Failed to create database schema. Shutting down Flags.");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -114,14 +115,14 @@ public class Flags extends JavaPlugin {
 
 		// Load Border Patrol
 		if (borderPatrol) {
-			log("Registering for PlayerMoveEvent", true);
+			debug("Registering for PlayerMoveEvent");
 			BorderPatrol bp = new BorderPatrol(getConfig().getInt("Flags.BorderPatrol.EventDivisor"), getConfig().getInt("Flags.BorderPatrol.TimeDivisor"));
 			getServer().getPluginManager().registerEvents(bp, this);
 		}
 
 		// Schedule tasks to perform after server is running
 		new onServerEnabledTask(this.getConfig().getBoolean("Flags.Metrics.Enabled")).runTask(this);
-		getLogger().info("Flags Has Been Enabled.");
+		log("Flags Has Been Enabled.");
 	}
 	
 	/**
@@ -165,7 +166,7 @@ public class Flags extends JavaPlugin {
 		flagRegistrar = null;
 		currentSystem = null;
 
-		getLogger().info("Flags Has Been Disabled.");
+		log("Flags Has Been Disabled.");
 	}
 	
 	/*
@@ -202,7 +203,7 @@ public class Flags extends JavaPlugin {
 		@Override
 		public void run() {
 			for (final String b : Flags.getDataStore().readBundles()) {
-				log("Registering Bundle Permission:" + b, true);
+				debug("Registering Bundle Permission:" + b);
 				final Permission perm = new Permission("flags.bundle." + b,
 						"Grants ability to use the bundle " + b,
 						PermissionDefault.FALSE);
@@ -270,26 +271,7 @@ public class Flags extends JavaPlugin {
 				|| APIVersion == CompareVersion	&& APIBuild >= CompareBuild);
 	}
 
-	/**
-	 * Sends a log message through the Flags logger.
-	 * 
-	 * @param message
-	 *            The message
-	 * @param debug
-	 * 			  Specifies if the message is a debug message
-	 */
-	public static void log(String message, boolean debug) {
-		if(debug && !debugOn) {
-			return;
-		}
-		
-		if (debug) {
-			message = "DEBUG: " + message;
-		}
-		Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().info(message);
-	}
-	
-	/**
+    /**
 	 * Sends a severe message through the Flags logger.
 	 * 
 	 * @param message
@@ -316,7 +298,7 @@ public class Flags extends JavaPlugin {
 	 *            The message
 	 */
 	public static void log(String message) {
-		log(message, false);
+        Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().info(message);
 	}
 
     /**
@@ -326,7 +308,9 @@ public class Flags extends JavaPlugin {
      *            The message
      */
     public static void debug(String message) {
-        log(message, true);
+        if(debugOn) {
+            Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().info("[DEBUG] " + message);
+        }
     }
 
 	/**
@@ -374,9 +358,9 @@ public class Flags extends JavaPlugin {
 		final List<?> pluginList = getConfig().getList("Flags.AreaPlugins");
 
 		for(Object o : pluginList) {
-			log("Testing Plugin: " + o, true);
+			debug("Testing Plugin: " + o);
 			if (pm.isPluginEnabled((String) o)) {
-				log("Plugin Found: " + o, true);
+				debug("Plugin Found: " + o);
 				return System.getByName((String) o);
 			}
 		}
