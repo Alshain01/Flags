@@ -346,7 +346,8 @@ public class SQLDataStore implements DataStore {
 
     @Override
     public boolean readInheritance(Area area) {
-        if(!(area instanceof Subdivision) || ((Subdivision)area).isSubdivision()) {
+        if(!(area instanceof Subdivision) || !((Subdivision)area).isSubdivision()) {
+            Flags.debug("Cannot read inheritance, area is not a subdivision.");
             return false;
         }
 
@@ -355,7 +356,11 @@ public class SQLDataStore implements DataStore {
         ResultSet results = executeQuery(areaBuilder(selectString, area));
 
         try {
-            return !results.next() || results.getBoolean("FlagValue");
+            if (!results.next()) {
+                Flags.debug("Inheritance flag not found in DataStore, assuming true.");
+                return true;
+            }
+            return results.getBoolean("FlagValue");
         } catch (SQLException ex){
             SqlError(ex.getMessage());
         }
@@ -364,8 +369,9 @@ public class SQLDataStore implements DataStore {
 
     //TODO: Implementation Specific (BOOLEAN)
     @Override
-    public void writeInheritance(Area area, Boolean value) {
+    public void writeInheritance(Area area, boolean value) {
         if(!(area instanceof Subdivision) || !((Subdivision)area).isSubdivision()) {
+            Flags.debug("Cannot write inheritance, area is not a subdivision.");
             return;
         }
 

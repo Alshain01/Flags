@@ -61,7 +61,7 @@ public interface DataStore {
 
 	public void writeFlag(Area area, Flag flag, Boolean value);
 
-	public void writeInheritance(Area area, Boolean value);
+	public void writeInheritance(Area area, boolean value);
 
 	public void writeMessage(Area area, Flag flag, String message);
 

@@ -178,7 +178,7 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
 	}
 
 	@Override
-	public void setInherited(Boolean value) {
+	public void setInherited(boolean value) {
 		if (field == null || !field.isChild()) {
 			return;
 		}

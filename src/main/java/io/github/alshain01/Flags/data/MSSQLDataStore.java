@@ -29,9 +29,9 @@ public class MSSQLDataStore extends SQLDataStore {
             executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(25), FlagName VARCHAR(25), CONSTRAINT pk_BundleEntry PRIMARY KEY (BundleName, FlagName));");
             executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(25), ProductType VARCHAR(25), Cost DOUBLE, CONSTRAINT pk_FlagType PRIMARY KEY (FlagName, ProductType));");
             executeStatement("CREATE TABLE IF NOT EXISTS WorldFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BIT, FlagMessage VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
-            executeStatement("CREATE TABLE IF NOT EXISTS WorldTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
+            executeStatement("CREATE TABLE IF NOT EXISTS WorldTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName, Trustee));");
             executeStatement("CREATE TABLE IF NOT EXISTS DefaultFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BIT, FlagMessage VARCHAR(255), CONSTRAINT pk_DefaultFlag PRIMARY KEY (WorldName, FlagName));");
-            executeStatement("CREATE TABLE IF NOT EXISTS DefaultTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_DefaultTrust PRIMARY KEY (WorldName, FlagName));");
+            executeStatement("CREATE TABLE IF NOT EXISTS DefaultTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_DefaultTrust PRIMARY KEY (WorldName, FlagName, Trustee));");
         }
         return true;
     }
@@ -47,7 +47,7 @@ public class MSSQLDataStore extends SQLDataStore {
         executeStatement("CREATE TABLE IF NOT EXISTS " + System.getActive().toString()
                 + "Trust (WorldName VARCHAR(50), AreaID VARCHAR(50), "
                 + "AreaSubID VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), "
-                + "CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
+                + "CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName, Trustee));");
     }
 
     @Override
@@ -85,7 +85,7 @@ public class MSSQLDataStore extends SQLDataStore {
                     + " VALUES ('%world%', '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
         } else {
             insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue)"
-                    + " VALUES ('%world%', '%area%', '%sub%', '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
+                    + " VALUES ('%world%', '%area%', %sub%, '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
         }
 
         String bitValue = "null";
@@ -99,19 +99,16 @@ public class MSSQLDataStore extends SQLDataStore {
     }
 
     @Override
-    public void writeInheritance(Area area, Boolean value) {
+    public void writeInheritance(Area area, boolean value) {
         // BIT BASED BOOLEAN
         if(!(area instanceof Subdivision) || !((Subdivision)area).isSubdivision()) {
             return;
         }
 
-        String bitValue = "null";
-        if(value != null) {
-            bitValue = String.valueOf(value ? 1 : 0);
-        }
+        String bitValue = String.valueOf(value ? 1 : 0);
 
         String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue) "
-                + "VALUES ('%world%', '%area%', '%sub%', 'InheritParent', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
+                + "VALUES ('%world%', '%area%', %sub%, 'InheritParent', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
 
         executeStatement(areaBuilder(insertString, area)
                 .replaceAll("%value%", bitValue));

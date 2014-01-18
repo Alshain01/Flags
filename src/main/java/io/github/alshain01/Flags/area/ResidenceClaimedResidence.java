@@ -155,7 +155,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	}
 
 	@Override
-	public void setInherited(Boolean value) {
+	public void setInherited(boolean value) {
 		if (residence == null || residence.getParent() == null) {
 			return;
 		}

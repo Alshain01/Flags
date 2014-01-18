@@ -322,7 +322,7 @@ public final class YamlDataStore implements DataStore {
 	}
 
 	@Override
-	public void writeInheritance(Area area, Boolean value) {
+	public void writeInheritance(Area area, boolean value) {
 		if (!(area instanceof Subdivision) || !((Subdivision) area).isSubdivision()) {
 			return;
 		}
@@ -330,10 +330,6 @@ public final class YamlDataStore implements DataStore {
 		final String path = area.getType().toString() + "." + area.getWorld().getName() + "." + area.getSystemID() + "."	+ ((Subdivision) area).getSystemSubID() + ".InheritParent";
 		
 		final CustomYML cYml = getYml(path);
-		
-		if (value == null) {
-            value = cYml.getConfig().isSet(path) && !cYml.getConfig().getBoolean(path);
-		}
 		
 		cYml.getConfig().set(path, value);
 		cYml.saveConfig();

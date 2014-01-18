@@ -271,8 +271,14 @@ final class FlagCmd extends Common {
 	 */
 	protected static void inherit(Player player, Boolean value) {
 		Area area = getArea(player, ECommandLocation.AREA);
-		if(!Validate.isArea(player, area) || !Validate.isSubdivision(player, area)) { return; }
-	
+		if(!Validate.isArea(player, area) || !Validate.isSubdivision(player, area)) {
+            Flags.debug("Failed area or subdivision validation");
+            return; }
+
+        if(value == null) {
+            value = !((Subdivision)area).isInherited();
+        }
+
 		((Subdivision)area).setInherited(value);
 		player.sendMessage(Message.SetInherited.get()
 				.replaceAll("\\{Value\\}", getValue(((Subdivision)area).isInherited()).toLowerCase()));
