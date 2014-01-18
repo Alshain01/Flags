@@ -399,7 +399,7 @@ public class SQLDataStore implements DataStore {
 
         try {
             if(results.next()) {
-                return results.getString("FlagMessage");
+                return results.getString("FlagMessage").replaceAll("''", "'");
             }
             Flags.debug("Found no SQL results for query");
             return null;
@@ -416,7 +416,7 @@ public class SQLDataStore implements DataStore {
         if (message == null) {
             message = "null";
         } else {
-            message = "'" + message + "'";
+            message = "'" + message.replaceAll("'", "''") + "'";
         }
         Flags.debug("Writing message: " + message);
 
