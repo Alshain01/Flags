@@ -45,7 +45,7 @@ public class SQLDataStore implements DataStore {
     protected SQLDataStore() { }
 
     private String getSubID(Area area) {
-        return (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : "null";
+        return (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : "'null'";
     }
 
 
@@ -234,7 +234,9 @@ public class SQLDataStore implements DataStore {
         try {
             while(results.next()) {
                 String flagName = results.getString("FlagName");
+                Flags.debug(flagName);
                 if(Flags.getRegistrar().getFlag(flagName) != null) {
+                    Flags.debug(flagName + " found in registrar.");
                     flags.add(Flags.getRegistrar().getFlag(flagName));
                 }
             }
@@ -252,21 +254,23 @@ public class SQLDataStore implements DataStore {
     //TODO: Oracle doesn't support standard for inserting multiple rows
     @Override
     public void writeBundle(String bundleName, Set<Flag> flags) {
-        if (flags == null || flags.size() == 0) {
-            deleteBundle(bundleName);
-            return;
-        }
-
         StringBuilder values = new StringBuilder();
 
         // Clear out any existing version of this bundle.
+        // If no flags are provided, assume we are deleting it.
         deleteBundle(bundleName);
+        if (flags == null || flags.size() == 0) {
+            Flags.debug("No flags provided, removing bundle.");
+            return;
+        }
 
         Iterator<Flag> iterator = flags.iterator();
+        Flags.debug("Beginning flag iteration.");
         while(iterator.hasNext()) {
             Flag flag = iterator.next();
             values.append("('").append(bundleName).append("','").append(flag.getName()).append("')");
             if(iterator.hasNext()) {
+                Flags.debug("Found another flag.");
                 values.append(",");
             }
         }

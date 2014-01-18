@@ -120,6 +120,8 @@ final class Validate {
 	}
 	
 	protected static boolean isBundlePermitted(Permissible p, Object o) {
+        if(p.isOp()) { return true; }
+
 		if(o instanceof String) {
 			if(p.hasPermission("flags.bundle." + o)) { return true; }
 			if(p instanceof CommandSender) {

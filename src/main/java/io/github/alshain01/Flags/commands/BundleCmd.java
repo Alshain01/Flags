@@ -127,20 +127,27 @@ final class BundleCmd extends Common {
 	}
 	
 	protected static void delete(CommandSender sender, String bundleName, Set<String> flags) {
-		if(sender instanceof Player && !Validate.canEditBundle(sender)){ return; }
+		if(sender instanceof Player && !Validate.canEditBundle(sender)){
+            Flags.debug("Bundle permission error.");
+            return; }
 		
 		boolean success = true;
 		Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName.toLowerCase());
 		
-		if(!Validate.isBundle(sender, bundle, bundleName)) { return; }
+		if(!Validate.isBundle(sender, bundle, bundleName)) {
+            Flags.debug("Invalid Bundle");
+            return; }
 
 		for(String s : flags) {
             Flag flag = Flags.getRegistrar().getFlag(s);
-            if (flag == null || !bundle.remove(flag)) { success = false; }
+            Flags.debug("Remvoing " + s + " from bundle.");
+            if (flag == null || !bundle.remove(flag)) {
+                Flags.debug("Failed to delete flag from bundle");
+                success = false; }
 		}
 		Flags.getDataStore().writeBundle(bundleName, bundle);
 		
-		sender.sendMessage((success ? Message.UpdateBundle.get() : Message.RemoveAllFlags.get())
+		sender.sendMessage((success ? Message.UpdateBundle.get() : Message.RemoveAllFlagsError.get())
 				.replaceAll("\\{Bundle\\}", bundleName));
 	}
 	
@@ -181,7 +188,8 @@ final class BundleCmd extends Common {
         }
         
 		sender.sendMessage(Message.HelpHeader.get()
-				.replaceAll("\\{Type\\}", Message.Index.get())
+				.replaceAll("\\{Type\\}", Message.Bundle.get())
+                .replaceAll("\\{Group}", Message.Index.get())
 				.replaceAll("\\{Page\\}", String.valueOf(page))
 				.replaceAll("\\{TotalPages\\}", String.valueOf(total))
 				.replaceAll("\\{Type\\}", Message.Bundle.get()));

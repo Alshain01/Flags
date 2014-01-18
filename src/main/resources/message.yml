@@ -73,7 +73,7 @@ Message:
   
   # Help Messages
   HelpHeader: '&6---------&f {Type}: {Group} ({Page}/{TotalPages})&6--------------------'
-  HelpInfo: '&7Use /{Type} help [n] to get page n of <10>s.'
+  HelpInfo: '&7Use /{Type} help [n] to get page n of {Type}s.'
   GroupHelpInfo: '&7Below is a list of all {Type} commands:'
   HelpTopic: '&6{Topic}&f: {Description}'
   GroupHelpDescription: Lists all flags for {Group}.
