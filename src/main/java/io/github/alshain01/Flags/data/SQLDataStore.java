@@ -162,9 +162,9 @@ public class SQLDataStore implements DataStore {
             executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(25), FlagName VARCHAR(25), CONSTRAINT pk_BundleEntry PRIMARY KEY (BundleName, FlagName));");
             executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(25), ProductType VARCHAR(25), Cost DOUBLE, CONSTRAINT pk_FlagType PRIMARY KEY (FlagName, ProductType));");
             executeStatement("CREATE TABLE IF NOT EXISTS WorldFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
-            executeStatement("CREATE TABLE IF NOT EXISTS WorldTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
+            executeStatement("CREATE TABLE IF NOT EXISTS WorldTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName, Trustee));");
             executeStatement("CREATE TABLE IF NOT EXISTS DefaultFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), CONSTRAINT pk_DefaultFlag PRIMARY KEY (WorldName, FlagName));");
-            executeStatement("CREATE TABLE IF NOT EXISTS DefaultTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_DefaultTrust PRIMARY KEY (WorldName, FlagName));");
+            executeStatement("CREATE TABLE IF NOT EXISTS DefaultTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_DefaultTrust PRIMARY KEY (WorldName, FlagName, Trustee));");
         }
         return true;
     }
@@ -178,10 +178,10 @@ public class SQLDataStore implements DataStore {
                 + "FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), "
                 + "CONSTRAINT pk_AreaFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
 
-        executeStatement("CREATE TABLE IF NOT EXISTS " + io.github.alshain01.Flags.System.getActive().toString()
+        executeStatement("CREATE TABLE IF NOT EXISTS " + System.getActive().toString()
                 + "Trust (WorldName VARCHAR(50), AreaID VARCHAR(50), "
                 + "AreaSubID VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), "
-                + "CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
+                + "CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName, Trustee));");
     }
 
     //TODO: Implementation Specific (ROW LIMITING)
@@ -305,7 +305,7 @@ public class SQLDataStore implements DataStore {
     public Boolean readFlag(Area area, Flag flag) {
         StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Flags WHERE WorldName='%world%'");
         if(!(area instanceof Default || area instanceof World)) {
-            selectString.append(" AND AreaID='%area%' AND AreaSubID='%sub%'");
+            selectString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
         }
         selectString.append(" AND FlagName='%flag%';");
 
@@ -335,7 +335,7 @@ public class SQLDataStore implements DataStore {
                     + " VALUES ('%world%', '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
         } else {
             insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue)"
-                    + " VALUES ('%world%', '%area%', '%sub%', '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
+                    + " VALUES ('%world%', '%area%', %sub%, '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
         }
 
 
@@ -350,7 +350,7 @@ public class SQLDataStore implements DataStore {
             return false;
         }
 
-        String selectString = "SELECT * FROM %table%Flags WHERE WorldName='%world%' AND AreaID='%area%' AND AreaSubID='%sub%' AND FlagName='InheritParent';";
+        String selectString = "SELECT * FROM %table%Flags WHERE WorldName='%world%' AND AreaID='%area%' AND AreaSubID=%sub% AND FlagName='InheritParent';";
 
         ResultSet results = executeQuery(areaBuilder(selectString, area));
 
@@ -370,7 +370,7 @@ public class SQLDataStore implements DataStore {
         }
 
         String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue) "
-                + "VALUES ('%world%', '%area%', '%sub%', 'InheritParent', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
+                + "VALUES ('%world%', '%area%', %sub%, 'InheritParent', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
 
         executeStatement(areaBuilder(insertString, area)
                 .replaceAll("%value%", String.valueOf(value)));
@@ -380,7 +380,7 @@ public class SQLDataStore implements DataStore {
     public String readMessage(Area area, Flag flag) {
         StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Flags WHERE WorldName='%world%'");
         if(!(area instanceof Default || area instanceof World)) {
-            selectString.append(" AND AreaID='%area%' AND AreaSubID='%sub%'");
+            selectString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
         }
         selectString.append(" AND FlagName='%flag%';");
 
@@ -413,7 +413,7 @@ public class SQLDataStore implements DataStore {
         if(area instanceof Default || area instanceof World) {
             insertString = "INSERT INTO %table%Flags (WorldName, FlagName, FlagMessage) VALUES ('%world%', '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
         } else {
-            insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID. FlagName, FlagMessage) VALUES ('%world%', '%area%', '%sub%', '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
+            insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagMessage) VALUES ('%world%', '%area%', %sub%, '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
         }
         executeStatement(areaBuilder(insertString, area)
                 .replaceAll("%flag%", flag.getName())
@@ -424,7 +424,7 @@ public class SQLDataStore implements DataStore {
     public Set<String> readTrust(Area area, Flag flag) {
         StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Trust WHERE WorldName='%world%'");
         if(!(area instanceof Default || area instanceof World)) {
-            selectString.append(" AND AreaID='%area%' AND AreaSubID='%sub%'");
+            selectString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
         }
         selectString.append(" AND FlagName='%flag%';");
 
@@ -448,7 +448,7 @@ public class SQLDataStore implements DataStore {
         // Delete the old list to be replaced
         StringBuilder deleteString = new StringBuilder("DELETE FROM %table%Trust WHERE WorldName='%world%'");
         if(!(area instanceof Default || area instanceof World)) {
-            deleteString.append(" AND AreaID='%area%' AND AreaSubID='%sub%'");
+            deleteString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
         }
         deleteString.append(" AND FlagName='%flag%';");
 
@@ -459,7 +459,7 @@ public class SQLDataStore implements DataStore {
             if(area instanceof Default || area instanceof World) {
                 insertString = "INSERT INTO %table%Trust (WorldName, FlagName, Trustee) VALUES('%world%', '%flag%', '%player%');";
             } else {
-                insertString = "INSERT INTO %table%Trust (WorldName, AreaID, AreaSubID, FlagName, Trustee) VALUES('%world%', '%area%', '%sub%', '%flag%', '%player%');";
+                insertString = "INSERT INTO %table%Trust (WorldName, AreaID, AreaSubID, FlagName, Trustee) VALUES('%world%', '%area%', %sub%, '%flag%', '%player%');";
             }
 
             executeStatement(areaBuilder(insertString, area)
@@ -470,7 +470,7 @@ public class SQLDataStore implements DataStore {
 
     @Override
     public void remove(Area area) {
-        String deleteString = "DELETE FROM %table%%type% WHERE WorldName='%world%' AND AreaID='%area%' AND SubID='%sub%';";
+        String deleteString = "DELETE FROM %table%%type% WHERE WorldName='%world%' AND AreaID='%area%' AND SubID=%sub%;";
         executeStatement(areaBuilder(deleteString, area)
                 .replaceAll("%type%", "Flags"));
 

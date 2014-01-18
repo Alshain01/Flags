@@ -53,7 +53,9 @@ public enum System {
             final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention");
             final float pluginVersion = Float.valueOf(plugin.getDescription().getVersion().substring(0, 3));
 
-            return pluginVersion >= (float)7.8 ? new GriefPreventionClaim78(location) : new GriefPreventionClaim(location);
+            return pluginVersion >= (float)7.8
+                    ? new GriefPreventionClaim78(location)
+                    : new GriefPreventionClaim(location);
         }
 
         public Area getArea(String name) {
