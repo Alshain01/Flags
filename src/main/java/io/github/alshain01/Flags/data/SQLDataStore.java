@@ -294,11 +294,11 @@ public class SQLDataStore implements DataStore {
 
     @Override
     public void writePrice(Flag flag, EPurchaseType type, double price) {
-        String insertString = "INSERT INTO Price (FlagName, ProductType, Cost) VALUES ('%flag%', '%product%', price) ON DUPLICATE KEY UPDATE Cost=%price%;";
+        String insertString = "INSERT INTO Price (FlagName, ProductType, Cost) VALUES ('%flag%', '%product%', %price%) ON DUPLICATE KEY UPDATE Cost=%price%;";
         executeStatement(insertString
                 .replaceAll("%flag%", flag.getName())
                 .replaceAll("%product%", type.toString())
-                .replaceAll("%price$", String.valueOf(price)));
+                .replaceAll("%price%", String.valueOf(price)));
     }
 
     @Override
