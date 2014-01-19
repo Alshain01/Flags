@@ -14,7 +14,7 @@ commands:
     permission: flags.command.bundle
     usage: /flag <set|remove|add|delete|erase|help>
 
-  flagsadmin:
+  flags:
     description: Administrative command for the plugin Flags
     aliases: fa
     permission: flags.admin

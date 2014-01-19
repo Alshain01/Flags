@@ -31,6 +31,7 @@ import io.github.alshain01.Flags.area.Default;
 import io.github.alshain01.Flags.area.Subdivision;
 import io.github.alshain01.Flags.area.World;
 import io.github.alshain01.Flags.economy.EPurchaseType;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.*;
@@ -491,5 +492,138 @@ public class SQLDataStore implements DataStore {
     @Override
     public DataStoreType getType() {
         return DataStoreType.POSTGRESQL;
+    }
+
+    public void importDB() {
+        Flags.log("Importing YAML Database to " + getType().getName());
+        DataStore yaml = new YamlDataStore((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
+
+        //Import the bundles
+        for(String b : yaml.readBundles()) {
+            writeBundle(b, yaml.readBundle(b));
+        }
+
+        //Import the prices
+        for(Flag f : Flags.getRegistrar().getFlags()) {
+            double price = yaml.readPrice(f, EPurchaseType.Flag);
+            if(price > (double)0) {
+                writePrice(f, EPurchaseType.Flag, price);
+            }
+
+            price = yaml.readPrice(f, EPurchaseType.Message);
+            if(price > (double)0) {
+                writePrice(f, EPurchaseType.Message, price);
+            }
+        }
+
+        //Import world & default data
+        for(org.bukkit.World w : Bukkit.getWorlds()) {
+            for(Flag f : Flags.getRegistrar().getFlags()) {
+                World world = new World(w);
+                Default def = new Default(w);
+
+                //Flags
+                Boolean value = yaml.readFlag(world, f);
+                if(value != null) {
+                    writeFlag(world, f, value);
+                }
+
+                value = yaml.readFlag(def, f);
+                if(value != null) {
+                    writeFlag(def, f, yaml.readFlag(def, f));
+                }
+
+                //Messages
+                String message = yaml.readMessage(world, f);
+                if(message != null) {
+                    writeMessage(world, f, message);
+                }
+
+                message = yaml.readMessage(def, f);
+                if(message != null) {
+                    writeMessage(def, f, message);
+                }
+
+                //Trust Lists
+                Set<String> trust = yaml.readTrust(world, f);
+                if(!trust.isEmpty()) {
+                    writeTrust(world, f, trust);
+                }
+
+                trust = yaml.readTrust(def, f);
+                if(!trust.isEmpty()) {
+                    writeTrust(def, f, trust);
+                }
+            }
+        }
+
+        Flags.log("Import Complete");
+    }
+
+    public void exportDB() {
+        Flags.log("Exporting " + getType().getName() + " Database to YAML");
+        DataStore yaml = new YamlDataStore((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
+
+        //Export the bundles
+        Set<String> bundles = readBundles();
+        for(String b : bundles) {
+            yaml.writeBundle(b, readBundle(b));
+        }
+
+        //Export the prices
+        for(Flag f : Flags.getRegistrar().getFlags()) {
+            double price = readPrice(f, EPurchaseType.Flag);
+            if(price > (double)0) {
+                yaml.writePrice(f, EPurchaseType.Flag, price);
+            }
+
+            price = readPrice(f, EPurchaseType.Message);
+            if(price > (double)0) {
+                yaml.writePrice(f, EPurchaseType.Message, price);
+            }
+        }
+
+        //Import world & default data
+        for(org.bukkit.World w : Bukkit.getWorlds()) {
+            for(Flag f : Flags.getRegistrar().getFlags()) {
+                World world = new World(w);
+                Default def = new Default(w);
+
+                //Flags
+                Boolean value = readFlag(world, f);
+                if(value != null) {
+                    yaml.writeFlag(world, f, value);
+                }
+
+                value = readFlag(def, f);
+                if(value != null) {
+                    yaml.writeFlag(def, f, yaml.readFlag(def, f));
+                }
+
+                //Messages
+                String message = readMessage(world, f);
+                if(message != null) {
+                    yaml.writeMessage(world, f, message);
+                }
+
+                message = readMessage(def, f);
+                if(message != null) {
+                    yaml.writeMessage(def, f, message);
+                }
+
+                //Trust Lists
+                Set<String> trust = readTrust(world, f);
+                if(!trust.isEmpty()) {
+                    yaml.writeTrust(world, f, trust);
+                }
+
+                trust = readTrust(def, f);
+                if(!trust.isEmpty()) {
+                    yaml.writeTrust(def, f, trust);
+                }
+            }
+        }
+
+        Flags.log("Export Complete");
     }
 }

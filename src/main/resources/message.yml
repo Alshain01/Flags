@@ -47,6 +47,7 @@ Message:
   AreaPermError: '&cYou do not have permission to set a {Type} in &6{OwnerName}&c''s {AreaType}.'
   WorldPermError: '&cYou do not have permission to set a {Type} in the {AreaType}.'
   EconomyError: '&cThere is no economy installed on this server.'
+  SQLDatabaseError: '&cThis action can only be performed on a SQL database.'
   
   # Command Messages
   GetFlag: '&bThe {AreaType} flag &e{Flag} &bis {Value}.'

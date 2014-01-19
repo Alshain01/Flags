@@ -73,6 +73,15 @@ public final class YamlDataStore implements DataStore {
 		return true;
 	}
 
+    // Used in SQL Import/Export
+    protected Set<String> readKeys(String dataLocation) {
+        CustomYML yaml = getYml(dataLocation);
+        if(yaml.getConfig().isConfigurationSection(dataLocation)) {
+            return yaml.getConfig().getConfigurationSection(dataLocation).getKeys(false);
+        }
+        return new HashSet<String>();
+    }
+
 	private void deleteBundle(String name) {
 		final String path = "Bundle." + name;
 		final CustomYML cYml = getYml(path);

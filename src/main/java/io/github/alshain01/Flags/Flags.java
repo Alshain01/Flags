@@ -38,8 +38,6 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -144,13 +142,31 @@ public class Flags extends JavaPlugin {
 	@Override
 	public boolean onCommand(CommandSender sender,
 			org.bukkit.command.Command cmd, String label, String[] args) {
-        if (cmd.getName().equalsIgnoreCase("flagsadmin")) {
+        if (cmd.getName().equalsIgnoreCase("flags")) {
             if(args.length < 1) {
                 return false;
             }
 
             if(args[0].equalsIgnoreCase("reload")) {
                 this.reload();
+            }
+
+            if(args[0].equalsIgnoreCase("import")) {
+                if(dataStore instanceof SQLDataStore) {
+                    ((SQLDataStore)dataStore).importDB();
+                    return true;
+                }
+                sender.sendMessage(Message.SQLDatabaseError.get());
+                return true;
+            }
+
+            if(args[0].equalsIgnoreCase("export")) {
+                if(dataStore instanceof SQLDataStore) {
+                    ((SQLDataStore)dataStore).exportDB();
+                    return true;
+                }
+                sender.sendMessage(Message.SQLDatabaseError.get());
+                return true;
             }
 
             return false;
@@ -272,6 +288,7 @@ public class Flags extends JavaPlugin {
 
         messageStore.reload();
         dataStore.reload();
+        log("Flag Database Reloaded");
     }
 
 	/**
@@ -348,7 +365,7 @@ public class Flags extends JavaPlugin {
 	 * Gets the DataStore used by Flags. In most cases, plugins should not
 	 * attempt to access this directly.
 	 * 
-	 * @return The vault economy.
+	 * @return The dataStore object in Flags.
 	 */
 	public static DataStore getDataStore() {
 		return dataStore;

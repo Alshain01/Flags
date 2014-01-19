@@ -18,7 +18,7 @@ public enum DataStoreType {
             return new MSSQLDataStore(url, user, pw);
         }
     },
-    MYSQL("mysql", "MYSQL") {
+    MYSQL("mysql", "MySQL") {
         public DataStore getDataStore(JavaPlugin plugin) {
             final String url = plugin.getConfig().getString("Flags.Database.Url");
             final String user = plugin.getConfig().getString("Flags.Database.User");
@@ -59,21 +59,4 @@ public enum DataStoreType {
        }
        return DataStoreType.YAML;
     }
-/*
-    public DataStore getDataStore(JavaPlugin plugin) {
-        String url = plugin.getConfig().getString("Flags.Database.Url");
-        String user = plugin.getConfig().getString("Flags.Database.User");
-        String pw = plugin.getConfig().getString("Flags.Database.Password");
-
-        switch (this) {
-            case MYSQL:
-                return new MySQLDataStore(url, user, pw);
-            case MSSQL:
-                return new MSSQLDataStore(url, user, pw);
-            case POSTGRESQL:
-                return new SQLDataStore(url, user, pw);
-            default:
-                return new YamlDataStore(plugin);
-        }
-    }*/
 }
