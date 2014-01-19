@@ -38,6 +38,8 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -75,12 +77,12 @@ public class Flags extends JavaPlugin {
 		// Create the configuration file if it doesn't exist
 		saveDefaultConfig();
 		debugOn = getConfig().getBoolean("Flags.Debug");
-		
+
 		if (getConfig().getBoolean("Flags.Update.Check")) {
             debug("Enabling Update Scheduler");
 			new UpdateScheduler().runTaskTimer(this, 0, 1728000);
 		}
-		
+
 		borderPatrol = getConfig().getBoolean("Flags.BorderPatrol.Enable");
 
 		// Create the specific implementation of DataStore
@@ -106,7 +108,7 @@ public class Flags extends JavaPlugin {
             return;
         }
 		dataStore.update(this);
-		
+
 		// Enable Vault support
 		setupEconomy();
 
@@ -124,7 +126,7 @@ public class Flags extends JavaPlugin {
 		new onServerEnabledTask(this.getConfig().getBoolean("Flags.Metrics.Enabled")).runTask(this);
 		log("Flags Has Been Enabled.");
 	}
-	
+
 	/**
 	 * Executes the given command, returning its success
 	 * 
@@ -142,6 +144,17 @@ public class Flags extends JavaPlugin {
 	@Override
 	public boolean onCommand(CommandSender sender,
 			org.bukkit.command.Command cmd, String label, String[] args) {
+        if (cmd.getName().equalsIgnoreCase("flagsadmin")) {
+            if(args.length < 1) {
+                return false;
+            }
+
+            if(args[0].equalsIgnoreCase("reload")) {
+                this.reload();
+            }
+
+            return false;
+        }
 		if (cmd.getName().equalsIgnoreCase("flag")) {
 			return Command.onFlagCommand(sender, args);
 		}
@@ -252,6 +265,14 @@ public class Flags extends JavaPlugin {
 			getServer().getPluginManager().registerEvents(new FlagsListener(), plugin);
 		}
 	}
+
+    private void reload() {
+        this.reloadConfig();
+        debugOn = getConfig().getBoolean("Flags.Debug");
+
+        messageStore.reload();
+        dataStore.reload();
+    }
 
 	/**
 	 * Checks if the provided string represents a version number that is equal
