@@ -7,12 +7,12 @@ commands:
   flag:
     description: Allows you to perform actions on flags.
     permission: flags.command.flag
-    usage: /flag <get|set|remove|trust|distrust|view|message|presentmessage|erasemessage|charge|inherit|help>
+    usage: /flag <get|set|remove|trust|distrust|viewtrust|message|presentmessage|erasemessage|charge|inherit|help>
   
   bundle:
     description: Allows you to perform actions on bundles.
     permission: flags.command.bundle
-    usage: /flag <set|remove|add|delete|erase|help>
+    usage: /bundle <get|set|remove|add|delete|erase|help>
 
   flags:
     description: Administrative command for the plugin Flags

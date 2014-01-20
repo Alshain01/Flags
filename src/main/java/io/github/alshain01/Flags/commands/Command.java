@@ -195,10 +195,22 @@ public final class Command {
 	 * @return		 true if a valid command, otherwise false
 	 */
 	public static boolean onBundleCommand(CommandSender sender, String[] args) {
-		if (args.length < 1) { return false; }
+		if (args.length < 1) {
+            if(sender instanceof Player) {
+                sender.sendMessage(getBundleUsage((Player) sender, System.getActive().getAreaAt(((Player) sender).getLocation())));
+                return true;
+            }
+            return false;
+        }
 		
 		final EBundleCommand command = EBundleCommand.get(args[0]);
-		if(command == null) { return false;	}
+		if(command == null) {
+            if(sender instanceof Player) {
+                sender.sendMessage(getBundleUsage((Player) sender, System.getActive().getAreaAt(((Player) sender).getLocation())));
+                return true;
+            }
+            return false;
+        }
 		
 		ECommandLocation location = null;
 		String bundle = null;
@@ -335,7 +347,7 @@ public final class Command {
 	}
 
     private static String getFlagUsage(Player player, Area area) {
-        //usage: /flag <get|set|remove|trust|distrust|view|message|presentmessage|erasemessage|charge|inherit|help>
+        //usage: /flag <get|set|remove|trust|distrust|viewtrust|message|presentmessage|erasemessage|charge|inherit|help>
         // We can assume if we get this far, the player has read access to the command.
         StringBuilder usage = new StringBuilder("/flag <get");
         if(player.hasPermission("flags.command.flag.set") && area.hasPermission(player)) {
@@ -356,6 +368,23 @@ public final class Command {
             usage.append("|inherit");
         }
 
+        usage.append("|help>");
+
+        return usage.toString();
+    }
+
+    private static String getBundleUsage(Player player, Area area) {
+        //usage: /bundle <get|set|remove|add|delete|erase|help>
+        // We can assume if we get this far, the player has read access to the command.
+        StringBuilder usage = new StringBuilder("/bundle <get");
+        if(player.hasPermission("flags.command.bundle.set") && area.hasBundlePermission(player)) {
+            usage.append("|set|remove");
+        }
+
+        if(player.hasPermission("flags.command.bundle.edit")) {
+            usage.append("|add|delete|erase");
+        }
+          
         usage.append("|help>");
 
         return usage.toString();
