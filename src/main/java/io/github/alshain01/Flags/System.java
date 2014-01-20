@@ -34,19 +34,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public enum System {
-	DEFAULT("Default", "Default") {
+	DEFAULT("Default", "Default", false) {
         public Area getAreaAt(Location location) { return new Default(location); }
         public Area getArea(String name) { return new Default(name); }
         public boolean hasArea(Location location) { return true; }
     },
 
-	WORLD("World", "World") {
+	WORLD("World", "World", false) {
         public Area getAreaAt(Location location) { return new World(location); }
         public Area getArea(String name) { return new World(name); }
         public boolean hasArea(Location location) { return true; }
     },
 
-	GRIEF_PREVENTION("GriefPrevention",	"Grief Prevention") {
+	GRIEF_PREVENTION("GriefPrevention",	"Grief Prevention", true) {
         public Area getAreaAt(Location location) {
             if(!hasArea(location)) { return new World(location); }
 
@@ -70,7 +70,7 @@ public enum System {
         public boolean hasArea(Location location) { return GriefPreventionClaim.hasClaim(location); }
     } ,
 
-	WORLDGUARD("WorldGuard", "WorldGuard") {
+	WORLDGUARD("WorldGuard", "WorldGuard", false) {
         public Area getAreaAt(Location location) {
             if(!hasArea(location)) { return new World(location); }
             return new WorldGuardRegion(location);
@@ -84,7 +84,7 @@ public enum System {
         public boolean hasArea(Location location) { return WorldGuardRegion.hasRegion(location); }
     },
 
-	RESIDENCE("Residence", "Residence") {
+	RESIDENCE("Residence", "Residence", true) {
         public Area getAreaAt(Location location) {
             if(!hasArea(location)) { return new World(location); }
             return new ResidenceClaimedResidence(location);
@@ -93,7 +93,7 @@ public enum System {
         public boolean hasArea(Location location) { return ResidenceClaimedResidence.hasResidence(location); }
     },
 
-	INFINITEPLOTS("InfinitePlots", "InfinitePlots") {
+	INFINITEPLOTS("InfinitePlots", "InfinitePlots", false) {
         public Area getAreaAt(Location location) {
             if(!hasArea(location)) { return new World(location); }
             return new InfinitePlotsPlot(location);
@@ -108,7 +108,7 @@ public enum System {
         public boolean hasArea(Location location) { return InfinitePlotsPlot.hasPlot(location); }
     },
 
-	FACTIONS("Factions", "Factions") {
+	FACTIONS("Factions", "Factions", false) {
         public Area getAreaAt(Location location) {
             if(!hasArea(location)) { return new World(location); }
             return new FactionsTerritory(location);
@@ -122,7 +122,7 @@ public enum System {
         public boolean hasArea(Location location) { return FactionsTerritory.hasTerritory(location); }
     },
 
-	PLOTME("PlotMe", "PlotMe") {
+	PLOTME("PlotMe", "PlotMe",false) {
         public Area getAreaAt(Location location) {
             if(!hasArea(location)) { return new World(location); }
             return new PlotMePlot(location);
@@ -136,7 +136,7 @@ public enum System {
         public boolean hasArea(Location location) { return PlotMePlot.hasPlot(location); }
     },
 
-	REGIOS("Regios", "Regios") {
+	REGIOS("Regios", "Regios", false) {
         public Area getAreaAt(Location location) {
             if(!hasArea(location)) { return new World(location); }
             return new RegiosRegion(location);
@@ -145,7 +145,7 @@ public enum System {
         public boolean hasArea(Location location) { return RegiosRegion.hasRegion(location); }
     },
 
-	PRECIOUSSTONES("PreciousStones", "PreciousStones"){
+	PRECIOUSSTONES("PreciousStones", "PreciousStones", true){
         public Area getAreaAt(Location location) {
             if(!hasArea(location)) { return new World(location); }
             return new PreciousStonesField(location);
@@ -221,10 +221,12 @@ public enum System {
 	}
 
 	private String pluginName = null, displayName = null;
+    private boolean subdivisions;
 
-	private System(String name, String displayName) {
+	private System(String name, String displayName, boolean hasSubivisions) {
 		pluginName = name;
 		this.displayName = displayName;
+        this.subdivisions = hasSubivisions;
 	}
 	
 	/**
@@ -272,4 +274,8 @@ public enum System {
 		return this == System.GRIEF_PREVENTION
                 && GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
 	}
+
+    public boolean hasSubdivisions() {
+        return subdivisions;
+    }
 }

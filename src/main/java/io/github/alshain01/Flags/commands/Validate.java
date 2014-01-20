@@ -25,6 +25,7 @@
 package io.github.alshain01.Flags.commands;
 
 import io.github.alshain01.Flags.*;
+import io.github.alshain01.Flags.System;
 import io.github.alshain01.Flags.area.Area;
 import io.github.alshain01.Flags.area.Default;
 import io.github.alshain01.Flags.area.Subdivision;
@@ -48,11 +49,15 @@ final class Validate {
 	}
 	
 	protected static boolean isSubdivision(CommandSender cs, Area a) {
-		if(!(a instanceof Subdivision) || !((Subdivision)a).isSubdivision()) {
-			cs.sendMessage(Message.SubdivisionError.get());
-			return false;
-		}
-		return true;
+        if(System.getActive().hasSubdivisions()) {
+            if(!(a instanceof Subdivision) || !((Subdivision)a).isSubdivision()) {
+                cs.sendMessage(Message.SubdivisionError.get());
+                return false;
+            }
+            return true;
+        }
+        cs.sendMessage(Message.SubdivisionSupportError.get().replaceAll("\\{System\\}", System.getActive().getDisplayName()));
+        return false;
 	}
 	
 	protected static boolean isPlayerFlag(CommandSender cs, Flag f) {
