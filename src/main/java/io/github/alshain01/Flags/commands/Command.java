@@ -356,8 +356,8 @@ public final class Command {
         usage.append("|viewtrust"); //read access
 
         if(player.hasPermission("flags.command.flag.set") && area.hasPermission(player)) {
-            usage.append("|message|erasemessage"); //read access
-        }
+            usage.append("|message|erasemessage");
+    }
         usage.append("|presentmessage");
 
         if(Flags.getEconomy() != null && player.hasPermission("flags.command.flag.charge")) {
@@ -384,7 +384,7 @@ public final class Command {
         if(player.hasPermission("flags.command.bundle.edit")) {
             usage.append("|add|delete|erase");
         }
-          
+
         usage.append("|help>");
 
         return usage.toString();
