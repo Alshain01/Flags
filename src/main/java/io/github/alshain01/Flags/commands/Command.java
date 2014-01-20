@@ -28,6 +28,7 @@ import io.github.alshain01.Flags.Flag;
 import io.github.alshain01.Flags.Flags;
 import io.github.alshain01.Flags.Message;
 import io.github.alshain01.Flags.System;
+import io.github.alshain01.Flags.area.Area;
 import io.github.alshain01.Flags.economy.EPurchaseType;
 
 import java.util.Arrays;
@@ -53,10 +54,22 @@ public final class Command {
 	 * @return		 true if a valid command, otherwise false
 	 */
 	public static boolean onFlagCommand(CommandSender sender, String[] args) {
-		if (args.length < 1) { return false; }
+		if (args.length < 1) {
+            if(sender instanceof Player) {
+                sender.sendMessage(getFlagUsage((Player)sender, System.getActive().getAreaAt(((Player)sender).getLocation())));
+                return true;
+            }
+            return false;
+        }
 		
 		final EFlagCommand command = EFlagCommand.get(args[0]);
-		if(command == null) { return false;	}
+		if(command == null) {
+            if(sender instanceof Player) {
+                sender.sendMessage(getFlagUsage((Player)sender, System.getActive().getAreaAt(((Player)sender).getLocation())));
+                return true;
+            }
+            return false;
+        }
 		
 		ECommandLocation location = null;
 		boolean success = false;
@@ -320,4 +333,31 @@ public final class Command {
 		}
 		return null;
 	}
+
+    private static String getFlagUsage(Player player, Area area) {
+        //usage: /flag <get|set|remove|trust|distrust|view|message|presentmessage|erasemessage|charge|inherit|help>
+        // We can assume if we get this far, the player has read access to the command.
+        StringBuilder usage = new StringBuilder("/flag <get");
+        if(player.hasPermission("flags.command.flag.set") && area.hasPermission(player)) {
+            usage.append("|set|remove|trust|distrust");
+        }
+        usage.append("|viewtrust"); //read access
+
+        if(player.hasPermission("flags.command.flag.set") && area.hasPermission(player)) {
+            usage.append("|message|erasemessage"); //read access
+        }
+        usage.append("|presentmessage");
+
+        if(Flags.getEconomy() != null && player.hasPermission("flags.command.flag.charge")) {
+            usage.append("|charge");
+        }
+
+        if(player.hasPermission("flags.command.flag.set") && area.hasPermission(player) && System.getActive().hasSubdivisions()) {
+            usage.append("|inherit");
+        }
+
+        usage.append("|help>");
+
+        return usage.toString();
+    }
 }

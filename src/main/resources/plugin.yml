@@ -16,9 +16,8 @@ commands:
 
   flags:
     description: Administrative command for the plugin Flags
-    aliases: fa
-    permission: flags.admin
-    usage: /flagsadmin <reload|import|export>
+    permission: flags.command.admin
+    usage: /flags <reload|import|export>
     
 permissions:
 # Flag Command Permissions
