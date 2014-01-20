@@ -41,6 +41,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
@@ -227,7 +228,7 @@ public class Flags extends JavaPlugin {
             this.mcStats = mcStats;
         }
 
-        private boolean mcStats = true;
+        private final boolean mcStats;
 
 		@Override
 		public void run() {
@@ -246,14 +247,10 @@ public class Flags extends JavaPlugin {
 
 			// Check the handlers to see if anything is registered for Border
 			// Patrol
-			final RegisteredListener[] listeners = PlayerChangedAreaEvent
-					.getHandlerList().getRegisteredListeners();
+			final RegisteredListener[] listeners = PlayerChangedAreaEvent.getHandlerList().getRegisteredListeners();
 			if (borderPatrol && (listeners == null || listeners.length == 0)) {
-				Bukkit.getServer()
-						.getConsoleSender()
-						.sendMessage("[Flags] "	+ ChatColor.RED
-										+ "No plugins have registered for Flags' Border Patrol listener. "
-										+ "Please consider disabling it in config.yml to increase performance.");
+                PlayerMoveEvent.getHandlerList().unregister(Bukkit.getPluginManager().getPlugin("Flags"));
+				Flags.log("No plugins have registered for Flags' Border Patrol listener. Unregistering PlayerMoveEvent.");
 			}
 		}
 	}
