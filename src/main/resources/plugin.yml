@@ -12,7 +12,7 @@ commands:
   bundle:
     description: Allows you to perform actions on bundles.
     permission: flags.command.bundle
-    usage: /bundle <get|set|remove|add|delete|erase|help>
+    usage: /bundle <get|set|remove|trust|distrust|add|cut|erase|help>
 
   flags:
     description: Administrative command for the plugin Flags

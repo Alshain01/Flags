@@ -252,7 +252,7 @@ public final class Command {
 		}
 		
 		// Process the command
-		
+		Set<String> players = new HashSet<String>();
 		switch(command) {
 			case HELP:
 				BundleCmd.help(sender, getPage(args));
@@ -267,10 +267,19 @@ public final class Command {
 			case REMOVE:
 				BundleCmd.remove((Player)sender, location, bundle);
 				break;
+            case TRUST:
+                players = getPlayers(args, command.requiredArgs - 1);
+                BundleCmd.trust((Player)sender, location, bundle, players);
+                break;
+            case DISTRUST:
+                if(args.length > command.requiredArgs) {
+                    players = getPlayers(args, command.requiredArgs); } // Players can be omitted to distrust all
+                BundleCmd.distrust((Player)sender, location, bundle, players);
+                break;
 			case ADD:
 				BundleCmd.add(sender, bundle, new HashSet<String>(Arrays.asList(args).subList(2, args.length)));
 				break;
-			case DELETE:
+			case CUT:
 				BundleCmd.delete(sender, bundle, new HashSet<String>(Arrays.asList(args).subList(2, args.length)));
 				break;
 			case ERASE:
@@ -378,11 +387,11 @@ public final class Command {
         // We can assume if we get this far, the player has read access to the command.
         StringBuilder usage = new StringBuilder("/bundle <get");
         if(player.hasPermission("flags.command.bundle.set") && area.hasBundlePermission(player)) {
-            usage.append("|set|remove");
+            usage.append("|set|remove|trust|distrust");
         }
 
         if(player.hasPermission("flags.command.bundle.edit")) {
-            usage.append("|add|delete|erase");
+            usage.append("|add|cut|erase");
         }
 
         usage.append("|help>");

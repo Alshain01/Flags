@@ -28,11 +28,13 @@ enum EBundleCommand {
 	SET('s', 4, 0, true, true, "Set <area|world|default> <bundle> <true|false>"),
 	GET('g', 3, 0, true, true, "Get <area|world|default> <bundle>"),
 	REMOVE('r', 3, 0, true, true, "Remove <area|world|default> <bundle>"),
+    TRUST('t', 4, -1, true, true, "Trust <area|world|default> <bundle> <player> [player]..."),
+    DISTRUST('d', 3, -1, true, true, "Distrust <area|world|default> <bundle> [player] [player]..."),
 	HELP('h', 1, 1, false, null, "Help [page]"),
 	ADD('a', 3, -1, false, true, "Add <bundle> <flag> [flag]..."),
-	DELETE ('d', 3, -1, false, true, "Delete <bundle> <flag> [flag]..."),
+	CUT ('c', 3, -1, false, true, "Cut <bundle> <flag> [flag]..."),
 	ERASE ('e', 2, 0, false, true, "Erase <bundle>");
-	
+
 	final char alias;
 	final int requiredArgs;
 	final int optionalArgs; //-1 for infinite

@@ -24,6 +24,7 @@
 
 package io.github.alshain01.Flags.commands;
 
+import io.github.alshain01.Flags.Bundle;
 import io.github.alshain01.Flags.Flag;
 import io.github.alshain01.Flags.Flags;
 import io.github.alshain01.Flags.Message;
@@ -96,6 +97,59 @@ final class BundleCmd extends Common {
 				.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
 				.replaceAll("\\{Bundle\\}", bundleName));
 	}
+
+    protected static boolean trust(Player player, ECommandLocation location, String bundleName, Set<String> playerList) {
+        if(playerList.size() == 0) { return false; }
+
+        Area area = getArea(player, location);
+        if(!Bundle.isBundle(bundleName)
+                || !Validate.isArea(player, area)
+                || !Validate.isBundlePermitted(player, bundleName)
+                || !Validate.isPermitted(player, area))
+        { return true; }
+
+        boolean success = true;
+
+        for(Flag f : Bundle.getBundle(bundleName)) {
+            if(!f.isPlayerFlag()) { continue; }
+
+            for(String p : playerList) {
+                if(!area.setTrust(f, p, true, player)) { success = false; }
+            }
+        }
+
+        player.sendMessage((success ? Message.SetTrust.get() : Message.SetTrustError.get())
+                .replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
+                .replaceAll("\\{Flag\\}", bundleName));
+        return true;
+    }
+
+    protected static void distrust(Player player, ECommandLocation location, String bundleName, Set<String> playerList) {
+        boolean success = true;
+        Area area = getArea(player, location);
+
+        if(!Bundle.isBundle(bundleName)
+                || !Validate.isArea(player, area)
+                || !Validate.isBundlePermitted(player, bundleName)
+                || !Validate.isPermitted(player, area))
+        { return; }
+
+        for(Flag f : Bundle.getBundle(bundleName)) {
+            if(!f.isPlayerFlag()) { continue; }
+
+            Set<String> trustList = area.getTrustList(f);
+            if(trustList == null || !trustList.isEmpty()) { continue; }
+
+            //If playerList is empty, remove everyone
+            for(String p : playerList.isEmpty() ? trustList : playerList) {
+                if (!area.setTrust(f, p, false, player)) { success = false; }
+            }
+        }
+
+        player.sendMessage((success ? Message.RemoveTrust.get() : Message.RemoveTrustError.get())
+                .replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
+                .replaceAll("\\{Flag\\}", bundleName));
+    }
 	
 	protected static void add(CommandSender sender, String bundleName, Set<String> flags) {
 		if(sender instanceof Player && !Validate.canEditBundle(sender)){ return; }
