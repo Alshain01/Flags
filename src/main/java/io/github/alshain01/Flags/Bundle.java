@@ -24,6 +24,10 @@
 
 package io.github.alshain01.Flags;
 
+import org.bukkit.Bukkit;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
+
 import java.util.Set;
 
 /**
@@ -73,7 +77,31 @@ public final class Bundle {
 	 */
 	public static void setBundle(String name, Set<Flag> flags) {
 		Flags.getDataStore().writeBundle(name, flags);
+        String permName = "flag.bundle." + name;
+        if(flags == null || flags.size() == 0) {
+            if(Bukkit.getPluginManager().getPermission(permName) != null) {
+                Bukkit.getPluginManager().removePermission(permName);
+            }
+        } else {
+            if(Bukkit.getPluginManager().getPermission(permName) == null) {
+                addPermission(name);
+            }
+        }
 	}
+
+    // Used only on plugin enable
+    protected static void registerPermissions() {
+        for(String b : Flags.getDataStore().readBundles()) {
+            addPermission(b);
+        }
+    }
+
+    private static void addPermission(String name) {
+        final Permission perm = new Permission("flags.bundle." + name,
+                "Grants ability to use the bundle " + name, PermissionDefault.FALSE);
+        perm.addParent("flags.bundle", true);
+        Bukkit.getPluginManager().addPermission(perm);
+    }
 
 	private Bundle() {
 	}

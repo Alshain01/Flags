@@ -121,6 +121,9 @@ public class Flags extends JavaPlugin {
 			getServer().getPluginManager().registerEvents(bp, this);
 		}
 
+        // Tell Bukkit about the existing bundles
+        Bundle.registerPermissions();
+
 		// Schedule tasks to perform after server is running
 		new onServerEnabledTask(this.getConfig().getBoolean("Flags.Metrics.Enabled")).runTask(this);
 		log("Flags Has Been Enabled.");
