@@ -144,7 +144,7 @@ final class FlagCmd extends Common {
 		boolean first = true;
 		StringBuilder message;
 		Area area = getArea(player, location);
-		Set<String> trustList = area.getTrustList(flag);
+		Set<String> trustList = area.getPlayerTrustList(flag);
 		
 		if(!Validate.isPlayerFlag(player, flag) 
 				|| !Validate.isArea(player, area)
@@ -203,13 +203,14 @@ final class FlagCmd extends Common {
         Flags.debug("Trust List " + trustList.toString());
 		if(!Validate.isTrustList(player, trustList, area.getAreaType(), flag.getName())) {
             Flags.debug("Failed trust list validation");
-            return; }
+            return;
+        }
 
         //If playerList is empty, remove everyone
 		for(String p : playerList.isEmpty() ? trustList : playerList) {
 			//if (area.getOwners().contains(p)) { continue; }
             Flags.debug("Removing " + p);
-			if (!area.setTrust(flag, p, false, player)) { success = false; }
+			if (!area.setTrust(flag, p, false, player) && !area.getOwners().contains(p)) { success = false; }
 		}
 
 		player.sendMessage((success ? Message.RemoveTrust.get() : Message.RemoveTrustError.get())

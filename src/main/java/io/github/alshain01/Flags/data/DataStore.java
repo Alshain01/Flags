@@ -49,6 +49,10 @@ public interface DataStore {
 
 	public Set<String> readTrust(Area area, Flag flag);
 
+    public Set<String> readPlayerTrust(Area area, Flag flag);
+
+    public Set<String> readPermissionTrust(Area area, Flag flag);
+
 	public DBVersion readVersion();
 
 	public boolean reload();

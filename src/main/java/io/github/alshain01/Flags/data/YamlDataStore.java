@@ -174,6 +174,34 @@ public final class YamlDataStore implements DataStore {
 		return stringData;
 	}
 
+    @Override
+    public Set<String> readPlayerTrust(Area area, Flag flag) {
+        final String path = getAreaPath(area) + "." + flag.getName() + ".Trust";
+        final List<?> setData = getYml(path).getConfig().getList(path, new ArrayList<String>());
+        final Set<String> stringData = new HashSet<String>();
+
+        for (final Object o : setData) {
+            if(!((String)o).contains(".")) {
+                stringData.add((String) o);
+            }
+        }
+        return stringData;
+    }
+
+    @Override
+    public Set<String> readPermissionTrust(Area area, Flag flag) {
+        final String path = getAreaPath(area) + "." + flag.getName() + ".Trust";
+        final List<?> setData = getYml(path).getConfig().getList(path, new ArrayList<String>());
+        final Set<String> stringData = new HashSet<String>();
+
+        for (final Object o : setData) {
+            if(((String)o).contains(".")) {
+                stringData.add((String) o);
+            }
+        }
+        return stringData;
+    }
+
 	@Override
 	public DBVersion readVersion() {
 		final String path = "Default.Database.Version";

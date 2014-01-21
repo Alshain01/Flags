@@ -455,6 +455,56 @@ public class SQLDataStore implements DataStore {
     }
 
     @Override
+    public Set<String> readPlayerTrust(Area area, Flag flag) {
+        StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Trust WHERE WorldName='%world%'");
+        if(!(area instanceof Default || area instanceof World)) {
+            selectString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
+        }
+        selectString.append(" AND FlagName='%flag%';");
+
+        ResultSet results = executeQuery(areaBuilder(selectString.toString(), area)
+                .replaceAll("%flag%", flag.getName()));
+
+        try {
+            Set<String> trustList = new HashSet<String>();
+            while(results.next()) {
+                if(!results.getString("Trustee").contains(".")) {
+                    trustList.add(results.getString("Trustee"));
+                }
+            }
+            return trustList;
+        } catch (SQLException ex){
+            SqlError(ex.getMessage());
+        }
+        return new HashSet<String>();
+    }
+
+    @Override
+    public Set<String> readPermissionTrust(Area area, Flag flag) {
+        StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Trust WHERE WorldName='%world%'");
+        if(!(area instanceof Default || area instanceof World)) {
+            selectString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
+        }
+        selectString.append(" AND FlagName='%flag%';");
+
+        ResultSet results = executeQuery(areaBuilder(selectString.toString(), area)
+                .replaceAll("%flag%", flag.getName()));
+
+        try {
+            Set<String> trustList = new HashSet<String>();
+            while(results.next()) {
+                if(results.getString("Trustee").contains(".")) {
+                    trustList.add(results.getString("Trustee"));
+                }
+            }
+            return trustList;
+        } catch (SQLException ex){
+            SqlError(ex.getMessage());
+        }
+        return new HashSet<String>();
+    }
+
+    @Override
     public void writeTrust(Area area, Flag flag, Set<String> players) {
         // Delete the old list to be replaced
         StringBuilder deleteString = new StringBuilder("DELETE FROM %table%Trust WHERE WorldName='%world%'");

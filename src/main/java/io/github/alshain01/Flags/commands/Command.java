@@ -179,7 +179,7 @@ public final class Command {
                 success = true;
 				break;
 		}
-		
+
 		if(!success) { 
 			Flags.debug("Command Unsuccessful");
 			sender.sendMessage(command.getHelp());
@@ -357,7 +357,7 @@ public final class Command {
 
         if(player.hasPermission("flags.command.flag.set") && area.hasPermission(player)) {
             usage.append("|message|erasemessage");
-    }
+        }
         usage.append("|presentmessage");
 
         if(Flags.getEconomy() != null && player.hasPermission("flags.command.flag.charge")) {

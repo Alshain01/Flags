@@ -179,11 +179,11 @@ public abstract class Area implements Comparable<Area> {
 	public abstract String getSystemID();
 
 	/**
-	 * Gets a list of trusted players
+	 * Gets a full trust list
 	 * 
 	 * @param flag
 	 *            The flag to retrieve the trust list for.
-	 * @return The list of players
+	 * @return The list of trustees
 	 */
 	public final Set<String> getTrustList(Flag flag) {
 		if (!isArea()) {
@@ -198,6 +198,63 @@ public abstract class Area implements Comparable<Area> {
 		}
 		return trustedPlayers;
 	}
+
+    /**
+     * Gets a list of trusted players
+     *
+     * @param flag
+     *            The flag to retrieve the trust list for.
+     * @return The list of players
+     */
+    public final Set<String> getPlayerTrustList(Flag flag) {
+        if (!isArea()) {
+            return null;
+        }
+
+        final Set<String> trustedPlayers = Flags.getDataStore().readPlayerTrust(this, flag);
+        if (!(this instanceof Default || this instanceof World)) {
+            for(String owner: getOwners()) {
+                trustedPlayers.add(owner.toLowerCase());
+            }
+        }
+        return trustedPlayers;
+    }
+
+    /**
+     * Gets a list of trusted permissions
+     *
+     * @param flag
+     *            The flag to retrieve the trust list for.
+     * @return The list of permissions
+     */
+    public final Set<String> getPermissionTrustList(Flag flag) {
+        if (!isArea()) { return null; }
+        return Flags.getDataStore().readPermissionTrust(this, flag);
+    }
+
+    /**
+     * Returns true if the provided player has implicit trust or permission trust.
+     *
+     * @param flag
+     *            The flag to check the trust list for.
+     * @param player
+     *            The player to check trust for.
+     * @return The list of permissions
+     */
+    public final boolean hasTrust(Flag flag, Player player) {
+        if (!isArea()) { return false; }
+        if(getPlayerTrustList(flag).contains(player.getName().toLowerCase())) {
+            return true;
+        }
+
+        for(String p : getPermissionTrustList(flag)) {
+            if(player.hasPermission(p)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 	/**
 	 * Gets the value of the flag for this area.
@@ -328,8 +385,7 @@ public abstract class Area implements Comparable<Area> {
 				// discouraging bad spelling & grammar)
 				if (!getMessage(flag, false).equalsIgnoreCase(message)) {
                     Flags.debug("Message is not the same as datastore value");
-					if (isFundingLow(EPurchaseType.Message, flag,
-                            (Player) sender)) {
+					if (isFundingLow(EPurchaseType.Message, flag, (Player) sender)) {
                         Flags.debug("Player cannot afford transaction.  Message set cancelled.");
 						return false;
 					}
@@ -361,8 +417,7 @@ public abstract class Area implements Comparable<Area> {
 		// Delay making the transaction in case the event is cancelled.
 		if (transaction != null) {
             Flags.debug("Economy Transaction Ready");
-			if (!makeTransaction(transaction, EPurchaseType.Message, flag,
-					(Player) sender)) {
+			if (!makeTransaction(transaction, EPurchaseType.Message, flag, (Player) sender)) {
                 Flags.debug("Failed to make transaction");
 				return true;
 			}
@@ -403,8 +458,7 @@ public abstract class Area implements Comparable<Area> {
 			}
 			trustList.add(trustee.toLowerCase());
 
-			final TrustChangedEvent event = 
-					new TrustChangedEvent(this, flag, trustee, true, sender);
+			final TrustChangedEvent event = new TrustChangedEvent(this, flag, trustee, true, sender);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 			if (event.isCancelled()) {
                 Flags.debug("TrustChangedEvent Cancelled");
