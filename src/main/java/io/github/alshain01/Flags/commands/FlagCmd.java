@@ -208,9 +208,8 @@ final class FlagCmd extends Common {
 
         //If playerList is empty, remove everyone
 		for(String p : playerList.isEmpty() ? trustList : playerList) {
-			//if (area.getOwners().contains(p)) { continue; }
             Flags.debug("Removing " + p);
-			if (!area.setTrust(flag, p, false, player) && !area.getOwners().contains(p)) { success = false; }
+			if (!area.setTrust(flag, p, false, player)) { success = false; }
 		}
 
 		player.sendMessage((success ? Message.RemoveTrust.get() : Message.RemoveTrustError.get())

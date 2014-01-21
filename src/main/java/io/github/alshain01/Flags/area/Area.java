@@ -188,8 +188,7 @@ public abstract class Area implements Comparable<Area> {
 	public final Set<String> getTrustList(Flag flag) {
 		if (!isArea()) { return null; }
 
-		final Set<String> trustedPlayers = Flags.getDataStore().readTrust(this,	flag);
-		return trustedPlayers;
+		return Flags.getDataStore().readTrust(this,	flag);
 	}
 
     /**
@@ -202,8 +201,7 @@ public abstract class Area implements Comparable<Area> {
     public final Set<String> getPlayerTrustList(Flag flag) {
         if (!isArea()) { return null; }
 
-        final Set<String> trustedPlayers = Flags.getDataStore().readPlayerTrust(this, flag);
-        return trustedPlayers;
+        return Flags.getDataStore().readPlayerTrust(this, flag);
     }
 
     /**
@@ -219,7 +217,7 @@ public abstract class Area implements Comparable<Area> {
     }
 
     /**
-     * Returns true if the provided player is the area owner, has implicit trust, or permission trust.
+     * Returns true if the provided player is the area owner, has explicit trust, or permission trust.
      *
      * @param flag
      *            The flag to check the trust list for.
