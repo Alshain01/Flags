@@ -186,16 +186,9 @@ public abstract class Area implements Comparable<Area> {
 	 * @return The list of trustees
 	 */
 	public final Set<String> getTrustList(Flag flag) {
-		if (!isArea()) {
-			return null;
-		}
+		if (!isArea()) { return null; }
 
 		final Set<String> trustedPlayers = Flags.getDataStore().readTrust(this,	flag);
-		if (!(this instanceof Default || this instanceof World)) {
-			for(String owner: getOwners()) {
-				trustedPlayers.add(owner.toLowerCase());
-			}
-		}
 		return trustedPlayers;
 	}
 
@@ -207,16 +200,9 @@ public abstract class Area implements Comparable<Area> {
      * @return The list of players
      */
     public final Set<String> getPlayerTrustList(Flag flag) {
-        if (!isArea()) {
-            return null;
-        }
+        if (!isArea()) { return null; }
 
         final Set<String> trustedPlayers = Flags.getDataStore().readPlayerTrust(this, flag);
-        if (!(this instanceof Default || this instanceof World)) {
-            for(String owner: getOwners()) {
-                trustedPlayers.add(owner.toLowerCase());
-            }
-        }
         return trustedPlayers;
     }
 
@@ -233,7 +219,7 @@ public abstract class Area implements Comparable<Area> {
     }
 
     /**
-     * Returns true if the provided player has implicit trust or permission trust.
+     * Returns true if the provided player is the area owner, has implicit trust, or permission trust.
      *
      * @param flag
      *            The flag to check the trust list for.
@@ -243,13 +229,18 @@ public abstract class Area implements Comparable<Area> {
      */
     public final boolean hasTrust(Flag flag, Player player) {
         if (!isArea()) { return false; }
-        if(getPlayerTrustList(flag).contains(player.getName().toLowerCase())) {
+        if (getOwners().contains(player.getName().toLowerCase())) { return true; }
+
+        Set<String> tl = getTrustList(flag);
+        if(tl.contains(player.getName().toLowerCase())) {
             return true;
         }
 
-        for(String p : getPermissionTrustList(flag)) {
-            if(player.hasPermission(p)) {
-                return true;
+        for(String p : tl) {
+            if(p.contains(".")) {
+                if(player.hasPermission(p)) {
+                    return true;
+                }
             }
         }
 
