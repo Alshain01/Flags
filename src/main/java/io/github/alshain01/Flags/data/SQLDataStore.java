@@ -43,19 +43,10 @@ public class SQLDataStore implements DataStore {
     private Connection connection = null;
     protected String url, user, password;
 
+    /*
+     * Constructor
+     */
     protected SQLDataStore() { }
-
-    private String getSubID(Area area) {
-        return (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : "'null'";
-    }
-
-
-    protected String areaBuilder(String query, Area area) {
-        return query.replaceAll("%table%", area.getType().toString())
-                .replaceAll("%world%", area.getWorld().getName())
-                .replaceAll("%area%", area.getSystemID())
-                .replaceAll("%sub%", getSubID(area));
-    }
 
     public SQLDataStore(String url, String user, String pw) {
         this.url = url;
@@ -63,43 +54,32 @@ public class SQLDataStore implements DataStore {
         this.password = pw;
     }
 
+    /*
+     * Private
+     */
+    private String getSubID(Area area) {
+        return (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : "'null'";
+    }
+
+    private void writeVersion(DBVersion version) {
+        executeQuery("UPDATE Version SET Major=" + version.major + ", Minor=" + version.minor + ", Build=" + version.build + ";");
+    }
+
+    /*
+     * Protected
+     */
+    protected String areaBuilder(String query, Area area) {
+        return query.replaceAll("%table%", area.getType().toString())
+                .replaceAll("%world%", area.getWorld().getName())
+                .replaceAll("%area%", area.getSystemID())
+                .replaceAll("%sub%", getSubID(area));
+    }
+
     protected boolean connect(String url, String user, String password) {
         // Connect to the database.
         try {
             connection = DriverManager.getConnection(url, user, password);
             return true;
-        } catch (SQLException e) {
-            SqlError(e.getMessage());
-            return false;
-        }
-    }
-
-    public void close() {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            SqlError(e.getMessage());
-        }
-    }
-
-    @Override
-    public boolean reload() {
-        // Close the connection and reconnect.
-        try {
-            if(!(this.connection == null) && !this.connection.isClosed()) {
-                connection.close();
-            }
-        } catch (SQLException e) {
-            SqlError(e.getMessage());
-            return false;
-        }
-
-        return connect(url, user, password);
-    }
-
-    public boolean isConnected() {
-        try {
-            return !connection.isClosed();
         } catch (SQLException e) {
             SqlError(e.getMessage());
             return false;
@@ -131,45 +111,6 @@ public class SQLDataStore implements DataStore {
         }
     }
 
-    @Override
-    public DBVersion readVersion() {
-        ResultSet results = executeQuery("SELECT * FROM Version;");
-        try {
-            results.next();
-            return new DBVersion(results.getInt("Major"), results.getInt("Minor"), results.getInt("Build"));
-        } catch (SQLException ex) {
-            SqlError(ex.getMessage());
-        }
-        return new DBVersion(0,0,0);
-    }
-
-    public void writeVersion(DBVersion version) {
-        executeQuery("UPDATE Version SET Major=" + version.major + ", Minor=" + version.minor + ", Build=" + version.build + ";");
-    }
-
-    @Override
-    public void update(JavaPlugin plugin) {
-        // Nothing to update at this time
-    }
-
-    //TODO: Implementation Specific (BOOLEAN)
-    @Override
-    public boolean create(JavaPlugin plugin) {
-        // STANDARD BOOLEAN
-        // OVERRIDE for Implementation Specific
-        if(!exists()) {
-            executeStatement("CREATE TABLE IF NOT EXISTS Version (Major INT, Minor INT, Build INT);");
-            executeStatement("INSERT INTO Version (Major, Minor, Build) VALUES (1,3,0);");
-            executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(25), FlagName VARCHAR(25), CONSTRAINT pk_BundleEntry PRIMARY KEY (BundleName, FlagName));");
-            executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(25), ProductType VARCHAR(25), Cost DOUBLE, CONSTRAINT pk_FlagType PRIMARY KEY (FlagName, ProductType));");
-            executeStatement("CREATE TABLE IF NOT EXISTS WorldFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
-            executeStatement("CREATE TABLE IF NOT EXISTS WorldTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName, Trustee));");
-            executeStatement("CREATE TABLE IF NOT EXISTS DefaultFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), CONSTRAINT pk_DefaultFlag PRIMARY KEY (WorldName, FlagName));");
-            executeStatement("CREATE TABLE IF NOT EXISTS DefaultTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_DefaultTrust PRIMARY KEY (WorldName, FlagName, Trustee));");
-        }
-        return true;
-    }
-
     //TODO: Implementation Specific (BOOLEAN)
     protected void createSystemDB() {
         // STANDARD BOOLEAN
@@ -186,7 +127,7 @@ public class SQLDataStore implements DataStore {
     }
 
     //TODO: Implementation Specific (ROW LIMITING)
-    public boolean exists() {
+    protected boolean exists() {
         // We always need to create the system specific table
         // in case it changed since the database was created.
         // i.e. Grief Prevention was removed and WorldGuard was installed.
@@ -209,6 +150,84 @@ public class SQLDataStore implements DataStore {
             SqlError(e.getMessage());
         }
         return false;
+    }
+
+    /*
+     * Public
+     */
+    public boolean isConnected() {
+        try {
+            return !connection.isClosed();
+        } catch (SQLException e) {
+            SqlError(e.getMessage());
+            return false;
+        }
+    }
+
+    public void close() {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            SqlError(e.getMessage());
+        }
+    }
+
+    /*
+     * Interface Methods
+     */
+    //TODO: Implementation Specific (BOOLEAN)
+    @Override
+    public boolean create(JavaPlugin plugin) {
+        // STANDARD BOOLEAN
+        // OVERRIDE for Implementation Specific
+        if(!exists()) {
+            executeStatement("CREATE TABLE IF NOT EXISTS Version (Major INT, Minor INT, Build INT);");
+            executeStatement("INSERT INTO Version (Major, Minor, Build) VALUES (1,3,0);");
+            executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(25), FlagName VARCHAR(25), CONSTRAINT pk_BundleEntry PRIMARY KEY (BundleName, FlagName));");
+            executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(25), ProductType VARCHAR(25), Cost DOUBLE, CONSTRAINT pk_FlagType PRIMARY KEY (FlagName, ProductType));");
+            executeStatement("CREATE TABLE IF NOT EXISTS WorldFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
+            executeStatement("CREATE TABLE IF NOT EXISTS WorldTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName, Trustee));");
+            executeStatement("CREATE TABLE IF NOT EXISTS DefaultFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), CONSTRAINT pk_DefaultFlag PRIMARY KEY (WorldName, FlagName));");
+            executeStatement("CREATE TABLE IF NOT EXISTS DefaultTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_DefaultTrust PRIMARY KEY (WorldName, FlagName, Trustee));");
+        }
+        return true;
+    }
+
+    @Override
+    public boolean reload() {
+        // Close the connection and reconnect.
+        try {
+            if(!(this.connection == null) && !this.connection.isClosed()) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            SqlError(e.getMessage());
+            return false;
+        }
+
+        return connect(url, user, password);
+    }
+
+    @Override
+    public DBVersion readVersion() {
+        ResultSet results = executeQuery("SELECT * FROM Version;");
+        try {
+            results.next();
+            return new DBVersion(results.getInt("Major"), results.getInt("Minor"), results.getInt("Build"));
+        } catch (SQLException ex) {
+            SqlError(ex.getMessage());
+        }
+        return new DBVersion(0,0,0);
+    }
+
+    @Override
+    public DataStoreType getType() {
+        return DataStoreType.POSTGRESQL;
+    }
+
+    @Override
+    public void update(JavaPlugin plugin) {
+        // Nothing to update at this time
     }
 
     @Override
@@ -280,33 +299,6 @@ public class SQLDataStore implements DataStore {
     }
 
     @Override
-    public double readPrice(Flag flag, EPurchaseType type) {
-        String selectString = "SELECT * FROM Price WHERE FlagName='%flag%' AND ProductType='%type%';";
-        ResultSet results = executeQuery(selectString
-                .replaceAll("%flag%", flag.getName())
-                .replaceAll("%type%", type.toString()));
-
-        try {
-            if(results.next()) {
-                return results.getDouble("Cost");
-            }
-            return 0;
-        } catch (SQLException ex){
-            SqlError(ex.getMessage());
-        }
-        return 0;
-    }
-
-    @Override
-    public void writePrice(Flag flag, EPurchaseType type, double price) {
-        String insertString = "INSERT INTO Price (FlagName, ProductType, Cost) VALUES ('%flag%', '%product%', %price%) ON DUPLICATE KEY UPDATE Cost=%price%;";
-        executeStatement(insertString
-                .replaceAll("%flag%", flag.getName())
-                .replaceAll("%product%", type.toString())
-                .replaceAll("%price%", String.valueOf(price)));
-    }
-
-    @Override
     public Boolean readFlag(Area area, Flag flag) {
         StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Flags WHERE WorldName='%world%'");
         if(!(area instanceof Default || area instanceof World)) {
@@ -346,44 +338,6 @@ public class SQLDataStore implements DataStore {
 
         executeStatement(areaBuilder(insertString, area)
                 .replaceAll("%flag%", flag.getName())
-                .replaceAll("%value%", String.valueOf(value)));
-    }
-
-    @Override
-    public boolean readInheritance(Area area) {
-        if(!(area instanceof Subdivision) || !((Subdivision)area).isSubdivision()) {
-            Flags.debug("Cannot read inheritance, area is not a subdivision.");
-            return false;
-        }
-
-        String selectString = "SELECT * FROM %table%Flags WHERE WorldName='%world%' AND AreaID='%area%' AND AreaSubID=%sub% AND FlagName='InheritParent';";
-
-        ResultSet results = executeQuery(areaBuilder(selectString, area));
-
-        try {
-            if (!results.next()) {
-                Flags.debug("Inheritance flag not found in DataStore, assuming true.");
-                return true;
-            }
-            return results.getBoolean("FlagValue");
-        } catch (SQLException ex){
-            SqlError(ex.getMessage());
-        }
-        return true;
-    }
-
-    //TODO: Implementation Specific (BOOLEAN)
-    @Override
-    public void writeInheritance(Area area, boolean value) {
-        if(!(area instanceof Subdivision) || !((Subdivision)area).isSubdivision()) {
-            Flags.debug("Cannot write inheritance, area is not a subdivision.");
-            return;
-        }
-
-        String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue) "
-                + "VALUES ('%world%', '%area%', %sub%, 'InheritParent', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
-
-        executeStatement(areaBuilder(insertString, area)
                 .replaceAll("%value%", String.valueOf(value)));
     }
 
@@ -429,6 +383,33 @@ public class SQLDataStore implements DataStore {
         executeStatement(areaBuilder(insertString, area)
                 .replaceAll("%flag%", flag.getName())
                 .replaceAll("%message%", message));
+    }
+
+    @Override
+    public double readPrice(Flag flag, EPurchaseType type) {
+        String selectString = "SELECT * FROM Price WHERE FlagName='%flag%' AND ProductType='%type%';";
+        ResultSet results = executeQuery(selectString
+                .replaceAll("%flag%", flag.getName())
+                .replaceAll("%type%", type.toString()));
+
+        try {
+            if(results.next()) {
+                return results.getDouble("Cost");
+            }
+            return 0;
+        } catch (SQLException ex){
+            SqlError(ex.getMessage());
+        }
+        return 0;
+    }
+
+    @Override
+    public void writePrice(Flag flag, EPurchaseType type, double price) {
+        String insertString = "INSERT INTO Price (FlagName, ProductType, Cost) VALUES ('%flag%', '%product%', %price%) ON DUPLICATE KEY UPDATE Cost=%price%;";
+        executeStatement(insertString
+                .replaceAll("%flag%", flag.getName())
+                .replaceAll("%product%", type.toString())
+                .replaceAll("%price%", String.valueOf(price)));
     }
 
     @Override
@@ -530,6 +511,44 @@ public class SQLDataStore implements DataStore {
     }
 
     @Override
+    public boolean readInheritance(Area area) {
+        if(!(area instanceof Subdivision) || !((Subdivision)area).isSubdivision()) {
+            Flags.debug("Cannot read inheritance, area is not a subdivision.");
+            return false;
+        }
+
+        String selectString = "SELECT * FROM %table%Flags WHERE WorldName='%world%' AND AreaID='%area%' AND AreaSubID=%sub% AND FlagName='InheritParent';";
+
+        ResultSet results = executeQuery(areaBuilder(selectString, area));
+
+        try {
+            if (!results.next()) {
+                Flags.debug("Inheritance flag not found in DataStore, assuming true.");
+                return true;
+            }
+            return results.getBoolean("FlagValue");
+        } catch (SQLException ex){
+            SqlError(ex.getMessage());
+        }
+        return true;
+    }
+
+    //TODO: Implementation Specific (BOOLEAN)
+    @Override
+    public void writeInheritance(Area area, boolean value) {
+        if(!(area instanceof Subdivision) || !((Subdivision)area).isSubdivision()) {
+            Flags.debug("Cannot write inheritance, area is not a subdivision.");
+            return;
+        }
+
+        String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue) "
+                + "VALUES ('%world%', '%area%', %sub%, 'InheritParent', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
+
+        executeStatement(areaBuilder(insertString, area)
+                .replaceAll("%value%", String.valueOf(value)));
+    }
+
+    @Override
     public void remove(Area area) {
         String deleteString = "DELETE FROM %table%%type% WHERE WorldName='%world%' AND AreaID='%area%' AND SubID=%sub%;";
         executeStatement(areaBuilder(deleteString, area)
@@ -539,71 +558,35 @@ public class SQLDataStore implements DataStore {
                 .replaceAll("%type%", "Trust"));
     }
 
-    @Override
-    public DataStoreType getType() {
-        return DataStoreType.POSTGRESQL;
-    }
-
+    /*
+     * Database Import/Export
+     */
     public void importDB() {
         Flags.log("Importing YAML Database to " + getType().getName());
         DataStore yaml = new YamlDataStore((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
 
-        //Import the bundles
-        for(String b : yaml.readBundles()) {
-            writeBundle(b, yaml.readBundle(b));
-        }
+        convertGenericData(yaml, this);
 
-        //Import the prices
-        for(Flag f : Flags.getRegistrar().getFlags()) {
-            double price = yaml.readPrice(f, EPurchaseType.Flag);
-            if(price > (double)0) {
-                writePrice(f, EPurchaseType.Flag, price);
+        // Import the system data
+        Set<String> keys = ((YamlDataStore)yaml).readKeys();
+        for(String key : keys) {
+            String[] keyNodes = key.split("\\.");
+
+            // Parent id's are 5, Subdivisons are 6, all others are incomplete.
+            if(keyNodes.length < 5 || keyNodes.length > 6) { continue; }
+
+            String world = keyNodes[1];
+            String id = keyNodes[2];
+            String subID = "null";
+            String flag = keyNodes[3];
+
+            if(keyNodes.length == 6) { // Subdivision
+                subID = keyNodes[3];
+                flag = keyNodes[4];
             }
 
-            price = yaml.readPrice(f, EPurchaseType.Message);
-            if(price > (double)0) {
-                writePrice(f, EPurchaseType.Message, price);
-            }
-        }
-
-        //Import world & default data
-        for(org.bukkit.World w : Bukkit.getWorlds()) {
-            for(Flag f : Flags.getRegistrar().getFlags()) {
-                World world = new World(w);
-                Default def = new Default(w);
-
-                //Flags
-                Boolean value = yaml.readFlag(world, f);
-                if(value != null) {
-                    writeFlag(world, f, value);
-                }
-
-                value = yaml.readFlag(def, f);
-                if(value != null) {
-                    writeFlag(def, f, yaml.readFlag(def, f));
-                }
-
-                //Messages
-                String message = yaml.readMessage(world, f);
-                if(message != null) {
-                    writeMessage(world, f, message);
-                }
-
-                message = yaml.readMessage(def, f);
-                if(message != null) {
-                    writeMessage(def, f, message);
-                }
-
-                //Trust Lists
-                Set<String> trust = yaml.readTrust(world, f);
-                if(!trust.isEmpty()) {
-                    writeTrust(world, f, trust);
-                }
-
-                trust = yaml.readTrust(def, f);
-                if(!trust.isEmpty()) {
-                    writeTrust(def, f, trust);
-                }
+            if(key.contains("Value")) {
+                //writeF
             }
         }
 
@@ -614,66 +597,70 @@ public class SQLDataStore implements DataStore {
         Flags.log("Exporting " + getType().getName() + " Database to YAML");
         DataStore yaml = new YamlDataStore((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
 
-        //Export the bundles
-        Set<String> bundles = readBundles();
-        for(String b : bundles) {
-            yaml.writeBundle(b, readBundle(b));
+        convertGenericData(this, yaml);
+
+        Flags.log("Export Complete");
+    }
+
+    private static void convertGenericData(DataStore convertFrom, DataStore convertTo) {
+        //Convert the bundles
+        for(String b : convertFrom.readBundles()) {
+            convertTo.writeBundle(b, convertFrom.readBundle(b));
         }
 
-        //Export the prices
+        //Convert the prices
         for(Flag f : Flags.getRegistrar().getFlags()) {
-            double price = readPrice(f, EPurchaseType.Flag);
+            double price = convertFrom.readPrice(f, EPurchaseType.Flag);
             if(price > (double)0) {
-                yaml.writePrice(f, EPurchaseType.Flag, price);
+                convertTo.writePrice(f, EPurchaseType.Flag, price);
             }
 
-            price = readPrice(f, EPurchaseType.Message);
+            price = convertFrom.readPrice(f, EPurchaseType.Message);
             if(price > (double)0) {
-                yaml.writePrice(f, EPurchaseType.Message, price);
+                convertTo.writePrice(f, EPurchaseType.Message, price);
             }
         }
 
-        //Import world & default data
+        //Convert world & default data
         for(org.bukkit.World w : Bukkit.getWorlds()) {
             for(Flag f : Flags.getRegistrar().getFlags()) {
                 World world = new World(w);
                 Default def = new Default(w);
 
                 //Flags
-                Boolean value = readFlag(world, f);
+                Boolean value = convertFrom.readFlag(world, f);
                 if(value != null) {
-                    yaml.writeFlag(world, f, value);
+                    convertTo.writeFlag(world, f, value);
                 }
 
-                value = readFlag(def, f);
+                value = convertFrom.readFlag(def, f);
                 if(value != null) {
-                    yaml.writeFlag(def, f, yaml.readFlag(def, f));
+                    convertTo.writeFlag(def, f, convertFrom.readFlag(def, f));
                 }
 
                 //Messages
-                String message = readMessage(world, f);
+                String message = convertFrom.readMessage(world, f);
                 if(message != null) {
-                    yaml.writeMessage(world, f, message);
+                    convertTo.writeMessage(world, f, message);
                 }
 
-                message = readMessage(def, f);
+                message = convertFrom.readMessage(def, f);
                 if(message != null) {
-                    yaml.writeMessage(def, f, message);
+                    convertTo.writeMessage(def, f, message);
                 }
 
                 //Trust Lists
-                Set<String> trust = readTrust(world, f);
+                Set<String> trust = convertFrom.readTrust(world, f);
                 if(!trust.isEmpty()) {
-                    yaml.writeTrust(world, f, trust);
+                    convertTo.writeTrust(world, f, trust);
                 }
 
-                trust = readTrust(def, f);
+                trust = convertFrom.readTrust(def, f);
                 if(!trust.isEmpty()) {
-                    yaml.writeTrust(def, f, trust);
+                    convertTo.writeTrust(def, f, trust);
                 }
             }
         }
 
-        Flags.log("Export Complete");
     }
 }

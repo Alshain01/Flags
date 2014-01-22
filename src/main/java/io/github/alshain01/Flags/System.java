@@ -61,10 +61,16 @@ public enum System {
         public Area getArea(String name) {
             final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention");
             final float pluginVersion = Float.valueOf(plugin.getDescription().getVersion().substring(0, 3));
-            final Long ID = Long.parseLong(name);
+            String[] id = name.split("\\.");
 
-            if (pluginVersion >= (float)7.8) { return new GriefPreventionClaim78(ID); }
-            return new GriefPreventionClaim(ID);
+            if (pluginVersion >= (float)7.8) {
+                if(id.length > 1) {
+                    return new GriefPreventionClaim78(Long.parseLong(id[0]), Long.parseLong(id[1]));
+                } else {
+                    return new GriefPreventionClaim78(Long.parseLong(id[0]));
+                }
+            }
+            return new GriefPreventionClaim(Long.parseLong(id[0]));
         }
 
         public boolean hasArea(Location location) { return GriefPreventionClaim.hasClaim(location); }
@@ -173,7 +179,7 @@ public enum System {
      * Gets an area by system specific name. The name is formatted based on the
      * system.
      *
-     * GriefPrevention = ID number
+     * GriefPrevention = ID number OR ID.SubID
      * WorldGuard = WorldName.RegionName
      * Regios = Region name
      * Residence = Residence name OR ResidenceName.Sub-zoneName

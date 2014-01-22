@@ -39,7 +39,7 @@ public final class MySQLDataStore extends SQLDataStore {
 	}
 	
     @Override
-	public boolean exists() {
+	protected boolean exists() {
 		// We always need to create the system specific table
 		// in case it changed since the database was created.
         // i.e. Grief Prevention was removed and WorldGuard was installed.

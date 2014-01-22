@@ -35,17 +35,31 @@ import org.bukkit.plugin.java.JavaPlugin;
 public interface DataStore {
 	public boolean create(JavaPlugin plugin);
 
+    public boolean reload();
+
+    public DBVersion readVersion();
+
+    public DataStoreType getType();
+
+    public void update(JavaPlugin plugin);
+
+    public Set<String> readBundles();
+
 	public Set<Flag> readBundle(String bundleName);
 
-	public Set<String> readBundles();
+    public void writeBundle(String bundleName, Set<Flag> flags);
 
 	public Boolean readFlag(Area area, Flag flag);
 
-	public boolean readInheritance(Area area);
+    public void writeFlag(Area area, Flag flag, Boolean value);
 
 	public String readMessage(Area area, Flag flag);
 
+    public void writeMessage(Area area, Flag flag, String message);
+
 	public double readPrice(Flag flag, EPurchaseType type);
+
+    public void writePrice(Flag flag, EPurchaseType type, double price);
 
 	public Set<String> readTrust(Area area, Flag flag);
 
@@ -53,25 +67,11 @@ public interface DataStore {
 
     public Set<String> readPermissionTrust(Area area, Flag flag);
 
-	public DBVersion readVersion();
+    public void writeTrust(Area area, Flag flag, Set<String> players);
 
-	public boolean reload();
-
-	public void remove(Area area);
-
-	public void update(JavaPlugin plugin);
-
-	public void writeBundle(String bundleName, Set<Flag> flags);
-
-	public void writeFlag(Area area, Flag flag, Boolean value);
+    public boolean readInheritance(Area area);
 
 	public void writeInheritance(Area area, boolean value);
 
-	public void writeMessage(Area area, Flag flag, String message);
-
-	public void writePrice(Flag flag, EPurchaseType type, double price);
-
-	public void writeTrust(Area area, Flag flag, Set<String> players);
-
-    public DataStoreType getType();
+    public void remove(Area area);
 }
