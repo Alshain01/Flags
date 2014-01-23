@@ -76,8 +76,8 @@ public class SQLDataStore implements DataStore {
                 .replaceAll("%sub%", getSubID(area));
     }
 
-    protected String areaBuilder(String query, String areaType, String worldName, String systemID, String systemSubID) {
-        return query.replaceAll("%table%", areaType)
+    protected String areaBuilder(String query, String systemName, String worldName, String systemID, String systemSubID) {
+        return query.replaceAll("%table%", systemName)
                 .replaceAll("%world%", worldName)
                 .replaceAll("%area%", systemID)
                 .replaceAll("%sub%", systemSubID);
@@ -614,7 +614,7 @@ public class SQLDataStore implements DataStore {
         for(String key : keys) {
             String[] keyNodes = key.split("\\.");
 
-            // Parent id's are 5, Subdivisions are 6, all others are incomplete.
+            // Parent id's & 'InheritParent' are 5, Subdivisions are 6, all others are incomplete.
             if(keyNodes.length < 5 || keyNodes.length > 6) { continue; }
 
             String world = keyNodes[1];
@@ -628,17 +628,17 @@ public class SQLDataStore implements DataStore {
             }
 
             if(key.contains("InheritParent")) {
-                writeInheritance(((YamlDataStore) yaml).getBoolean(key), System.getActive().getAreaType(), world, id, subID);
+                writeInheritance(((YamlDataStore) yaml).getBoolean(key), System.getActive().toString(), world, id, subID);
                 continue;
             }
 
             if(key.contains("Value")) {
-                writeAreaFlag(((YamlDataStore) yaml).getBoolean(key), flag, System.getActive().getAreaType(), world, id, subID);
+                writeAreaFlag(((YamlDataStore) yaml).getBoolean(key), flag, System.getActive().toString(), world, id, subID);
                 continue;
             }
 
             if(key.contains("Message")) {
-                writeAreaMessage(((YamlDataStore) yaml).getString(key), flag, System.getActive().getAreaType(), world, id, subID);
+                writeAreaMessage(((YamlDataStore) yaml).getString(key), flag, System.getActive().toString(), world, id, subID);
                 continue;
             }
 
@@ -649,7 +649,7 @@ public class SQLDataStore implements DataStore {
                     players.add((String)o);
                 }
 
-                writeAreaTrust(players, flag, System.getActive().getAreaType(), world, id, subID);
+                writeAreaTrust(players, flag, System.getActive().toString(), world, id, subID);
             }
         }
 
@@ -661,6 +661,8 @@ public class SQLDataStore implements DataStore {
         DataStore yaml = new YamlDataStore((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
 
         convertGenericData(this, yaml);
+
+
 
         Flags.log("Export Complete");
     }
