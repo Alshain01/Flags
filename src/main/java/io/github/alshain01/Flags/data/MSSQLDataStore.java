@@ -98,6 +98,22 @@ public class MSSQLDataStore extends SQLDataStore {
                 .replaceAll("%value%", bitValue));
     }
 
+    //For SQL Importer
+    @Override
+    protected void writeAreaFlag(Boolean value, String flagName, String areaType, String worldName, String systemID, String systemSubID) {
+        String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue)"
+                + " VALUES ('%world%', '%area%', %sub%, '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
+
+        String bitValue = "null";
+        if(value != null) {
+            bitValue = String.valueOf(value ? 1 : 0);
+        }
+
+        executeStatement(areaBuilder(insertString, areaType, worldName, systemID, systemSubID)
+                .replaceAll("%flag%", flagName)
+                .replaceAll("%value%", bitValue));
+    }
+
     @Override
     public void writeInheritance(Area area, boolean value) {
         // BIT BASED BOOLEAN
@@ -111,6 +127,17 @@ public class MSSQLDataStore extends SQLDataStore {
                 + "VALUES ('%world%', '%area%', %sub%, 'InheritParent', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
 
         executeStatement(areaBuilder(insertString, area)
+                .replaceAll("%value%", bitValue));
+    }
+
+    @Override
+    protected void writeInheritance(boolean value, String areaType, String worldName, String systemID, String systemSubID) {
+        String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue) "
+                + "VALUES ('%world%', '%area%', %sub%, 'InheritParent', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
+
+        String bitValue = String.valueOf(value ? 1 : 0);
+
+        executeStatement(areaBuilder(insertString, areaType, worldName, systemID, systemSubID)
                 .replaceAll("%value%", bitValue));
     }
 

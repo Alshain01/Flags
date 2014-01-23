@@ -76,7 +76,7 @@ public class SQLDataStore implements DataStore {
                 .replaceAll("%sub%", getSubID(area));
     }
 
-    private String areaBuilder(String query, String areaType, String worldName, String systemID, String systemSubID) {
+    protected String areaBuilder(String query, String areaType, String worldName, String systemID, String systemSubID) {
         return query.replaceAll("%table%", areaType)
                 .replaceAll("%world%", worldName)
                 .replaceAll("%area%", systemID)
@@ -350,7 +350,7 @@ public class SQLDataStore implements DataStore {
     }
 
     //For SQL Importer
-    private void writeAreaFlag(Boolean value, String flagName, String areaType, String worldName, String systemID, String systemSubID) {
+    protected void writeAreaFlag(Boolean value, String flagName, String areaType, String worldName, String systemID, String systemSubID) {
         String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue)"
                 + " VALUES ('%world%', '%area%', %sub%, '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
 
@@ -582,7 +582,7 @@ public class SQLDataStore implements DataStore {
                 area.getSystemID(), ((Subdivision) area).getSystemSubID());
     }
 
-    private void writeInheritance(boolean value, String areaType, String worldName, String systemID, String systemSubID) {
+    protected void writeInheritance(boolean value, String areaType, String worldName, String systemID, String systemSubID) {
         String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue) "
                 + "VALUES ('%world%', '%area%', %sub%, 'InheritParent', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
 
