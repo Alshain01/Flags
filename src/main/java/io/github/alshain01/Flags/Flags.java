@@ -164,6 +164,7 @@ public class Flags extends JavaPlugin {
                 return true;
             }
 
+            /*
             if(args[0].equalsIgnoreCase("export")) {
                 if(dataStore instanceof SQLDataStore) {
                     ((SQLDataStore)dataStore).exportDB();
@@ -172,6 +173,7 @@ public class Flags extends JavaPlugin {
                 sender.sendMessage(Message.SQLDatabaseError.get());
                 return true;
             }
+            */
 
             return false;
         }
