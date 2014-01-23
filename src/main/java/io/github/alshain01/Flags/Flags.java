@@ -31,6 +31,7 @@ import io.github.alshain01.Flags.events.PlayerChangedAreaEvent;
 import io.github.alshain01.Flags.importer.GPFImport;
 import io.github.alshain01.Flags.metrics.MetricsManager;
 
+import java.io.File;
 import java.util.List;
 
 import net.milkbowl.vault.economy.Economy;
@@ -73,6 +74,12 @@ public class Flags extends JavaPlugin {
 	 */
 	@Override
 	public void onEnable() {
+        // Cleanup old stuff
+        File file = new File(this.getDataFolder(), "metrics.yml");
+        if(file.exists()) {
+            file.delete();
+        }
+
 		// Create the configuration file if it doesn't exist
 		saveDefaultConfig();
 		debugOn = getConfig().getBoolean("Flags.Debug");
