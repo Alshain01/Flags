@@ -149,6 +149,10 @@ permissions:
     default: false
 
 # Administrative Permissions
+  flags.admin.command:
+    description: Gives players access to the administration command.
+    default: op
+
   flags.admin.notifyupdate:
     description: Notifies players when Flags needs updating.
     default: op
