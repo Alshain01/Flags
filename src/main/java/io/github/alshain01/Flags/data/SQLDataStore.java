@@ -37,6 +37,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 public class SQLDataStore implements DataStore {
@@ -73,6 +74,13 @@ public class SQLDataStore implements DataStore {
                 .replaceAll("%world%", area.getWorld().getName())
                 .replaceAll("%area%", area.getSystemID())
                 .replaceAll("%sub%", getSubID(area));
+    }
+
+    private String areaBuilder(String query, String areaType, String worldName, String systemID, String systemSubID) {
+        return query.replaceAll("%table%", areaType)
+                .replaceAll("%world%", worldName)
+                .replaceAll("%area%", systemID)
+                .replaceAll("%sub%", systemSubID);
     }
 
     protected boolean connect(String url, String user, String password) {
@@ -341,6 +349,16 @@ public class SQLDataStore implements DataStore {
                 .replaceAll("%value%", String.valueOf(value)));
     }
 
+    //For SQL Importer
+    private void writeAreaFlag(Boolean value, String flagName, String areaType, String worldName, String systemID, String systemSubID) {
+        String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue)"
+                + " VALUES ('%world%', '%area%', %sub%, '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
+
+        executeStatement(areaBuilder(insertString, areaType, worldName, systemID, systemSubID)
+                .replaceAll("%flag%", flagName)
+                .replaceAll("%value%", String.valueOf(value)));
+    }
+
     @Override
     public String readMessage(Area area, Flag flag) {
         StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Flags WHERE WorldName='%world%'");
@@ -382,6 +400,15 @@ public class SQLDataStore implements DataStore {
         }
         executeStatement(areaBuilder(insertString, area)
                 .replaceAll("%flag%", flag.getName())
+                .replaceAll("%message%", message));
+    }
+
+    // For SQL Importer
+    private void writeAreaMessage(String message, String flagName, String areaType, String worldName, String systemID, String systemSubID) {
+       String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagMessage) VALUES ('%world%', '%area%', %sub%, '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
+
+       executeStatement(areaBuilder(insertString, areaType, worldName, systemID, systemSubID)
+                .replaceAll("%flag%", flagName)
                 .replaceAll("%message%", message));
     }
 
@@ -496,16 +523,26 @@ public class SQLDataStore implements DataStore {
 
         executeStatement(areaBuilder(deleteString.toString(), area).replaceAll("%flag%", flag.getName()));
 
-        for(String p : players) {
-            String insertString;
-            if(area instanceof Default || area instanceof World) {
-                insertString = "INSERT INTO %table%Trust (WorldName, FlagName, Trustee) VALUES('%world%', '%flag%', '%player%');";
-            } else {
-                insertString = "INSERT INTO %table%Trust (WorldName, AreaID, AreaSubID, FlagName, Trustee) VALUES('%world%', '%area%', %sub%, '%flag%', '%player%');";
-            }
+        String insertString;
+        if(area instanceof Default || area instanceof World) {
+            insertString = "INSERT INTO %table%Trust (WorldName, FlagName, Trustee) VALUES('%world%', '%flag%', '%player%');";
+        } else {
+            insertString = "INSERT INTO %table%Trust (WorldName, AreaID, AreaSubID, FlagName, Trustee) VALUES('%world%', '%area%', %sub%, '%flag%', '%player%');";
+        }
 
+        for(String p : players) {
             executeStatement(areaBuilder(insertString, area)
                     .replaceAll("%flag%", flag.getName())
+                    .replaceAll("%player%", p));
+        }
+    }
+
+    // For SQL Importer
+    private void writeAreaTrust(Set<String> players, String flagName, String areaType, String worldName, String systemID, String systemSubID) {
+        String insertString = "INSERT INTO %table%Trust (WorldName, AreaID, AreaSubID, FlagName, Trustee) VALUES('%world%', '%area%', %sub%, '%flag%', '%player%');";
+        for(String p : players) {
+            executeStatement(areaBuilder(insertString, areaType, worldName, systemID, systemSubID)
+                    .replaceAll("%flag%", flagName)
                     .replaceAll("%player%", p));
         }
     }
@@ -541,10 +578,15 @@ public class SQLDataStore implements DataStore {
             return;
         }
 
+        writeInheritance(value, area.getAreaType(), area.getWorld().getName(),
+                area.getSystemID(), ((Subdivision) area).getSystemSubID());
+    }
+
+    private void writeInheritance(boolean value, String areaType, String worldName, String systemID, String systemSubID) {
         String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue) "
                 + "VALUES ('%world%', '%area%', %sub%, 'InheritParent', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
 
-        executeStatement(areaBuilder(insertString, area)
+        executeStatement(areaBuilder(insertString, areaType, worldName, systemID, systemSubID)
                 .replaceAll("%value%", String.valueOf(value)));
     }
 
@@ -580,13 +622,35 @@ public class SQLDataStore implements DataStore {
             String subID = "null";
             String flag = keyNodes[3];
 
-            if(keyNodes.length == 6) { // Subdivision
+            if(keyNodes.length == 6 || key.contains("InheritParent")) { // Subdivision or InheritParent
                 subID = keyNodes[3];
                 flag = keyNodes[4];
             }
 
+            if(key.contains("InheritParent")) {
+                writeInheritance(((YamlDataStore) yaml).getBoolean(key), System.getActive().getAreaType(), world, id, subID);
+                continue;
+            }
+
             if(key.contains("Value")) {
-                //writeF
+                writeAreaFlag(((YamlDataStore) yaml).getBoolean(key), flag, System.getActive().getAreaType(), world, id, subID);
+                continue;
+            }
+
+            if(key.contains("Message")) {
+                writeAreaMessage(((YamlDataStore) yaml).getString(key), flag, System.getActive().getAreaType(), world, id, subID);
+                continue;
+            }
+
+            if(key.contains("Trust")) {
+                List<?> rawPlayers = ((YamlDataStore) yaml).getList(key);
+                Set<String> players = new HashSet<String>();
+                for(Object o : rawPlayers) {
+                    players.add((String)o);
+                }
+
+                writeAreaTrust(players, flag, System.getActive().getAreaType(), world, id, subID);
+                continue;
             }
         }
 
