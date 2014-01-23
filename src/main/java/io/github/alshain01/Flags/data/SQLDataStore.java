@@ -614,7 +614,7 @@ public class SQLDataStore implements DataStore {
         for(String key : keys) {
             String[] keyNodes = key.split("\\.");
 
-            // Parent id's are 5, Subdivisons are 6, all others are incomplete.
+            // Parent id's are 5, Subdivisions are 6, all others are incomplete.
             if(keyNodes.length < 5 || keyNodes.length > 6) { continue; }
 
             String world = keyNodes[1];
@@ -650,7 +650,6 @@ public class SQLDataStore implements DataStore {
                 }
 
                 writeAreaTrust(players, flag, System.getActive().getAreaType(), world, id, subID);
-                continue;
             }
         }
 
