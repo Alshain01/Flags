@@ -36,8 +36,6 @@ import org.bukkit.event.HandlerList;
  * Event for that occurs when a trustee is added or removed. This event may
  * occur if there is nothing to add or remove. (the player being removed is not
  * in the list or the player being added is already in the list)
- * 
- * @author Alshain01
  */
 public class TrustChangedEvent extends Event implements Cancellable {
 

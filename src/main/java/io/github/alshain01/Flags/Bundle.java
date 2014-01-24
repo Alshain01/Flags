@@ -32,8 +32,6 @@ import java.util.Set;
 
 /**
  * API for bundle management.
- * 
- * @author Alshain01
  */
 public final class Bundle {
 	/**
@@ -77,7 +75,7 @@ public final class Bundle {
 	 */
 	public static void setBundle(String name, Set<Flag> flags) {
 		Flags.getDataStore().writeBundle(name, flags);
-        String permName = "flag.bundle." + name;
+        String permName = "flag.bundle." + name.toLowerCase();
         if(flags == null || flags.size() == 0) {
             if(Bukkit.getPluginManager().getPermission(permName) != null) {
                 Bukkit.getPluginManager().removePermission(permName);
@@ -97,7 +95,7 @@ public final class Bundle {
     }
 
     private static void addPermission(String name) {
-        final Permission perm = new Permission("flags.bundle." + name,
+        final Permission perm = new Permission("flags.bundle." + name.toLowerCase(),
                 "Grants ability to use the bundle " + name, PermissionDefault.FALSE);
         perm.addParent("flags.bundle", true);
         Bukkit.getPluginManager().addPermission(perm);

@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -41,12 +42,10 @@ import com.massivecraft.mcore.ps.PS;
 
 /**
  * Class for creating areas to manage a Factions Territory.
- * 
- * @author Kevin Seiden
  */
 public class FactionsTerritory extends Area implements Removable {
 	private final Faction faction;
-	private final World world;
+	private final String worldName;
 
 	/**
 	 * Creates an instance of FactionsTerritory based on a Bukkit Location
@@ -56,7 +55,7 @@ public class FactionsTerritory extends Area implements Removable {
 	 */
 	public FactionsTerritory(Location location) {
 		faction = BoardColls.get().getFactionAt(PS.valueOf(location));
-		world = location.getWorld();
+		worldName = location.getWorld().getName();
 	}
 
 	/**
@@ -70,65 +69,54 @@ public class FactionsTerritory extends Area implements Removable {
 	 */
 	public FactionsTerritory(World world, String factionID) {
 		faction = FactionColls.get().getForWorld(world.getName()).get(factionID);
-		this.world = world;
+		this.worldName = world.getName();
 	}
 
-	/**
-	 * 0 if the the plots are the same, 3 if they are not.
-	 * 
-	 * @return The value of the comparison.
-	 */
-	@Override
-	public int compareTo(Area a) {
-		return a instanceof FactionsTerritory
-				&& a.getSystemID().equals(getSystemID()) ? 0 : 3;
-	}
+    /**
+     * Gets the faction object embedded in the area class.
+     *
+     * @return The faction object
+     */
+    public Faction getFaction() {
+        return faction;
+    }
 
-	/**
-	 * Gets if there is a territory at the location.
-	 * 
-	 * @return True if a territory exists at the location.
-	 */
-	public static boolean hasTerritory(Location location) {
-		return BoardColls.get().getFactionAt(PS.valueOf(location)) != null;
-	}
-	
-	@Override
-	public String getAreaType() {
-		return System.FACTIONS.getAreaType();
-	}
+    /**
+     * Gets if there is a territory at the location.
+     *
+     * @return True if a territory exists at the location.
+     */
+    public static boolean hasTerritory(Location location) {
+        return BoardColls.get().getFactionAt(PS.valueOf(location)) != null;
+    }
 
-	public Faction getFaction() {
-		return faction;
-	}
+    @Override
+    public String getSystemID() { return isArea() ? getFaction().getId() : null; }
+
+    @Override
+    public System getSystemType() {
+        return System.FACTIONS;
+    }
 
 	@Override
-	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList(getFaction().getLeader().getName()));
-	}
+	public Set<String> getOwners() { return new HashSet<String>(Arrays.asList(getFaction().getLeader().getName())); }
 
 	@Override
-	public String getSystemID() {
-		return isArea() ? getFaction().getId() : null;
-	}
+	public World getWorld() { return Bukkit.getWorld(worldName); }
+
+    @Override
+    public void remove() { Flags.getDataStore().remove(this); }
 
 	@Override
-	public World getWorld() {
-		return world;
-	}
+	public boolean isArea() { return getWorld() != null && getFaction() != null; }
 
-	@Override
-	public boolean isArea() {
-		return getWorld() != null && getFaction() != null;
-	}
-
-	@Override
-	public void remove() {
-		Flags.getDataStore().remove(this);
-	}
-
-	@Override
-	public System getType() {
-		return System.FACTIONS;
-	}
+    /**
+     * 0 if the the plots are the same, 3 if they are not.
+     *
+     * @return The value of the comparison.
+     */
+    @Override
+    public int compareTo(Area a) {
+        return a instanceof FactionsTerritory && a.getSystemID().equals(getSystemID()) ? 0 : 3;
+    }
 }

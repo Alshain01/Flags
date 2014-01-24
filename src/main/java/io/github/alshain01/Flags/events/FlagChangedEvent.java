@@ -34,8 +34,6 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Event that occurs when a flag value is set or removed.
- * 
- * @author Alshain01
  */
 public class FlagChangedEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();

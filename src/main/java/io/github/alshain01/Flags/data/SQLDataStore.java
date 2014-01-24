@@ -40,6 +40,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Class for handling SQL Database Storage
+ */
 public class SQLDataStore implements DataStore {
     private Connection connection = null;
     protected String url, user, password;
@@ -53,111 +56,6 @@ public class SQLDataStore implements DataStore {
         this.url = url;
         this.user = user;
         this.password = pw;
-    }
-
-    /*
-     * Private
-     */
-    private String getSubID(Area area) {
-        return (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : "'null'";
-    }
-
-    private void writeVersion(DBVersion version) {
-        executeQuery("UPDATE Version SET Major=" + version.major + ", Minor=" + version.minor + ", Build=" + version.build + ";");
-    }
-
-    /*
-     * Protected
-     */
-    protected String areaBuilder(String query, Area area) {
-        return query.replaceAll("%table%", area.getType().toString())
-                .replaceAll("%world%", area.getWorld().getName())
-                .replaceAll("%area%", area.getSystemID())
-                .replaceAll("%sub%", getSubID(area));
-    }
-
-    protected String areaBuilder(String query, String systemName, String worldName, String systemID, String systemSubID) {
-        return query.replaceAll("%table%", systemName)
-                .replaceAll("%world%", worldName)
-                .replaceAll("%area%", systemID)
-                .replaceAll("%sub%", systemSubID);
-    }
-
-    protected boolean connect(String url, String user, String password) {
-        // Connect to the database.
-        try {
-            connection = DriverManager.getConnection(url, user, password);
-            return true;
-        } catch (SQLException e) {
-            SqlError(e.getMessage());
-            return false;
-        }
-    }
-
-    protected void SqlError(String error) {
-        Flags.severe("[SQL DataStore Error] " + error);
-    }
-
-    protected void executeStatement(String statement) {
-        Flags.debug("[SQL Statement] " + statement);
-        try {
-            Statement SQL = connection.createStatement();
-            SQL.execute(statement);
-        } catch (SQLException e) {
-            SqlError(e.getMessage());
-        }
-    }
-
-    protected ResultSet executeQuery(String query) {
-        Flags.debug("[SQL Query] " + query);
-        try {
-            Statement SQL = connection.createStatement();
-            return SQL.executeQuery(query);
-        } catch (SQLException e) {
-            SqlError(e.getMessage());
-            return null;
-        }
-    }
-
-    //TODO: Implementation Specific (BOOLEAN)
-    protected void createSystemDB() {
-        // STANDARD BOOLEAN
-        // OVERRIDE for Implementation Specific
-        executeStatement("CREATE TABLE IF NOT EXISTS " + System.getActive().toString()
-                + "Flags (WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
-                + "FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), "
-                + "CONSTRAINT pk_AreaFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
-
-        executeStatement("CREATE TABLE IF NOT EXISTS " + System.getActive().toString()
-                + "Trust (WorldName VARCHAR(50), AreaID VARCHAR(50), "
-                + "AreaSubID VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), "
-                + "CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName, Trustee));");
-    }
-
-    //TODO: Implementation Specific (ROW LIMITING)
-    protected boolean exists() {
-        // We always need to create the system specific table
-        // in case it changed since the database was created.
-        // i.e. Grief Prevention was removed and WorldGuard was installed.
-        if(System.getActive() != System.WORLD) {
-            createSystemDB();
-        }
-
-        String[] connection = url.split("/");
-
-        // STANDARD ROW LIMITING
-        // OVERRIDE for Implementation Specific
-        ResultSet results =
-                executeQuery("SELECT * FROM information_schema.tables "
-                        + "WHERE table_schema = '%database%' AND table_name = 'Version' FETCH FIRST 1 ROWS ONLY;"
-                        .replaceAll("%database%", connection[connection.length-1]));
-
-        try {
-            return results.next();
-        } catch (SQLException e) {
-            SqlError(e.getMessage());
-        }
-        return false;
     }
 
     /*
@@ -667,6 +565,111 @@ public class SQLDataStore implements DataStore {
         Flags.log("Export Complete");
     }
 
+    /*
+     * Protected
+     */
+    protected String areaBuilder(String query, Area area) {
+        return query.replaceAll("%table%", area.getType().toString())
+                .replaceAll("%world%", area.getWorld().getName())
+                .replaceAll("%area%", area.getSystemID())
+                .replaceAll("%sub%", getSubID(area));
+    }
+
+    protected String areaBuilder(String query, String systemName, String worldName, String systemID, String systemSubID) {
+        return query.replaceAll("%table%", systemName)
+                .replaceAll("%world%", worldName)
+                .replaceAll("%area%", systemID)
+                .replaceAll("%sub%", systemSubID);
+    }
+
+    protected boolean connect(String url, String user, String password) {
+        // Connect to the database.
+        try {
+            connection = DriverManager.getConnection(url, user, password);
+            return true;
+        } catch (SQLException e) {
+            SqlError(e.getMessage());
+            return false;
+        }
+    }
+
+    protected void SqlError(String error) {
+        Flags.severe("[SQL DataStore Error] " + error);
+    }
+
+    protected void executeStatement(String statement) {
+        Flags.debug("[SQL Statement] " + statement);
+        try {
+            Statement SQL = connection.createStatement();
+            SQL.execute(statement);
+        } catch (SQLException e) {
+            SqlError(e.getMessage());
+        }
+    }
+
+    protected ResultSet executeQuery(String query) {
+        Flags.debug("[SQL Query] " + query);
+        try {
+            Statement SQL = connection.createStatement();
+            return SQL.executeQuery(query);
+        } catch (SQLException e) {
+            SqlError(e.getMessage());
+            return null;
+        }
+    }
+
+    //TODO: Implementation Specific (BOOLEAN)
+    protected void createSystemDB() {
+        // STANDARD BOOLEAN
+        // OVERRIDE for Implementation Specific
+        executeStatement("CREATE TABLE IF NOT EXISTS " + System.getActive().toString()
+                + "Flags (WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
+                + "FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), "
+                + "CONSTRAINT pk_AreaFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
+
+        executeStatement("CREATE TABLE IF NOT EXISTS " + System.getActive().toString()
+                + "Trust (WorldName VARCHAR(50), AreaID VARCHAR(50), "
+                + "AreaSubID VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), "
+                + "CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName, Trustee));");
+    }
+
+    //TODO: Implementation Specific (ROW LIMITING)
+    protected boolean exists() {
+        // We always need to create the system specific table
+        // in case it changed since the database was created.
+        // i.e. Grief Prevention was removed and WorldGuard was installed.
+        if(System.getActive() != System.WORLD) {
+            createSystemDB();
+        }
+
+        String[] connection = url.split("/");
+
+        // STANDARD ROW LIMITING
+        // OVERRIDE for Implementation Specific
+        ResultSet results =
+                executeQuery("SELECT * FROM information_schema.tables "
+                        + "WHERE table_schema = '%database%' AND table_name = 'Version' FETCH FIRST 1 ROWS ONLY;"
+                        .replaceAll("%database%", connection[connection.length-1]));
+
+        try {
+            return results.next();
+        } catch (SQLException e) {
+            SqlError(e.getMessage());
+        }
+        return false;
+    }
+
+    /*
+     * Private
+     */
+    private String getSubID(Area area) {
+        return (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : "'null'";
+    }
+
+    private void writeVersion(DBVersion version) {
+        executeQuery("UPDATE Version SET Major=" + version.major + ", Minor=" + version.minor + ", Build=" + version.build + ";");
+    }
+
     private static void convertGenericData(DataStore convertFrom, DataStore convertTo) {
         //Convert the bundles
         for(String b : convertFrom.readBundles()) {
@@ -726,6 +729,6 @@ public class SQLDataStore implements DataStore {
                 }
             }
         }
-
     }
+
 }

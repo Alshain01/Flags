@@ -47,6 +47,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.bekvon.bukkit.residence.Residence;
 
+/**
+ * Class for managing YAML Database Storage
+ */
 public final class YamlDataStore implements DataStore {
 	private static CustomYML data;
 	private static CustomYML def;
@@ -66,101 +69,6 @@ public final class YamlDataStore implements DataStore {
 		price.saveDefaultConfig();
 		bundle.saveDefaultConfig();
 	}
-
-    /*
-     * Private
-     */
-    private void writeVersion(DBVersion version) {
-        final String path = "Default.Database.Version";
-        final CustomYML cYml = getYml(path);
-        cYml.getConfig().set("Default.Database.Version",
-                version.major + "." + version.minor + "." + version.build);
-        cYml.saveConfig();
-    }
-
-	private void deleteBundle(String name) {
-		final String path = "Bundle." + name;
-		final CustomYML cYml = getYml(path);
-		cYml.getConfig().set("Bundle." + name, null);
-		cYml.saveConfig();
-	}
-
-    private boolean exists(JavaPlugin plugin) {
-		final File fileObject = new File(plugin.getDataFolder(), "default.yml");
-		return fileObject.exists();
-	}
-
-	private String getAreaPath(Area area) {
-		String path = area.getType().toString() + "." + area.getWorld().getName();
-
-		if (!(area instanceof World || area instanceof Default)) {
-			path += "." + area.getSystemID();
-		}
-
-		if (area instanceof Subdivision && !readInheritance(area)) {
-			path += "." + ((Subdivision) area).getSystemSubID();
-		}
-
-		return path;
-	}
-
-	private CustomYML getYml(String path) {
-		final String[] pathList = path.split("\\.");
-
-		if (pathList[0].equalsIgnoreCase("world")) {
-			return world;
-		} else if (pathList[0].equalsIgnoreCase("default")) {
-			return def;
-		} else if (pathList[0].equalsIgnoreCase("bundle")) {
-			return bundle;
-		} else if (pathList[0].equalsIgnoreCase("price")) {
-			return price;
-		} else {
-			return data;
-		}
-	}
-
-    /*
-     * Used in SQL Import/Export
-     */
-    protected Set<String> getAreaIDs() {
-        ConfigurationSection cSec = getYml("data").getConfig().getConfigurationSection(System.getActive().toString() + "Data");
-        if(cSec == null) { return new HashSet<String>(); }
-        return cSec.getKeys(false);
-    }
-
-    protected Set<String> getAreaSubIDs(String id) {
-        ConfigurationSection cSec = getYml("data").getConfig().getConfigurationSection(System.getActive().toString() + "Data." + id);
-        Set<String> subIDs = new HashSet<String>();
-        if(cSec == null) { return subIDs; }
-
-        for(String i : cSec.getKeys(true)) {
-            String[] nodes = i.split("\\.");
-            if(nodes.length == 4) { // All keys for the parent should have 3 nodes.
-                subIDs.add(nodes[0]);
-            }
-        }
-        return subIDs;
-    }
-
-    protected Set<String> readKeys() {
-        return data.getConfig().getKeys(true);
-    }
-
-    protected Boolean getBoolean(String dataLocation) {
-        if(data.getConfig().isBoolean(dataLocation)) {
-            return data.getConfig().getBoolean(dataLocation);
-        }
-        return null;
-    }
-
-    protected String getString(String dataLocation) {
-        return data.getConfig().getString(dataLocation);
-    }
-
-    protected List<?> getList(String dataLocation) {
-        return data.getConfig().getList(dataLocation);
-    }
 
     /*
      * Interface Methods
@@ -457,4 +365,99 @@ public final class YamlDataStore implements DataStore {
 		final String path = getAreaPath(area);
 		getYml(path).getConfig().set(path, null);
 	}
+
+    /*
+     * Used in SQL Import/Export
+     */
+    protected Set<String> getAreaIDs() {
+        ConfigurationSection cSec = getYml("data").getConfig().getConfigurationSection(System.getActive().toString() + "Data");
+        if(cSec == null) { return new HashSet<String>(); }
+        return cSec.getKeys(false);
+    }
+
+    protected Set<String> getAreaSubIDs(String id) {
+        ConfigurationSection cSec = getYml("data").getConfig().getConfigurationSection(System.getActive().toString() + "Data." + id);
+        Set<String> subIDs = new HashSet<String>();
+        if(cSec == null) { return subIDs; }
+
+        for(String i : cSec.getKeys(true)) {
+            String[] nodes = i.split("\\.");
+            if(nodes.length == 4) { // All keys for the parent should have 3 nodes.
+                subIDs.add(nodes[0]);
+            }
+        }
+        return subIDs;
+    }
+
+    protected Set<String> readKeys() {
+        return data.getConfig().getKeys(true);
+    }
+
+    protected Boolean getBoolean(String dataLocation) {
+        if(data.getConfig().isBoolean(dataLocation)) {
+            return data.getConfig().getBoolean(dataLocation);
+        }
+        return null;
+    }
+
+    protected String getString(String dataLocation) {
+        return data.getConfig().getString(dataLocation);
+    }
+
+    protected List<?> getList(String dataLocation) {
+        return data.getConfig().getList(dataLocation);
+    }
+
+    /*
+     * Private
+     */
+    private void writeVersion(DBVersion version) {
+        final String path = "Default.Database.Version";
+        final CustomYML cYml = getYml(path);
+        cYml.getConfig().set("Default.Database.Version",
+                version.major + "." + version.minor + "." + version.build);
+        cYml.saveConfig();
+    }
+
+    private void deleteBundle(String name) {
+        final String path = "Bundle." + name;
+        final CustomYML cYml = getYml(path);
+        cYml.getConfig().set("Bundle." + name, null);
+        cYml.saveConfig();
+    }
+
+    private boolean exists(JavaPlugin plugin) {
+        final File fileObject = new File(plugin.getDataFolder(), "default.yml");
+        return fileObject.exists();
+    }
+
+    private String getAreaPath(Area area) {
+        String path = area.getType().toString() + "." + area.getWorld().getName();
+
+        if (!(area instanceof World || area instanceof Default)) {
+            path += "." + area.getSystemID();
+        }
+
+        if (area instanceof Subdivision && !readInheritance(area)) {
+            path += "." + ((Subdivision) area).getSystemSubID();
+        }
+
+        return path;
+    }
+
+    private CustomYML getYml(String path) {
+        final String[] pathList = path.split("\\.");
+
+        if (pathList[0].equalsIgnoreCase("world")) {
+            return world;
+        } else if (pathList[0].equalsIgnoreCase("default")) {
+            return def;
+        } else if (pathList[0].equalsIgnoreCase("bundle")) {
+            return bundle;
+        } else if (pathList[0].equalsIgnoreCase("price")) {
+            return price;
+        } else {
+            return data;
+        }
+    }
 }

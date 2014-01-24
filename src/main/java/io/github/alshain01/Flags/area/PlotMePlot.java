@@ -38,6 +38,9 @@ import org.bukkit.World;
 import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
 
+/**
+ * Class for creating areas to manage a PlotMe Plot.
+ */
 public class PlotMePlot extends Area implements Removable {
 	private final Plot plot;
 
@@ -63,17 +66,7 @@ public class PlotMePlot extends Area implements Removable {
 		plot = PlotManager.getPlotById(world, plotID);
 	}
 
-	/**
-	 * 0 if the the worlds are the same, 3 if they are not.
-	 * 
-	 * @return The value of the comparison.
-	 */
-	@Override
-	public int compareTo(Area a) {
-		return a instanceof PlotMePlot && a.getSystemID().equals(getSystemID()) ? 0	: 3;
-	}
-
-	/**
+    /**
 	 * Gets if there is a plot at the location.
 	 * 
 	 * @return True if a plot exists at the location.
@@ -81,43 +74,41 @@ public class PlotMePlot extends Area implements Removable {
 	public static boolean hasPlot(Location location) {
 		return PlotManager.getPlotById(location) != null;
 	}
-	
-	@Override
-	public String getAreaType() {
-		return System.PLOTME.getAreaType();
-	}
+
+    /**
+     * Gets the plot object embedded in the area class.
+     *
+     * @return The plot object
+     */
+    public Plot getPlot() {
+        return plot;
+    }
+
+    @Override
+    public String getSystemID() { return isArea() ? getPlot().id : null; }
+
+    @Override
+    public System getSystemType() { return System.PLOTME; }
 
 	@Override
-	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList(getPlot().owner));
-	}
-
-	public Plot getPlot() {
-		return plot;
-	}
+	public Set<String> getOwners() { return new HashSet<String>(Arrays.asList(getPlot().owner)); }
 
 	@Override
-	public String getSystemID() {
-		return isArea() ? getPlot().id : null;
-	}
+	public World getWorld() { return Bukkit.getWorld(plot.world); }
 
 	@Override
-	public World getWorld() {
-		return Bukkit.getWorld(plot.world);
-	}
+	public boolean isArea() { return plot != null; }
 
 	@Override
-	public boolean isArea() {
-		return plot != null;
-	}
+	public void remove() { Flags.getDataStore().remove(this); }
 
-	@Override
-	public void remove() {
-		Flags.getDataStore().remove(this);
-	}
-
-	@Override
-	public System getType() {
-		return io.github.alshain01.Flags.System.PLOTME;
-	}
+    /**
+     * 0 if the the worlds are the same, 3 if they are not.
+     *
+     * @return The value of the comparison.
+     */
+    @Override
+    public int compareTo(Area a) {
+        return a instanceof PlotMePlot && a.getSystemID().equals(getSystemID()) ? 0	: 3;
+    }
 }

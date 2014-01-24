@@ -27,8 +27,6 @@ package io.github.alshain01.Flags.area;
 /**
  * Interface that defines area types that can be placed under siege by the land
  * management system
- * 
- * @author Alshain01
  */
 public interface Siege {
 	/**

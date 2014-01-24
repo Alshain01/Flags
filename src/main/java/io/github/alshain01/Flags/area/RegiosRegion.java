@@ -39,9 +39,12 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
+/**
+ * Class for creating areas to manage a Regios Region.
+ */
 public class RegiosRegion extends Area implements Removable{
 	final Region region;
-	
+
 	/**
 	 * Creates an instance of RegiosRegion based on a Bukkit Location
 	 * 
@@ -82,47 +85,35 @@ public class RegiosRegion extends Area implements Removable{
         return plugin != null && ((RegiosAPI)plugin).isInRegion(location);
 	}
 
+    /**
+     * Gets the region object embedded in the area class.
+     *
+     * @return The region object
+     */
+    public Region getRegion() {
+        return region;
+    }
+
 	@Override
-	public int compareTo(Area a) {
-		return a instanceof RegiosRegion && a.getSystemID().equals(getSystemID()) ? 0 : 3;
+	public Set<String> getOwners() { return new HashSet<String>(Arrays.asList(region.getOwner())); }
+
+	@Override
+	public System getSystemType() {
+		return System.REGIOS;
 	}
 
 	@Override
-	public String getAreaType() {
-		return System.REGIOS.getAreaType();
-	}
-	
-	public Region getRegion() {
-		return region;
-	}
+	public String getSystemID() { return region.getName(); }
 
 	@Override
-	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList(region.getOwner()));
-	}
+	public World getWorld() { return Bukkit.getWorld(region.getWorld().getName()); }
 
 	@Override
-	public System getType() {
-		return io.github.alshain01.Flags.System.REGIOS;
-	}
+	public boolean isArea() { return region != null; }
 
 	@Override
-	public String getSystemID() {
-		return region.getName();
-	}
+	public void remove() { Flags.getDataStore().remove(this); }
 
-	@Override
-	public World getWorld() {
-		return Bukkit.getWorld(region.getWorld().getName());
-	}
-
-	@Override
-	public boolean isArea() {
-		return region != null;
-	}
-
-	@Override
-	public void remove() {
-		Flags.getDataStore().remove(this);
-	}
+    @Override
+    public int compareTo(Area a) { return a instanceof RegiosRegion && a.getSystemID().equals(getSystemID()) ? 0 : 3; }
 }

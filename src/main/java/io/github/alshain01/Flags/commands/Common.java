@@ -33,8 +33,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 /**
  * Top level class for command based functions
- * 
- * @author Alshain01
  */
 abstract class Common {
 	protected static String getValue(boolean value) {

@@ -35,8 +35,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Modified YAML manager from http://wiki.bukkit.org/Configuration_API_Reference
- * 
- * @author bukkit.org
  */
 public final class CustomYML {
 	private static JavaPlugin plugin;

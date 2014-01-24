@@ -46,56 +46,156 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 
+/**
+ * Class for base functions of a specific area.
+ */
 public abstract class Area implements Comparable<Area> {
-	/*
-	 * Checks to make sure the player can afford the item. If false, the player
-	 * is automatically notified.
-	 */
-	private static boolean isFundingLow(EPurchaseType product, Flag flag, Player player) {
-		final double price = flag.getPrice(product);
+    /**
+     * Gets the land system's ID for this area.
+     *
+     * @return the area's ID in the format provided by the land management
+     *         system.
+     */
+    public abstract String getSystemID();
 
-		if (price > Flags.getEconomy().getBalance(player.getName())) {
-			player.sendMessage(Message.LowFunds
-					.get()
-					.replaceAll("\\{PurchaseType\\}",
-							product.getLocal().toLowerCase())
-					.replaceAll("\\{Price\\}", Flags.getEconomy().format(price))
-					.replaceAll("\\{Flag\\}", flag.getName()));
-			return true;
-		}
-		return false;
-	}
+    /**
+     * Returns the system type that this object belongs to.
+     *
+     * @return The LandSystem that created this object
+     */
+    public abstract System getSystemType();
 
-	/*
-	 * Makes the final purchase transaction.
-	 */
-	private static boolean makeTransaction(ETransactionType transaction,
-			EPurchaseType product, Flag flag, Player player) {
-		final double price = flag.getPrice(product);
-
-		final EconomyResponse r = transaction == ETransactionType.Withdraw ? Flags
-				.getEconomy().withdrawPlayer(player.getName(), price) // Withdrawal
-				: Flags.getEconomy().depositPlayer(player.getName(), price); // Deposit
-
-		if (r.transactionSuccess()) {
-			player.sendMessage(transaction.getMessage().replaceAll(
-					"\\{Price\\}", Flags.getEconomy().format(price)));
-			return true;
-		}
-
-		// Something went wrong if we made it this far.
-		Flags.severe(String.format("[Economy Error] %s", r.errorMessage));
-		player.sendMessage(Message.Error.get().replaceAll("\\{Error\\}",
-				r.errorMessage));
-		return false;
-	}
-	
 	/**
 	 * Gets the friendly name of the area type.
 	 * 
 	 * @return the area's type as a user friendly name.
+     * @deprecated Redundant. Use Area.getSystemType().getAreaType() instead
 	 */
-	public abstract String getAreaType();
+    @Deprecated
+	public String getAreaType() {
+        return getSystemType().getAreaType();
+    }
+
+    /**
+     * Gets a set of owners for the area. On many systems, there will only be
+     * one.
+     *
+     * @return the player name of the area owner.
+     */
+    public abstract Set<String> getOwners();
+
+    /**
+     * Gets the world for the area.
+     *
+     * @return the world associated with the area.
+     */
+    public abstract org.bukkit.World getWorld();
+
+    /**
+     * Checks if area exists on the server and can be flagged.
+     *
+     * @return true if the area exists.
+     */
+    public abstract boolean isArea();
+
+    /**
+     * Gets the value of the flag for this area.
+     *
+     * @param flag
+     *            The flag to retrieve the value for.
+     * @param absolute
+     *            True if you want a null value if the flag is not defined.
+     *            False if you want the inherited default (ensures not null).
+     * @return The value of the flag or the inherited value of the flag from
+     *         defaults if not defined.
+     */
+    public Boolean getValue(Flag flag, boolean absolute) {
+        if (!isArea()) {
+            return null;
+        }
+
+        Boolean value = Flags.getDataStore().readFlag(this, flag);
+        if (absolute) {
+            return value;
+        }
+
+        return value != null ? value : new Default(getWorld()).getValue(flag, false);
+    }
+
+    /**
+     * Sets the value of the flag for this area.
+     *
+     * @param flag
+     *            The flag to set the value for.
+     * @param value
+     *            The value to set, null to remove.
+     * @param sender
+     *            The command sender for event call and economy, may be null if
+     *            no associated player or console.
+     * @return False if the event was canceled.
+     */
+    public final boolean setValue(Flag flag, Boolean value, CommandSender sender) {
+        if (!isArea()) {
+            return false;
+        }
+
+        // Check to see if this can be paid for
+        ETransactionType transaction = null;
+        if (Flags.getEconomy() != null // No economy
+                && sender != null
+                && sender instanceof Player // Need a player to charge
+                && value != getValue(flag, true) // The flag isn't actually
+                // changing
+                && flag.getPrice(EPurchaseType.Flag) != 0 // No defined price
+                && !(this instanceof World) // No charge for world flags
+                && !(this instanceof Default) // No charge for defaults
+                && !(this instanceof Administrator && ((Administrator) this)
+                .isAdminArea())) // No charge for admin areas
+        {
+            if (value != null
+                    && (EBaseValue.ALWAYS.isSet()
+                    || EBaseValue.PLUGIN.isSet()
+                    && (getValue(flag, true) == null || getValue(flag,
+                    true) != flag.getDefault()) || EBaseValue.DEFAULT
+                    .isSet()
+                    && getValue(flag, true) != new Default(
+                    ((Player) sender).getLocation().getWorld())
+                    .getValue(flag, true))) {
+                // The flag is being set, see if the player can afford it.
+                if (isFundingLow(EPurchaseType.Flag, flag,
+                        (Player) sender)) {
+                    return false;
+                }
+                transaction = ETransactionType.Withdraw;
+            } else {
+                // Check whether or not to refund the account for setting the
+                // flag value
+                if (EPurchaseType.Flag.isRefundable()
+                        && !EBaseValue.ALWAYS.isSet()) {
+                    transaction = ETransactionType.Deposit;
+                }
+            }
+        }
+
+        final FlagChangedEvent event = new FlagChangedEvent(this, flag, sender,
+                value);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return false;
+        }
+
+        // Delay making the transaction in case the event is cancelled.
+        if (transaction != null) {
+            if (!makeTransaction(transaction, EPurchaseType.Flag, flag,
+                    (Player) sender)) {
+                return true;
+            }
+        }
+
+        final Boolean val = value == null ? null : value;
+        Flags.getDataStore().writeFlag(this, flag, val);
+        return true;
+    }
 
 	/**
 	 * Gets the message associated with a player flag. Translates the color
@@ -105,9 +205,22 @@ public abstract class Area implements Comparable<Area> {
 	 *            The flag to retrieve the message for.
 	 * @return The message associated with the flag.
 	 */
-	public final String getMessage(Flag flag) {
-		return getMessage(flag, true);
-	}
+	public final String getMessage(Flag flag) { return getMessage(flag, true); }
+
+    /**
+     * Gets the message associated with a player flag and parses {AreaType},
+     * {Owner}, {World}, and {Player}
+     *
+     * @param flag
+     *            The flag to retrieve the message for.
+     * @param playerName
+     *            The player name to insert into the message.
+     * @return The message associated with the flag.
+     */
+    public final String getMessage(Flag flag, String playerName) {
+        return getMessage(flag, true)
+                .replaceAll("\\{Player\\}", playerName);
+    }
 
 	/**
 	 * Gets the message associated with a player flag.
@@ -134,49 +247,96 @@ public abstract class Area implements Comparable<Area> {
 		if (parse) {
             Flags.debug("Parsing color codes and dynamic replacement strings.");
 			message = message.replaceAll("\\{AreaType\\}",
-					getAreaType().toLowerCase()).replaceAll("\\{Owner\\}",
+					getSystemType().getAreaType().toLowerCase()).replaceAll("\\{Owner\\}",
 					getOwners().toArray()[0].toString());
 			message = ChatColor.translateAlternateColorCodes('&', message);
 		}
 		return message;
 	}
 
-	/**
-	 * Gets the message associated with a player flag and parses {AreaType},
-	 * {Owner}, {World}, and {Player}
-	 * 
-	 * @param flag
-	 *            The flag to retrieve the message for.
-	 * @param playerName
-	 *            The player name to insert into the message.
-	 * @return The message associated with the flag.
-	 */
-	public final String getMessage(Flag flag, String playerName) {
-		return getMessage(flag, true).replaceAll("\\{Player\\}", playerName);
-	}
+    /**
+     * Sets or removes the message associated with a player flag.
+     *
+     * @param flag
+     *            The flag to set the message for.
+     * @param message
+     *            The message to set, null to remove.
+     * @param sender
+     *            CommandSender for event, may be null if no associated player
+     *            or console.
+     * @return True if successful
+     */
+    public final boolean setMessage(Flag flag, String message, CommandSender sender) {
+        Flags.debug("Setting Flag Message");
+        if (!isArea()) {
+            Flags.debug("Invalid Area Provided: Message Not Set");
+            return false;
+        }
 
-	/**
-	 * Gets a set of owners for the area. On many systems, there will only be
-	 * one.
-	 * 
-	 * @return the player name of the area owner.
-	 */
-	public abstract Set<String> getOwners();
+        ETransactionType transaction = null;
 
-	/**
-	 * Returns the system type that this object belongs to.
-	 * 
-	 * @return The LandSystem that created this object (null for Default)
-	 */
-	public abstract System getType();
+        // Check to see if this is a purchase or deposit
+        if (Flags.getEconomy() != null // No economy
+                && sender != null
+                && sender instanceof Player // Need a player to charge
+                && flag.getPrice(EPurchaseType.Message) != 0 // No defined price
+                && !(this instanceof World) // No charge for world flags
+                && !(this instanceof Default) // No charge for defaults
+                && !(this instanceof Administrator && ((Administrator) this)
+                .isAdminArea())) // No charge for admin areas
+        {
+            Flags.debug("Economy Transaction Configured");
+            // Check to make sure we aren't removing the message
+            if (message != null) {
+                Flags.debug("Message was not null");
+                // Check to make sure the message isn't identical to what we
+                // have
+                // (if they are just correcting caps, don't charge, I hate
+                // discouraging bad spelling & grammar)
+                if (!getMessage(flag, false).equalsIgnoreCase(message)) {
+                    Flags.debug("Message is not the same as datastore value");
+                    if (isFundingLow(EPurchaseType.Message, flag, (Player) sender)) {
+                        Flags.debug("Player cannot afford transaction.  Message set cancelled.");
+                        return false;
+                    }
+                    transaction = ETransactionType.Withdraw;
+                }
+            } else {
+                Flags.debug("Message was null/removing message");
+                // Check whether or not to refund the account
+                if (EPurchaseType.Message.isRefundable()) {
+                    Flags.debug("Purchase is refundable");
+                    // Make sure the message we are refunding isn't identical to
+                    // the default message
+                    if (!getMessage(flag, false).equals(
+                            flag.getDefaultAreaMessage())) {
+                        Flags.debug("Message is not the same as datastore value");
+                        transaction = ETransactionType.Deposit;
+                    }
+                }
+            }
+        }
 
-	/**
-	 * Gets the land system's ID for this area.
-	 * 
-	 * @return the area's ID in the format provided by the land management
-	 *         system.
-	 */
-	public abstract String getSystemID();
+        final MessageChangedEvent event = new MessageChangedEvent(this, flag, message, sender);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            Flags.debug("MessageChangedEvent Cancelled");
+            return false;
+        }
+
+        // Delay making the transaction in case the event is cancelled.
+        if (transaction != null) {
+            Flags.debug("Economy Transaction Ready");
+            if (!makeTransaction(transaction, EPurchaseType.Message, flag, (Player) sender)) {
+                Flags.debug("Failed to make transaction");
+                return true;
+            }
+        }
+
+        Flags.getDataStore().writeMessage(this, flag, message);
+        Flags.debug("Set Message Completed");
+        return true;
+    }
 
 	/**
 	 * Gets a full trust list
@@ -217,6 +377,67 @@ public abstract class Area implements Comparable<Area> {
     }
 
     /**
+     * Adds or removes a player from the trust list.
+     *
+     * @param flag
+     *            The flag to change trust for.
+     * @param trustee
+     *            The player being trusted or distrusted
+     * @param trusted
+     *            True if adding to the trust list, false if removing.
+     * @param sender
+     *            CommandSender for event, may be null if no associated player
+     *            or console.
+     * @return True if successful.
+     */
+    public final boolean setTrust(Flag flag, String trustee, boolean trusted, CommandSender sender) {
+        if (!isArea()) {
+            return false;
+        }
+
+        final Set<String> trustList = Flags.getDataStore().readTrust(this, flag);
+
+        // Set player to trusted.
+        if (trusted) {
+            Flags.debug("Adding Player to Trust");
+            if (trustList.contains(trustee.toLowerCase())) {
+                Flags.debug("Trusted Player already in trust list.");
+                return false;
+            }
+            trustList.add(trustee.toLowerCase());
+
+            final TrustChangedEvent event = new TrustChangedEvent(this, flag, trustee, true, sender);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                Flags.debug("TrustChangedEvent Cancelled");
+                return false;
+            }
+
+            // Set the list
+            Flags.getDataStore().writeTrust(this, flag, trustList);
+            return true;
+        }
+
+        Flags.debug("Removing Player from Trust");
+        // Remove player from trusted.
+        if (!trustList.contains(trustee.toLowerCase())) {
+            Flags.debug("Player not found in Trust list");
+            return false;
+        }
+
+        final TrustChangedEvent event = new TrustChangedEvent(this, flag, trustee, false, sender);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            Flags.debug("TrustChangedEvent Cancelled");
+            return false;
+        }
+
+        trustList.remove(trustee.toLowerCase());
+        Flags.getDataStore().writeTrust(this, flag, trustList);
+        return true;
+    }
+
+    /**
      * Returns true if the provided player is the area owner, has explicit trust, or permission trust.
      *
      * @param flag
@@ -245,36 +466,30 @@ public abstract class Area implements Comparable<Area> {
         return false;
     }
 
-	/**
-	 * Gets the value of the flag for this area.
-	 * 
-	 * @param flag
-	 *            The flag to retrieve the value for.
-	 * @param absolute
-	 *            True if you want a null value if the flag is not defined.
-	 *            False if you want the inherited default (ensures not null).
-	 * @return The value of the flag or the inherited value of the flag from
-	 *         defaults if not defined.
-	 */
-	public Boolean getValue(Flag flag, boolean absolute) {
-		if (!isArea()) {
-			return null;
-		}
+    /**
+     * Checks the players permission to set flags at this location.
+     *
+     * @param p
+     *            The player to check.
+     * @return true if the player has permissions.
+     */
+    public boolean hasPermission(Permissible p) {
+        if (!isArea()) {
+            return false;
+        }
 
-		Boolean value = Flags.getDataStore().readFlag(this, flag);
-		if (absolute) {
-			return value;
-		}
+        if (p instanceof HumanEntity
+                && getOwners().contains(((HumanEntity) p).getName())) {
+            return p.hasPermission("flags.command.flag.set");
+        }
 
-		return value != null ? value : new Default(getWorld()).getValue(flag, false);
-	}
+        if (this instanceof Administrator
+                && ((Administrator) this).isAdminArea()) {
+            return p.hasPermission("flags.area.flag.admin");
+        }
 
-	/**
-	 * Gets the world for the area.
-	 * 
-	 * @return the world associated with the area.
-	 */
-	public abstract org.bukkit.World getWorld();
+        return p.hasPermission("flags.area.flag.others");
+    }
 
 	/**
 	 * Checks the players permission to set bundles at this location
@@ -301,255 +516,46 @@ public abstract class Area implements Comparable<Area> {
 		return p.hasPermission("flags.area.bundle.others");
 	}
 
-	/**
-	 * Checks the players permission to set flags at this location.
-	 * 
-	 * @param p
-	 *            The player to check.
-	 * @return true if the player has permissions.
-	 */
-	public boolean hasPermission(Permissible p) {
-		if (!isArea()) {
-			return false;
-		}
+    /*
+     * Checks to make sure the player can afford the item. If false, the player
+     * is automatically notified.
+     */
+    private static boolean isFundingLow(EPurchaseType product, Flag flag, Player player) {
+        final double price = flag.getPrice(product);
 
-		if (p instanceof HumanEntity
-				&& getOwners().contains(((HumanEntity) p).getName())) {
-			return p.hasPermission("flags.command.flag.set");
-		}
+        if (price > Flags.getEconomy().getBalance(player.getName())) {
+            player.sendMessage(Message.LowFunds
+                    .get()
+                    .replaceAll("\\{PurchaseType\\}",
+                            product.getLocal().toLowerCase())
+                    .replaceAll("\\{Price\\}", Flags.getEconomy().format(price))
+                    .replaceAll("\\{Flag\\}", flag.getName()));
+            return true;
+        }
+        return false;
+    }
 
-		if (this instanceof Administrator
-				&& ((Administrator) this).isAdminArea()) {
-			return p.hasPermission("flags.area.flag.admin");
-		}
+    /*
+     * Makes the final purchase transaction.
+     */
+    private static boolean makeTransaction(ETransactionType transaction,
+                                           EPurchaseType product, Flag flag, Player player) {
+        final double price = flag.getPrice(product);
 
-		return p.hasPermission("flags.area.flag.others");
-	}
+        final EconomyResponse r = transaction == ETransactionType.Withdraw ? Flags
+                .getEconomy().withdrawPlayer(player.getName(), price) // Withdrawal
+                : Flags.getEconomy().depositPlayer(player.getName(), price); // Deposit
 
-	/**
-	 * Checks if area exists on the server and cam be flagged.
-	 * 
-	 * @return true if the area exists.
-	 */
-	public abstract boolean isArea();
+        if (r.transactionSuccess()) {
+            player.sendMessage(transaction.getMessage().replaceAll(
+                    "\\{Price\\}", Flags.getEconomy().format(price)));
+            return true;
+        }
 
-	/**
-	 * Sets or removes the message associated with a player flag.
-	 * 
-	 * @param flag
-	 *            The flag to set the message for.
-	 * @param message
-	 *            The message to set, null to remove.
-	 * @param sender
-	 *            CommandSender for event, may be null if no associated player
-	 *            or console.
-	 * @return True if successful
-	 */
-	public final boolean setMessage(Flag flag, String message, CommandSender sender) {
-        Flags.debug("Setting Flag Message");
-		if (!isArea()) {
-            Flags.debug("Invalid Area Provided: Message Not Set");
-			return false;
-		}
-
-		ETransactionType transaction = null;
-
-		// Check to see if this is a purchase or deposit
-		if (Flags.getEconomy() != null // No economy
-				&& sender != null
-				&& sender instanceof Player // Need a player to charge
-				&& flag.getPrice(EPurchaseType.Message) != 0 // No defined price
-				&& !(this instanceof World) // No charge for world flags
-				&& !(this instanceof Default) // No charge for defaults
-				&& !(this instanceof Administrator && ((Administrator) this)
-						.isAdminArea())) // No charge for admin areas
-		{
-            Flags.debug("Economy Transaction Configured");
-			// Check to make sure we aren't removing the message
-			if (message != null) {
-                Flags.debug("Message was not null");
-				// Check to make sure the message isn't identical to what we
-				// have
-				// (if they are just correcting caps, don't charge, I hate
-				// discouraging bad spelling & grammar)
-				if (!getMessage(flag, false).equalsIgnoreCase(message)) {
-                    Flags.debug("Message is not the same as datastore value");
-					if (isFundingLow(EPurchaseType.Message, flag, (Player) sender)) {
-                        Flags.debug("Player cannot afford transaction.  Message set cancelled.");
-						return false;
-					}
-					transaction = ETransactionType.Withdraw;
-				}
-			} else {
-                Flags.debug("Message was null/removing message");
-				// Check whether or not to refund the account
-				if (EPurchaseType.Message.isRefundable()) {
-                    Flags.debug("Purchase is refundable");
-					// Make sure the message we are refunding isn't identical to
-					// the default message
-					if (!getMessage(flag, false).equals(
-							flag.getDefaultAreaMessage())) {
-                        Flags.debug("Message is not the same as datastore value");
-						transaction = ETransactionType.Deposit;
-					}
-				}
-			}
-		}
-
-		final MessageChangedEvent event = new MessageChangedEvent(this, flag, message, sender);
-		Bukkit.getServer().getPluginManager().callEvent(event);
-		if (event.isCancelled()) {
-            Flags.debug("MessageChangedEvent Cancelled");
-			return false;
-		}
-
-		// Delay making the transaction in case the event is cancelled.
-		if (transaction != null) {
-            Flags.debug("Economy Transaction Ready");
-			if (!makeTransaction(transaction, EPurchaseType.Message, flag, (Player) sender)) {
-                Flags.debug("Failed to make transaction");
-				return true;
-			}
-		}
-
-		Flags.getDataStore().writeMessage(this, flag, message);
-        Flags.debug("Set Message Completed");
-		return true;
-	}
-
-	/**
-	 * Adds or removes a player from the trust list.
-	 * 
-	 * @param flag
-	 *            The flag to change trust for.
-	 * @param trustee
-	 *            The player being trusted or distrusted
-	 * @param trusted
-	 *            True if adding to the trust list, false if removing.
-	 * @param sender
-	 *            CommandSender for event, may be null if no associated player
-	 *            or console.
-	 * @return True if successful.
-	 */
-	public final boolean setTrust(Flag flag, String trustee, boolean trusted, CommandSender sender) {
-		if (!isArea()) {
-			return false;
-		}
-
-		final Set<String> trustList = Flags.getDataStore().readTrust(this, flag);
-
-		// Set player to trusted.
-		if (trusted) {
-            Flags.debug("Adding Player to Trust");
-			if (trustList.contains(trustee.toLowerCase())) {
-                Flags.debug("Trusted Player already in trust list.");
-				return false;
-			}
-			trustList.add(trustee.toLowerCase());
-
-			final TrustChangedEvent event = new TrustChangedEvent(this, flag, trustee, true, sender);
-			Bukkit.getServer().getPluginManager().callEvent(event);
-			if (event.isCancelled()) {
-                Flags.debug("TrustChangedEvent Cancelled");
-				return false;
-			}
-
-			// Set the list
-			Flags.getDataStore().writeTrust(this, flag, trustList);
-			return true;
-		}
-
-        Flags.debug("Removing Player from Trust");
-		// Remove player from trusted.
-		if (!trustList.contains(trustee.toLowerCase())) {
-            Flags.debug("Player not found in Trust list");
-			return false;
-		}
-
-		final TrustChangedEvent event = new TrustChangedEvent(this, flag, trustee, false, sender);
-		Bukkit.getServer().getPluginManager().callEvent(event);
-		if (event.isCancelled()) {
-            Flags.debug("TrustChangedEvent Cancelled");
-			return false;
-		}
-
-		trustList.remove(trustee.toLowerCase());
-		Flags.getDataStore().writeTrust(this, flag, trustList);
-		return true;
-	}
-
-	/**
-	 * Sets the value of the flag for this area.
-	 * 
-	 * @param flag
-	 *            The flag to set the value for.
-	 * @param value
-	 *            The value to set, null to remove.
-	 * @param sender
-	 *            The command sender for event call and economy, may be null if
-	 *            no associated player or console.
-	 * @return False if the event was canceled.
-	 */
-	public final boolean setValue(Flag flag, Boolean value, CommandSender sender) {
-		if (!isArea()) {
-			return false;
-		}
-
-		// Check to see if this can be paid for
-		ETransactionType transaction = null;
-		if (Flags.getEconomy() != null // No economy
-				&& sender != null
-				&& sender instanceof Player // Need a player to charge
-				&& value != getValue(flag, true) // The flag isn't actually
-													// changing
-				&& flag.getPrice(EPurchaseType.Flag) != 0 // No defined price
-				&& !(this instanceof World) // No charge for world flags
-				&& !(this instanceof Default) // No charge for defaults
-				&& !(this instanceof Administrator && ((Administrator) this)
-						.isAdminArea())) // No charge for admin areas
-		{
-			if (value != null
-					&& (EBaseValue.ALWAYS.isSet()
-							|| EBaseValue.PLUGIN.isSet()
-							&& (getValue(flag, true) == null || getValue(flag,
-									true) != flag.getDefault()) || EBaseValue.DEFAULT
-							.isSet()
-							&& getValue(flag, true) != new Default(
-									((Player) sender).getLocation().getWorld())
-									.getValue(flag, true))) {
-				// The flag is being set, see if the player can afford it.
-				if (isFundingLow(EPurchaseType.Flag, flag,
-                        (Player) sender)) {
-					return false;
-				}
-				transaction = ETransactionType.Withdraw;
-			} else {
-				// Check whether or not to refund the account for setting the
-				// flag value
-				if (EPurchaseType.Flag.isRefundable()
-						&& !EBaseValue.ALWAYS.isSet()) {
-					transaction = ETransactionType.Deposit;
-				}
-			}
-		}
-
-		final FlagChangedEvent event = new FlagChangedEvent(this, flag, sender,
-				value);
-		Bukkit.getPluginManager().callEvent(event);
-		if (event.isCancelled()) {
-			return false;
-		}
-
-		// Delay making the transaction in case the event is cancelled.
-		if (transaction != null) {
-			if (!makeTransaction(transaction, EPurchaseType.Flag, flag,
-					(Player) sender)) {
-				return true;
-			}
-		}
-
-		final Boolean val = value == null ? null : value;
-		Flags.getDataStore().writeFlag(this, flag, val);
-		return true;
-	}
+        // Something went wrong if we made it this far.
+        Flags.severe(String.format("[Economy Error] %s", r.errorMessage));
+        player.sendMessage(Message.Error.get().replaceAll("\\{Error\\}",
+                r.errorMessage));
+        return false;
+    }
 }

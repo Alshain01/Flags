@@ -30,6 +30,9 @@ import me.ryanhamshire.GriefPrevention.Claim;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+/**
+ * Class for creating areas to manage a Grief Prevention Claim.
+ */
 public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subdivision {
 
 	/**
@@ -66,6 +69,44 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 		this.claim = (claim == null) ? null : claim.getSubClaim(subID);
 	}
 
+    @Override
+    public org.bukkit.World getWorld() { return Bukkit.getServer().getWorld(claim.getClaimWorldName()); }
+
+    @Override
+    public String getSystemSubID() {
+        return claim != null && claim.parent != null ? String.valueOf(claim.getSubClaimID()) : null;
+    }
+
+    @Override
+    public boolean isSubdivision() { return claim != null && claim.parent != null; }
+
+    @Override
+    public boolean isParent(Area area) {
+        return area instanceof GriefPreventionClaim78 && claim.parent != null
+                && claim.parent.equals(((GriefPreventionClaim78)area).getClaim());
+    }
+
+    @Override
+    public Area getParent() {
+        if(claim.parent == null) { return null; }
+        return new GriefPreventionClaim78(claim.getID());
+    }
+
+    @Override
+    public boolean isInherited() {
+        return claim != null && claim.parent != null && Flags.getDataStore().readInheritance(this);
+    }
+
+    @Override
+    public void setInherited(boolean value) {
+        if (claim == null || claim.parent == null) {
+            Flags.debug("Claim or parent claim is null. Cancelling set inherited");
+            return;
+        }
+
+        Flags.getDataStore().writeInheritance(this, value);
+    }
+
 	/**
 	 * 0 if the the claims are the same 
 	 * -1 if the claim is a subdivision of the provided claim. 
@@ -91,47 +132,5 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 			return 2;
 		}
 		return 3;
-	}
-
-	@Override
-	public String getSystemSubID() {
-		return claim != null && claim.parent != null ? String.valueOf(claim.getSubClaimID()) : null;
-	}
-
-	@Override
-	public org.bukkit.World getWorld() {
-		return Bukkit.getServer().getWorld(claim.getClaimWorldName());
-	}
-
-	@Override
-	public boolean isInherited() {
-        return claim != null && claim.parent != null && Flags.getDataStore().readInheritance(this);
-	}
-
-	@Override
-	public boolean isSubdivision() {
-		return claim != null && claim.parent != null;
-	}
-
-	@Override
-	public void setInherited(boolean value) {
-		if (claim == null || claim.parent == null) {
-            Flags.debug("Claim or parent claim is null. Cancelling set inherited");
-			return;
-		}
-
-		Flags.getDataStore().writeInheritance(this, value);
-	}
-
-	@Override
-	public boolean isParent(Area area) {
-        return area instanceof GriefPreventionClaim78 && claim.parent != null
-            && claim.parent.equals(((GriefPreventionClaim78)area).getClaim());
-	}
-
-	@Override
-	public Area getParent() {
-		if(claim.parent == null) { return null; }
-		return new GriefPreventionClaim78(claim.getID());
 	}
 }

@@ -43,8 +43,6 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 /**
  * Listener for handling Player Movement
- * 
- * @author Alshain01
  */
 final class BorderPatrol implements Listener {
 	/*
@@ -74,18 +72,18 @@ final class BorderPatrol implements Listener {
 		timeDivisor = tDivisor;
 	}
 	
-	private static int eventsDivisor;
-	private static int timeDivisor;
-	private static final ConcurrentHashMap<String, PreviousMove> moveStore =
+	private int eventsDivisor;
+	private int timeDivisor;
+	private final ConcurrentHashMap<String, PreviousMove> moveStore =
 			new ConcurrentHashMap<String, PreviousMove>();
-	private static int eventCalls = 0;
+	private int eventCalls = 0;
 
 	/*
 	 * Remove any garbage entries that may have been left behind Probably won't
 	 * happen, but just in case.
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	private static void onPlayerJoin(PlayerJoinEvent event) {
+	private void onPlayerJoin(PlayerJoinEvent event) {
 		if (moveStore.containsKey(event.getPlayer().getName())) {
 			moveStore.remove(event.getPlayer().getName());
 		}
@@ -95,7 +93,7 @@ final class BorderPatrol implements Listener {
 	 * Remove the last location to keep memory usage low.
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	private static void onPlayerQuit(PlayerQuitEvent event) {
+	private void onPlayerQuit(PlayerQuitEvent event) {
 		if (moveStore.containsKey(event.getPlayer().getName())) {
 			moveStore.remove(event.getPlayer().getName());
 		}

@@ -33,12 +33,17 @@ import java.io.IOException;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
+/*
+ * Class for creating metrics graphs
+ */
 public class MetricsManager {
 	public static void StartMetrics(Plugin plugin) {
 		try {
 			final Metrics metrics = new Metrics(plugin);
 
-			// Land System Graph
+            /*
+             * Land System Graph
+             */
 			final Graph systemGraph = metrics.createGraph("Land System");
 			for (final System system : System.values()) {
 				if (System.getActive() == system) {
@@ -51,7 +56,9 @@ public class MetricsManager {
 				}
 			}
 
-			// Land System by PlayersGraph
+			/*
+			 * Land System by PlayersGraph
+			 */
 			final Graph systemPlayersGraph = metrics
 					.createGraph("Land System by Players");
 			for (final System system : io.github.alshain01.Flags.System.values()) {
@@ -65,7 +72,9 @@ public class MetricsManager {
 				}
 			}
 
-			// Flag groups installed
+			/*
+			 * Flag groups installed
+			 */
 			final Graph groupGraph = metrics.createGraph("Flag Groups");
 			for (final String group : Flags.getRegistrar().getFlagGroups()) {
 				groupGraph.addPlotter(new Metrics.Plotter(group) {
@@ -76,7 +85,9 @@ public class MetricsManager {
 				});
 			}
 
-            // Database Type
+            /*
+             * Database Type
+             */
             final Graph dbGraph = metrics.createGraph("Data Storage Type");
             dbGraph.addPlotter(new Metrics.Plotter(Flags.getDataStore().getType().getName()) {
                 @Override
@@ -85,7 +96,9 @@ public class MetricsManager {
                 }
             });
 
-			// Border Patrol Status
+			/*
+			 * Border Patrol Status
+			 */
 			final Graph bpGraph = metrics.createGraph("BorderPatrol Enabled");
 			if (Flags.getBorderPatrolEnabled()) {
 				bpGraph.addPlotter(new Metrics.Plotter("Enabled") {
@@ -103,7 +116,9 @@ public class MetricsManager {
 				});
 			}
 
-			// Auto Update settings
+			/*
+			 * Auto Update settings
+			 */
 			final Graph updateGraph = metrics.createGraph("Update Configuration");
 			if (!plugin.getConfig()
 					.getBoolean("Flags.Update.Check")) {
@@ -131,7 +146,9 @@ public class MetricsManager {
 				});
 			}
 
-			// Economy Graph
+			/*
+			 * Economy Graph
+			 */
 			final Graph econGraph = metrics.createGraph("Economy Enabled");
 			if (Flags.getEconomy() == null) {
 				econGraph.addPlotter(new Metrics.Plotter("No") {

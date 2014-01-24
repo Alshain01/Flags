@@ -27,8 +27,6 @@ import org.bukkit.Bukkit;
 
 /**
  * Enumeration for handling the purchasable product type
- * 
- * @author Alshain01
  */
 public enum EPurchaseType {
 	Flag('f'), Message('m');

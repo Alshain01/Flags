@@ -38,8 +38,6 @@ import org.bukkit.permissions.Permissible;
 
 /**
  * Class for creating areas to manage server defaults.
- * 
- * @author Kevin Seiden
  */
 public class Default extends Area {
 	private final String worldName;
@@ -78,20 +76,39 @@ public class Default extends Area {
 		}
 	}
 
-	/**
-	 * 0 if the the worlds are the same, 3 if they are not.
-	 * 
-	 * @return The value of the comparison.
-	 */
-	@Override
-	public int compareTo(Area a) {
-		return a instanceof Default && a.getSystemID().equals(worldName) ? 0 : 3;
-	}
+    @Override
+    public String getSystemID() {
+        return worldName;
+    }
 
-	@Override
-	public String getAreaType() {
-		return io.github.alshain01.Flags.System.DEFAULT.getAreaType();
-	}
+    @Override
+    public System getSystemType() {
+        return System.DEFAULT;
+    }
+
+    @Override
+    public Set<String> getOwners() { return new HashSet<String>(Arrays.asList("default")); }
+
+    @Override
+    public World getWorld() { return worldName != null ? Bukkit.getWorld(worldName) : null; }
+
+    @Override
+    public boolean isArea() { return worldName != null; }
+
+    @Override
+    public boolean hasBundlePermission(Permissible p) { return p.hasPermission("flags.area.bundle.default"); }
+
+    @Override
+    public boolean hasPermission(Permissible p) { return p.hasPermission("flags.area.flag.default"); }
+
+    @Override
+    public Boolean getValue(Flag flag, boolean absolute) {
+        final Boolean value = super.getValue(flag, true);
+        if (absolute) {
+            return value;
+        }
+        return value != null ? value : flag.getDefault();
+    }
 
 	/**
 	 * Gets the message associated with a player flag.
@@ -109,47 +126,11 @@ public class Default extends Area {
 		return message != null ? message : flag.getDefaultAreaMessage();
 	}
 
-	@Override
-	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList("default"));
-	}
-
-	@Override
-	public String getSystemID() {
-		return worldName;
-	}
-
-	@Override
-	public Boolean getValue(Flag flag, boolean absolute) {
-		final Boolean value = super.getValue(flag, true);
-		if (absolute) {
-			return value;
-		}
-		return value != null ? value : flag.getDefault();
-	}
-
-	@Override
-	public World getWorld() {
-		return worldName != null ? Bukkit.getWorld(worldName) : null;
-	}
-
-	@Override
-	public boolean hasBundlePermission(Permissible p) {
-		return p.hasPermission("flags.area.bundle.default");
-	}
-
-	@Override
-	public boolean hasPermission(Permissible p) {
-		return p.hasPermission("flags.area.flag.default");
-	}
-
-	@Override
-	public boolean isArea() {
-		return worldName != null;
-	}
-
-	@Override
-	public System getType() {
-		return System.DEFAULT;
-	}
+    /**
+     * 0 if the the worlds are the same, 3 if they are not.
+     *
+     * @return The value of the comparison.
+     */
+    @Override
+    public int compareTo(Area a) { return a instanceof Default && a.getSystemID().equals(worldName) ? 0 : 3; }
 }

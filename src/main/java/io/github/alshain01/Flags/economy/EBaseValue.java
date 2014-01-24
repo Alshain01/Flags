@@ -28,8 +28,6 @@ import org.bukkit.Bukkit;
 
 /**
  * Enumeration for handling the BaseFlagValue setting
- * 
- * @author Alshain01
  */
 public enum EBaseValue {
 	PLUGIN, DEFAULT, ALWAYS;

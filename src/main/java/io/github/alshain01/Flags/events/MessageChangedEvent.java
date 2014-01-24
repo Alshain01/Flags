@@ -34,8 +34,6 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Event for that occurs when a message is set, changed or removed.
- * 
- * @author Alshain01
  */
 public class MessageChangedEvent extends Event implements Cancellable {
 

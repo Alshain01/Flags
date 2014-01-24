@@ -37,6 +37,9 @@ import org.bukkit.Location;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 
+/**
+ * Class for creating areas to manage a Residence Claimed Residences.
+ */
 public class ResidenceClaimedResidence extends Area implements Removable, Subdivision {
 	private final ClaimedResidence residence;
 
@@ -63,33 +66,6 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	}
 
 	/**
-	 * 0 if the the claims are the same 
-	 * -1 if the claim is a subdivision of the provided claim. 
-	 * 1 if the claim is a parent of the provided claim.
-	 * 2 if they are "sister" subdivisions. 3 if they are completely unrelated.
-	 * 
-	 * @return The value of the comparison.
-	 */
-	@Override
-	public int compareTo(Area a) {
-		if (!(a instanceof ResidenceClaimedResidence)) {
-			return 3;
-		}
-
-		ClaimedResidence testRes = ((ResidenceClaimedResidence)a).getResidence();
-		if (residence.equals(testRes)) {
-			return 0;
-		} else if (residence.getParent() != null && residence.getParent().equals(testRes)) {
-			return -1;
-		} else if (testRes.getParent() != null && testRes.getParent().equals(residence)) {
-			return 1;
-		} else if (residence.getParent() != null && residence.getParent().equals(testRes.getParent())) {
-			return 2;
-		}
-		return 3;
-	}
-
-	/**
 	 * Gets if there is a residence at the location.
 	 * 
 	 * @return True if a residence exists at the location.
@@ -97,28 +73,37 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	public static boolean hasResidence(Location location) {
 		return Residence.getResidenceManager().getByLoc(location) != null;
 	}
-	
-	@Override
-	public String getAreaType() {
-		return io.github.alshain01.Flags.System.RESIDENCE.getAreaType();
-	}
 
-	@Override
-	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList(residence.getOwner()));
-	}
+    /**
+     * Gets the ClaimedResidence object embedded in the area class.
+     *
+     * @return The ClaimedResidence object
+     */
+    public ClaimedResidence getResidence() {
+        return residence;
+    }
 
-	public ClaimedResidence getResidence() {
-		return residence;
-	}
-
-	@Override
-	public String getSystemID() {
+    @Override
+    public String getSystemID() {
         if(residence != null) {
-		    return residence.getParent() != null ? residence.getParent().getName() : residence.getName();
+            return residence.getParent() != null ? residence.getParent().getName() : residence.getName();
         }
         return null;
-	}
+    }
+
+    @Override
+    public System getSystemType() {
+        return System.RESIDENCE;
+    }
+
+	@Override
+	public Set<String> getOwners() { return new HashSet<String>(Arrays.asList(residence.getOwner())); }
+
+    @Override
+    public org.bukkit.World getWorld() { return Bukkit.getServer().getWorld(residence.getWorld()); }
+
+    @Override
+    public boolean isArea() { return residence != null; }
 
 	@Override
 	public String getSystemSubID() {
@@ -126,57 +111,67 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 				? residence.getName().split("\\.")[1] : null;
 	}
 
-	@Override
-	public org.bukkit.World getWorld() {
-		return Bukkit.getServer().getWorld(residence.getWorld());
-	}
+    @Override
+    public boolean isSubdivision() {
+        return residence != null && residence.getParent() != null;
+    }
 
-	@Override
-	public boolean isArea() {
-		return residence != null;
-	}
+    @Override
+    public boolean isParent(Area area) {
+        return area instanceof ResidenceClaimedResidence && residence.getParent() != null &&
+                residence.getParent().equals(((ResidenceClaimedResidence)area).getResidence());
+    }
 
-	@Override
+    @Override
+    public Area getParent() {
+        if(residence.getParent() == null) { return null; }
+        return new ResidenceClaimedResidence(residence.getParent().getName());
+    }
+
+    @Override
 	public boolean isInherited() {
 		return residence != null && residence.getParent() != null && Flags.getDataStore().readInheritance(this);
 	}
 
-	@Override
-	public boolean isSubdivision() {
-		return residence != null && residence.getParent() != null;
-	}
+    @Override
+    public void setInherited(boolean value) {
+        if (residence == null || residence.getParent() == null) {
+            return;
+        }
+
+        Flags.getDataStore().writeInheritance(this, value);
+    }
 
 	/**
 	 * Permanently removes the area from the data store USE CAUTION!
 	 */
 	@Override
-	public void remove() {
-		Flags.getDataStore().remove(this);
-	}
+	public void remove() { Flags.getDataStore().remove(this); }
 
-	@Override
-	public void setInherited(boolean value) {
-		if (residence == null || residence.getParent() == null) {
-			return;
-		}
+    /**
+     * 0 if the the claims are the same
+     * -1 if the claim is a subdivision of the provided claim.
+     * 1 if the claim is a parent of the provided claim.
+     * 2 if they are "sister" subdivisions. 3 if they are completely unrelated.
+     *
+     * @return The value of the comparison.
+     */
+    @Override
+    public int compareTo(Area a) {
+        if (!(a instanceof ResidenceClaimedResidence)) {
+            return 3;
+        }
 
-		Flags.getDataStore().writeInheritance(this, value);
-	}
-
-	@Override
-	public System getType() {
-		return System.RESIDENCE;
-	}
-
-	@Override
-	public boolean isParent(Area area) {
-		return area instanceof ResidenceClaimedResidence && residence.getParent() != null &&
-            residence.getParent().equals(((ResidenceClaimedResidence)area).getResidence());
-	}
-
-	@Override
-	public Area getParent() {
-		if(residence.getParent() == null) { return null; }
-		return new ResidenceClaimedResidence(residence.getParent().getName());
-	}
+        ClaimedResidence testRes = ((ResidenceClaimedResidence)a).getResidence();
+        if (residence.equals(testRes)) {
+            return 0;
+        } else if (residence.getParent() != null && residence.getParent().equals(testRes)) {
+            return -1;
+        } else if (testRes.getParent() != null && testRes.getParent().equals(residence)) {
+            return 1;
+        } else if (residence.getParent() != null && residence.getParent().equals(testRes.getParent())) {
+            return 2;
+        }
+        return 3;
+    }
 }

@@ -33,6 +33,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
+/**
+ * Class for handling the registration of new Flags
+ */
 public final class Registrar {
 	final ConcurrentHashMap<String, Flag> flagStore = new ConcurrentHashMap<String, Flag>();
 

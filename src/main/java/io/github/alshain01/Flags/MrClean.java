@@ -41,9 +41,41 @@ import org.bukkit.plugin.PluginManager;
 import com.bekvon.bukkit.residence.event.ResidenceDeleteEvent;
 import com.massivecraft.factions.event.FactionsEventDisband;
 
+/**
+ * Class for removing data from areas that are deleted.
+ */
 public class MrClean {
 	private MrClean() { }
-	
+
+    /*
+     * Database cleanup monitors
+     */
+    protected static void enable(Plugin plugin) {
+        PluginManager pm = plugin.getServer().getPluginManager();
+        switch (System.getActive()) {
+            case GRIEF_PREVENTION:
+                if (Float.valueOf(pm.getPlugin(System.getActive().toString())
+                        .getDescription().getVersion().substring(0, 3)) >= 7.8) {
+
+                    pm.registerEvents(new GriefPreventionCleaner(),	plugin);
+                }
+                break;
+            case RESIDENCE:
+                pm.registerEvents(new ResidenceCleaner(), plugin);
+                break;
+            case FACTIONS:
+                pm.registerEvents(new FactionsCleaner(), plugin);
+                break;
+            case REGIOS:
+                pm.registerEvents(new RegiosCleaner(), plugin);
+            default:
+                break;
+        }
+    }
+
+    /*
+     * Factions Cleaner
+     */
 	private static class FactionsCleaner implements Listener {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onFactionDisband(FactionsEventDisband e) {
@@ -53,6 +85,9 @@ public class MrClean {
 		}
 	}
 
+    /*
+     * Grief Prevention Cleaner
+     */
 	private static class GriefPreventionCleaner implements Listener {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onClaimDeleted(ClaimDeletedEvent e) {
@@ -61,6 +96,9 @@ public class MrClean {
 		}
 	}
 
+    /*
+     * Residence Cleaner
+     */
 	private static class ResidenceCleaner implements Listener {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onResidenceDelete(ResidenceDeleteEvent e) {
@@ -69,37 +107,14 @@ public class MrClean {
 		}
 	}
 
+    /*
+     * Regios Cleaner
+     */
 	private static class RegiosCleaner implements Listener {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onRegionDelete(RegionDeleteEvent e) {
 			// Cleanup the database, keep the file from growing too large.
 			new RegiosRegion(e.getRegion().getName()).remove();
-		}
-	}
-	
-	/*
-	 * Database cleanup monitors
-	 */
-	protected static void enable(Plugin plugin) {
-		PluginManager pm = plugin.getServer().getPluginManager();
-		switch (System.getActive()) {
-		case GRIEF_PREVENTION:
-			if (Float.valueOf(pm.getPlugin(System.getActive().toString())
-					.getDescription().getVersion().substring(0, 3)) >= 7.8) {
-
-				pm.registerEvents(new GriefPreventionCleaner(),	plugin);
-			}
-			break;
-		case RESIDENCE:
-			pm.registerEvents(new ResidenceCleaner(), plugin);
-			break;
-		case FACTIONS:
-			pm.registerEvents(new FactionsCleaner(), plugin);
-			break;
-		case REGIOS:
-			pm.registerEvents(new RegiosCleaner(), plugin);
-		default:
-			break;
 		}
 	}
 }

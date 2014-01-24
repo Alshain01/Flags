@@ -31,9 +31,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * Modified YAML manager from http://wiki.bukkit.org/Configuration_API_Reference
  * Handles reading YAML from a source file without saving it to disk.
- * 
- * @author bukkit.org
- * @author Alshain01
  */
 public final class ModuleYML {
 	private final JavaPlugin plugin;

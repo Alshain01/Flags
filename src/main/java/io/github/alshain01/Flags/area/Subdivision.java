@@ -27,8 +27,6 @@ package io.github.alshain01.Flags.area;
 /**
  * Interface that defines area types that can be subdivided into parent/child
  * subdivisions.
- * 
- * @author Alshain01
  */
 public interface Subdivision {
 	/**
@@ -38,19 +36,34 @@ public interface Subdivision {
 	 */
 	public String getSystemSubID();
 
-	/**
-	 * Checks if the subdivision is inheriting flags from it's parent
-	 * 
-	 * @return True if the area is inheriting.
-	 */
-	public boolean isInherited();
+    /**
+     * Checks if the area is a subdivision.
+     *
+     * @return True if the are is a subdivision of another area.
+     */
+    public boolean isSubdivision();
 
-	/**
-	 * Checks if the area is a subdivision.
-	 * 
-	 * @return True if the are is a subdivision of another area.
-	 */
-	public boolean isSubdivision();
+    /**
+     * Returns whether the provided area is a parent of this area.
+     *
+     * @param area The potential parent area
+     * @return True if the area is a parent.
+     */
+    public boolean isParent(Area area);
+
+    /**
+     * Returns the parent of a subdivision area
+     *
+     * @return The parent of this area
+     */
+    public Area getParent();
+
+    /**
+     * Checks if the subdivision is inheriting flags from it's parent
+     *
+     * @return True if the area is inheriting.
+     */
+	public boolean isInherited();
 
 	/**
 	 * Sets if a subdivision is inheriting from it's parent
@@ -59,8 +72,4 @@ public interface Subdivision {
 	 *            True if the area should inherit from the parent area.
 	 */
 	public void setInherited(boolean value);
-	
-	public boolean isParent(Area area);
-	
-	public Area getParent();
 }

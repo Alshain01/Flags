@@ -31,8 +31,6 @@ import org.bukkit.permissions.PermissionDefault;
 
 /**
  * Represents a flag registered with the plug-in.
- * 
- * @author Alshain01
  */
 public final class Flag {
 	private final boolean def;
@@ -63,7 +61,7 @@ public final class Flag {
 	 *            The default world message for the flag.
 	 */
 	protected Flag(String name, String description, boolean def, String plugin,
-			boolean player, String area, String world) {
+            boolean player, String area, String world) {
 		this.name = name;
 		this.description = description;
 		this.def = def;

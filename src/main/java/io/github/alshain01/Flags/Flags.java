@@ -60,15 +60,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class Flags extends JavaPlugin {
 	protected static CustomYML messageStore;
 	protected static System currentSystem = System.WORLD;
-	private static DataStore dataStore;
-	private static Updater updater = null;
+
+    private Updater updater = null;
+    private static DataStore dataStore;
 	private static Economy economy = null;
 	private static boolean debugOn = false;
-
+    private static boolean borderPatrol = false;
 	private static Registrar flagRegistrar = new Registrar();
 
-	private static boolean borderPatrol = false;
-	
 	/**
 	 * Called when this plug-in is enabled
 	 */
@@ -136,6 +135,26 @@ public class Flags extends JavaPlugin {
 		log("Flags Has Been Enabled.");
 	}
 
+    /**
+     * Called when this plug-in is disabled
+     */
+    @Override
+    public void onDisable() {
+        if(dataStore instanceof SQLDataStore) {
+            ((SQLDataStore)dataStore).close();
+        }
+
+        // Static cleanup
+        economy = null;
+        dataStore = null;
+        updater = null;
+        messageStore = null;
+        flagRegistrar = null;
+        currentSystem = null;
+
+        log("Flags Has Been Disabled.");
+    }
+
 	/**
 	 * Executes the given command, returning its success
 	 * 
@@ -191,27 +210,105 @@ public class Flags extends JavaPlugin {
 		return (cmd.getName().equalsIgnoreCase("bundle") && Command.onBundleCommand(sender, args));
 	}
 
-	/**
-	 * Called when this plug-in is disabled
-	 */
-	@Override
-	public void onDisable() {
-		if(dataStore instanceof SQLDataStore) {
-             ((SQLDataStore)dataStore).close();
-        }
-		
-		// Static cleanup
-		economy = null;
-		dataStore = null;
-		updater = null;
-		messageStore = null;
-		flagRegistrar = null;
-		currentSystem = null;
+    /**
+     * Checks if the provided string represents a version number that is equal
+     * to or lower than the current Bukkit API version.
+     *
+     * String should be formatted with 3 numbers: x.y.z
+     *
+     * @return true if the version provided is compatible
+     */
+    public static boolean checkAPI(String version) {
+        final float APIVersion = Float.valueOf(Bukkit.getServer().getBukkitVersion().substring(0, 3));
+        final float CompareVersion = Float.valueOf(version.substring(0, 3));
+        final int APIBuild = Integer.valueOf(Bukkit.getServer().getBukkitVersion().substring(4, 5));
+        final int CompareBuild = Integer.valueOf(version.substring(4, 5));
 
-		log("Flags Has Been Disabled.");
-	}
-	
-	/*
+        return (APIVersion > CompareVersion
+                || APIVersion == CompareVersion	&& APIBuild >= CompareBuild);
+    }
+
+    /**
+     * Sends a severe message through the Flags logger.
+     *
+     * @param message
+     *            The message
+     */
+    public static void severe(String message) {
+        Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().severe(message);
+    }
+
+    /**
+     * Sends a warning message through the Flags logger.
+     *
+     * @param message
+     *            The message
+     */
+    public static void warn(String message) {
+        Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().warning(message);
+    }
+
+    /**
+     * Sends a log message through the Flags logger.
+     *
+     * @param message
+     *            The message
+     */
+    public static void log(String message) {
+        Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().info(message);
+    }
+
+    /**
+     * Sends a debug message through the Flags logger.
+     *
+     * @param message
+     *            The message
+     */
+    public static void debug(String message) {
+        if(debugOn) {
+            Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().info("[DEBUG] " + message);
+        }
+    }
+
+    /**
+     * Gets the status of the border patrol event listener. (i.e
+     * PlayerChangedAreaEvent)
+     *
+     * @return The status of the border patrol listener
+     */
+    public static boolean getBorderPatrolEnabled() {
+        return borderPatrol;
+    }
+
+    /**
+     * Gets the DataStore used by Flags. In most cases, plugins should not
+     * attempt to access this directly.
+     *
+     * @return The dataStore object in Flags.
+     */
+    public static DataStore getDataStore() {
+        return dataStore;
+    }
+
+    /**
+     * Gets the vault economy for this instance of Flags.
+     *
+     * @return The vault economy.
+     */
+    public static Economy getEconomy() {
+        return economy;
+    }
+
+    /**
+     * Gets the registrar for this instance of Flags.
+     *
+     * @return The flag registrar.
+     */
+    public static Registrar getRegistrar() {
+        return flagRegistrar;
+    }
+
+    /*
 	 * Contains event listeners required for plugin maintenance.
 	 */
 	private class FlagsListener implements Listener {
@@ -266,7 +363,10 @@ public class Flags extends JavaPlugin {
 			}
 		}
 	}
-	
+
+    /*
+     * Handles update checking and downloading
+     */
 	private class UpdateScheduler extends BukkitRunnable {
 		@Override
 		public void run() {
@@ -291,6 +391,9 @@ public class Flags extends JavaPlugin {
 		}
 	}
 
+    /*
+     * Reloads YAML files
+     */
     private void reload() {
         this.reloadConfig();
         debugOn = getConfig().getBoolean("Flags.Debug");
@@ -299,104 +402,6 @@ public class Flags extends JavaPlugin {
         dataStore.reload();
         log("Flag Database Reloaded");
     }
-
-	/**
-	 * Checks if the provided string represents a version number that is equal
-	 * to or lower than the current Bukkit API version.
-	 * 
-	 * String should be formatted with 3 numbers: x.y.z
-	 * 
-	 * @return true if the version provided is compatible
-	 */
-	public static boolean checkAPI(String version) {
-		final float APIVersion = Float.valueOf(Bukkit.getServer().getBukkitVersion().substring(0, 3));
-		final float CompareVersion = Float.valueOf(version.substring(0, 3));
-		final int APIBuild = Integer.valueOf(Bukkit.getServer().getBukkitVersion().substring(4, 5));
-		final int CompareBuild = Integer.valueOf(version.substring(4, 5));
-
-		return (APIVersion > CompareVersion 
-				|| APIVersion == CompareVersion	&& APIBuild >= CompareBuild);
-	}
-
-    /**
-	 * Sends a severe message through the Flags logger.
-	 * 
-	 * @param message
-	 *            The message
-	 */
-	public static void severe(String message) {
-		Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().severe(message);
-	}
-	
-	/**
-	 * Sends a warning message through the Flags logger.
-	 * 
-	 * @param message
-	 *            The message
-	 */
-	public static void warn(String message) {
-		Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().warning(message);
-	}
-	
-	/**
-	 * Sends a log message through the Flags logger.
-	 * 
-	 * @param message
-	 *            The message
-	 */
-	public static void log(String message) {
-        Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().info(message);
-	}
-
-    /**
-     * Sends a debug message through the Flags logger.
-     *
-     * @param message
-     *            The message
-     */
-    public static void debug(String message) {
-        if(debugOn) {
-            Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().info("[DEBUG] " + message);
-        }
-    }
-
-	/**
-	 * Gets the status of the border patrol event listener. (i.e
-	 * PlayerChangedAreaEvent)
-	 * 
-	 * @return The status of the border patrol listener
-	 */
-	public static boolean getBorderPatrolEnabled() {
-		return borderPatrol;
-	}
-
-	/**
-	 * Gets the DataStore used by Flags. In most cases, plugins should not
-	 * attempt to access this directly.
-	 * 
-	 * @return The dataStore object in Flags.
-	 */
-	public static DataStore getDataStore() {
-		return dataStore;
-	}
-
-	/**
-	 * Gets the vault economy for this instance of Flags.
-	 * 
-	 * @return The vault economy.
-	 */
-	public static Economy getEconomy() {
-		return economy;
-	}
-
-	/**
-	 * Gets the registrar for this instance of Flags.
-	 * 
-	 * @return The flag registrar.
-	 */
-	public static Registrar getRegistrar() {
-		return flagRegistrar;
-	}
 
 	/*
 	 * Acquires the land management plugin.

@@ -29,6 +29,7 @@ import io.github.alshain01.Flags.System;
 
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -36,12 +37,21 @@ import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
+/**
+ * Class for creating areas to manage a WorldGuard Region.
+ */
 public class WorldGuardRegion extends Area implements Removable {
 	private final ProtectedRegion region;
-	private final World world;
+	private final String worldName;
 
+    /**
+     * Creates an instance of WorldGuardRegion based on a Bukkit Location
+     *
+     * @param location
+     *            The Bukkit location
+     */
 	public WorldGuardRegion(Location location) {
-		world = location.getWorld();
+		worldName = location.getWorld().getName();
 		ProtectedRegion tempRegion = null;
 		final ApplicableRegionSet regionSet = WGBukkit.getRegionManager(location.getWorld()).getApplicableRegions(location);
 		if (regionSet != null) {
@@ -57,8 +67,16 @@ public class WorldGuardRegion extends Area implements Removable {
 		this.region = tempRegion;
 	}
 
+    /**
+     * Creates an instance of WorldGuardRegion based on a region ID
+     *
+     * @param world
+     *            The world the region is in.
+     * @param regionID
+     *            The ID of the region.
+     */
 	public WorldGuardRegion(World world, String regionID) {
-		this.world = world;
+		this.worldName = world.getName();
 		region = WGBukkit.getRegionManager(world).getRegionExact(regionID);
 	}
 	
@@ -71,53 +89,42 @@ public class WorldGuardRegion extends Area implements Removable {
 		return WGBukkit.getRegionManager(location.getWorld()).getApplicableRegions(location).size() != 0;
 	}
 
-	/**
-	 * 0 if the the worlds are the same, 3 if they are not.
-	 * 
-	 * @return The value of the comparison.
-	 */
-	@Override
-	public int compareTo(Area a) {
-		return a instanceof WorldGuardRegion
-				&& a.getSystemID().equals(getSystemID()) ? 0 : 3;
-	}
+    /**
+     * Gets the region object embedded in the area class.
+     *
+     * @return The region object
+     */
+    public ProtectedRegion getRegion() {
+        return region;
+    }
 
 	@Override
-	public String getAreaType() {
-		return io.github.alshain01.Flags.System.WORLDGUARD.getAreaType();
-	}
+	public String getSystemID() { return !isArea() ? null : region.getId(); }
+
+    @Override
+    public System getSystemType() {
+        return System.WORLDGUARD;
+    }
+
+    @Override
+    public Set<String> getOwners() { return getRegion().getOwners().getPlayers(); }
 
 	@Override
-	public Set<String> getOwners() {
-		return getRegion().getOwners().getPlayers();
-	}
-
-	public ProtectedRegion getRegion() {
-		return region;
-	}
+	public org.bukkit.World getWorld() { return Bukkit.getWorld(worldName);	}
 
 	@Override
-	public String getSystemID() {
-		return !isArea() ? null : region.getId();
-	}
+	public boolean isArea() { return region != null && getWorld() != null; }
 
 	@Override
-	public org.bukkit.World getWorld() {
-		return world;
-	}
+	public void remove() { Flags.getDataStore().remove(this); }
 
-	@Override
-	public boolean isArea() {
-		return region != null && world != null;
-	}
-
-	@Override
-	public void remove() {
-		Flags.getDataStore().remove(this);
-	}
-
-	@Override
-	public System getType() {
-		return System.WORLDGUARD;
-	}
+    /**
+     * 0 if the the worlds are the same, 3 if they are not.
+     *
+     * @return The value of the comparison.
+     */
+    @Override
+    public int compareTo(Area a) {
+        return a instanceof WorldGuardRegion && a.getSystemID().equals(getSystemID()) ? 0 : 3;
+    }
 }

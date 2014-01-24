@@ -33,8 +33,6 @@ import org.bukkit.entity.Player;
 
 /**
  * Class for retrieving area system specific information.
- * 
- * @author Alshain01
  */
 @SuppressWarnings("ALL")
 public final class Director {
@@ -85,62 +83,6 @@ public final class Director {
 		final Area area = System.getActive().getAreaAt(location);
 		return area.isArea() ? area : new World(location);
 	}
-
-/*	*//**
-	 * Gets a set of system specific area names stored in the database
-	 * 
-	 * @return A list containing all the area names.
-	 *//*
-	public static Set<String> getAreaNames() {
-		Set<String> worlds, localAreas;
-		final Set<String> allAreas = new HashSet<String>();
-		switch (LandSystem.getActive()) {
-		case GRIEF_PREVENTION:
-			return Flags.getDataStore().readKeys("GriefPreventionData");
-		case RESIDENCE:
-			return Flags.getDataStore().readKeys("ResidenceData");
-		case WORLDGUARD:
-			worlds = Flags.getDataStore().readKeys("WorldGuardData");
-			for (final String world : worlds) {
-				localAreas = Flags.getDataStore().readKeys("WorldGuardData." + world);
-				for (final String area : localAreas) {
-					allAreas.add(world + "." + area);
-				}
-			}
-			return allAreas;
-		case INFINITEPLOTS:
-			worlds = Flags.getDataStore().readKeys("InfinitePlotsData");
-			for (final String world : worlds) {
-				localAreas = Flags.getDataStore().readKeys("InfinitePlotsData." + world);
-				for (final String localArea : localAreas) {
-					allAreas.add(world + "." + localArea);
-				}
-			}
-			return allAreas;
-		case FACTIONS:
-			worlds = Flags.getDataStore().readKeys("FactionsData");
-			for (final String world : worlds) {
-				localAreas = Flags.getDataStore().readKeys("FactionsData." + world);
-				for (final String localArea : localAreas) {
-					if (!allAreas.contains(localArea)) {
-						allAreas.add(world + "." + localArea);
-					}
-				}
-			}
-			return allAreas;
-		case PLOTME:
-			worlds = Flags.getDataStore().readKeys("PlotMeData");
-			for (final String world : worlds) {
-				localAreas = Flags.getDataStore().readKeys("PlotMeData." + world);
-				for (final String localArea : localAreas) {
-					allAreas.add(world + "." + localArea);
-				}
-			}
-			return allAreas;
-		default:
-			return null;
-		}
-	}*/
 
 	/**
 	 * Gets a user friendly name of the area type of the configured system,

@@ -36,6 +36,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.permissions.Permissible;
 
+/**
+ * Class for creating areas to manage a World.
+ */
 public class World extends Area {
 	private final String worldName;
 
@@ -73,20 +76,37 @@ public class World extends Area {
 		}
 	}
 
-	/**
-	 * 0 if the the worlds are the same, 3 if they are not.
-	 * 
-	 * @return The value of the comparison.
-	 */
-	@Override
-	public int compareTo(Area a) {
-		return a instanceof World && a.getSystemID().equals(worldName) ? 0 : 3;
-	}
+    @Override
+    public String getSystemID() { return worldName; }
 
-	@Override
-	public String getAreaType() {
-		return System.WORLD.getAreaType();
-	}
+    @Override
+    public System getSystemType() {
+        return System.WORLD;
+    }
+
+    @Override
+    public Set<String> getOwners() { return new HashSet<String>(Arrays.asList("world")); }
+
+    @Override
+    public org.bukkit.World getWorld() { return worldName != null ? Bukkit.getWorld(worldName) : null; }
+
+    @Override
+    public boolean isArea() { return worldName != null; }
+
+    @Override
+    public boolean hasPermission(Permissible p) { return p.hasPermission("flags.area.flag.world"); }
+
+    @Override
+    public boolean hasBundlePermission(Permissible p) { return p.hasPermission("flags.area.bundle.world"); }
+
+    @Override
+    public Boolean getValue(Flag flag, boolean absolute) {
+        final Boolean value = super.getValue(flag, true);
+        if (absolute) {
+            return value;
+        }
+        return value != null ? value : flag.getDefault();
+    }
 
 	@Override
 	public String getMessage(Flag flag, boolean parse) {
@@ -105,47 +125,11 @@ public class World extends Area {
 		return message;
 	}
 
-	@Override
-	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList("world"));
-	}
-
-	@Override
-	public String getSystemID() {
-		return worldName;
-	}
-
-	@Override
-	public Boolean getValue(Flag flag, boolean absolute) {
-		final Boolean value = super.getValue(flag, true);
-		if (absolute) {
-			return value;
-		}
-		return value != null ? value : flag.getDefault();
-	}
-
-	@Override
-	public org.bukkit.World getWorld() {
-		return worldName != null ? Bukkit.getWorld(worldName) : null;
-	}
-
-	@Override
-	public boolean hasBundlePermission(Permissible p) {
-		return p.hasPermission("flags.area.bundle.world");
-	}
-
-	@Override
-	public boolean hasPermission(Permissible p) {
-		return p.hasPermission("flags.area.flag.world");
-	}
-
-	@Override
-	public boolean isArea() {
-		return worldName != null;
-	}
-
-	@Override
-	public System getType() {
-		return io.github.alshain01.Flags.System.WORLD;
-	}
+    /**
+     * 0 if the the worlds are the same, 3 if they are not.
+     *
+     * @return The value of the comparison.
+     */
+    @Override
+    public int compareTo(Area a) { return a instanceof World && a.getSystemID().equals(worldName) ? 0 : 3; }
 }

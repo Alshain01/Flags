@@ -41,9 +41,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+/**
+ * Class for creating areas to manage a PreciousStones Field.
+ */
 public class PreciousStonesField extends Area implements Subdivision, Removable {
 	private Field field;
-	
+
+    /**
+     * Creates an instance of PreciousStonesField based on a Bukkit Location
+     *
+     * @param location
+     *            The Bukkit location
+     */
 	public PreciousStonesField(Location location) {
 		if(!PreciousStones.API().isFieldProtectingArea(FieldFlag.ALL, location)){
 			field = null;
@@ -63,7 +72,13 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
 			}
 		}
 	}
-	
+
+    /**
+     * Creates an instance of PreciousStonesField based on a world and field ID
+     *
+     * @param ID
+     *            The claim ID
+     */
 	public PreciousStonesField(World world, long ID) {
 		 List<Field> fields = PreciousStones.getInstance().getStorageManager().getFields(world.getName());
 		 for(Field field : fields) {
@@ -93,49 +108,23 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
 			}
 		}
 	}
+
+    /**
+     * Gets if there is a field at the location.
+     *
+     * @return True if a field exists at the location.
+     */
+    public static boolean hasField(Location location) {
+        return PreciousStones.API().isFieldProtectingArea(FieldFlag.ALL, location);
+    }
+
+    /**
+     * Gets the field object embedded in the area class.
+     *
+     * @return The field object
+     */
+	public Field getField() { return field; }
 	
-	public Field getField() {
-		return field;
-	}
-	
-	public static boolean hasField(Location location) {
-		return PreciousStones.API().isFieldProtectingArea(FieldFlag.ALL, location);
-	}
-	
-	@Override
-	public int compareTo(Area a) {
-		if (!(a instanceof PreciousStonesField)) {
-			return 3;
-		}
-		
-		Field testField = ((PreciousStonesField)a).getField();
-		if(field.equals(testField)) {
-			return 0;
-		} else if (field.isChild() && field.getParent().equals(testField)) {
-			return -1;
-		} else if (testField.isChild() && testField.getParent().equals(field)) {
-			return 1;
-		} else if (field.isChild() && testField.isChild() && field.getParent().equals(testField.getParent())) {
-			return 2;
-		}
-		return 3;
-	}
-
-	@Override
-	public String getAreaType() {
-		return System.PRECIOUSSTONES.getAreaType();
-	}
-
-	@Override
-	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList(field.getOwner()));
-	}
-
-	@Override
-	public io.github.alshain01.Flags.System getType() {
-		return System.PRECIOUSSTONES;
-	}
-
 	@Override
 	public String getSystemID() {
 		if (isArea() && field.isChild()) {
@@ -147,35 +136,43 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
 		}
 	}
 
-	@Override
-	public World getWorld() {
-		return Bukkit.getWorld(field.getWorld());
-	}
+    @Override
+    public System getSystemType() { return System.PRECIOUSSTONES; }
+
+    @Override
+    public Set<String> getOwners() { return new HashSet<String>(Arrays.asList(field.getOwner())); }
 
 	@Override
-	public boolean isArea() {
-		return field != null;
-	}
+	public World getWorld() {return Bukkit.getWorld(field.getWorld()); }
 
 	@Override
-	public void remove() {
-		Flags.getDataStore().remove(this);
-	}
+	public boolean isArea() { return field != null; }
 
 	@Override
 	public String getSystemSubID() {
-		return field !=null && field.isChild() ? String.valueOf(field.getId()) : null;
+		return field != null && field.isChild() ? String.valueOf(field.getId()) : null;
 	}
+
+    @Override
+    public boolean isSubdivision() { return field.isChild(); }
+
+    @Override
+    public boolean isParent(Area area) {
+        return area instanceof PreciousStonesField && field != null
+                && field.isParent() && field.getChildren().contains(((PreciousStonesField)area).getField());
+    }
+
+    @Override
+    public Area getParent() {
+        if(!field.isChild()) { return null; }
+        return new PreciousStonesField(field.getParent().getLocation(), true);
+    }
 
 	@Override
 	public boolean isInherited() {
 		return field != null && field.isChild() && Flags.getDataStore().readInheritance(this);
 	}
 
-	@Override
-	public boolean isSubdivision() {
-		return field.isChild();
-	}
 
 	@Override
 	public void setInherited(boolean value) {
@@ -186,16 +183,25 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
 		Flags.getDataStore().writeInheritance(this, value);
 	}
 
-	@Override
-	public boolean isParent(Area area) {
-		return area instanceof PreciousStonesField && field != null
-                && field.isParent() && field.getChildren().contains(((PreciousStonesField)area).getField());
-	}
+    @Override
+    public void remove() { Flags.getDataStore().remove(this); }
 
-	@Override
-	public Area getParent() {
-		if(!field.isChild()) { return null; }
-		return new PreciousStonesField(field.getParent().getLocation(), true);
-	}
+    @Override
+    public int compareTo(Area a) {
+        if (!(a instanceof PreciousStonesField)) {
+            return 3;
+        }
 
+        Field testField = ((PreciousStonesField)a).getField();
+        if(field.equals(testField)) {
+            return 0;
+        } else if (field.isChild() && field.getParent().equals(testField)) {
+            return -1;
+        } else if (testField.isChild() && testField.getParent().equals(field)) {
+            return 1;
+        } else if (field.isChild() && testField.isChild() && field.getParent().equals(testField.getParent())) {
+            return 2;
+        }
+        return 3;
+    }
 }

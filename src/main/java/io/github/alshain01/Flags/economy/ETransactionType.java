@@ -26,8 +26,6 @@ package io.github.alshain01.Flags.economy;
 
 /**
  * Enumeration for handling withdrawal and deposit
- * 
- * @author Alshain01
  */
 public enum ETransactionType {
 	Withdraw, Deposit;

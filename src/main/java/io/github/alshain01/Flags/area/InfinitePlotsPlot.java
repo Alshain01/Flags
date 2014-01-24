@@ -38,6 +38,9 @@ import uk.co.jacekk.bukkit.infiniteplots.InfinitePlots;
 import uk.co.jacekk.bukkit.infiniteplots.plot.Plot;
 import uk.co.jacekk.bukkit.infiniteplots.plot.PlotLocation;
 
+/**
+ * Class for creating areas to manage a InfinitePlots Plot.
+ */
 public class InfinitePlotsPlot extends Area implements Removable {
 	private final Plot plot;
 
@@ -76,55 +79,45 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	public static boolean hasPlot(Location location) {
 		return InfinitePlots.getInstance().getPlotManager().getPlotAt(PlotLocation.fromWorldLocation(location)) != null;
 	}
-	
-	/**
-	 * 0 if the the worlds are the same, 3 if they are not.
-	 * 
-	 * @return The value of the comparison.
-	 */
-	@Override
-	public int compareTo(Area a) {
-		return a instanceof InfinitePlotsPlot
-				&& a.getSystemID().equals(getSystemID()) ? 0 : 3;
-	}
+
+    /**
+     * Gets the plot object embedded in the area class.
+     *
+     * @return The plot object
+     */
+    public Plot getPlot() {
+        return plot;
+    }
+
+    @Override
+    public String getSystemID() {
+        return isArea() ? getPlot().getLocation().getX() + ";" + getPlot().getLocation().getZ() : null;
+    }
+
+    @Override
+    public System getSystemType() {
+        return System.INFINITEPLOTS;
+    }
 
 	@Override
-	public String getAreaType() {
-		return System.INFINITEPLOTS.getAreaType();
-	}
+	public Set<String> getOwners() { return new HashSet<String>(Arrays.asList(getPlot().getAdmin())); }
 
 	@Override
-	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList(getPlot().getAdmin()));
-	}
-
-	public Plot getPlot() {
-		return plot;
-	}
+	public World getWorld() { return getPlot().getLocation().getWorld(); }
 
 	@Override
-	public String getSystemID() {
-		return isArea() ? getPlot().getLocation().getX() + ";"
-				+ getPlot().getLocation().getZ() : null;
-	}
+	public boolean isArea() { return plot != null; }
 
 	@Override
-	public World getWorld() {
-		return getPlot().getLocation().getWorld();
-	}
+	public void remove() { Flags.getDataStore().remove(this); }
 
-	@Override
-	public boolean isArea() {
-		return plot != null;
-	}
-
-	@Override
-	public void remove() {
-		Flags.getDataStore().remove(this);
-	}
-
-	@Override
-	public System getType() {
-		return System.INFINITEPLOTS;
-	}
+    /**
+     * 0 if the the worlds are the same, 3 if they are not.
+     *
+     * @return The value of the comparison.
+     */
+    @Override
+    public int compareTo(Area a) {
+        return a instanceof InfinitePlotsPlot && a.getSystemID().equals(getSystemID()) ? 0 : 3;
+    }
 }

@@ -33,8 +33,6 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Event that occurs when a player first enters a new area.
- * 
- * @author Alshain01
  */
 public class PlayerChangedAreaEvent extends Event implements Cancellable {
 

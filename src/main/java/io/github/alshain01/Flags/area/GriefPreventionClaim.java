@@ -35,9 +35,12 @@ import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 
-public class GriefPreventionClaim extends Area implements Removable, Siege,
-		Administrator {
+/**
+ * Class for creating areas to manage a Grief Prevention Claim.
+ */
+public class GriefPreventionClaim extends Area implements Removable, Siege, Administrator {
 	protected Claim claim;
 
 	/**
@@ -59,7 +62,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege,
 	public GriefPreventionClaim(long ID) {
 		claim = GriefPrevention.instance.dataStore.getClaim(ID);
 	}
-	
+
 	/**
 	 * Gets if there is a claim at the location.
 	 * 
@@ -69,72 +72,60 @@ public class GriefPreventionClaim extends Area implements Removable, Siege,
 		return GriefPrevention.instance.dataStore.getClaimAt(location, false, null) != null;
 	}
 
-	/**
-	 * 0 if the the worlds are the same, 3 if they are not.
-	 * 
-	 * @return The value of the comparison.
-	 */
-	@Override
-	public int compareTo(Area a) {
-		if(!(a instanceof GriefPreventionClaim)) {
-			return 3;
-		}
-		
-		return (claim.equals(((GriefPreventionClaim)a).getClaim())) ? 0 : 3;
-	}
+    /**
+     * Gets the claim object embedded in the area class.
+     *
+     * @return The claim object
+     */
+    public Claim getClaim() {
+        return claim;
+    }
+
+    @Override
+    public String getSystemID() {
+        if (isArea() && claim.parent != null) {
+            return String.valueOf(claim.parent.getID());
+        } else if (isArea()) {
+            return String.valueOf(claim.getID());
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public System getSystemType() {
+        return io.github.alshain01.Flags.System.GRIEF_PREVENTION;
+    }
 
 	@Override
-	public String getAreaType() {
-		return System.GRIEF_PREVENTION.getAreaType();
-	}
-
-	public Claim getClaim() {
-		return claim;
-	}
+	public Set<String> getOwners() { return new HashSet<String>(Arrays.asList(claim.getOwnerName())); }
 
 	@Override
-	public Set<String> getOwners() {
-		return new HashSet<String>(Arrays.asList(claim.getOwnerName()));
-	}
+	public World getWorld() { return claim.getGreaterBoundaryCorner().getWorld(); }
+
+    @Override
+    public boolean isArea() { return claim != null; }
 
 	@Override
-	public String getSystemID() {
-		if (isArea() && claim.parent != null) {
-			return String.valueOf(claim.parent.getID());
-		} else if (isArea()) {
-			return String.valueOf(claim.getID());
-		} else {
-			return null;
-		}
-	}
+	public boolean isAdminArea() {	return claim.isAdminClaim(); }
 
 	@Override
-	public org.bukkit.World getWorld() {
-		return claim.getGreaterBoundaryCorner().getWorld();
-	}
+	public boolean isUnderSiege() { return !(claim == null || claim.siegeData == null); }
 
 	@Override
-	public boolean isAdminArea() {
-		return claim.isAdminClaim();
-	}
+	public void remove() { Flags.getDataStore().remove(this); }
 
-	@Override
-	public boolean isArea() {
-		return claim != null;
-	}
+    /**
+     * 0 if the the worlds are the same, 3 if they are not.
+     *
+     * @return The value of the comparison.
+     */
+    @Override
+    public int compareTo(Area a) {
+        if(!(a instanceof GriefPreventionClaim)) {
+            return 3;
+        }
 
-	@Override
-	public boolean isUnderSiege() {
-		return !(claim == null || claim.siegeData == null);
-	}
-
-	@Override
-	public void remove() {
-		Flags.getDataStore().remove(this);
-	}
-
-	@Override
-	public System getType() {
-		return io.github.alshain01.Flags.System.GRIEF_PREVENTION;
-	}
+        return (claim.equals(((GriefPreventionClaim)a).getClaim())) ? 0 : 3;
+    }
 }

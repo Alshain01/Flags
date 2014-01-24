@@ -31,8 +31,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * Modified YAML manager from http://wiki.bukkit.org/Configuration_API_Reference
- * 
- * @author bukkit.org
  */
 class ImportYML {
 	// private static JavaPlugin plugin;

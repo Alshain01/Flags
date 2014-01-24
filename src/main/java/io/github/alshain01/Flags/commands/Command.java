@@ -40,8 +40,6 @@ import org.bukkit.entity.Player;
 
 /**
  * Command handler for Flags
- * 
- * @author Alshain01
  */
 public final class Command {
 	private Command(){}
