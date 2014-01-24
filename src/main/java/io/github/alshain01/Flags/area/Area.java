@@ -50,6 +50,8 @@ import org.bukkit.permissions.Permissible;
  * Class for base functions of a specific area.
  */
 public abstract class Area implements Comparable<Area> {
+    protected Area() { }
+
     /**
      * Gets the land system's ID for this area.
      *
