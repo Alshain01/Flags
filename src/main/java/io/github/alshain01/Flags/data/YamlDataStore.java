@@ -340,7 +340,7 @@ public final class YamlDataStore implements DataStore {
             return true;
         }
 
-        final String path = area.getType().toString() + "." + area.getWorld().getName() + "." + area.getSystemID() + "."	+ ((Subdivision) area).getSystemSubID() + ".InheritParent";
+        final String path = area.getSystemType().toString() + "." + area.getWorld().getName() + "." + area.getSystemID() + "."	+ ((Subdivision) area).getSystemSubID() + ".InheritParent";
 
         final FileConfiguration cYml = getYml(path).getConfig();
         return !cYml.isSet(path) || cYml.getBoolean(path);
@@ -352,7 +352,7 @@ public final class YamlDataStore implements DataStore {
             return;
         }
 
-        final String path = area.getType().toString() + "." + area.getWorld().getName() + "." + area.getSystemID() + "."	+ ((Subdivision) area).getSystemSubID() + ".InheritParent";
+        final String path = area.getSystemType().toString() + "." + area.getWorld().getName() + "." + area.getSystemID() + "."	+ ((Subdivision) area).getSystemSubID() + ".InheritParent";
 
         final CustomYML cYml = getYml(path);
 
@@ -432,7 +432,7 @@ public final class YamlDataStore implements DataStore {
     }
 
     private String getAreaPath(Area area) {
-        String path = area.getType().toString() + "." + area.getWorld().getName();
+        String path = area.getSystemType().toString() + "." + area.getWorld().getName();
 
         if (!(area instanceof World || area instanceof Default)) {
             path += "." + area.getSystemID();

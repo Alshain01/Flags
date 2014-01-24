@@ -41,10 +41,10 @@ import org.bukkit.plugin.PluginManager;
 import com.bekvon.bukkit.residence.event.ResidenceDeleteEvent;
 import com.massivecraft.factions.event.FactionsEventDisband;
 
-/**
+/*
  * Class for removing data from areas that are deleted.
  */
-public class MrClean {
+class MrClean {
 	private MrClean() { }
 
     /*

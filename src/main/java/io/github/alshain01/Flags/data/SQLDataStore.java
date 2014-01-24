@@ -569,7 +569,7 @@ public class SQLDataStore implements DataStore {
      * Protected
      */
     protected String areaBuilder(String query, Area area) {
-        return query.replaceAll("%table%", area.getType().toString())
+        return query.replaceAll("%table%", area.getSystemType().toString())
                 .replaceAll("%world%", area.getWorld().getName())
                 .replaceAll("%area%", area.getSystemID())
                 .replaceAll("%sub%", getSubID(area));
