@@ -196,7 +196,7 @@ public enum System {
     public abstract Area getArea(String name);
 
     /*
-     * Gets whether there is an area for this system that flags can use at the location
+     * Gets whether there is an area for this system that Flags can use at the location
      *
      * @param location The location to check for an area
      * @return True if there is an area
@@ -218,7 +218,7 @@ public enum System {
 	}
 	
 	/**
-	 * Gets the area type enumeration of the land system that flags is currently using.
+	 * Gets the area type enumeration of the land system that Flags is currently using.
 	 * 
 	 * @return The enumeration.
 	 */
