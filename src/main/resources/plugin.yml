@@ -10,7 +10,7 @@ commands:
     description: Allows you to perform actions on flags.
     permission: flags.command.flag
     usage: /flag <get|set|remove|trust|distrust|viewtrust|message|presentmessage|erasemessage|charge|inherit|help>
-  
+
   bundle:
     description: Allows you to perform actions on bundles.
     permission: flags.command.bundle
@@ -20,7 +20,7 @@ commands:
     description: Administrative command for the plugin Flags
     permission: flags.admin.command
     usage: /flags <reload|import>
-    
+
 permissions:
 # Flag Command Permissions
   flags.command:
@@ -159,6 +159,6 @@ permissions:
     description: Notifies players when Flags needs updating.
     default: op
 
- flags.view.permtrust:
+  flags.view.permtrust:
    description: Allows players to see permission nodes when viewing trust.
    default: op
