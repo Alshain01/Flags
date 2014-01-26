@@ -22,10 +22,10 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.area;
+package io.github.alshain01.flags.area;
 
-import io.github.alshain01.Flags.*;
-import io.github.alshain01.Flags.System;
+import io.github.alshain01.flags.*;
+import io.github.alshain01.flags.System;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -94,7 +94,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 
     @Override
     public System getSystemType() {
-        return io.github.alshain01.Flags.System.GRIEF_PREVENTION;
+        return io.github.alshain01.flags.System.GRIEF_PREVENTION;
     }
 
 	@Override

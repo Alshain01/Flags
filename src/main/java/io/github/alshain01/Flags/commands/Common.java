@@ -22,12 +22,12 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.commands;
+package io.github.alshain01.flags.commands;
 
-import io.github.alshain01.Flags.*;
-import io.github.alshain01.Flags.area.Area;
-import io.github.alshain01.Flags.area.Default;
-import io.github.alshain01.Flags.area.World;
+import io.github.alshain01.flags.*;
+import io.github.alshain01.flags.area.Area;
+import io.github.alshain01.flags.area.Default;
+import io.github.alshain01.flags.area.World;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -45,7 +45,7 @@ abstract class Common {
 		} else if (location == ECommandLocation.WORLD) {
 			return new World((((Player)sender).getWorld()));
 		} else if (location == ECommandLocation.AREA) {
-			Area area = io.github.alshain01.Flags.System.getActive().getAreaAt(((Player) sender).getLocation());
+			Area area = io.github.alshain01.flags.System.getActive().getAreaAt(((Player) sender).getLocation());
 			return (area instanceof World) ? null : area;
 		}
 		// Invalid location selection

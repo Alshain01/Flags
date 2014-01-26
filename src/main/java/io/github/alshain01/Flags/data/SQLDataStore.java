@@ -22,15 +22,15 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.data;
+package io.github.alshain01.flags.data;
 
-import io.github.alshain01.Flags.*;
-import io.github.alshain01.Flags.System;
-import io.github.alshain01.Flags.area.Area;
-import io.github.alshain01.Flags.area.Default;
-import io.github.alshain01.Flags.area.Subdivision;
-import io.github.alshain01.Flags.area.World;
-import io.github.alshain01.Flags.economy.EPurchaseType;
+import io.github.alshain01.flags.*;
+import io.github.alshain01.flags.System;
+import io.github.alshain01.flags.area.Area;
+import io.github.alshain01.flags.area.Default;
+import io.github.alshain01.flags.area.Subdivision;
+import io.github.alshain01.flags.area.World;
+import io.github.alshain01.flags.economy.EPurchaseType;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -206,7 +206,7 @@ public class SQLDataStore implements DataStore {
 
     @Override
     public Boolean readFlag(Area area, Flag flag) {
-        StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Flags WHERE WorldName='%world%'");
+        StringBuilder selectString = new StringBuilder("SELECT * FROM %table%flags WHERE WorldName='%world%'");
         if(!(area instanceof Default || area instanceof World)) {
             selectString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
         }
@@ -234,10 +234,10 @@ public class SQLDataStore implements DataStore {
         String insertString;
 
         if((area instanceof World) || (area instanceof Default)) {
-            insertString = "INSERT INTO %table%Flags (WorldName, FlagName, FlagValue)"
+            insertString = "INSERT INTO %table%flags (WorldName, FlagName, FlagValue)"
                     + " VALUES ('%world%', '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
         } else {
-            insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue)"
+            insertString = "INSERT INTO %table%flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue)"
                     + " VALUES ('%world%', '%area%', %sub%, '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
         }
 
@@ -249,7 +249,7 @@ public class SQLDataStore implements DataStore {
 
     //For SQL Importer
     protected void writeAreaFlag(Boolean value, String flagName, String areaType, String worldName, String systemID, String systemSubID) {
-        String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue)"
+        String insertString = "INSERT INTO %table%flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue)"
                 + " VALUES ('%world%', '%area%', %sub%, '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
 
         executeStatement(areaBuilder(insertString, areaType, worldName, systemID, systemSubID)
@@ -259,7 +259,7 @@ public class SQLDataStore implements DataStore {
 
     @Override
     public String readMessage(Area area, Flag flag) {
-        StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Flags WHERE WorldName='%world%'");
+        StringBuilder selectString = new StringBuilder("SELECT * FROM %table%flags WHERE WorldName='%world%'");
         if(!(area instanceof Default || area instanceof World)) {
             selectString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
         }
@@ -292,9 +292,9 @@ public class SQLDataStore implements DataStore {
         Flags.debug("Writing message: " + message);
 
         if(area instanceof Default || area instanceof World) {
-            insertString = "INSERT INTO %table%Flags (WorldName, FlagName, FlagMessage) VALUES ('%world%', '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
+            insertString = "INSERT INTO %table%flags (WorldName, FlagName, FlagMessage) VALUES ('%world%', '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
         } else {
-            insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagMessage) VALUES ('%world%', '%area%', %sub%, '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
+            insertString = "INSERT INTO %table%flags (WorldName, AreaID, AreaSubID, FlagName, FlagMessage) VALUES ('%world%', '%area%', %sub%, '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
         }
         executeStatement(areaBuilder(insertString, area)
                 .replaceAll("%flag%", flag.getName())
@@ -303,7 +303,7 @@ public class SQLDataStore implements DataStore {
 
     // For SQL Importer
     private void writeAreaMessage(String message, String flagName, String areaType, String worldName, String systemID, String systemSubID) {
-       String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagMessage) VALUES ('%world%', '%area%', %sub%, '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
+       String insertString = "INSERT INTO %table%flags (WorldName, AreaID, AreaSubID, FlagName, FlagMessage) VALUES ('%world%', '%area%', %sub%, '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
 
        executeStatement(areaBuilder(insertString, areaType, worldName, systemID, systemSubID)
                 .replaceAll("%flag%", flagName)
@@ -452,7 +452,7 @@ public class SQLDataStore implements DataStore {
             return false;
         }
 
-        String selectString = "SELECT * FROM %table%Flags WHERE WorldName='%world%' AND AreaID='%area%' AND AreaSubID=%sub% AND FlagName='InheritParent';";
+        String selectString = "SELECT * FROM %table%flags WHERE WorldName='%world%' AND AreaID='%area%' AND AreaSubID=%sub% AND FlagName='InheritParent';";
 
         ResultSet results = executeQuery(areaBuilder(selectString, area));
 
@@ -481,7 +481,7 @@ public class SQLDataStore implements DataStore {
     }
 
     protected void writeInheritance(boolean value, String areaType, String worldName, String systemID, String systemSubID) {
-        String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue) "
+        String insertString = "INSERT INTO %table%flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue) "
                 + "VALUES ('%world%', '%area%', %sub%, 'InheritParent', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
 
         executeStatement(areaBuilder(insertString, areaType, worldName, systemID, systemSubID)
@@ -492,7 +492,7 @@ public class SQLDataStore implements DataStore {
     public void remove(Area area) {
         String deleteString = "DELETE FROM %table%%type% WHERE WorldName='%world%' AND AreaID='%area%' AND SubID=%sub%;";
         executeStatement(areaBuilder(deleteString, area)
-                .replaceAll("%type%", "Flags"));
+                .replaceAll("%type%", "flags"));
 
         executeStatement(areaBuilder(deleteString, area)
                 .replaceAll("%type%", "Trust"));
@@ -503,7 +503,7 @@ public class SQLDataStore implements DataStore {
      */
     public void importDB() {
         Flags.log("Importing YAML Database to " + getType().getName());
-        DataStore yaml = new YamlDataStore((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
+        DataStore yaml = new YamlDataStore((Flags)Bukkit.getPluginManager().getPlugin("flags"));
 
         convertGenericData(yaml, this);
 
@@ -556,7 +556,7 @@ public class SQLDataStore implements DataStore {
 
     public void exportDB() {
         Flags.log("Exporting " + getType().getName() + " Database to YAML");
-        DataStore yaml = new YamlDataStore((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
+        DataStore yaml = new YamlDataStore((Flags)Bukkit.getPluginManager().getPlugin("flags"));
 
         convertGenericData(this, yaml);
 
@@ -623,7 +623,7 @@ public class SQLDataStore implements DataStore {
         // STANDARD BOOLEAN
         // OVERRIDE for Implementation Specific
         executeStatement("CREATE TABLE IF NOT EXISTS " + System.getActive().toString()
-                + "Flags (WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
+                + "flags (WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
                 + "FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), "
                 + "CONSTRAINT pk_AreaFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
 
@@ -695,7 +695,7 @@ public class SQLDataStore implements DataStore {
                 World world = new World(w);
                 Default def = new Default(w);
 
-                //Flags
+                //flags
                 Boolean value = convertFrom.readFlag(world, f);
                 if(value != null) {
                     convertTo.writeFlag(world, f, value);

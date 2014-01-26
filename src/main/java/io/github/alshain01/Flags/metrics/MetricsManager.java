@@ -22,11 +22,11 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.metrics;
+package io.github.alshain01.flags.metrics;
 
-import io.github.alshain01.Flags.*;
-import io.github.alshain01.Flags.System;
-import io.github.alshain01.Flags.metrics.Metrics.Graph;
+import io.github.alshain01.flags.*;
+import io.github.alshain01.flags.System;
+import io.github.alshain01.flags.metrics.Metrics.Graph;
 
 import java.io.IOException;
 
@@ -61,7 +61,7 @@ public class MetricsManager {
 			 */
 			final Graph systemPlayersGraph = metrics
 					.createGraph("Land System by Players");
-			for (final System system : io.github.alshain01.Flags.System.values()) {
+			for (final System system : io.github.alshain01.flags.System.values()) {
 				if (System.getActive() == system) {
 					systemPlayersGraph.addPlotter(new Metrics.Plotter(system.getDisplayName()) {
 						@Override
@@ -121,7 +121,7 @@ public class MetricsManager {
 			 */
 			final Graph updateGraph = metrics.createGraph("Update Configuration");
 			if (!plugin.getConfig()
-					.getBoolean("Flags.Update.Check")) {
+					.getBoolean("flags.Update.Check")) {
 				updateGraph.addPlotter(new Metrics.Plotter("No Updates") {
 					@Override
 					public int getValue() {
@@ -129,7 +129,7 @@ public class MetricsManager {
 					}
 				});
 			} else if (!plugin.getConfig()
-					.getBoolean("Flags.Update.Download")) {
+					.getBoolean("flags.Update.Download")) {
 				updateGraph
 						.addPlotter(new Metrics.Plotter("Check for Updates") {
 							@Override

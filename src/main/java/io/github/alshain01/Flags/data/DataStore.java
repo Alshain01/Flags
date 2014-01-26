@@ -22,11 +22,11 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.data;
+package io.github.alshain01.flags.data;
 
-import io.github.alshain01.Flags.Flag;
-import io.github.alshain01.Flags.area.Area;
-import io.github.alshain01.Flags.economy.EPurchaseType;
+import io.github.alshain01.flags.Flag;
+import io.github.alshain01.flags.area.Area;
+import io.github.alshain01.flags.economy.EPurchaseType;
 
 import java.util.Set;
 

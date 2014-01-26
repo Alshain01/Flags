@@ -22,7 +22,7 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.commands;
+package io.github.alshain01.flags.commands;
 
 enum EBundleCommand {
 	SET('s', 4, 0, true, true, "Set <area|world|default> <bundle> <true|false>"),

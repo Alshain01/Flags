@@ -22,14 +22,14 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.commands;
+package io.github.alshain01.flags.commands;
 
-import io.github.alshain01.Flags.*;
-import io.github.alshain01.Flags.System;
-import io.github.alshain01.Flags.area.Area;
-import io.github.alshain01.Flags.area.Default;
-import io.github.alshain01.Flags.area.Subdivision;
-import io.github.alshain01.Flags.area.World;
+import io.github.alshain01.flags.*;
+import io.github.alshain01.flags.System;
+import io.github.alshain01.flags.area.Area;
+import io.github.alshain01.flags.area.Default;
+import io.github.alshain01.flags.area.Subdivision;
+import io.github.alshain01.flags.area.World;
 
 import java.util.Set;
 
@@ -42,7 +42,7 @@ final class Validate {
 	protected static boolean isArea(CommandSender cs, Area a) {
 		if(a == null || !a.isArea()) {
 			cs.sendMessage(Message.NoAreaError.get()
-					.replaceAll("\\{AreaType\\}", io.github.alshain01.Flags.System.getActive().getAreaType().toLowerCase()));
+					.replaceAll("\\{AreaType\\}", io.github.alshain01.flags.System.getActive().getAreaType().toLowerCase()));
 			return false;
 		}
 		return true;

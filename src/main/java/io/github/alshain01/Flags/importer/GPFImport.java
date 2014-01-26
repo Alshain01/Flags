@@ -22,15 +22,15 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.importer;
+package io.github.alshain01.flags.importer;
 
-import io.github.alshain01.Flags.Flag;
-import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.area.Area;
-import io.github.alshain01.Flags.area.Default;
-import io.github.alshain01.Flags.area.GriefPreventionClaim78;
-import io.github.alshain01.Flags.area.Subdivision;
-import io.github.alshain01.Flags.area.World;
+import io.github.alshain01.flags.Flag;
+import io.github.alshain01.flags.Flags;
+import io.github.alshain01.flags.area.Area;
+import io.github.alshain01.flags.area.Default;
+import io.github.alshain01.flags.area.GriefPreventionClaim78;
+import io.github.alshain01.flags.area.Subdivision;
+import io.github.alshain01.flags.area.World;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public final class GPFImport {
 			for (final String k : keys) {
 				if (k.toLowerCase().contains("database")) {
 					continue;
-				} // Database version for GPFlags, not used by Flags.
+				} // Database version for GPFlags, not used by flags.
 				final String[] path = k.split("\\.");
 
 				// Acquire the claim

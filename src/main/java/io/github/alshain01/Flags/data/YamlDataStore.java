@@ -22,15 +22,15 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.data;
+package io.github.alshain01.flags.data;
 
-import io.github.alshain01.Flags.*;
-import io.github.alshain01.Flags.System;
-import io.github.alshain01.Flags.area.Area;
-import io.github.alshain01.Flags.area.Default;
-import io.github.alshain01.Flags.area.Subdivision;
-import io.github.alshain01.Flags.area.World;
-import io.github.alshain01.Flags.economy.EPurchaseType;
+import io.github.alshain01.flags.*;
+import io.github.alshain01.flags.System;
+import io.github.alshain01.flags.area.Area;
+import io.github.alshain01.flags.area.Default;
+import io.github.alshain01.flags.area.Subdivision;
+import io.github.alshain01.flags.area.World;
+import io.github.alshain01.flags.economy.EPurchaseType;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -187,7 +187,7 @@ public final class YamlDataStore implements DataStore {
                         cYml.saveConfig();
                     }
                 }
-                cYml.getConfig().set(io.github.alshain01.Flags.System.getActive().toString() + "Data", null);
+                cYml.getConfig().set(io.github.alshain01.flags.System.getActive().toString() + "Data", null);
                 cYml.saveConfig();
             }
             writeVersion(new DBVersion(1, 2, 2));

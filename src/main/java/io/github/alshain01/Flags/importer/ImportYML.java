@@ -22,7 +22,7 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.importer;
+package io.github.alshain01.flags.importer;
 
 import java.io.File;
 

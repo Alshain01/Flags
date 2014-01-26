@@ -22,9 +22,9 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags;
+package io.github.alshain01.flags;
 
-import io.github.alshain01.Flags.economy.EPurchaseType;
+import io.github.alshain01.flags.economy.EPurchaseType;
 
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;

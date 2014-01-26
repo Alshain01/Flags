@@ -1,4 +1,4 @@
-package io.github.alshain01.Flags.data;
+package io.github.alshain01.flags.data;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -11,27 +11,27 @@ public enum DataStoreType {
 
     MSSQL("jtdc", "Microsoft SQL") {
         public DataStore getDataStore(JavaPlugin plugin) {
-            final String url = plugin.getConfig().getString("Flags.Database.Url");
-            final String user = plugin.getConfig().getString("Flags.Database.User");
-            final String pw = plugin.getConfig().getString("Flags.Database.Password");
+            final String url = plugin.getConfig().getString("flags.Database.Url");
+            final String user = plugin.getConfig().getString("flags.Database.User");
+            final String pw = plugin.getConfig().getString("flags.Database.Password");
 
             return new MSSQLDataStore(url, user, pw);
         }
     },
     MYSQL("mysql", "MySQL") {
         public DataStore getDataStore(JavaPlugin plugin) {
-            final String url = plugin.getConfig().getString("Flags.Database.Url");
-            final String user = plugin.getConfig().getString("Flags.Database.User");
-            final String pw = plugin.getConfig().getString("Flags.Database.Password");
+            final String url = plugin.getConfig().getString("flags.Database.Url");
+            final String user = plugin.getConfig().getString("flags.Database.User");
+            final String pw = plugin.getConfig().getString("flags.Database.Password");
 
             return new MySQLDataStore(url, user, pw);
         }
     },
     POSTGRESQL("postgresql", "PostgreSQL") {
         public DataStore getDataStore(JavaPlugin plugin) {
-            final String url = plugin.getConfig().getString("Flags.Database.Url");
-            final String user = plugin.getConfig().getString("Flags.Database.User");
-            final String pw = plugin.getConfig().getString("Flags.Database.Password");
+            final String url = plugin.getConfig().getString("flags.Database.Url");
+            final String user = plugin.getConfig().getString("flags.Database.User");
+            final String pw = plugin.getConfig().getString("flags.Database.Password");
 
             return new SQLDataStore(url, user, pw);
         }

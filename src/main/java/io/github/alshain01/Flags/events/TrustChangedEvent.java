@@ -22,10 +22,10 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.events;
+package io.github.alshain01.flags.events;
 
-import io.github.alshain01.Flags.Flag;
-import io.github.alshain01.Flags.area.Area;
+import io.github.alshain01.flags.Flag;
+import io.github.alshain01.flags.area.Area;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;

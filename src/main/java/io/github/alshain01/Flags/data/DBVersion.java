@@ -22,7 +22,7 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.data;
+package io.github.alshain01.flags.data;
 
 public class DBVersion {
 	public final int major;

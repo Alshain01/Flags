@@ -22,9 +22,9 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.area;
+package io.github.alshain01.flags.area;
 
-import io.github.alshain01.Flags.Flags;
+import io.github.alshain01.flags.Flags;
 import me.ryanhamshire.GriefPrevention.Claim;
 
 import org.bukkit.Bukkit;

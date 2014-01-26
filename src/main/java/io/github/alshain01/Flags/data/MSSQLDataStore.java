@@ -1,11 +1,11 @@
-package io.github.alshain01.Flags.data;
+package io.github.alshain01.flags.data;
 
-import io.github.alshain01.Flags.*;
-import io.github.alshain01.Flags.System;
-import io.github.alshain01.Flags.area.Area;
-import io.github.alshain01.Flags.area.Default;
-import io.github.alshain01.Flags.area.Subdivision;
-import io.github.alshain01.Flags.area.World;
+import io.github.alshain01.flags.*;
+import io.github.alshain01.flags.System;
+import io.github.alshain01.flags.area.Area;
+import io.github.alshain01.flags.area.Default;
+import io.github.alshain01.flags.area.Subdivision;
+import io.github.alshain01.flags.area.World;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.ResultSet;
@@ -24,7 +24,7 @@ public class MSSQLDataStore extends SQLDataStore {
     protected void createSystemDB() {
         // BIT BASED BOOLEAN
         executeStatement("CREATE TABLE IF NOT EXISTS " + System.getActive().toString()
-                + "Flags (WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
+                + "flags (WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
                 + "FlagName VARCHAR(25), FlagValue BIT, FlagMessage VARCHAR(255), "
                 + "CONSTRAINT pk_AreaFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
 
@@ -55,7 +55,7 @@ public class MSSQLDataStore extends SQLDataStore {
         // We always need to create the system specific table
         // in case it changed since the database was created.
         // i.e. Grief Prevention was removed and WorldGuard was installed.
-        if(System.getActive() != io.github.alshain01.Flags.System.WORLD) {
+        if(System.getActive() != io.github.alshain01.flags.System.WORLD) {
             createSystemDB();
         }
 
@@ -81,10 +81,10 @@ public class MSSQLDataStore extends SQLDataStore {
         String insertString;
 
         if((area instanceof World) || (area instanceof Default)) {
-            insertString = "INSERT INTO %table%Flags (WorldName, FlagName, FlagValue)"
+            insertString = "INSERT INTO %table%flags (WorldName, FlagName, FlagValue)"
                     + " VALUES ('%world%', '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
         } else {
-            insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue)"
+            insertString = "INSERT INTO %table%flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue)"
                     + " VALUES ('%world%', '%area%', %sub%, '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
         }
 
@@ -101,7 +101,7 @@ public class MSSQLDataStore extends SQLDataStore {
     //For SQL Importer
     @Override
     protected void writeAreaFlag(Boolean value, String flagName, String areaType, String worldName, String systemID, String systemSubID) {
-        String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue)"
+        String insertString = "INSERT INTO %table%flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue)"
                 + " VALUES ('%world%', '%area%', %sub%, '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
 
         String bitValue = "null";
@@ -123,7 +123,7 @@ public class MSSQLDataStore extends SQLDataStore {
 
         String bitValue = String.valueOf(value ? 1 : 0);
 
-        String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue) "
+        String insertString = "INSERT INTO %table%flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue) "
                 + "VALUES ('%world%', '%area%', %sub%, 'InheritParent', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
 
         executeStatement(areaBuilder(insertString, area)
@@ -132,7 +132,7 @@ public class MSSQLDataStore extends SQLDataStore {
 
     @Override
     protected void writeInheritance(boolean value, String areaType, String worldName, String systemID, String systemSubID) {
-        String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue) "
+        String insertString = "INSERT INTO %table%flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue) "
                 + "VALUES ('%world%', '%area%', %sub%, 'InheritParent', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
 
         String bitValue = String.valueOf(value ? 1 : 0);

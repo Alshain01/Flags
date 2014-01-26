@@ -22,18 +22,18 @@ Notice: For any reuse or distribution, you must make clear to others the license
 http://creativecommons.org/licenses/by-nc/3.0/
 */
 
-package io.github.alshain01.Flags.area;
+package io.github.alshain01.flags.area;
 
-import io.github.alshain01.Flags.Flag;
-import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.Message;
-import io.github.alshain01.Flags.System;
-import io.github.alshain01.Flags.economy.EBaseValue;
-import io.github.alshain01.Flags.economy.EPurchaseType;
-import io.github.alshain01.Flags.economy.ETransactionType;
-import io.github.alshain01.Flags.events.FlagChangedEvent;
-import io.github.alshain01.Flags.events.MessageChangedEvent;
-import io.github.alshain01.Flags.events.TrustChangedEvent;
+import io.github.alshain01.flags.Flag;
+import io.github.alshain01.flags.Flags;
+import io.github.alshain01.flags.Message;
+import io.github.alshain01.flags.System;
+import io.github.alshain01.flags.economy.EBaseValue;
+import io.github.alshain01.flags.economy.EPurchaseType;
+import io.github.alshain01.flags.economy.ETransactionType;
+import io.github.alshain01.flags.events.FlagChangedEvent;
+import io.github.alshain01.flags.events.MessageChangedEvent;
+import io.github.alshain01.flags.events.TrustChangedEvent;
 
 import java.util.Set;
 

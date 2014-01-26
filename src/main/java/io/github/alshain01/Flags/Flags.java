@@ -22,14 +22,14 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags;
+package io.github.alshain01.flags;
 
-import io.github.alshain01.Flags.Updater.UpdateResult;
-import io.github.alshain01.Flags.commands.Command;
-import io.github.alshain01.Flags.data.*;
-import io.github.alshain01.Flags.events.PlayerChangedAreaEvent;
-import io.github.alshain01.Flags.importer.GPFImport;
-import io.github.alshain01.Flags.metrics.MetricsManager;
+import io.github.alshain01.flags.Updater.UpdateResult;
+import io.github.alshain01.flags.commands.Command;
+import io.github.alshain01.flags.data.*;
+import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
+import io.github.alshain01.flags.importer.GPFImport;
+import io.github.alshain01.flags.metrics.MetricsManager;
 
 import java.io.File;
 import java.util.List;
@@ -53,7 +53,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
- * Flags
+ * flags
  * 
  * @author Alshain01
  */
@@ -81,14 +81,14 @@ public class Flags extends JavaPlugin {
 
 		// Create the configuration file if it doesn't exist
 		saveDefaultConfig();
-		debugOn = getConfig().getBoolean("Flags.Debug");
+		debugOn = getConfig().getBoolean("flags.Debug");
 
-		if (getConfig().getBoolean("Flags.Update.Check")) {
+		if (getConfig().getBoolean("flags.Update.Check")) {
             debug("Enabling Update Scheduler");
 			new UpdateScheduler().runTaskTimer(this, 0, 1728000);
 		}
 
-		borderPatrol = getConfig().getBoolean("Flags.BorderPatrol.Enable");
+		borderPatrol = getConfig().getBoolean("flags.BorderPatrol.Enable");
 
 		// Create the specific implementation of DataStore
 		(messageStore = new CustomYML(this, "message.yml")).saveDefaultConfig();
@@ -104,11 +104,11 @@ public class Flags extends JavaPlugin {
 			GPFImport.importGPF();
 		}
 
-        dataStore = DataStoreType.getType(getConfig().getString("Flags.Database.Url")).getDataStore(this);
+        dataStore = DataStoreType.getType(getConfig().getString("flags.Database.Url")).getDataStore(this);
 
         // New installation
         if (!dataStore.create(this)) {
-            severe("Failed to create database schema. Shutting down Flags.");
+            severe("Failed to create database schema. Shutting down flags.");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -123,7 +123,7 @@ public class Flags extends JavaPlugin {
 		// Load Border Patrol
 		if (borderPatrol) {
 			debug("Registering for PlayerMoveEvent");
-			BorderPatrol bp = new BorderPatrol(getConfig().getInt("Flags.BorderPatrol.EventDivisor"), getConfig().getInt("Flags.BorderPatrol.TimeDivisor"));
+			BorderPatrol bp = new BorderPatrol(getConfig().getInt("flags.BorderPatrol.EventDivisor"), getConfig().getInt("flags.BorderPatrol.TimeDivisor"));
 			getServer().getPluginManager().registerEvents(bp, this);
 		}
 
@@ -131,8 +131,8 @@ public class Flags extends JavaPlugin {
         Bundle.registerPermissions();
 
 		// Schedule tasks to perform after server is running
-		new onServerEnabledTask(this.getConfig().getBoolean("Flags.Metrics.Enabled")).runTask(this);
-		log("Flags Has Been Enabled.");
+		new onServerEnabledTask(this.getConfig().getBoolean("flags.Metrics.Enabled")).runTask(this);
+		log("flags Has Been Enabled.");
 	}
 
     /**
@@ -152,7 +152,7 @@ public class Flags extends JavaPlugin {
         flagRegistrar = null;
         currentSystem = null;
 
-        log("Flags Has Been Disabled.");
+        log("flags Has Been Disabled.");
     }
 
 	/**
@@ -229,44 +229,44 @@ public class Flags extends JavaPlugin {
     }
 
     /**
-     * Sends a severe message through the Flags logger.
+     * Sends a severe message through the flags logger.
      *
      * @param message
      *            The message
      */
     public static void severe(String message) {
-        Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().severe(message);
+        Bukkit.getServer().getPluginManager().getPlugin("flags").getLogger().severe(message);
     }
 
     /**
-     * Sends a warning message through the Flags logger.
+     * Sends a warning message through the flags logger.
      *
      * @param message
      *            The message
      */
     public static void warn(String message) {
-        Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().warning(message);
+        Bukkit.getServer().getPluginManager().getPlugin("flags").getLogger().warning(message);
     }
 
     /**
-     * Sends a log message through the Flags logger.
+     * Sends a log message through the flags logger.
      *
      * @param message
      *            The message
      */
     public static void log(String message) {
-        Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().info(message);
+        Bukkit.getServer().getPluginManager().getPlugin("flags").getLogger().info(message);
     }
 
     /**
-     * Sends a debug message through the Flags logger.
+     * Sends a debug message through the flags logger.
      *
      * @param message
      *            The message
      */
     public static void debug(String message) {
         if(debugOn) {
-            Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().info("[DEBUG] " + message);
+            Bukkit.getServer().getPluginManager().getPlugin("flags").getLogger().info("[DEBUG] " + message);
         }
     }
 
@@ -281,17 +281,17 @@ public class Flags extends JavaPlugin {
     }
 
     /**
-     * Gets the DataStore used by Flags. In most cases, plugins should not
+     * Gets the DataStore used by flags. In most cases, plugins should not
      * attempt to access this directly.
      *
-     * @return The dataStore object in Flags.
+     * @return The dataStore object in flags.
      */
     public static DataStore getDataStore() {
         return dataStore;
     }
 
     /**
-     * Gets the vault economy for this instance of Flags.
+     * Gets the vault economy for this instance of flags.
      *
      * @return The vault economy.
      */
@@ -300,7 +300,7 @@ public class Flags extends JavaPlugin {
     }
 
     /**
-     * Gets the registrar for this instance of Flags.
+     * Gets the registrar for this instance of flags.
      *
      * @return The flag registrar.
      */
@@ -318,11 +318,11 @@ public class Flags extends JavaPlugin {
 			if (e.getPlayer().hasPermission("flags.admin.notifyupdate")) {
 				if(updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
 					e.getPlayer().sendMessage(ChatColor.DARK_PURPLE
-							+ "The version of Flags that this server is running is out of date. "
+							+ "The version of flags that this server is running is out of date. "
 							+ "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
 				} else if(updater.getResult() == UpdateResult.SUCCESS) {
-					e.getPlayer().sendMessage("[Flags] " + ChatColor.DARK_PURPLE
-							+ "An update to Flags has been downloaded and will be installed when the server is reloaded.");
+					e.getPlayer().sendMessage("[flags] " + ChatColor.DARK_PURPLE
+							+ "An update to flags has been downloaded and will be installed when the server is reloaded.");
 				}
 			}
 		}
@@ -351,15 +351,15 @@ public class Flags extends JavaPlugin {
 			}
 
 			if (mcStats && !debugOn && checkAPI("1.3.2")) {
-				MetricsManager.StartMetrics(Bukkit.getServer().getPluginManager().getPlugin("Flags"));
+				MetricsManager.StartMetrics(Bukkit.getServer().getPluginManager().getPlugin("flags"));
 			}
 
 			// Check the handlers to see if anything is registered for Border
 			// Patrol
 			final RegisteredListener[] listeners = PlayerChangedAreaEvent.getHandlerList().getRegisteredListeners();
 			if (borderPatrol && (listeners == null || listeners.length == 0)) {
-                PlayerMoveEvent.getHandlerList().unregister(Bukkit.getPluginManager().getPlugin("Flags"));
-				Flags.log("No plugins have registered for Flags' Border Patrol listener. Unregistering PlayerMoveEvent.");
+                PlayerMoveEvent.getHandlerList().unregister(Bukkit.getPluginManager().getPlugin("flags"));
+				Flags.log("No plugins have registered for flags' Border Patrol listener. Unregistering PlayerMoveEvent.");
 			}
 		}
 	}
@@ -371,21 +371,21 @@ public class Flags extends JavaPlugin {
 		@Override
 		public void run() {
 			// Update script
-			final String key = getConfig().getString("Flags.Update.ServerModsAPIKey");
-			final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Flags");
-			updater = (getConfig().getBoolean("Flags.Update.Download"))
+			final String key = getConfig().getString("flags.Update.ServerModsAPIKey");
+			final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("flags");
+			updater = (getConfig().getBoolean("flags.Update.Download"))
 				? new Updater(plugin, 65024, getFile(), Updater.UpdateType.DEFAULT, key, true)
 				: new Updater(plugin, 65024, getFile(), Updater.UpdateType.NO_DOWNLOAD, key, false);
 
 			if (updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
 				Bukkit.getServer().getConsoleSender()
-					.sendMessage("[Flags] "	+ ChatColor.DARK_PURPLE
-						+ "The version of Flags that this server is running is out of date. "
+					.sendMessage("[flags] "	+ ChatColor.DARK_PURPLE
+						+ "The version of flags that this server is running is out of date. "
 						+ "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
 			} else if (updater.getResult() == UpdateResult.SUCCESS) {
 				Bukkit.getServer().getConsoleSender()
-				.sendMessage("[Flags] "	+ ChatColor.DARK_PURPLE
-					+ "An update to Flags has been downloaded and will be installed when the server is reloaded.");
+				.sendMessage("[flags] "	+ ChatColor.DARK_PURPLE
+					+ "An update to flags has been downloaded and will be installed when the server is reloaded.");
 			}
 			getServer().getPluginManager().registerEvents(new FlagsListener(), plugin);
 		}
@@ -396,7 +396,7 @@ public class Flags extends JavaPlugin {
      */
     private void reload() {
         this.reloadConfig();
-        debugOn = getConfig().getBoolean("Flags.Debug");
+        debugOn = getConfig().getBoolean("flags.Debug");
 
         messageStore.reload();
         dataStore.reload();
@@ -407,7 +407,7 @@ public class Flags extends JavaPlugin {
 	 * Acquires the land management plugin.
 	 */
 	private System findSystem(PluginManager pm) {
-		final List<?> pluginList = getConfig().getList("Flags.AreaPlugins");
+		final List<?> pluginList = getConfig().getList("flags.AreaPlugins");
 
 		for(Object o : pluginList) {
 			debug("Testing Plugin: " + o);

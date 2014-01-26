@@ -22,10 +22,10 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags;
+package io.github.alshain01.flags;
 
-import io.github.alshain01.Flags.area.Area;
-import io.github.alshain01.Flags.area.World;
+import io.github.alshain01.flags.area.Area;
+import io.github.alshain01.flags.area.World;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
 import org.bukkit.Location;

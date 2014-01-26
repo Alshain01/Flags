@@ -1,7 +1,9 @@
-name: Flags
+name: ${project.name}
 version: 1.3.0
-author: Alshain01
-main: io.github.alshain01.Flags.Flags
+description: ${project.description}
+author: ${project.author}
+website: ${project.url}
+main: ${project.main}
 softdepend: [Factions, GriefPrevention, InfinitePlots, PlotMe, PreciousStones, Regios, Residence, WorldGuard, Vault, GriefPreventionFlags]
 commands:
   flag:

@@ -22,7 +22,7 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.commands;
+package io.github.alshain01.flags.commands;
 
 enum EFlagCommand {
 	SET('s', 3, 1, true, true, "Set <area|world|default> <flag> [true|false]"),

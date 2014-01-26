@@ -22,7 +22,7 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.economy;
+package io.github.alshain01.flags.economy;
 
 /**
  * Enumeration for handling withdrawal and deposit
@@ -34,6 +34,6 @@ public enum ETransactionType {
 	 * @return The localized message of the transaction type.
 	 */
 	public String getMessage() {
-		return io.github.alshain01.Flags.Message.valueOf(toString()).get();
+		return io.github.alshain01.flags.Message.valueOf(toString()).get();
 	}
 }

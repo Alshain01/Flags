@@ -22,10 +22,10 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags;
+package io.github.alshain01.flags;
 
-import io.github.alshain01.Flags.area.Area;
-import io.github.alshain01.Flags.events.PlayerChangedAreaEvent;
+import io.github.alshain01.flags.area.Area;
+import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
 
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;

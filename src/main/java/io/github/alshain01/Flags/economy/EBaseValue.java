@@ -22,7 +22,7 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.economy;
+package io.github.alshain01.flags.economy;
 
 import org.bukkit.Bukkit;
 
@@ -36,8 +36,8 @@ public enum EBaseValue {
 	 * @return True if the BaseFlagValue is set to this type.
 	 */
 	public boolean isSet() {
-		final String message = Bukkit.getServer().getPluginManager().getPlugin("Flags").getConfig()
-				.getString("Flags.Economy.BaseValue");
+		final String message = Bukkit.getServer().getPluginManager().getPlugin("flags").getConfig()
+				.getString("flags.Economy.BaseValue");
 		return message.equalsIgnoreCase(toString());
 	}
 }

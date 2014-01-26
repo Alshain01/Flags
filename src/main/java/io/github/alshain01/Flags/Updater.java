@@ -1,4 +1,4 @@
-package io.github.alshain01.Flags;
+package io.github.alshain01.flags;
 
 /*
 * Updater for Bukkit.

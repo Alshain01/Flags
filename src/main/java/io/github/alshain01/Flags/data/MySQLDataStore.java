@@ -22,9 +22,9 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.data;
+package io.github.alshain01.flags.data;
 
-import io.github.alshain01.Flags.System;
+import io.github.alshain01.flags.System;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -22,16 +22,16 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.commands;
+package io.github.alshain01.flags.commands;
 
-import io.github.alshain01.Flags.Flag;
-import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.Message;
-import io.github.alshain01.Flags.Registrar;
-import io.github.alshain01.Flags.area.Area;
-import io.github.alshain01.Flags.area.Default;
-import io.github.alshain01.Flags.area.Subdivision;
-import io.github.alshain01.Flags.economy.EPurchaseType;
+import io.github.alshain01.flags.Flag;
+import io.github.alshain01.flags.Flags;
+import io.github.alshain01.flags.Message;
+import io.github.alshain01.flags.Registrar;
+import io.github.alshain01.flags.area.Area;
+import io.github.alshain01.flags.area.Default;
+import io.github.alshain01.flags.area.Subdivision;
+import io.github.alshain01.flags.economy.EPurchaseType;
 
 import java.util.ArrayList;
 import java.util.Collections;

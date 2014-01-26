@@ -22,7 +22,7 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.area;
+package io.github.alshain01.flags.area;
 
 /**
  * Interface that defines area types that can be removed from the server by

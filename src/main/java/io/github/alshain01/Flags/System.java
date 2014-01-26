@@ -22,9 +22,9 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags;
+package io.github.alshain01.flags;
 
-import io.github.alshain01.Flags.area.*;
+import io.github.alshain01.flags.area.*;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
 import org.bukkit.Bukkit;
@@ -196,7 +196,7 @@ public enum System {
     public abstract Area getArea(String name);
 
     /*
-     * Gets whether there is an area for this system that Flags can use at the location
+     * Gets whether there is an area for this system that flags can use at the location
      *
      * @param location The location to check for an area
      * @return True if there is an area

@@ -22,7 +22,7 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags.commands;
+package io.github.alshain01.flags.commands;
 
 enum ECommandLocation {
 	AREA('a'), WORLD('w'), DEFAULT('d');

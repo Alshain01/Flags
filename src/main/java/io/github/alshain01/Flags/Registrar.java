@@ -22,7 +22,7 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.Flags;
+package io.github.alshain01.flags;
 
 import java.util.Collection;
 import java.util.Enumeration;
@@ -34,7 +34,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
 /**
- * Class for handling the registration of new Flags
+ * Class for handling the registration of new flags
  */
 public final class Registrar {
 	final ConcurrentHashMap<String, Flag> flagStore = new ConcurrentHashMap<String, Flag>();
