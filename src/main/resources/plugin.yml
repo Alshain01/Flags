@@ -156,3 +156,7 @@ permissions:
   flags.admin.notifyupdate:
     description: Notifies players when Flags needs updating.
     default: op
+
+ flags.view.permtrust:
+   description: Allows players to see permission nodes when viewing trust.
+   default: op

@@ -54,7 +54,7 @@ final class FlagCmd extends Common {
 		// Return the single flag requested
 		if (flag != null) {
 			player.sendMessage(Message.GetFlag.get()
-					.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
+					.replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
 					.replaceAll("\\{Flag\\}", flag.getName())
 					.replaceAll("\\{Value\\}", getValue(area.getValue(flag, false)).toLowerCase()));
 			return true;
@@ -62,7 +62,7 @@ final class FlagCmd extends Common {
 		
 		// No flag provided, list all set flags for the area
 		StringBuilder message = new StringBuilder(Message.GetAllFlags.get()
-				.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase()));	
+				.replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase()));
 		boolean first = true; // Governs whether we insert a comma or not (true means no)
 		Boolean value;
 		Area defaultArea = new Default(player.getWorld());
@@ -100,7 +100,7 @@ final class FlagCmd extends Common {
         // Set the flag
     	if(area.setValue(flag, value, player)) {
     		player.sendMessage(Message.SetFlag.get()
-    				.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
+    				.replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
     				.replaceAll("\\{Flag\\}", flag.getName())
     				.replaceAll("\\{Value\\}", getValue(value).toLowerCase()));
     	}
@@ -117,7 +117,7 @@ final class FlagCmd extends Common {
 			
 			if(area.setValue(flag, null, player)) {
 				player.sendMessage(Message.RemoveFlag.get()
-						.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
+						.replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
 						.replaceAll("\\{Flag\\}", flag.getName()));
 			}
             return;
@@ -134,7 +134,7 @@ final class FlagCmd extends Common {
 		}
 		
 		player.sendMessage((success ? Message.RemoveAllFlags.get() : Message.RemoveAllFlagsError.get())
-				.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase()));
+				.replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase()));
 	}
 	
 	/*
@@ -144,15 +144,21 @@ final class FlagCmd extends Common {
 		boolean first = true;
 		StringBuilder message;
 		Area area = getArea(player, location);
-		Set<String> trustList = area.getPlayerTrustList(flag);
+
+        Set<String> trustList;
+        if(player.hasPermission("flags.view.permtrust")) {
+            trustList = area.getTrustList(flag);
+        } else {
+		    trustList = area.getPlayerTrustList(flag);
+        }
 		
 		if(!Validate.isPlayerFlag(player, flag) 
 				|| !Validate.isArea(player, area)
-				|| !Validate.isTrustList(player, trustList, area.getAreaType(), flag.getName())) { return; }
+				|| !Validate.isTrustList(player, trustList, area.getSystemType().getAreaType(), flag.getName())) { return; }
 
 		// List all set flags
 		message = new StringBuilder(Message.GetTrust.get()					
-				.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
+				.replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
 				.replaceAll("\\{Flag\\}", flag.getName()));
 		
 		for (String p : trustList) {
@@ -181,7 +187,7 @@ final class FlagCmd extends Common {
 		}
 		
 		player.sendMessage((success ? Message.SetTrust.get() : Message.SetTrustError.get())
-				.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
+				.replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
 				.replaceAll("\\{Flag\\}", flag.getName()));
 		return true;
 	}
@@ -201,7 +207,7 @@ final class FlagCmd extends Common {
 		
 		Set<String> trustList = area.getTrustList(flag);
         Flags.debug("Trust List " + trustList.toString());
-		if(!Validate.isTrustList(player, trustList, area.getAreaType(), flag.getName())) {
+		if(!Validate.isTrustList(player, trustList, area.getSystemType().getAreaType(), flag.getName())) {
             Flags.debug("Failed trust list validation");
             return;
         }
@@ -213,7 +219,7 @@ final class FlagCmd extends Common {
 		}
 
 		player.sendMessage((success ? Message.RemoveTrust.get() : Message.RemoveTrustError.get())
-				.replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
+				.replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
 				.replaceAll("\\{Flag\\}", flag.getName()));
 	}
 
