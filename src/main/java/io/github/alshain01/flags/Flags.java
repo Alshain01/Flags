@@ -43,8 +43,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredListener;
@@ -86,6 +84,7 @@ public class Flags extends JavaPlugin {
 		if (getConfig().getBoolean("Flags.Update.Check")) {
             debug("Enabling Update Scheduler");
 			new UpdateScheduler().runTaskTimer(this, 0, 1728000);
+            getServer().getPluginManager().registerEvents(new UpdateListener(), this);
 		}
 
 		borderPatrol = getConfig().getBoolean("Flags.BorderPatrol.Enable");
@@ -308,10 +307,11 @@ public class Flags extends JavaPlugin {
     /*
 	 * Contains event listeners required for plugin maintenance.
 	 */
-	private class FlagsListener implements Listener {
+	private class UpdateListener implements Listener {
 		// Update listener
 		@EventHandler(ignoreCancelled = true)
 		private void onPlayerJoin(PlayerJoinEvent e) {
+            if(updater == null) { return; }
 			if (e.getPlayer().hasPermission("flags.admin.notifyupdate")) {
 				if(updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
 					e.getPlayer().sendMessage(ChatColor.DARK_PURPLE
@@ -378,7 +378,6 @@ public class Flags extends JavaPlugin {
 				.sendMessage("[Flags] "	+ ChatColor.DARK_PURPLE
 					+ "An update to Flags has been downloaded and will be installed when the server is reloaded.");
 			}
-			getServer().getPluginManager().registerEvents(new FlagsListener(), plugin);
 		}
 	}
 
