@@ -45,32 +45,56 @@ public class MetricsManager {
              * Land System Graph
              */
 			final Graph systemGraph = metrics.createGraph("Land System");
-			for (final System system : System.values()) {
-				if (System.getActive() == system) {
-					systemGraph.addPlotter(new Metrics.Plotter(system.getDisplayName()) {
-						@Override
-						public int getValue() {
-							return 1;
-						}
-					});
+			systemGraph.addPlotter(new Metrics.Plotter(System.getActive().getDisplayName()) {
+				@Override
+				public int getValue() {
+                    return 1;
 				}
-			}
+			});
 
 			/*
 			 * Land System by PlayersGraph
 			 */
-			final Graph systemPlayersGraph = metrics
-					.createGraph("Land System by Players");
-			for (final System system : io.github.alshain01.flags.System.values()) {
-				if (System.getActive() == system) {
-					systemPlayersGraph.addPlotter(new Metrics.Plotter(system.getDisplayName()) {
-						@Override
-						public int getValue() {
-							return Bukkit.getOnlinePlayers().length;
-						}
-					});
+			final Graph systemPlayersGraph = metrics.createGraph("Land System by Players");
+		    systemPlayersGraph.addPlotter(new Metrics.Plotter(System.getActive().getDisplayName()) {
+				@Override
+				public int getValue() {
+                    return Bukkit.getOnlinePlayers().length;
 				}
-			}
+			});
+
+            /*
+             * Database Type
+             */
+            final Graph dbGraph = metrics.createGraph("Data Storage Type");
+            dbGraph.addPlotter(new Metrics.Plotter(Flags.getDataStore().getType().getName()) {
+                @Override
+                public int getValue() {
+                    return 1;
+                }
+            });
+
+            /*
+			 * Border Patrol Status
+			 */
+            final Graph bpGraph = metrics.createGraph("BorderPatrol Enabled");
+            bpGraph.addPlotter(new Metrics.Plotter(Flags.getBorderPatrolEnabled() ? "Enabled" : "Disabled") {
+                @Override
+                public int getValue() {
+                    return 1;
+                }
+            });
+
+   			/*
+			 * Economy Graph
+			 */
+            final Graph econGraph = metrics.createGraph("Economy Enabled");
+            econGraph.addPlotter(new Metrics.Plotter(Flags.getEconomy() == null ? "No" : "Yes") {
+                @Override
+                public int getValue() {
+                    return 1;
+                }
+            });
 
 			/*
 			 * Flag groups installed
@@ -85,43 +109,11 @@ public class MetricsManager {
 				});
 			}
 
-            /*
-             * Database Type
-             */
-            final Graph dbGraph = metrics.createGraph("Data Storage Type");
-            dbGraph.addPlotter(new Metrics.Plotter(Flags.getDataStore().getType().getName()) {
-                @Override
-                public int getValue() {
-                    return 1;
-                }
-            });
-
-			/*
-			 * Border Patrol Status
-			 */
-			final Graph bpGraph = metrics.createGraph("BorderPatrol Enabled");
-			if (Flags.getBorderPatrolEnabled()) {
-				bpGraph.addPlotter(new Metrics.Plotter("Enabled") {
-					@Override
-					public int getValue() {
-						return 1;
-					}
-				});
-			} else {
-				bpGraph.addPlotter(new Metrics.Plotter("Disabled") {
-					@Override
-					public int getValue() {
-						return 1;
-					}
-				});
-			}
-
 			/*
 			 * Auto Update settings
 			 */
 			final Graph updateGraph = metrics.createGraph("Update Configuration");
-			if (!plugin.getConfig()
-					.getBoolean("flags.Update.Check")) {
+			if (!plugin.getConfig().getBoolean("flags.Update.Check")) {
 				updateGraph.addPlotter(new Metrics.Plotter("No Updates") {
 					@Override
 					public int getValue() {
@@ -139,26 +131,6 @@ public class MetricsManager {
 						});
 			} else {
 				updateGraph.addPlotter(new Metrics.Plotter("Download Updates") {
-					@Override
-					public int getValue() {
-						return 1;
-					}
-				});
-			}
-
-			/*
-			 * Economy Graph
-			 */
-			final Graph econGraph = metrics.createGraph("Economy Enabled");
-			if (Flags.getEconomy() == null) {
-				econGraph.addPlotter(new Metrics.Plotter("No") {
-					@Override
-					public int getValue() {
-						return 1;
-					}
-				});
-			} else {
-				econGraph.addPlotter(new Metrics.Plotter("Yes") {
 					@Override
 					public int getValue() {
 						return 1;
