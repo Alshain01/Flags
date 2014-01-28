@@ -24,7 +24,7 @@
 
 package io.github.alshain01.flags.metrics;
 
-import io.github.alshain01.flags.*;
+import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.metrics.Metrics.Graph;
 
@@ -120,15 +120,13 @@ public class MetricsManager {
 						return 1;
 					}
 				});
-			} else if (!plugin.getConfig()
-					.getBoolean("flags.Update.Download")) {
-				updateGraph
-						.addPlotter(new Metrics.Plotter("Check for Updates") {
-							@Override
-							public int getValue() {
-								return 1;
-							}
-						});
+			} else if (!plugin.getConfig().getBoolean("flags.Update.Download")) {
+				updateGraph.addPlotter(new Metrics.Plotter("Check for Updates") {
+                    @Override
+                    public int getValue() {
+                        return 1;
+                    }
+                });
 			} else {
 				updateGraph.addPlotter(new Metrics.Plotter("Download Updates") {
 					@Override
