@@ -3,6 +3,6 @@
 # --Example--
 # Price:
 #  Flag:
-#    NotifyEnter: '100'
+#    NotifyEnter: 100
 #  Message:
-#    NotifyEnter: '2500.5'
+#    NotifyEnter: 2500.5

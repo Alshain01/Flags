@@ -476,7 +476,7 @@ public class SQLDataStore implements DataStore {
             return;
         }
 
-        writeInheritance(value, area.getAreaType(), area.getWorld().getName(),
+        writeInheritance(value, area.getSystemType().getAreaType(), area.getWorld().getName(),
                 area.getSystemID(), ((Subdivision) area).getSystemSubID());
     }
 
@@ -509,6 +509,7 @@ public class SQLDataStore implements DataStore {
 
         // Import the system data
         Set<String> keys = ((YamlDataStore)yaml).readKeys();
+        Flags.debug("KEYS: " + keys.toString());
         for(String key : keys) {
             String[] keyNodes = key.split("\\.");
 
@@ -517,7 +518,7 @@ public class SQLDataStore implements DataStore {
 
             String world = keyNodes[1];
             String id = keyNodes[2];
-            String subID = "null";
+            String subID = "'null'";
             String flag = keyNodes[3];
 
             if(keyNodes.length == 6 || key.contains("InheritParent")) { // Subdivision or InheritParent
@@ -536,7 +537,7 @@ public class SQLDataStore implements DataStore {
             }
 
             if(key.contains("Message")) {
-                writeAreaMessage(((YamlDataStore) yaml).getString(key), flag, System.getActive().toString(), world, id, subID);
+                writeAreaMessage("'" + ((YamlDataStore) yaml).getString(key) + "'", flag, System.getActive().toString(), world, id, subID);
                 continue;
             }
 
