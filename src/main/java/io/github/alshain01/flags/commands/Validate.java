@@ -47,17 +47,19 @@ final class Validate {
 		}
 		return true;
 	}
-	
-	protected static boolean isSubdivision(CommandSender cs, Area a) {
-        if(System.getActive().hasSubdivisions()) {
-            if(!(a instanceof Subdivision) || !((Subdivision)a).isSubdivision()) {
-                cs.sendMessage(Message.SubdivisionError.get());
-                return false;
-            }
-            return true;
-        }
+
+    protected static boolean canSubdivide(CommandSender cs) {
+        if(System.getActive().hasSubdivisions()) { return true; }
         cs.sendMessage(Message.SubdivisionSupportError.get().replaceAll("\\{System\\}", System.getActive().getDisplayName()));
         return false;
+    }
+	
+	protected static boolean isSubdivision(CommandSender cs, Area a) {
+        if(!(a instanceof Subdivision) || !((Subdivision)a).isSubdivision()) {
+            cs.sendMessage(Message.SubdivisionError.get());
+            return false;
+        }
+        return true;
 	}
 	
 	protected static boolean isPlayerFlag(CommandSender cs, Flag f) {
