@@ -9,7 +9,7 @@ public enum DataStoreType {
         }
     },
 
-    MSSQL("jtdc", "Microsoft SQL") {
+    MSSQL("sqlserver", "Microsoft SQL") {
         public DataStore getDataStore(JavaPlugin plugin) {
             final String url = plugin.getConfig().getString("Flags.Database.Url");
             final String user = plugin.getConfig().getString("Flags.Database.User");

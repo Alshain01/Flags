@@ -56,6 +56,8 @@ public class SQLDataStore implements DataStore {
         this.url = url;
         this.user = user;
         this.password = pw;
+
+        connect(url, user, password);
     }
 
     /*
