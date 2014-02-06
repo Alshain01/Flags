@@ -92,7 +92,11 @@ class MrClean {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onClaimDeleted(ClaimDeletedEvent e) {
 			// Cleanup the database, keep the file from growing too large.
-			new GriefPreventionClaim78(e.getClaim().getID()).remove();
+			if(e.getClaim().getParent() != null) {
+				new GriefPreventionClaim78(e.getClaim().getParent().getID(), e.getClaim().getID()).remove();
+			} else {
+				new GriefPreventionClaim78(e.getClaim().getID()).remove();
+			}
 		}
 	}
 
