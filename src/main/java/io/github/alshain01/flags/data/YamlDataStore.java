@@ -362,8 +362,19 @@ public final class YamlDataStore implements DataStore {
 
 	@Override
 	public void remove(Area area) {
-		final String path = getAreaPath(area);
-		getYml(path).getConfig().set(path, null);
+        String path = area.getSystemType().toString() + "." + area.getWorld().getName();
+
+        if (!(area instanceof World || area instanceof Default)) {
+            path += "." + area.getSystemID();
+        }
+
+        if (area instanceof Subdivision && ((Subdivision) area).isSubdivision()) {
+            path += "." + ((Subdivision) area).getSystemSubID();
+        }
+        CustomYML yml = getYml(path);
+        Flags.debug("Removing " + path);
+		yml.getConfig().set(path, null);
+        yml.saveConfig();
 	}
 
     /*
