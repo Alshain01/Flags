@@ -27,6 +27,7 @@ package io.github.alshain01.flags.area;
 /**
  * Interface that defines area types that can be subdivided into parent/child
  * subdivisions.
+ *
  */
 public interface Subdivision {
 	/**
