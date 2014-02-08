@@ -54,6 +54,11 @@ Flags:
       Flag: true
       Message: false
   #
+  # For supported land system plugins, Mr. Clean is a module that will remove data from the Flags database for
+  # areas that are unclaimed, abandoned, or deleted by the respective system.
+  #
+  MrClean: true
+  #
   # Check for updates and notify the console or download and install (Check must be true to auto update)
   # ServerModsAPIKey is optional and can be found here https://dev.bukkit.org/home/servermods-apikey/  
   # DO NOT SHARE WITH ANYONE!  The API key will only be uploaded to BukkitDev, not the author of this plugin.

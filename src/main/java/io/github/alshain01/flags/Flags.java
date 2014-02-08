@@ -117,7 +117,9 @@ public class Flags extends JavaPlugin {
 		setupEconomy();
 
 		// Load Mr. Clean
-		MrClean.enable(this);
+        if(getConfig().getBoolean("Flags.MrClean")) {
+		    MrClean.enable(this);
+        }
 
 		// Load Border Patrol
 		if (borderPatrol) {
