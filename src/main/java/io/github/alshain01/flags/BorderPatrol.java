@@ -25,6 +25,7 @@
 package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.area.Area;
+import io.github.alshain01.flags.area.Subdivision;
 import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
 
 import java.util.Date;
@@ -132,6 +133,11 @@ final class BorderPatrol implements Listener {
 
 			// If they are the same area, don't bother.
 			if (areaFrom.compareTo(areaTo) != 0) {
+                //If there is a subdivsion and it is inheriting, don't call the event.
+                if((areaFrom.compareTo(areaTo) == -1 && ((Subdivision)areaFrom).isInherited()) //AreaFrom is a subdivision of AreaTo and is inheriting
+                        || (areaFrom.compareTo(areaTo) == 1 && ((Subdivision)areaTo).isInherited())) { //AreaTo is a subdivision of AreaFrom and is inheriting
+                    return;
+                }
 				// Call the event
 				final PlayerChangedAreaEvent event = 
 						new PlayerChangedAreaEvent(e.getPlayer(), areaTo, areaFrom);

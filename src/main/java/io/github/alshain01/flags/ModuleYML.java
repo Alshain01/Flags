@@ -70,7 +70,7 @@ public final class ModuleYML {
 			fileConfig = new YamlConfiguration();
 			fileConfig.load(plugin.getResource(fileName));
 		} catch (final Exception e) {
-			plugin.getLogger().severe("Could not load data from " + fileName);
+			plugin.getLogger().severe("Could not load data from " + fileName + " in plugin " + plugin.getName() + ": " + e.getMessage());
 		}
 	}
 }
