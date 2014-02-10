@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * Class for handling SQL Database Storage
@@ -162,9 +163,7 @@ public class SQLDataStore implements DataStore {
         try {
             while(results.next()) {
                 String flagName = results.getString("FlagName");
-                Flags.debug(flagName);
                 if(Flags.getRegistrar().getFlag(flagName) != null) {
-                    Flags.debug(flagName + " found in registrar.");
                     flags.add(Flags.getRegistrar().getFlag(flagName));
                 }
             }
@@ -188,17 +187,14 @@ public class SQLDataStore implements DataStore {
         // If no flags are provided, assume we are deleting it.
         deleteBundle(bundleName);
         if (flags == null || flags.size() == 0) {
-            Flags.debug("No flags provided, removing bundle.");
             return;
         }
 
         Iterator<Flag> iterator = flags.iterator();
-        Flags.debug("Beginning flag iteration.");
         while(iterator.hasNext()) {
             Flag flag = iterator.next();
             values.append("('").append(bundleName).append("','").append(flag.getName()).append("')");
             if(iterator.hasNext()) {
-                Flags.debug("Found another flag.");
                 values.append(",");
             }
         }
@@ -274,7 +270,6 @@ public class SQLDataStore implements DataStore {
             if(results.next()) {
                 return results.getString("FlagMessage").replaceAll("''", "'");
             }
-            Flags.debug("Found no SQL results for query");
             return null;
         } catch (SQLException ex){
             SqlError(ex.getMessage());
@@ -284,14 +279,12 @@ public class SQLDataStore implements DataStore {
 
     @Override
     public void writeMessage(Area area, Flag flag, String message) {
-        Flags.debug("Writing Message to SQL DataStore");
         String insertString;
         if (message == null) {
             message = "null";
         } else {
             message = "'" + message.replaceAll("'", "''") + "'";
         }
-        Flags.debug("Writing message: " + message);
 
         if(area instanceof Default || area instanceof World) {
             insertString = "INSERT INTO %table%Flags (WorldName, FlagName, FlagMessage) VALUES ('%world%', '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
@@ -450,7 +443,6 @@ public class SQLDataStore implements DataStore {
     @Override
     public boolean readInheritance(Area area) {
         if(!(area instanceof Subdivision) || !((Subdivision)area).isSubdivision()) {
-            Flags.debug("Cannot read inheritance, area is not a subdivision.");
             return false;
         }
 
@@ -460,7 +452,6 @@ public class SQLDataStore implements DataStore {
 
         try {
             if (!results.next()) {
-                Flags.debug("Inheritance flag not found in DataStore, assuming true.");
                 return true;
             }
             return results.getBoolean("FlagValue");
@@ -474,7 +465,6 @@ public class SQLDataStore implements DataStore {
     @Override
     public void writeInheritance(Area area, boolean value) {
         if(!(area instanceof Subdivision) || !((Subdivision)area).isSubdivision()) {
-            Flags.debug("Cannot write inheritance, area is not a subdivision.");
             return;
         }
 
@@ -504,14 +494,14 @@ public class SQLDataStore implements DataStore {
      * Database Import/Export
      */
     public void importDB() {
-        Flags.log("Importing YAML Database to " + getType().getName());
+        final Logger log = Bukkit.getPluginManager().getPlugin("Flags").getLogger();
+        log.info("Importing YAML Database to " + getType().getName());
         DataStore yaml = new YamlDataStore((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
 
         convertGenericData(yaml, this);
 
         // Import the system data
         Set<String> keys = ((YamlDataStore)yaml).readKeys();
-        Flags.debug("KEYS: " + keys.toString());
         for(String key : keys) {
             String[] keyNodes = key.split("\\.");
 
@@ -554,18 +544,19 @@ public class SQLDataStore implements DataStore {
             }
         }
 
-        Flags.log("Import Complete");
+        log.info("Import Complete");
     }
 
     public void exportDB() {
-        Flags.log("Exporting " + getType().getName() + " Database to YAML");
+        final Logger log = Bukkit.getPluginManager().getPlugin("Flags").getLogger();
+        log.info("Exporting " + getType().getName() + " Database to YAML");
         DataStore yaml = new YamlDataStore((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
 
         convertGenericData(this, yaml);
 
 
 
-        Flags.log("Export Complete");
+        log.info("Export Complete");
     }
 
     /*
@@ -597,11 +588,10 @@ public class SQLDataStore implements DataStore {
     }
 
     protected void SqlError(String error) {
-        Flags.severe("[SQL DataStore Error] " + error);
+        Bukkit.getPluginManager().getPlugin("Flags").getLogger().severe("[SQL DataStore Error] " + error);
     }
 
     protected void executeStatement(String statement) {
-        Flags.debug("[SQL Statement] " + statement);
         try {
             Statement SQL = connection.createStatement();
             SQL.execute(statement);
@@ -611,7 +601,6 @@ public class SQLDataStore implements DataStore {
     }
 
     protected ResultSet executeQuery(String query) {
-        Flags.debug("[SQL Query] " + query);
         try {
             Statement SQL = connection.createStatement();
             return SQL.executeQuery(query);

@@ -193,7 +193,6 @@ final class FlagCmd extends Common {
 	}
 	
 	protected static void distrust(Player player, ECommandLocation location, Flag flag, Set<String> playerList) {
-        Flags.debug("Starting Distrust");
 		boolean success = true;
 		Area area = getArea(player, location);
 		
@@ -201,20 +200,15 @@ final class FlagCmd extends Common {
 				|| !Validate.isArea(player, area)
 				|| !Validate.isPermitted(player, flag)
 				|| !Validate.isPermitted(player, area))
-			{
-                Flags.debug("Failed validation");
-                return; }
+			{ return; }
 		
 		Set<String> trustList = area.getTrustList(flag);
-        Flags.debug("Trust List " + trustList.toString());
 		if(!Validate.isTrustList(player, trustList, area.getSystemType().getAreaType(), flag.getName())) {
-            Flags.debug("Failed trust list validation");
             return;
         }
 
         //If playerList is empty, remove everyone
 		for(String p : playerList.isEmpty() ? trustList : playerList) {
-            Flags.debug("Removing " + p);
 			if (!area.setTrust(flag, p, false, player)) { success = false; }
 		}
 
@@ -280,7 +274,6 @@ final class FlagCmd extends Common {
 		if(!Validate.canSubdivide(player)
                 || !Validate.isArea(player, area)
                 || !Validate.isSubdivision(player, area)) {
-            Flags.debug("Failed area or subdivision validation");
             return;
         }
 

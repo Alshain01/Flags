@@ -100,7 +100,6 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
     @Override
     public void setInherited(boolean value) {
         if (claim == null || claim.parent == null) {
-            Flags.debug("Claim or parent claim is null. Cancelling set inherited");
             return;
         }
 

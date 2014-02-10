@@ -77,7 +77,6 @@ public final class Command {
 		// Check argument length (-1 means infinite optional args)
 		if(args.length < command.requiredArgs
 				|| (command.optionalArgs > 0 && args.length > command.requiredArgs + command.optionalArgs)) {
-			Flags.debug("Command Argument Count Error");
 			sender.sendMessage(command.getHelp());
 			return true;
 		}
@@ -86,7 +85,6 @@ public final class Command {
 		if(command.requiresLocation) {
 			location = ECommandLocation.get(args[1]);
 			if(location == null) {
-				Flags.debug("Command Location Error");
 				sender.sendMessage(command.getHelp());
 				return true;
 			}
@@ -144,7 +142,6 @@ public final class Command {
 				break;
 			case DISTRUST:
 				if(args.length > command.requiredArgs) {
-                    Flags.debug("Players found in command.");
                     players = getPlayers(args, command.requiredArgs); } // Players can be omitted to distrust all
 				FlagCmd.distrust((Player)sender, location, flag, players);
                 success = true;
@@ -179,7 +176,6 @@ public final class Command {
 		}
 
 		if(!success) { 
-			Flags.debug("Command Unsuccessful");
 			sender.sendMessage(command.getHelp());
 		}
 		return true;
@@ -216,7 +212,6 @@ public final class Command {
 		// Check argument length (-1 means infinite optional args)
 		if(args.length < command.requiredArgs
 				|| (command.optionalArgs > 0 && args.length > command.requiredArgs + command.optionalArgs)) { 
-			Flags.debug("Command Argument Count Error");
 			sender.sendMessage(command.getHelp());
 			return true;
 		}
@@ -225,7 +220,6 @@ public final class Command {
 		if(command.requiresLocation) {
 			location = ECommandLocation.get(args[1]);
 			if(location == null) {
-				Flags.debug("Command Location Error");
 				sender.sendMessage(command.getHelp());
 				return true;
 			}
@@ -294,7 +288,6 @@ public final class Command {
 	 * @return A list of players
 	 */
 	private static Set<String> getPlayers(String[] args, int start) {
-        Flags.debug((new HashSet<String>(Arrays.asList(args).subList(start, args.length)).toString()));
 		return new HashSet<String>(Arrays.asList(args).subList(start, args.length));
 	}
 	

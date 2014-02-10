@@ -32,6 +32,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+
+import java.util.List;
+import java.util.logging.Logger;
 
 public enum System {
 	DEFAULT("Default", "Default", false) {
@@ -228,11 +232,13 @@ public enum System {
 
 	private String pluginName = null, displayName = null;
     private boolean subdivisions;
+    private Logger logger;
 
 	private System(String name, String displayName, boolean hasSubivisions) {
 		pluginName = name;
 		this.displayName = displayName;
         this.subdivisions = hasSubivisions;
+        this.logger = Bukkit.getPluginManager().getPlugin("Flags").getLogger();
 	}
 	
 	/**
@@ -252,7 +258,7 @@ public enum System {
 	public String getAreaType() {
 		final String message = Flags.messageStore.getConfig().getString("Message." + toString());
 		if (message == null) {
-			Flags.warn("ERROR: Invalid message.yml Message for " + toString());
+			logger.warning("ERROR: Invalid message.yml Message for " + toString());
 			return "ERROR: Invalid message.yml Message. Please contact your server administrator.";
 		}
 		return ChatColor.translateAlternateColorCodes('&', message);
@@ -283,5 +289,19 @@ public enum System {
 
     public boolean hasSubdivisions() {
         return subdivisions;
+    }
+
+    /*
+    * Acquires the land management plugin.
+    */
+    protected static System find(PluginManager pm, List<?> plugins) {
+        if(plugins != null && plugins.size() > 0) {
+            for(Object o : plugins) {
+                if (pm.isPluginEnabled((String) o)) {
+                    return getByName((String) o);
+                }
+            }
+        }
+        return System.WORLD;
     }
 }

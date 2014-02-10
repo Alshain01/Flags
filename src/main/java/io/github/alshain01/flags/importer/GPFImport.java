@@ -165,7 +165,7 @@ public final class GPFImport {
 
 	public static void importGPF() {
 		if (dataExists() && getVersion().equals("1.6.0")) {
-			Flags.log("Importing GriefPreventionFlags Database");
+			Bukkit.getPluginManager().getPlugin("Flags").getLogger().info("Importing GriefPreventionFlags Database");
 			importData(data, "data");
 			if (world != null) {
 				importData(world, "world");
