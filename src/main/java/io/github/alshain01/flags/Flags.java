@@ -101,7 +101,7 @@ public class Flags extends JavaPlugin {
 			GPFImport.importGPF();
 		}
 
-        dataStore = DataStoreType.getType(pluginConfig.getString("Database.Url")).getDataStore(this);
+        dataStore = DataStoreType.getByUrl(this, pluginConfig.getString("Database.Url"));
 
         // New installation
         if (!dataStore.create(this)) {
@@ -177,7 +177,7 @@ public class Flags extends JavaPlugin {
             }
 
             if(args[0].equalsIgnoreCase("import")) {
-                if(dataStore instanceof SQLDataStore) {
+                if(sqlData) {
                     ((SQLDataStore)dataStore).importDB();
                     return true;
                 }
@@ -187,7 +187,7 @@ public class Flags extends JavaPlugin {
 
             /*
             if(args[0].equalsIgnoreCase("export")) {
-                if(dataStore instanceof SQLDataStore) {
+                if(sqlData) {
                     ((SQLDataStore)dataStore).exportDB();
                     return true;
                 }

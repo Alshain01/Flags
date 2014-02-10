@@ -157,9 +157,8 @@ public abstract class Area implements Comparable<Area> {
             if (value != null
                     && (EBaseValue.ALWAYS.isSet()
                     || EBaseValue.PLUGIN.isSet()
-                    && (getValue(flag, true) == null || getValue(flag,
-                    true) != flag.getDefault()) || EBaseValue.DEFAULT
-                    .isSet()
+                    && (getValue(flag, true) == null || getValue(flag, true) != flag.getDefault())
+                    || EBaseValue.DEFAULT.isSet()
                     && getValue(flag, true) != new Default(
                     ((Player) sender).getLocation().getWorld())
                     .getValue(flag, true))) {

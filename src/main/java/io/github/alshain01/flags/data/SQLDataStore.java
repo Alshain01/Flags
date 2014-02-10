@@ -47,6 +47,7 @@ import java.util.logging.Logger;
 public class SQLDataStore implements DataStore {
     private Connection connection = null;
     protected String url, user, password;
+    private final Logger logger = Bukkit.getPluginManager().getPlugin("Flags").getLogger();
 
     /*
      * Constructor
@@ -494,8 +495,7 @@ public class SQLDataStore implements DataStore {
      * Database Import/Export
      */
     public void importDB() {
-        final Logger log = Bukkit.getPluginManager().getPlugin("Flags").getLogger();
-        log.info("Importing YAML Database to " + getType().getName());
+        logger.info("Importing YAML Database to " + getType().getName());
         DataStore yaml = new YamlDataStore((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
 
         convertGenericData(yaml, this);
@@ -544,19 +544,18 @@ public class SQLDataStore implements DataStore {
             }
         }
 
-        log.info("Import Complete");
+        logger.info("Import Complete");
     }
 
     public void exportDB() {
-        final Logger log = Bukkit.getPluginManager().getPlugin("Flags").getLogger();
-        log.info("Exporting " + getType().getName() + " Database to YAML");
+        logger.info("Exporting " + getType().getName() + " Database to YAML");
         DataStore yaml = new YamlDataStore((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
 
         convertGenericData(this, yaml);
 
 
 
-        log.info("Export Complete");
+        logger.info("Export Complete");
     }
 
     /*
@@ -588,7 +587,7 @@ public class SQLDataStore implements DataStore {
     }
 
     protected void SqlError(String error) {
-        Bukkit.getPluginManager().getPlugin("Flags").getLogger().severe("[SQL DataStore Error] " + error);
+        logger.severe("[SQL DataStore Error] " + error);
     }
 
     protected void executeStatement(String statement) {

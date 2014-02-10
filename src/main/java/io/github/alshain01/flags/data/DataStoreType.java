@@ -51,6 +51,10 @@ public enum DataStoreType {
         return niceName;
     }
 
+    public static DataStore getByUrl(JavaPlugin plugin, String url) {
+        return getType(url).getDataStore(plugin);
+    }
+
     public static DataStoreType getType(String url) {
        for(DataStoreType d : DataStoreType.values()) {
            if(url.contains(d.identifier)) {
