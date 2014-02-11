@@ -24,10 +24,7 @@
 
 package io.github.alshain01.flags;
 
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
@@ -37,7 +34,7 @@ import org.bukkit.configuration.ConfigurationSection;
  * Class for handling the registration of new flags
  */
 public final class Registrar {
-	final ConcurrentHashMap<String, Flag> flagStore = new ConcurrentHashMap<String, Flag>();
+	final Map<String, Flag> flagStore = new HashMap<String, Flag>();
 
 	protected Registrar() {
 	}
@@ -92,8 +89,9 @@ public final class Registrar {
 	 * 
 	 * @return A list of names of all the flags registered.
 	 */
-	public Enumeration<String> getFlagNames() {
-		return flagStore.keys();
+
+	public Set<String> getFlagNames() {
+		return flagStore.keySet();
 	}
 
 	/**

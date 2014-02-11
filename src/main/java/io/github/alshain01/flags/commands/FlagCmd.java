@@ -321,11 +321,9 @@ final class FlagCmd extends Common {
 		Registrar registrar = Flags.getRegistrar();
 		List<String> groupNames = new ArrayList<String>();
 		List<String> allowedFlagNames = new ArrayList<String>();
-		Enumeration<String> flagNames = Flags.getRegistrar().getFlagNames();
 
 		// First we need to filter out the flags and groups to show to the particular user.
-		while(flagNames.hasMoreElements()) {
-			Flag flag = registrar.getFlag(flagNames.nextElement());
+		for(Flag flag : Flags.getRegistrar().getFlags()) {
 			// Add flags for the requested group only
 			if(group == null || group.equalsIgnoreCase(flag.getGroup())) {
 				// Only show flags that can be used.
