@@ -16,6 +16,11 @@ commands:
     permission: flags.command.bundle
     usage: /bundle <get|set|remove|trust|distrust|add|cut|erase|help>
 
+  sector:
+    description: Allows you to permform actions on sectors.
+    permission: flags.command.sector
+    usage: /sector <delete | deleteall>
+
   flags:
     description: Administrative command for the plugin Flags
     permission: flags.admin.command
@@ -149,6 +154,23 @@ permissions:
   flags.bypass:
     description: Grants ability to bypass all player flag effects.
     default: false
+
+# Sector Permissions
+  flags.command.sector:
+    description: Grants the ability to use the sector command.
+    default: false
+
+  flags.command.sector.delete:
+    description: Grants the ability to delete a sector.
+    default: op
+    children:
+      flags.command.sector: true
+
+  flags.command.sector.deleteall:
+    description: Grants the ability to delete all sectors.
+    default: op
+    children:
+      flags.command.sector: true
 
 # Administrative Permissions
   flags.admin.command:

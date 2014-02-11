@@ -35,6 +35,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 public enum System {
@@ -48,6 +49,12 @@ public enum System {
         public Area getAreaAt(Location location) { return new World(location); }
         public Area getArea(String name) { return new World(name); }
         public boolean hasArea(Location location) { return true; }
+    },
+
+    FLAGS("Flags", "Flags", true) {
+        public Area getAreaAt(Location location) { return new FlagsSector(location); }
+        public Area getArea(String name) { return new FlagsSector(UUID.fromString(name)); }
+        public boolean hasArea(Location location) { return FlagsSector.hasSector(location); }
     },
 
 	GRIEF_PREVENTION("GriefPrevention",	"Grief Prevention", true) {
@@ -191,6 +198,7 @@ public enum System {
      * InfinitePlots = WorldName.PlotLoc (X;Z)
      * Factions = WorldName.FactionID
      * PlotMe = WorldName.PlotID
+     * Flags = Sector UUID
      *
      * @param name
      *            The system specific name of the area or world name
@@ -210,7 +218,7 @@ public enum System {
 	/**
 	 * Gets the enumeration that matches the case sensitive plugin.yml name.
 	 * 
-	 * @return The enumeration. LandSystem.NONE if no matches found.
+	 * @return The enumeration. LandSystem.FLAGS if no matches found.
 	 */
 	public static System getByName(String name) {
 		for (final System p : System.values()) {
@@ -218,7 +226,7 @@ public enum System {
 				return p;
 			}
 		}
-		return System.WORLD;
+		return System.FLAGS;
 	}
 	
 	/**
@@ -302,6 +310,6 @@ public enum System {
                 }
             }
         }
-        return System.WORLD;
+        return System.FLAGS;
     }
 }

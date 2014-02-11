@@ -34,15 +34,15 @@ public class SectorLocation {
         return new Location(Bukkit.getWorld(world), coords[0], coords[1], coords[2]);
     }
 
-    public double getX() {
+    public int getX() {
         return coords[0];
     }
 
-    public double getY() {
+    public int getY() {
         return coords[1];
     }
 
-    public double getZ() {
+    public int getZ() {
         return coords[2];
     }
 }

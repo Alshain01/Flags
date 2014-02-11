@@ -25,6 +25,7 @@
 package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.sector.SectorCommand;
+import io.github.alshain01.flags.sector.SectorListener;
 import io.github.alshain01.flags.sector.SectorManager;
 import io.github.alshain01.flags.update.UpdateListener;
 import io.github.alshain01.flags.update.UpdateScheduler;
@@ -40,6 +41,7 @@ import java.util.logging.Logger;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -132,7 +134,12 @@ public class Flags extends JavaPlugin {
 			pm.registerEvents(bp, this);
 		}
 
-        getCommand("sector").setExecutor(new SectorCommand());
+        if(currentSystem == System.FLAGS) {
+            ConfigurationSection sectorConfig = pluginConfig.getConfigurationSection("Sector");
+            sectors = new SectorManager(new CustomYML(this, "sector.yml").getConfig(), sectorConfig.getInt("DefaultDepth"));
+            pm.registerEvents(new SectorListener(Material.getMaterial(sectorConfig.getString("Tool"))), this);
+            getCommand("sector").setExecutor(new SectorCommand());
+        }
 
  		// Schedule tasks to perform after server is running
 		new onServerEnabledTask(this.getLogger(), pluginConfig.getBoolean("Metrics.Enabled")).runTask(this);
