@@ -49,7 +49,9 @@ public enum Message {
 	// General Translations
 	Flag, Bundle, Message, ValueColorTrue, ValueColorFalse, Index, Error,
 	// Economy
-	SetPrice, GetPrice, LowFunds, Withdraw, Deposit;
+	SetPrice, GetPrice, LowFunds, Withdraw, Deposit,
+    // Sector
+    DeleteSector, NoSectorError, DeleteAllSectors;
 
     private Logger logger;
 

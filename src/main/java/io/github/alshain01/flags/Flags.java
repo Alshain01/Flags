@@ -24,6 +24,8 @@
 
 package io.github.alshain01.flags;
 
+import io.github.alshain01.flags.sector.SectorCommand;
+import io.github.alshain01.flags.sector.SectorManager;
 import io.github.alshain01.flags.update.UpdateListener;
 import io.github.alshain01.flags.update.UpdateScheduler;
 import io.github.alshain01.flags.commands.Command;
@@ -59,6 +61,7 @@ public class Flags extends JavaPlugin {
 
 	private static Economy economy = null;
 	private static Registrar flagRegistrar = new Registrar();
+    private static SectorManager sectors;
     //private static boolean debugOn = false,
     private static boolean sqlData = false;
     private static boolean borderPatrol = false;
@@ -128,6 +131,8 @@ public class Flags extends JavaPlugin {
 			BorderPatrol bp = new BorderPatrol(bpConfig.getInt("EventDivisor"), bpConfig.getInt("TimeDivisor"));
 			pm.registerEvents(bp, this);
 		}
+
+        getCommand("sector").setExecutor(new SectorCommand());
 
  		// Schedule tasks to perform after server is running
 		new onServerEnabledTask(this.getLogger(), pluginConfig.getBoolean("Metrics.Enabled")).runTask(this);
@@ -273,6 +278,15 @@ public class Flags extends JavaPlugin {
      */
     public static Registrar getRegistrar() {
         return flagRegistrar;
+    }
+
+    /**
+     * Gets the sector manager for this instance of Flags.
+     *
+     * @return The flag registrar. Null if disabled.
+     */
+    public static SectorManager getSectorManager() {
+        return sectors;
     }
 
 	/*

@@ -10,12 +10,12 @@ import org.bukkit.permissions.Permissible;
 
 public class SectorCommand implements CommandExecutor {
     private enum CommandType {
-        INFO, DELETE, DELETEALL;
+        INFO, DELETE, DELETEALL
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(command.toString() != "sector") { return false; }
+        if(!command.toString().equals("sector")) { return false; }
 
         if(!(sender instanceof Player)) {
             sender.sendMessage(Message.NoConsoleError.get());
