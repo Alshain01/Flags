@@ -44,7 +44,7 @@ public final class CustomYML {
 
 	// Construct a new CustomYML file
 	public CustomYML(JavaPlugin plugin, String dataFile) {
-		CustomYML.plugin = plugin;
+		this.plugin = plugin;
 		this.dataFile = dataFile;
 	}
 
