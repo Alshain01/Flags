@@ -59,7 +59,8 @@ public class Flags extends JavaPlugin {
 
 	private static Economy economy = null;
 	private static Registrar flagRegistrar = new Registrar();
-    private boolean debugOn = false, sqlData = false;
+    //private static boolean debugOn = false,
+    private static boolean sqlData = false;
     private static boolean borderPatrol = false;
 
 	/**
@@ -75,7 +76,7 @@ public class Flags extends JavaPlugin {
 		saveDefaultConfig();
         PluginManager pm = getServer().getPluginManager();
         final ConfigurationSection pluginConfig = getConfig().getConfigurationSection("Flags");
-        debugOn = pluginConfig.getBoolean("Debug");
+        //debugOn = pluginConfig.getBoolean("Debug");
 
         // Configure the updater
         ConfigurationSection updateConfig = pluginConfig.getConfigurationSection("Update");
@@ -230,11 +231,11 @@ public class Flags extends JavaPlugin {
      * @param message
      *            The message
      */
-    //public static void debug(String message) {
-//        if(debugOn) {
-//            Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().info("[DEBUG] " + message);
-//        }
-//    }
+   // public static void debug(String message) {
+        //if(debugOn) {
+            //Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger().info("[DEBUG] " + message);
+        //}
+    //}
 
     /**
      * Gets the status of the border patrol event listener. (i.e
@@ -292,7 +293,7 @@ public class Flags extends JavaPlugin {
             // Tell Bukkit about the existing bundles
             Bundle.registerPermissions();
 
-			if (mcStats && !debugOn && checkAPI("1.3.2")) {
+			if (mcStats && checkAPI("1.3.2")) {
 				MetricsManager.StartMetrics(Bukkit.getServer().getPluginManager().getPlugin("Flags"));
 			}
 
@@ -312,7 +313,7 @@ public class Flags extends JavaPlugin {
      */
     private void reload() {
         this.reloadConfig();
-        debugOn = getConfig().getBoolean("Flags.Debug");
+        //debugOn = getConfig().getBoolean("Flags.Debug");
 
         messageStore.reload();
         dataStore.reload();

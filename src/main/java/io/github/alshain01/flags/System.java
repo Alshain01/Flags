@@ -232,13 +232,13 @@ public enum System {
 
 	private String pluginName = null, displayName = null;
     private boolean subdivisions;
-    private Logger logger;
+    //private Logger logger;
 
 	private System(String name, String displayName, boolean hasSubivisions) {
 		pluginName = name;
 		this.displayName = displayName;
         this.subdivisions = hasSubivisions;
-        this.logger = Bukkit.getPluginManager().getPlugin("Flags").getLogger();
+        //this.logger = Bukkit.getPluginManager().getPlugin("Flags").getLogger();
 	}
 	
 	/**
@@ -258,7 +258,7 @@ public enum System {
 	public String getAreaType() {
 		final String message = Flags.messageStore.getConfig().getString("Message." + toString());
 		if (message == null) {
-			logger.warning("ERROR: Invalid message.yml Message for " + toString());
+			//logger.warning("ERROR: Invalid message.yml Message for " + toString());
 			return "ERROR: Invalid message.yml Message. Please contact your server administrator.";
 		}
 		return ChatColor.translateAlternateColorCodes('&', message);

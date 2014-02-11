@@ -121,7 +121,6 @@ public final class YamlDataStore implements DataStore {
                 if (system == System.GRIEF_PREVENTION || System.getActive() == System.RESIDENCE) {
                     cSec = cYml.getConfig().getConfigurationSection(System.getActive().toString() + "Data");
 
-                    Flags.debug("Updating World Names " + cSec.getCurrentPath());
                     final Set<String> keys = cSec.getKeys(true);
                     for (final String k : keys) {
 
@@ -160,7 +159,6 @@ public final class YamlDataStore implements DataStore {
                 final String[] fileArray = {"data", "default", "world"};
                 for(final String s : fileArray) {
                     cYml = getYml(s);
-                    Flags.debug("Updating Boolean " + cYml.getConfig().getCurrentPath());
                     Set<String> keys = cYml.getConfig().getKeys(true);
                     for (final String k : keys) {
                         if (k.contains("Value") || k.contains("InheritParent")) {
@@ -171,17 +169,14 @@ public final class YamlDataStore implements DataStore {
                 }
 
                 //Remove "Data" from the root heading.
-                Flags.debug(System.getActive().toString() + "Data");
                 cYml = getYml("data");
                 cSec = getYml("data").getConfig().getConfigurationSection(System.getActive().toString() + "Data");
                 getYml("data").getConfig().createSection(System.getActive().toString());
                 ConfigurationSection newCSec = getYml("data").getConfig().getConfigurationSection(System.getActive().toString());
-                Flags.debug("Moving " + cSec.getCurrentPath() + " to " + newCSec.getCurrentPath());
                 Set<String> keys = cSec.getKeys(true);
                 for (final String k : keys) {
                     if (k.contains("Value") || k.contains("Message")
                             || k.contains("Trust") || k.contains("InheritParent")) {
-                        Flags.debug("Moving " + k);
                         newCSec.set(k , cSec.get(k));
                         cSec.set(k, null);
                         cYml.saveConfig();
@@ -372,7 +367,6 @@ public final class YamlDataStore implements DataStore {
             path += "." + ((Subdivision) area).getSystemSubID();
         }
         CustomYML yml = getYml(path);
-        Flags.debug("Removing " + path);
 		yml.getConfig().set(path, null);
         yml.saveConfig();
 	}

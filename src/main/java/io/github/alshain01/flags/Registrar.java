@@ -221,9 +221,9 @@ public final class Registrar {
 			// Be sure to send a plug-in name or group description for the help command!
 			// It can be this.getName() or another string.
 			if (isPlayer) {
-				register(f, desc, def, group, area, world);
+				flags.add(register(f, desc, def, group, area, world));
 			} else {
-				register(f, desc, def, group);
+				flags.add(register(f, desc, def, group));
 			}
 		}
 		return flags;

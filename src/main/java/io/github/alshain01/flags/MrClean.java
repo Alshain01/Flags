@@ -93,7 +93,6 @@ class MrClean {
 		private void onClaimDeleted(ClaimDeletedEvent e) {
 			// Cleanup the database, keep the file from growing too large.
 			if(e.getClaim().parent != null) {
-                Flags.debug(e.getClaim().parent.getID() + ":" + e.getClaim().getSubClaimID());
 				new GriefPreventionClaim78(e.getClaim().parent.getID(), e.getClaim().getSubClaimID()).remove();
 			} else {
 				new GriefPreventionClaim78(e.getClaim().getID()).remove();
