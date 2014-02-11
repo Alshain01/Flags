@@ -1,4 +1,4 @@
-package io.github.alshain01.flags.sector;
+package io.github.alshain01.flags.commands;
 
 import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.Message;
@@ -9,8 +9,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 
 public class SectorCommand implements CommandExecutor {
-    private enum CommandType {
-        INFO, DELETE, DELETEALL
+    private enum SectorCommandType {
+        DELETE('d'), DELETEALL('a');
+
+        final char alias;
+
+        SectorCommandType(char alias) {
+            this.alias = alias;
+        }
+
+        public static SectorCommandType get(String name) {
+            for(SectorCommandType t : SectorCommandType.values()) {
+                if(name.toLowerCase().equals(t.toString().toLowerCase()) || name.toLowerCase().equals(String.valueOf(t.alias))) {
+                    return t;
+                }
+            }
+            return null;
+        }
     }
 
     @Override
@@ -27,7 +42,7 @@ public class SectorCommand implements CommandExecutor {
             return true;
         }
 
-        final CommandType cType = CommandType.valueOf(args[0].toUpperCase());
+        final SectorCommandType cType = SectorCommandType.get(args[0]);
         if(cType == null) {
             sender.sendMessage(getUsage(sender));
             return true;

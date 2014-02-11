@@ -24,31 +24,21 @@
 
 package io.github.alshain01.flags.commands;
 
-import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.area.Area;
-import io.github.alshain01.flags.area.Default;
-import io.github.alshain01.flags.area.World;
+enum CommandLocation {
+	AREA('a'), WORLD('w'), DEFAULT('d');
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-/**
- * Top level class for command based functions
- */
-abstract class Common {
-	protected static String getValue(boolean value) {
-        return (value) ? Message.ValueColorTrue.get() : Message.ValueColorFalse.get();
+	final char alias;
+	
+	CommandLocation(char alias) {
+		this.alias = alias;
 	}
-
-	protected static Area getArea(CommandSender sender, ECommandLocation location) {
-		if (location == ECommandLocation.DEFAULT) {
-			return new Default((((Player)sender).getWorld()));
-		} else if (location == ECommandLocation.WORLD) {
-			return new World((((Player)sender).getWorld()));
-		} else if (location == ECommandLocation.AREA) {
-			Area area = io.github.alshain01.flags.System.getActive().getAreaAt(((Player) sender).getLocation());
-			return (area instanceof World) ? null : area;
+	
+	public static CommandLocation get(String name) {
+		for(CommandLocation c : CommandLocation.values()) {
+			if(name.toLowerCase().equals(c.toString().toLowerCase()) || name.toLowerCase().equals(String.valueOf(c.alias))) {
+				return c;
+			}
 		}
-		// Invalid location selection
 		return null;
 	}
 }

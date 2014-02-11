@@ -24,10 +24,7 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.area.FactionsTerritory;
-import io.github.alshain01.flags.area.GriefPreventionClaim78;
-import io.github.alshain01.flags.area.RegiosRegion;
-import io.github.alshain01.flags.area.ResidenceClaimedResidence;
+import io.github.alshain01.flags.area.*;
 import io.github.alshain01.flags.events.SectorDeleteEvent;
 import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
 import net.jzx7.regiosapi.events.RegionDeleteEvent;
@@ -84,9 +81,7 @@ class MrClean {
     private static class FlagsCleaner implements Listener {
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         private void onSectorDelete(SectorDeleteEvent e) {
-            for (final org.bukkit.World world : Bukkit.getWorlds()) {
-                new FlagsSector(world, sector).remove();
-            }
+            new FlagsSector(e.getSector().getID()).remove();
         }
     }
 

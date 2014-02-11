@@ -24,21 +24,43 @@
 
 package io.github.alshain01.flags.commands;
 
-enum ECommandLocation {
-	AREA('a'), WORLD('w'), DEFAULT('d');
+enum BundleCommandType {
+	SET('s', 4, 0, true, true, "Set <area|world|default> <bundle> <true|false>"),
+	GET('g', 3, 0, true, true, "Get <area|world|default> <bundle>"),
+	REMOVE('r', 3, 0, true, true, "Remove <area|world|default> <bundle>"),
+    TRUST('t', 4, -1, true, true, "Trust <area|world|default> <bundle> <player> [player]..."),
+    DISTRUST('d', 3, -1, true, true, "Distrust <area|world|default> <bundle> [player] [player]..."),
+	HELP('h', 1, 1, false, null, "Help [page]"),
+	ADD('a', 3, -1, false, true, "Add <bundle> <flag> [flag]..."),
+	CUT ('c', 3, -1, false, true, "Cut <bundle> <flag> [flag]..."),
+	ERASE ('e', 2, 0, false, true, "Erase <bundle>");
 
 	final char alias;
+	final int requiredArgs;
+	final int optionalArgs; //-1 for infinite
+	final boolean requiresLocation;
+	final Boolean requiresBundle; // null if bundle isn't even an optional arg.
+	final String help;
 	
-	ECommandLocation(char alias) {
+	BundleCommandType(char alias, int requiredArgs, int optionalArgs, boolean hasLocation, Boolean requiresBundle, String help) {
 		this.alias = alias;
+		this.requiredArgs = requiredArgs;
+		this.optionalArgs = optionalArgs;
+		this.help = help;
+		this.requiresLocation = hasLocation;
+		this.requiresBundle = requiresBundle;
 	}
-	
-	public static ECommandLocation get(String name) {
-		for(ECommandLocation c : ECommandLocation.values()) {
+
+	protected static BundleCommandType get(String name) {
+		for(BundleCommandType c : BundleCommandType.values()) {
 			if(name.toLowerCase().equals(c.toString().toLowerCase()) || name.toLowerCase().equals(String.valueOf(c.alias))) {
 				return c;
 			}
 		}
 		return null;
+	}
+
+	protected String getHelp() {
+		return "/bundle " + this.help;
 	}
 }

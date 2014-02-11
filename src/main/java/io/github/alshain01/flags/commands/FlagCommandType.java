@@ -24,7 +24,7 @@
 
 package io.github.alshain01.flags.commands;
 
-enum EFlagCommand {
+enum FlagCommandType {
 	SET('s', 3, 1, true, true, "Set <area|world|default> <flag> [true|false]"),
 	GET('g', 2, 1, true, false, "Get <area|world|default> [flag]"),
 	REMOVE ('r', 2, 1, true, false, "Remove <area|world|default> [flag]"),
@@ -46,7 +46,7 @@ enum EFlagCommand {
 	final String help;
 	
 	//Note: requiredArgs INCLUDES the command action
-	EFlagCommand(char alias, int requiredArgs, int optionalArgs, boolean hasLocation, Boolean requiresFlag, String help) {
+	FlagCommandType(char alias, int requiredArgs, int optionalArgs, boolean hasLocation, Boolean requiresFlag, String help) {
 		this.alias = alias;
 		this.requiredArgs = requiredArgs;
 		this.optionalArgs = optionalArgs;
@@ -55,8 +55,8 @@ enum EFlagCommand {
 		this.requiresFlag = requiresFlag;
 	}
 	
-	protected static EFlagCommand get(String name) {
-		for(EFlagCommand c : EFlagCommand.values()) {
+	protected static FlagCommandType get(String name) {
+		for(FlagCommandType c : FlagCommandType.values()) {
 			if(name.toLowerCase().equals(c.toString().toLowerCase()) || name.toLowerCase().equals(String.valueOf(c.alias))) {
 				return c;
 			}

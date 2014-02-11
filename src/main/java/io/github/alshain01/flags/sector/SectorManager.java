@@ -5,9 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class SectorManager {
     private Map<UUID, Sector> sectors = new HashMap<UUID, Sector>();
@@ -28,6 +26,9 @@ public class SectorManager {
     }
 
     public void clear() {
+        for(Sector s : sectors.values()) {
+            Bukkit.getPluginManager().callEvent(new SectorDeleteEvent(s));
+        }
         sectors.clear();
     }
 
@@ -38,19 +39,33 @@ public class SectorManager {
     }
 
     public void delete(UUID id) {
-        Bukkit.getPluginManager().callEvent(new SectorDeleteEvent(sectors.get(id)));
+        Sector sector = get(id);
+        if(sector.getParentID() == null) {
+            // Removing parent shoudld remove subdivisions
+            for(Sector s : sectors.values()) {
+                if(s.getParentID().equals(id)) {
+                    Bukkit.getPluginManager().callEvent(new SectorDeleteEvent(s));
+                    sectors.remove(s.getID());
+                }
+            }
+        }
+        Bukkit.getPluginManager().callEvent(new SectorDeleteEvent(sector));
         sectors.remove(id);
     }
 
     public boolean delete(Location location) {
-        for(Sector s : sectors.values()) {
-            if(s.contains(location)) {
-                Bukkit.getPluginManager().callEvent(new SectorDeleteEvent(sectors.get(s.getID())));
-                sectors.remove(s.getID());
-                return true;
-            }
-        }
-        return false;
+        Sector sector = getAt(location);
+        if(sector == null) { return false; }
+        delete(sector.getID());
+        return true;
+    }
+
+    public boolean deleteTopLevel(Location location) {
+        Sector sector = getAt(location);
+        if(sector == null) { return false; }
+        UUID id = sector.getParentID() != null ? sector.getParentID() : sector.getID();
+        delete(id);
+        return true;
     }
 
     public Sector get(UUID uid) {
@@ -58,11 +73,16 @@ public class SectorManager {
     }
 
     public Sector getAt(Location location) {
+        Sector foundParent = null;
         for(Sector s : sectors.values()) {
             if(s.contains(location)) {
-                return s;
+                if(s.getParentID() == null) { // Check for subdivisions
+                    foundParent = s;
+                } else {
+                    return s;
+                }
             }
         }
-        return null;
+        return foundParent;
     }
 }

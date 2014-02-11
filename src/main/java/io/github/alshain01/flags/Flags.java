@@ -24,12 +24,13 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.sector.SectorCommand;
+import io.github.alshain01.flags.commands.BundleCommand;
+import io.github.alshain01.flags.commands.FlagCommand;
+import io.github.alshain01.flags.commands.SectorCommand;
 import io.github.alshain01.flags.sector.SectorListener;
 import io.github.alshain01.flags.sector.SectorManager;
 import io.github.alshain01.flags.update.UpdateListener;
 import io.github.alshain01.flags.update.UpdateScheduler;
-import io.github.alshain01.flags.commands.Command;
 import io.github.alshain01.flags.data.*;
 import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
 import io.github.alshain01.flags.importer.GPFImport;
@@ -141,6 +142,9 @@ public class Flags extends JavaPlugin {
             getCommand("sector").setExecutor(new SectorCommand());
         }
 
+        getCommand("flag").setExecutor(new FlagCommand());
+        getCommand("bundle").setExecutor(new BundleCommand());
+
  		// Schedule tasks to perform after server is running
 		new onServerEnabledTask(this.getLogger(), pluginConfig.getBoolean("Metrics.Enabled")).runTask(this);
 		this.getLogger().info("Flags Has Been Enabled.");
@@ -151,9 +155,14 @@ public class Flags extends JavaPlugin {
      */
     @Override
     public void onDisable() {
+        if(currentSystem == System.FLAGS) {
+            sectors.write(new CustomYML(this, "sector.yml").getConfig());
+        }
+
         if(sqlData) { ((SQLDataStore)dataStore).close(); }
 
         // Static cleanup
+        sectors = null;
         economy = null;
         dataStore = null;
         messageStore = null;
@@ -178,44 +187,38 @@ public class Flags extends JavaPlugin {
 	 * 
 	 */
 	@Override
-	public boolean onCommand(CommandSender sender,
-			org.bukkit.command.Command cmd, String label, String[] args) {
-        if (cmd.getName().equalsIgnoreCase("flags")) {
-            if(args.length < 1) {
-                return false;
-            }
+	public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args) {
+        if(!cmd.toString().equalsIgnoreCase("flags")) { return false; }
+        // Handle administration command
 
-            if(args[0].equalsIgnoreCase("reload")) {
-                this.reload();
-            }
-
-            if(args[0].equalsIgnoreCase("import")) {
-                if(sqlData) {
-                    ((SQLDataStore)dataStore).importDB();
-                    return true;
-                }
-                sender.sendMessage(Message.SQLDatabaseError.get());
-                return true;
-            }
-
-            /*
-            if(args[0].equalsIgnoreCase("export")) {
-                if(sqlData) {
-                    ((SQLDataStore)dataStore).exportDB();
-                    return true;
-                }
-                sender.sendMessage(Message.SQLDatabaseError.get());
-                return true;
-            }
-            */
-
+        if(args.length < 1) {
             return false;
         }
-		if (cmd.getName().equalsIgnoreCase("flag")) {
-			return Command.onFlagCommand(sender, args);
-		}
 
-		return (cmd.getName().equalsIgnoreCase("bundle") && Command.onBundleCommand(sender, args));
+        if(args[0].equalsIgnoreCase("reload")) {
+            this.reload();
+        }
+
+        if(args[0].equalsIgnoreCase("import")) {
+            if(sqlData) {
+                ((SQLDataStore)dataStore).importDB();
+                return true;
+            }
+            sender.sendMessage(Message.SQLDatabaseError.get());
+            return true;
+        }
+
+        /*
+        if(args[0].equalsIgnoreCase("export")) {
+            if(sqlData) {
+                ((SQLDataStore)dataStore).exportDB();
+                return true;
+            }
+            sender.sendMessage(Message.SQLDatabaseError.get());
+            return true;
+        }
+        */
+        return false;
 	}
 
     /**
