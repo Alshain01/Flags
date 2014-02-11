@@ -27,6 +27,12 @@ public class SectorManager {
         }
     }
 
+    public void writeSectors(ConfigurationSection config) {
+        for(UUID u : sectors.keySet()) {
+            config.set(u.toString(), sectors.get(u).serialize());
+        }
+    }
+
     public Sector getSector(UUID uid) {
         return sectors.get(uid);
     }

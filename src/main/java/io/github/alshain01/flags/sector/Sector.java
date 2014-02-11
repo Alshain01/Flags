@@ -10,12 +10,20 @@ import java.util.UUID;
 
 public class Sector implements ConfigurationSerializable, Comparable<Sector> {
     private final UUID id;
-    //private final UUID parent = null;
+    private final UUID parent;
     private SectorLocation greater, lesser;
 
 
     protected Sector(Location corner1, Location corner2) {
         id = UUID.randomUUID();
+        parent = null;
+        greater = new SectorLocation(corner1.getBlockX() > corner2.getBlockX() ? corner1 : corner2);
+        lesser = new SectorLocation(corner1.getBlockX() > corner2.getBlockX() ? corner2 : corner1);
+    }
+
+    protected Sector(Location corner1, Location corner2, UUID parentID) {
+        id = UUID.randomUUID();
+        parent = parentID;
         greater = new SectorLocation(corner1.getBlockX() > corner2.getBlockX() ? corner1 : corner2);
         lesser = new SectorLocation(corner1.getBlockX() > corner2.getBlockX() ? corner2 : corner1);
     }
@@ -24,12 +32,14 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
         this.id = id;
         greater = new SectorLocation((String)sector.get("greaterCorner"));
         lesser = new SectorLocation((String)sector.get("lesserCorner"));
+        parent = sector.get("parent") == null ? null : UUID.fromString((String)sector.get("parent"));
     }
 
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> sector = new HashMap<String, Object>();
         sector.put("id", id);
+        sector.put("parent", parent.toString());
         sector.put("greaterCorner", greater.toString());
         sector.put("lesserCorder", lesser.toString());
         return sector;
@@ -51,10 +61,14 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
         return greater.getLocation().getWorld();
     }
 
+    public UUID getParentID() {
+        return parent;
+    }
+
     public boolean contains(Location location) {
         int x = location.getBlockX(), z = location.getBlockZ();
 
-        if(x < greater.getX() && x > lesser.getX()) {
+        if(x < greater.getX() && x > lesser.getX()) { // Greater will always have a higher X
             if((greater.getZ() > lesser.getZ() && z < greater.getZ() && z > lesser.getZ())
                     || (greater.getZ() < lesser.getZ() && z > greater.getZ() && z < lesser.getZ())) {
                 return true;
