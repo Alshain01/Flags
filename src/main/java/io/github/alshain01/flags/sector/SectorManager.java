@@ -10,7 +10,24 @@ import java.util.UUID;
 public class SectorManager {
     private Map<UUID, Sector> sectors = new HashMap<UUID, Sector>();
 
-    public Sector addSector(Location corner1, Location corner2) {
+    public void load(ConfigurationSection config) {
+        for(String s : config.getKeys(false)) {
+            UUID id = UUID.fromString(s);
+            sectors.put(id, new Sector(id, config.getConfigurationSection(s).getValues(false)));
+        }
+    }
+
+    public void write(ConfigurationSection config) {
+        for(UUID u : sectors.keySet()) {
+            config.set(u.toString(), sectors.get(u).serialize());
+        }
+    }
+
+    public void clear() {
+        sectors.clear();
+    }
+
+    public Sector add(Location corner1, Location corner2) {
         Sector s = new Sector(corner1, corner2);
         sectors.put(s.getID(), s);
         return s;
@@ -20,24 +37,21 @@ public class SectorManager {
         sectors.remove(id);
     }
 
-    public void loadSectors(ConfigurationSection config) {
-        for(String s : config.getKeys(false)) {
-            UUID id = UUID.fromString(s);
-            sectors.put(id, new Sector(id, config.getConfigurationSection(s).getValues(false)));
+    public boolean delete(Location location) {
+        for(Sector s : sectors.values()) {
+            if(s.contains(location)) {
+                sectors.remove(s.getID());
+                return true;
+            }
         }
+        return false;
     }
 
-    public void writeSectors(ConfigurationSection config) {
-        for(UUID u : sectors.keySet()) {
-            config.set(u.toString(), sectors.get(u).serialize());
-        }
-    }
-
-    public Sector getSector(UUID uid) {
+    public Sector get(UUID uid) {
         return sectors.get(uid);
     }
 
-    public Sector getSectorAt(Location location) {
+    public Sector getAt(Location location) {
         for(Sector s : sectors.values()) {
             if(s.contains(location)) {
                 return s;
