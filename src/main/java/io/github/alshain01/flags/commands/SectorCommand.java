@@ -51,7 +51,7 @@ public class SectorCommand implements CommandExecutor {
         switch(cType) {
             case DELETE:
                 if(!sender.hasPermission("flags.sector.delete")) {
-                    sender.sendMessage(Message.FlagPermError.get().replaceAll("\\{Type\\}", "command"));
+                    sender.sendMessage(Message.FlagPermError.get().replaceAll("\\{Type\\}", Message.Command.get()));
                     return true;
                 }
 
@@ -62,7 +62,7 @@ public class SectorCommand implements CommandExecutor {
                 return true;
             case DELETEALL:
                 if(!sender.hasPermission("flags.sector.deleteall")) {
-                    sender.sendMessage(Message.FlagPermError.get().replaceAll("\\{Type\\}", "command"));
+                    sender.sendMessage(Message.FlagPermError.get().replaceAll("\\{Type\\}", Message.Command.get()));
                     return true;
                 }
 

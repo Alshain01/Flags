@@ -31,9 +31,26 @@ public class SectorManager {
         }
         sectors.clear();
     }
+    protected Sector add(Location corner1, Location corner2) {
+        Sector s = new Sector(corner1, corner2, defaultDepth);
+        sectors.put(s.getID(), s);
+        return s;
+    }
 
-    public Sector add(Location corner1, Location corner2, int depth) {
+    protected Sector add(Location corner1, Location corner2, int depth) {
         Sector s = new Sector(corner1, corner2, depth);
+        sectors.put(s.getID(), s);
+        return s;
+    }
+
+    protected Sector add(Location corner1, Location corner2, int depth, UUID parent) {
+        Sector s = new Sector(corner1, corner2, depth, parent);
+        sectors.put(s.getID(), s);
+        return s;
+    }
+
+    protected Sector add(Location corner1, Location corner2, UUID parent) {
+        Sector s = new Sector(corner1, corner2, defaultDepth, parent);
         sectors.put(s.getID(), s);
         return s;
     }
@@ -84,5 +101,23 @@ public class SectorManager {
             }
         }
         return foundParent;
+    }
+
+    public boolean isOverlap(Location corner1, Location corner2) {
+        for(Sector s : sectors.values()) {
+            if(s.overlaps(corner1, corner2)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public UUID isContained(Location corner1, Location corner2) {
+        for(Sector s : sectors.values()) {
+            if(s.contains(corner1, corner2)) {
+                return s.getID();
+            }
+        }
+        return null;
     }
 }

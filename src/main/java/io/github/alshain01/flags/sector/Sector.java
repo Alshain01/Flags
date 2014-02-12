@@ -93,11 +93,29 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
         return false;
     }
 
+    public boolean contains(Location corner1, Location corner2) {
+        //TODO
+    }
+
+    public boolean overlaps(Location corner1, Location corner2) {
+        //TODO
+    }
+
     @Override
     public int compareTo(Sector s) {
-        if(s != null) {
-            return this.id == s.getID() ? 0 : 1;
+        if(s == null) { return 3; }
+
+        if(this.getID().equals(s.getID())) {
+            return 0;
+        } else if (this.getParentID() != null && this.getParentID().equals(s.getID())) {
+            return -1;
+        } else if (s.getParentID() != null && s.getParentID().equals(this.getID())) {
+            return 1;
+        } else if (this.getParentID() != null && s.getParentID() != null && s.getParentID().equals(this.getParentID())) {
+            return 2;
         }
-        return 1;
+        return 3;
     }
+
+
 }

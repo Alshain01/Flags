@@ -47,11 +47,12 @@ public enum Message {
 	ConsoleHelpHeader, HelpHeader, HelpTopic, HelpInfo, FlagCount, SetFlagTrustError,
 	GroupHelpDescription, GroupHelpInfo,
 	// General Translations
-	Flag, Bundle, Message, ValueColorTrue, ValueColorFalse, Index, Error,
+	Flag, Bundle, Message, ValueColorTrue, ValueColorFalse, Index, Error, Command,
 	// Economy
 	SetPrice, GetPrice, LowFunds, Withdraw, Deposit,
     // Sector
-    DeleteSector, NoSectorError, DeleteAllSectors;
+    DeleteSector, NoSectorError, DeleteAllSectors, SectorOverlapError,
+    CancelCreateSector, SectorCreated, SubsectorCreated;
 
     private Logger logger;
 

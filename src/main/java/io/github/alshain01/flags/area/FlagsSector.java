@@ -122,20 +122,8 @@ public class FlagsSector extends Area implements Subdivision, Removable {
      */
     @Override
     public int compareTo(Area a) {
-        if (!(a instanceof FlagsSector)) {
-            return 3;
-        }
-
+        if (!(a instanceof FlagsSector)) { return 3; }
         Sector testSector = ((FlagsSector)a).getSector();
-        if(sector.equals(testSector)) {
-            return 0;
-        } else if (sector.getParentID() != null && sector.getParentID().equals(testSector.getID())) {
-            return -1;
-        } else if (sector.getParentID() != null && testSector.getParentID().equals(sector.getID())) {
-            return 1;
-        } else if (sector.getParentID() != null && sector.getParentID().equals(testSector.getParentID())) {
-            return 2;
-        }
-        return 3;
+        return sector.compareTo(testSector);
     }
 }

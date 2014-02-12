@@ -172,6 +172,10 @@ permissions:
     children:
       flags.command.sector: true
 
+  flags.sector.create:
+    description: Grants the ability to create sectors.
+    default: op
+
 # Administrative Permissions
   flags.admin.command:
     description: Gives players access to the administration command.

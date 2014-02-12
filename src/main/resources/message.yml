@@ -6,6 +6,7 @@ Message:
   #Command Types {Type}
   Flag: 'Flag'
   Bundle: 'Bundle'
+  Command: 'Command'
   
   #Generic Group {Group}
   Index: 'Index'
@@ -14,6 +15,7 @@ Message:
   Default: 'Default'
   World: 'World'
   Factions: 'Territory'
+  Flags: 'Sector'
   GriefPrevention: 'Claim'
   InfinitePlots: 'Plot'
   PlotMe: 'Plot'
@@ -21,6 +23,7 @@ Message:
   Regios: 'Region'
   Residence: 'Residence'
   WorldGuard: 'Region'
+
 
   # Other Translations
   Message: 'Message'
@@ -66,7 +69,7 @@ Message:
   UpdateBundle: '&bThe bundle &e{Bundle} &bwas updated.'
   EraseBundle: '&bThe bundle &e{Bundle} &bwas erased.'
   
-  #Economy MEssages
+  #Economy Messages
   SetPrice: '&bSet the {PurchaseType} price for &e{Flag} &bto &a{Price}&b.'
   GetPrice: '&bThe price for the {PurchaseType} &e{Flag} &bis &a{Price}&b.'
   LowFunds: '&cThe {PurchaseType} &e{Flag} &ccosts &a{Price}&c. You do not have enough funds.'
