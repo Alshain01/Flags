@@ -6,8 +6,8 @@ import org.bukkit.Location;
 import java.util.UUID;
 
 public class SectorLocation {
-    public UUID world;
-    public int coords[] = new int[3];
+    private UUID world;
+    private int coords[] = new int[3];
 
     protected SectorLocation(Location location) {
         coords[0] = location.getBlockX();
@@ -51,5 +51,14 @@ public class SectorLocation {
 
     public int getZ() {
         return coords[2];
+    }
+
+    /**
+     * Gets the unique ID of the world associated with this location
+     *
+     * @return The unique ID of the world
+     */
+    public UUID getWorld() {
+        return world;
     }
 }

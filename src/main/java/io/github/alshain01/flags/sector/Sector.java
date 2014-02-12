@@ -55,30 +55,89 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
         return sector;
     }
 
+    /**
+     * Returns a unique identifier for this sector
+     *
+     * @return The id of the sector
+     */
     public UUID getID() {
         return id;
     }
 
-    public Location getGreaterBoundaryCorner() {
+    /**
+     * Gets the corner where X and Z are greater.
+     *
+     * @return The location of the corner block
+     */
+    public Location getGreaterCorner() {
         return greater.getLocation();
     }
 
-    public Location getLesserBoundaryCorner() {
+    /**
+     * Gets the corner where X is greater and Z is lesser.
+     *
+     * @return The location of the corner block
+     */
+    public Location getGreaterXCorner() {
+        return new SectorLocation(greater.getWorld(), greater.getX(), greater.getY(), lesser.getZ()).getLocation();
+    }
+
+    /**
+     * Gets the corner where Z is greater and X is lesser.
+     *
+     * @return The location of the corner block
+     */
+    public Location getGreaterZCorner() {
+        return new SectorLocation(greater.getWorld(), lesser.getX(), greater.getY(), greater.getZ()).getLocation();
+    }
+
+    /**
+     * Gets the corner where X and Z are lesser.
+     *
+     * @return The location of the corner block
+     */
+    public Location getLesserCorner() {
         return lesser.getLocation();
     }
 
+    /**
+     * Gets the world the sector is located in
+     *
+     * @return The world the sector is in
+     */
     public World getWorld() {
         return greater.getLocation().getWorld();
     }
 
+    /**
+     * Gets the depth of the sector
+     *
+     * @return The depth of the sector
+     */
     public int getDepth() { return depth; }
 
+    /**
+     * Sets the depth of the sector
+     *
+     * @param depth The new depth of the sector
+     */
     public void setDepth(int depth) { this.depth = depth; }
 
+    /**
+     * Gets the Unique ID of the Parent of this sector
+     *
+     * @return The ID of the parent sector, null if it is a parent sector
+     */
     public UUID getParentID() {
         return parent;
     }
 
+    /**
+     * Gets whether the sector contains the provided point
+     *
+     * @param location The location to test conatainent
+     * @return True if the sector contains the point
+     */
     public boolean contains(Location location) {
         int x = location.getBlockX(), z = location.getBlockZ();
 
@@ -92,17 +151,44 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
         return false;
     }
 
+    /**
+     * Gets whether the sector fully contains a provided cuboid.
+     *
+     * @param corner1 One corner of the cuboid
+     * @param corner2 The diagonal opposite of corner1
+     * @return True if the cuboid lies completely within this sector
+     */
     public boolean contains(Location corner1, Location corner2) {
         if(!corner1.getWorld().equals(this.getWorld()) || !corner2.getWorld().equals(this.getWorld())) { return false; }
-
-        //Find the lesser/greater corners
-        SectorLocation g = getGreaterCorner(corner1, corner2);
-        SectorLocation l = getLesserCorner(corner1, corner2);
-        return isLesser(g, greater) && isGreater (l, lesser);
+        return isLesser(getGreaterCorner(corner1, corner2), greater)
+                && isGreater (getLesserCorner(corner1, corner2), lesser);
     }
 
+    /**
+     * Gets whether the sector overlaps the provided cuboid in any way.
+     * Includes partial overlapping or fully contained.
+     *
+     * @param corner1 One corner of the cuboid
+     * @param corner2 The diagonal opposite of corner1
+     * @return True if the cuboid overlaps this sector
+     */
     public boolean overlaps(Location corner1, Location corner2) {
-        //TODO
+        //Find the lesser/greater corners
+        Sector testSector = new Sector(corner1, corner2, 25);
+
+        if(testSector.contains(getGreaterCorner()) || testSector.contains(getLesserCorner())
+                || testSector.contains(getGreaterXCorner()) || testSector.contains(getGreaterZCorner())) {
+            // One of the 4 points of this sector is inside the new sector.
+            return true;
+        }
+
+        if(contains(testSector.getGreaterCorner()) || contains(testSector.getLesserCorner())
+                || contains(testSector.getGreaterXCorner()) || contains(testSector.getGreaterZCorner())) {
+            // One of the 4 points of the new sector is inside the this sector.
+            return true;
+        }
+
+        return false;
     }
 
     @Override
