@@ -41,6 +41,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import javax.annotation.Nonnull;
+
 /**
  * Class for creating areas to manage a PreciousStones Field.
  */
@@ -187,7 +189,7 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
     public void remove() { Flags.getDataStore().remove(this); }
 
     @Override
-    public int compareTo(Area a) {
+    public int compareTo(@Nonnull Area a) {
         if (!(a instanceof PreciousStonesField)) {
             return 3;
         }

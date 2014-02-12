@@ -356,6 +356,7 @@ public abstract class Area implements Comparable<Area> {
      *            The flag to retrieve the trust list for.
      * @return The list of permissions
      */
+    @SuppressWarnings("unused") // API
     public final Set<String> getPermissionTrustList(Flag flag) {
         if (!isArea()) { return null; }
         return Flags.getDataStore().readPermissionTrust(this, flag);
@@ -425,6 +426,7 @@ public abstract class Area implements Comparable<Area> {
      *            The player to check trust for.
      * @return The list of permissions
      */
+    @SuppressWarnings("unused") // API
     public final boolean hasTrust(Flag flag, Player player) {
         if (!isArea()) { return false; }
         if (getOwners().contains(player.getName().toLowerCase())) { return true; }

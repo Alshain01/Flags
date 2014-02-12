@@ -36,6 +36,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.permissions.Permissible;
 
+import javax.annotation.Nonnull;
+
 /**
  * Class for creating areas to manage server defaults.
  */
@@ -132,5 +134,5 @@ public class Default extends Area {
      * @return The value of the comparison.
      */
     @Override
-    public int compareTo(Area a) { return a instanceof Default && a.getSystemID().equals(worldName) ? 0 : 3; }
+    public int compareTo(@Nonnull Area a) { return a instanceof Default && a.getSystemID().equals(worldName) ? 0 : 3; }
 }

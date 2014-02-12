@@ -36,7 +36,6 @@ import org.bukkit.plugin.PluginManager;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 public enum System {
 	DEFAULT("Default", "Default", false) {
@@ -290,6 +289,7 @@ public enum System {
 	 * @return True if the player is in pvp combat, false is not or if system is
 	 *         unsupported.
 	 */
+    @SuppressWarnings("unused") // API
 	public boolean inPvpCombat(Player player) {
 		return this == System.GRIEF_PREVENTION
                 && GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
@@ -306,10 +306,12 @@ public enum System {
         if(plugins != null && plugins.size() > 0) {
             for(Object o : plugins) {
                 if (pm.isPluginEnabled((String) o)) {
+                    Flags.log(o + " detected. Enabling integrated support.");
                     return getByName((String) o);
                 }
             }
         }
+        Flags.log("No system detected. Enabling Flags Sectors.");
         return System.FLAGS;
     }
 }

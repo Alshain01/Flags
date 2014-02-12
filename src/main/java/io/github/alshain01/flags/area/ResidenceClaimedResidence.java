@@ -37,6 +37,8 @@ import org.bukkit.Location;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 
+import javax.annotation.Nonnull;
+
 /**
  * Class for creating areas to manage a Residence Claimed Residences.
  */
@@ -157,7 +159,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
      * @return The value of the comparison.
      */
     @Override
-    public int compareTo(Area a) {
+    public int compareTo(@Nonnull Area a) {
         if (!(a instanceof ResidenceClaimedResidence)) {
             return 3;
         }

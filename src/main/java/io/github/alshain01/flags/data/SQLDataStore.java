@@ -452,10 +452,7 @@ public class SQLDataStore implements DataStore {
         ResultSet results = executeQuery(areaBuilder(selectString, area));
 
         try {
-            if (!results.next()) {
-                return true;
-            }
-            return results.getBoolean("FlagValue");
+            return !results.next() || results.getBoolean("FlagValue");
         } catch (SQLException ex){
             SqlError(ex.getMessage());
         }

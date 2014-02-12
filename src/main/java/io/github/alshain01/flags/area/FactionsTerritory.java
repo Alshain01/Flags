@@ -40,6 +40,8 @@ import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.FactionColls;
 import com.massivecraft.mcore.ps.PS;
 
+import javax.annotation.Nonnull;
+
 /**
  * Class for creating areas to manage a Factions Territory.
  */
@@ -116,7 +118,7 @@ public class FactionsTerritory extends Area implements Removable {
      * @return The value of the comparison.
      */
     @Override
-    public int compareTo(Area a) {
+    public int compareTo(@Nonnull Area a) {
         return a instanceof FactionsTerritory && a.getSystemID().equals(getSystemID()) ? 0 : 3;
     }
 }

@@ -25,7 +25,6 @@
 package io.github.alshain01.flags;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -89,7 +88,7 @@ public final class Registrar {
 	 * 
 	 * @return A list of names of all the flags registered.
 	 */
-
+    @SuppressWarnings("unused") // API
 	public Set<String> getFlagNames() {
 		return flagStore.keySet();
 	}
@@ -179,6 +178,7 @@ public final class Registrar {
 	 *            The group the flags belong in.
 	 * @return The set of flags if the flags were successfully registered. May be null or empty.
 	 */
+    @SuppressWarnings("unused") // API
 	public Set<Flag> register(ModuleYML yaml, String group) {
 		if(yaml == null || group == null) {
 			return null;

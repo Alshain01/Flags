@@ -38,6 +38,8 @@ import uk.co.jacekk.bukkit.infiniteplots.InfinitePlots;
 import uk.co.jacekk.bukkit.infiniteplots.plot.Plot;
 import uk.co.jacekk.bukkit.infiniteplots.plot.PlotLocation;
 
+import javax.annotation.Nonnull;
+
 /**
  * Class for creating areas to manage a InfinitePlots Plot.
  */
@@ -117,7 +119,7 @@ public class InfinitePlotsPlot extends Area implements Removable {
      * @return The value of the comparison.
      */
     @Override
-    public int compareTo(Area a) {
+    public int compareTo(@Nonnull Area a) {
         return a instanceof InfinitePlotsPlot && a.getSystemID().equals(getSystemID()) ? 0 : 3;
     }
 }

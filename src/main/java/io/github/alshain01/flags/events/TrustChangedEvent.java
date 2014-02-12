@@ -33,22 +33,11 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Event for that occurs when a trustee is added or removed. This event may
- * occur if there is nothing to add or remove. (the player being removed is not
- * in the list or the player being added is already in the list)
+ * Event that occurs when a trustee is added or removed.
  */
 public class TrustChangedEvent extends Event implements Cancellable {
 
 	private static final HandlerList handlers = new HandlerList();
-
-	/**
-	 * Static HandlerList for FlagSetEvent
-	 * 
-	 * @return A list of event handlers, stored per-event.
-	 */
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
 
 	private final Area area;
 	private final Flag flag;
@@ -59,7 +48,7 @@ public class TrustChangedEvent extends Event implements Cancellable {
 	private boolean cancel = false;
 
 	/**
-	 * Class Constructor
+	 * Creates a new TrustChangedEvent
 	 * 
 	 * @param area
 	 *            The area the flag is being set for.
@@ -69,10 +58,8 @@ public class TrustChangedEvent extends Event implements Cancellable {
 	 *            True if the player is being added, false if being removed.
 	 * @param sender
 	 *            The sender changing the trust.
-	 * 
 	 */
-	public TrustChangedEvent(Area area, Flag flag, String trustee,
-			boolean isTrusted, CommandSender sender) {
+	public TrustChangedEvent(Area area, Flag flag, String trustee, boolean isTrusted, CommandSender sender) {
 		this.area = area;
 		this.flag = flag;
 		this.trustee = trustee;
@@ -80,70 +67,75 @@ public class TrustChangedEvent extends Event implements Cancellable {
 		value = isTrusted;
 	}
 
-	/**
-	 * @return The area associated with the event.
-	 */
+    /**
+     * Gets the area where the trust is changing
+     *
+     * @return The area associated with the event.
+     */
 	public Area getArea() {
 		return area;
 	}
 
-	/**
-	 * @return The flag type associated with the event.
-	 */
+    /**
+     * Gets the flag that trust is changing for
+     *
+     * @return The flag associated with the event.
+     */
 	public Flag getFlag() {
 		return flag;
 	}
 
-	/**
-	 * HandlerList for FlagSetEvent
-	 * 
-	 * @return A list of event handlers, stored per-event.
-	 */
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
 
-	/**
-	 * @return The player associated with the event. Null if no sender involved
-	 *         (caused by plug-in).
-	 */
+    /**
+     * Gets the CommandSender requesting the trust change
+     *
+     * @return The CommandSender. Null if no sender involved (caused by plug-in).
+     */
+    @SuppressWarnings("unused") // API
 	public CommandSender getSender() {
 		return sender;
 	}
 
 	/**
-	 * @return The name of the player who's trust is changing
+     * Gets the player whos trust is changing
+     *
+	 * @return The name of the player
 	 */
+    @SuppressWarnings("unused") // API
 	public String getTrustee() {
 		return trustee;
 	}
 
 	/**
-	 * Gets the cancellation state of this event. A cancelled event will not be
-	 * executed in the server, but will still pass to other plugins
-	 * 
-	 * @return true if this event is cancelled
-	 */
-	@Override
-	public boolean isCancelled() {
-		return cancel;
-	}
-
-	/**
+     * Gets whether the player is gaining or losing trust
+     *
 	 * @return True if the player is being added, false if being removed.
 	 */
+    @SuppressWarnings("unused") // API
 	public boolean isTrusted() {
 		return value;
 	}
 
-	/**
-	 * Sets the cancellation state of this event. A cancelled event will not be
-	 * executed in the server, but will still pass to other plugins.
-	 * 
-	 * @param cancel
-	 *            - true if you wish to cancel this event
-	 */
+    /**
+     * Static HandlerList for TrustChangedEvent
+     *
+     * @return A list of event handlers, stored per-event.
+     */
+    @SuppressWarnings("unused") // API
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancel;
+    }
+
 	@Override
 	public void setCancelled(boolean cancel) {
 		this.cancel = cancel;

@@ -38,15 +38,6 @@ import org.bukkit.event.HandlerList;
 public class FlagChangedEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 
-	/**
-	 * Static HandlerList for FlagChangedEvent
-	 * 
-	 * @return A list of event handlers, stored per-event.
-	 */
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
 	private final Area area;
 	private final Flag flag;
 	private final CommandSender sender;
@@ -55,7 +46,7 @@ public class FlagChangedEvent extends Event implements Cancellable {
 	private boolean cancel = false;
 
 	/**
-	 * Class Constructor
+	 * Creates a new FlagChangedEvent
 	 * 
 	 * @param area
 	 *            The area the flag is being set for.
@@ -74,6 +65,8 @@ public class FlagChangedEvent extends Event implements Cancellable {
 	}
 
 	/**
+     * Gets the area where the flag is changing
+     *
 	 * @return The area associated with the event.
 	 */
 	public Area getArea() {
@@ -81,55 +74,54 @@ public class FlagChangedEvent extends Event implements Cancellable {
 	}
 
 	/**
-	 * @return The flag type associated with the event.
+     * Gets the flag that is changing
+     *
+	 * @return The flag associated with the event.
 	 */
 	public Flag getFlag() {
 		return flag;
 	}
 
-	/**
-	 * HandlerList for FlagChangedEvent
-	 * 
-	 * @return A list of event handlers, stored per-event.
-	 */
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
+    /**
+     * Gets the CommandSender requesting the flag change
+     *
+     * @return The CommandSender. Null if no sender involved (caused by plug-in).
+     */
+    @SuppressWarnings("unused") // API
+    public CommandSender getSender() {
+        return sender;
+    }
 
 	/**
+     * Gets the new value the flag is changing to
+     *
 	 * @return The new value of the flag if being set, null if being removed.
 	 */
+    @SuppressWarnings("unused") // API
 	public Boolean getNewValue() {
 		return value;
 	}
 
-	/**
-	 * @return The CommandSender associated with the event. Null if no sender
-	 *         involved (caused by plug-in).
-	 */
-	public CommandSender getSender() {
-		return sender;
-	}
+    /**
+     * Static HandlerList for FlagChangedEvent
+     *
+     * @return A list of event handlers, stored per-event.
+     */
+    @SuppressWarnings("unused") // API
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 
-	/**
-	 * Gets the cancellation state of this event. A cancelled event will not be
-	 * executed in the server, but will still pass to other plugins
-	 * 
-	 * @return true if this event is cancelled
-	 */
-	@Override
-	public boolean isCancelled() {
-		return cancel;
-	}
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
 
-	/**
-	 * Sets the cancellation state of this event. A cancelled event will not be
-	 * executed in the server, but will still pass to other plugins.
-	 * 
-	 * @param cancel
-	 *            - true if you wish to cancel this event
-	 */
+    @Override
+    public boolean isCancelled() {
+        return cancel;
+    }
+
 	@Override
 	public void setCancelled(boolean cancel) {
 		this.cancel = cancel;

@@ -24,10 +24,7 @@
 
 package io.github.alshain01.flags;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-
-import java.util.logging.Logger;
 
 /**
  * Class for retrieving localized messages.
@@ -54,12 +51,6 @@ public enum Message {
     DeleteSector, NoSectorError, DeleteAllSectors, SectorOverlapError,
     CancelCreateSector, SectorCreated, SubsectorCreated;
 
-    private Logger logger;
-
-    private Message() {
-        this.logger = Bukkit.getPluginManager().getPlugin("Flags").getLogger();
-    }
-
 	/**
 	 * Gets the localized message for the enumeration
 	 * 
@@ -69,7 +60,7 @@ public enum Message {
 		final String message = Flags.messageStore.getConfig().getString(
 				"Message." + toString());
 		if (message == null) {
-			logger.warning("ERROR: Invalid message.yml Message for " + toString());
+			Flags.warn("ERROR: Invalid message.yml Message for " + toString());
 			return "ERROR: Invalid message.yml Message. Please contact your server administrator.";
 		}
 		return ChatColor.translateAlternateColorCodes('&', message);

@@ -36,6 +36,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.permissions.Permissible;
 
+import javax.annotation.Nonnull;
+
 /**
  * Class for creating areas to manage a World.
  */
@@ -131,5 +133,5 @@ public class World extends Area {
      * @return The value of the comparison.
      */
     @Override
-    public int compareTo(Area a) { return a instanceof World && a.getSystemID().equals(worldName) ? 0 : 3; }
+    public int compareTo(@Nonnull Area a) { return a instanceof World && a.getSystemID().equals(worldName) ? 0 : 3; }
 }

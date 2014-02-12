@@ -35,33 +35,23 @@ import org.bukkit.event.HandlerList;
  * Event that occurs when a player first enters a new area.
  */
 public class PlayerChangedAreaEvent extends Event implements Cancellable {
-
 	private static final HandlerList handlers = new HandlerList();
 
-	/**
-	 * Static HandlerList for GlobalFlagSetEvent
-	 * 
-	 * @return A list of event handlers, stored per-event.
-	 */
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
-	final Area area;
-	final Player player;
-	final Area exitArea;
+	private final Area area;
+    private final Player player;
+    private final Area exitArea;
 
 	boolean cancel = false;
 
 	/**
-	 * Class Constructor
+	 * Creates a new PlayerChangedAreaEvent
 	 * 
 	 * @param player
 	 *            The player involved with the event
 	 * @param area
-	 *            The area involved with the event
+	 *            The area the player is entering
 	 * @param areaLeft
-	 *            The area the player left to getType to this area
+	 *            The area the player is leaving
 	 */
 	public PlayerChangedAreaEvent(Player player, Area area, Area areaLeft) {
 		this.area = area;
@@ -69,56 +59,53 @@ public class PlayerChangedAreaEvent extends Event implements Cancellable {
 		exitArea = areaLeft;
 	}
 
-	/**
-	 * @return The area associated with the event.
-	 */
+    /**
+     * Gets the area the player is entering.
+     *
+     * @return The area associated with the event.
+     */
 	public Area getArea() {
 		return area;
 	}
 
+    /**
+     * Gets the player changing areas
+     *
+     * @return The Player associated with the event.
+     */
+    public Player getPlayer() {
+        return player;
+    }
+
 	/**
-	 * @return The area the player left to enter this area. Null if entering
-	 *         from world.
+     * Gets the area the player is leaving.
+     *
+	 * @return The area the player left to enter this area.
 	 */
+    @SuppressWarnings("unused") // API
 	public Area getAreaLeft() {
 		return exitArea;
 	}
 
-	/**
-	 * HandlerList for GlobalFlagSetEvent
-	 * 
-	 * @return A list of event handlers, stored per-event.
-	 */
+    /**
+     * Static HandlerList for PlayerChangedAreaEvent
+     *
+     * @return A list of event handlers, stored per-event.
+     */
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
 	@Override
 	public HandlerList getHandlers() {
 		return handlers;
 	}
 
-	/**
-	 * @return The Player associated with the event.
-	 */
-	public Player getPlayer() {
-		return player;
-	}
-
-	/**
-	 * Gets the cancellation state of this event. A cancelled event will not be
-	 * executed in the server, but will still pass to other plugins
-	 * 
-	 * @return true if this event is cancelled
-	 */
 	@Override
 	public boolean isCancelled() {
 		return cancel;
 	}
 
-	/**
-	 * Sets the cancellation state of this event. A cancelled event will not be
-	 * executed in the server, but will still pass to other plugins.
-	 * 
-	 * @param cancel
-	 *            - true if you wish to cancel this event
-	 */
 	@Override
 	public void setCancelled(boolean cancel) {
 		this.cancel = cancel;

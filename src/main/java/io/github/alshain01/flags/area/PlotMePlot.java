@@ -38,6 +38,8 @@ import org.bukkit.World;
 import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
 
+import javax.annotation.Nonnull;
+
 /**
  * Class for creating areas to manage a PlotMe Plot.
  */
@@ -108,7 +110,7 @@ public class PlotMePlot extends Area implements Removable {
      * @return The value of the comparison.
      */
     @Override
-    public int compareTo(Area a) {
+    public int compareTo(@Nonnull Area a) {
         return a instanceof PlotMePlot && a.getSystemID().equals(getSystemID()) ? 0	: 3;
     }
 }

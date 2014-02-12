@@ -29,25 +29,15 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Event that occurs when a flag value is set or removed.
+ * Event that occurs when a sector is deleted.
  */
 public class SectorDeleteEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
-    /**
-     * Static HandlerList for FlagChangedEvent
-     *
-     * @return A list of event handlers, stored per-event.
-     */
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
     private final Sector sector;
-    private boolean cancel = false;
 
     /**
-     * Class Constructor
+     * Creates a new SectorDeleteEvent
      *
      * @param sector
      *            The sector being deleted.
@@ -57,10 +47,22 @@ public class SectorDeleteEvent extends Event {
     }
 
     /**
+     * Gets the sector being deleted
+     *
      * @return The sector associated with the event.
      */
     public Sector getSector() {
         return sector;
+    }
+
+    /**
+     * Static HandlerList for SectorDeleteEvent
+     *
+     * @return A list of event handlers, stored per-event.
+     */
+    @SuppressWarnings("unused") // API
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     @Override

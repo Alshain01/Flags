@@ -39,6 +39,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nonnull;
+
 /**
  * Class for creating areas to manage a Regios Region.
  */
@@ -115,5 +117,5 @@ public class RegiosRegion extends Area implements Removable{
 	public void remove() { Flags.getDataStore().remove(this); }
 
     @Override
-    public int compareTo(Area a) { return a instanceof RegiosRegion && a.getSystemID().equals(getSystemID()) ? 0 : 3; }
+    public int compareTo(@Nonnull Area a) { return a instanceof RegiosRegion && a.getSystemID().equals(getSystemID()) ? 0 : 3; }
 }

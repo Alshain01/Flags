@@ -7,6 +7,7 @@ import io.github.alshain01.flags.sector.Sector;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -121,7 +122,7 @@ public class FlagsSector extends Area implements Subdivision, Removable {
      * @return The value of the comparison.
      */
     @Override
-    public int compareTo(Area a) {
+    public int compareTo(@Nonnull Area a) {
         if (!(a instanceof FlagsSector)) { return 3; }
         Sector testSector = ((FlagsSector)a).getSector();
         return sector.compareTo(testSector);

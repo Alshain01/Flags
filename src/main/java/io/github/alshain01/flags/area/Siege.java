@@ -34,5 +34,6 @@ public interface Siege {
 	 * 
 	 * @return true if the area is under siege
 	 */
+    @SuppressWarnings("unused") // API
 	public boolean isUnderSiege();
 }

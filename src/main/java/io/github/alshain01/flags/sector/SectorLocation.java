@@ -9,13 +9,6 @@ public class SectorLocation {
     private UUID world;
     private int coords[] = new int[3];
 
-    protected SectorLocation(Location location) {
-        coords[0] = location.getBlockX();
-        coords[1] = location.getBlockY();
-        coords[2] = location.getBlockZ();
-        world = location.getWorld().getUID();
-    }
-
     protected SectorLocation(UUID world, int x, int y, int z) {
         coords[0] = x;
         coords[1] = y;

@@ -37,6 +37,8 @@ import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
+import javax.annotation.Nonnull;
+
 /**
  * Class for creating areas to manage a WorldGuard Region.
  */
@@ -124,7 +126,7 @@ public class WorldGuardRegion extends Area implements Removable {
      * @return The value of the comparison.
      */
     @Override
-    public int compareTo(Area a) {
+    public int compareTo(@Nonnull Area a) {
         return a instanceof WorldGuardRegion && a.getSystemID().equals(getSystemID()) ? 0 : 3;
     }
 }

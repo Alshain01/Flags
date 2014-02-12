@@ -73,6 +73,7 @@ public final class Bundle {
 	 * @param flags
 	 *            A list of flags in the bundle. (does not verify validity)
 	 */
+    @SuppressWarnings("unused") // API
 	public static void setBundle(String name, Set<Flag> flags) {
 		Flags.getDataStore().writeBundle(name, flags);
         String permName = "flag.bundle." + name.toLowerCase();

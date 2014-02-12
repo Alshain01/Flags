@@ -50,6 +50,7 @@ public interface Subdivision {
      * @param area The potential parent area
      * @return True if the area is a parent.
      */
+    @SuppressWarnings("unused") // API
     public boolean isParent(Area area);
 
     /**

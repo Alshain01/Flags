@@ -89,7 +89,7 @@ public class MetricsManager {
 			 * Economy Graph
 			 */
             final Graph econGraph = metrics.createGraph("Economy Enabled");
-            econGraph.addPlotter(new Metrics.Plotter(Flags.getEconomy() == null ? "No" : "Yes") {
+            econGraph.addPlotter(new Metrics.Plotter(Flags.getEconomy() != null ? "No" : "Yes") {
                 @Override
                 public int getValue() {
                     return 1;

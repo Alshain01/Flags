@@ -36,17 +36,7 @@ import org.bukkit.event.HandlerList;
  * Event for that occurs when a message is set, changed or removed.
  */
 public class MessageChangedEvent extends Event implements Cancellable {
-
 	private static final HandlerList handlers = new HandlerList();
-
-	/**
-	 * Static HandlerList for FlagSetEvent
-	 * 
-	 * @return A list of event handlers, stored per-event.
-	 */
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
 
 	private final Area area;
 	private final Flag flag;
@@ -56,12 +46,12 @@ public class MessageChangedEvent extends Event implements Cancellable {
 	private boolean cancel = false;
 
 	/**
-	 * Class Constructor
+	 * Creates a new MessageChangedEvent
 	 * 
 	 * @param area
-	 *            The area the flag is being set for.
+	 *            The area the message is being set for.
 	 * @param message
-	 *            The message the be set
+	 *            The message being set
 	 * @param flag
 	 *            The flag the message is being set for
 	 * @param sender
@@ -75,73 +65,61 @@ public class MessageChangedEvent extends Event implements Cancellable {
 		this.sender = sender;
 	}
 
-	/**
-	 * @return The area associated with the event.
-	 */
+    /**
+     * Gets the area where the flag message is changing
+     *
+     * @return The area associated with the event.
+     */
 	public Area getArea() {
 		return area;
 	}
 
-	/**
-	 * @return The flag type associated with the event.
-	 */
+    /**
+     * Gets the flag the message is changing for
+     *
+     * @return The flag associated with the event.
+     */
 	public Flag getFlag() {
 		return flag;
 	}
 
-	/**
-	 * HandlerList for FlagSetEvent
-	 * 
-	 * @return A list of event handlers, stored per-event.
-	 */
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
+    /**
+     * Gets the CommandSender requesting the flag change
+     *
+     * @return The CommandSender. Null if no sender involved (caused by plug-in).
+     */
+    @SuppressWarnings("unused") // API
+    public CommandSender getSender() { return sender; }
 
 	/**
+     * Gets the new message being set
+     *
 	 * @return The new message (null if being removed).
 	 */
 	public String getMessage() {
 		return message;
 	}
 
-	/**
-	 * @return The CommandSender associated with the event. Null if no sender
-	 *         involved (caused by plug-in).
-	 * @deprecated Ambiguous name. Use {@link #getSender()} instead.
-	 */
-	@Deprecated
-	public CommandSender getPlayer() {
-		return getSender();
-	}
+    /**
+     * Static HandlerList for MessageChangedEvent
+     *
+     * @return A list of event handlers, stored per-event.
+     */
+    @SuppressWarnings("unused") // API
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 
-	/**
-	 * @return The CommandSender associated with the event. Null if no sender
-	 *         involved (caused by plug-in).
-	 */
-	public CommandSender getSender() {
-		return sender;
-	}
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
 
-	/**
-	 * Gets the cancellation state of this event. A cancelled event will not be
-	 * executed in the server, but will still pass to other plugins
-	 * 
-	 * @return true if this event is cancelled
-	 */
 	@Override
 	public boolean isCancelled() {
 		return cancel;
 	}
 
-	/**
-	 * Sets the cancellation state of this event. A cancelled event will not be
-	 * executed in the server, but will still pass to other plugins.
-	 * 
-	 * @param cancel
-	 *            - true if you wish to cancel this event
-	 */
 	@Override
 	public void setCancelled(boolean cancel) {
 		this.cancel = cancel;

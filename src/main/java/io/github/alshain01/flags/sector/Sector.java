@@ -1,6 +1,5 @@
 package io.github.alshain01.flags.sector;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -159,9 +158,8 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
      * @return True if the cuboid lies completely within this sector
      */
     public boolean contains(Location corner1, Location corner2) {
-        if(!corner1.getWorld().equals(this.getWorld()) || !corner2.getWorld().equals(this.getWorld())) { return false; }
-        return isLesser(getGreaterCorner(corner1, corner2), greater)
-                && isGreater (getLesserCorner(corner1, corner2), lesser);
+        return !(!corner1.getWorld().equals(this.getWorld()) || !corner2.getWorld().equals(this.getWorld()))
+                && isLesser(getGreaterCorner(corner1, corner2), greater) && isGreater (getLesserCorner(corner1, corner2), lesser);
     }
 
     /**
@@ -176,19 +174,10 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
         //Find the lesser/greater corners
         Sector testSector = new Sector(corner1, corner2, 25);
 
-        if(testSector.contains(getGreaterCorner()) || testSector.contains(getLesserCorner())
-                || testSector.contains(getGreaterXCorner()) || testSector.contains(getGreaterZCorner())) {
-            // One of the 4 points of this sector is inside the new sector.
-            return true;
-        }
-
-        if(contains(testSector.getGreaterCorner()) || contains(testSector.getLesserCorner())
-                || contains(testSector.getGreaterXCorner()) || contains(testSector.getGreaterZCorner())) {
-            // One of the 4 points of the new sector is inside the this sector.
-            return true;
-        }
-
-        return false;
+        return testSector.contains(getGreaterCorner()) || testSector.contains(getLesserCorner())
+                || testSector.contains(getGreaterXCorner()) || testSector.contains(getGreaterZCorner())
+                || contains(testSector.getGreaterCorner()) || contains(testSector.getLesserCorner())
+                || contains(testSector.getGreaterXCorner()) || contains(testSector.getGreaterZCorner());
     }
 
     @Override

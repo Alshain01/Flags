@@ -48,7 +48,8 @@ class MrClean {
     /*
      * Database cleanup monitors
      */
-    protected static void enable(Plugin plugin) {
+    protected static void enable(Plugin plugin, boolean enable) {
+        if(!enable) { return; }
         PluginManager pm = plugin.getServer().getPluginManager();
         switch (System.getActive()) {
             case GRIEF_PREVENTION:

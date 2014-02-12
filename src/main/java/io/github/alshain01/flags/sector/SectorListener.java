@@ -58,6 +58,7 @@ public class SectorListener implements Listener {
         createQueue.put(player.getUniqueId(), corner1);
     }
 
+    @EventHandler
     private void onPlayerPlayerItemHeld(PlayerItemHeldEvent e) {
         Player player = e.getPlayer();
         if(player.getInventory().getItem(e.getPreviousSlot()).getType() == tool) {
@@ -70,6 +71,7 @@ public class SectorListener implements Listener {
         }
     }
 
+    @EventHandler
     private void onPlayerQuit(PlayerQuitEvent e) {
         createQueue.remove(e.getPlayer().getUniqueId());
     }
