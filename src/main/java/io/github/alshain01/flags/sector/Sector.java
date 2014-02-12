@@ -1,5 +1,6 @@
 package io.github.alshain01.flags.sector;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -18,17 +19,22 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
     protected Sector(Location corner1, Location corner2, int depth) {
         id = UUID.randomUUID();
         parent = null;
-        greater = new SectorLocation(corner1.getBlockX() > corner2.getBlockX() ? corner1 : corner2);
-        lesser = new SectorLocation(corner1.getBlockX() > corner2.getBlockX() ? corner2 : corner1);
         this.depth = depth;
+
+        //Find the lesser/greater corners
+        greater = getGreaterCorner(corner1, corner2);
+        lesser = getLesserCorner(corner1, corner2);
     }
+
 
     protected Sector(Location corner1, Location corner2, int depth, UUID parentID) {
         id = UUID.randomUUID();
         parent = parentID;
-        greater = new SectorLocation(corner1.getBlockX() > corner2.getBlockX() ? corner1 : corner2);
-        lesser = new SectorLocation(corner1.getBlockX() > corner2.getBlockX() ? corner2 : corner1);
         this.depth = depth;
+
+        //Find the lesser/greater corners
+        greater = getGreaterCorner(corner1, corner2);
+        lesser = getLesserCorner(corner1, corner2);
     }
 
     protected Sector(UUID id, Map<String, Object> sector) {
@@ -76,25 +82,23 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
     public boolean contains(Location location) {
         int x = location.getBlockX(), z = location.getBlockZ();
 
-        // Greater will always have a higher X due to constructor
-        if(x < greater.getX() && x > lesser.getX()) {
-
-            // Check that the Z position is between the two points.
-            if((greater.getZ() > lesser.getZ() && z < greater.getZ() && z > lesser.getZ())
-                    || (greater.getZ() < lesser.getZ() && z > greater.getZ() && z < lesser.getZ())) {
-
-                // Check the depth below both points
-                if(getWorld().getHighestBlockYAt(greater.getLocation()) - depth < greater.getY()
-                        && getWorld().getHighestBlockYAt(lesser.getLocation()) - depth < lesser.getY()) {
-                    return true;
-                }
+        // Greater will always have a higher X and Y due to constructor
+        if((x >= lesser.getX() && x <= greater.getX()) && (z >= lesser.getZ() && z <= greater.getZ())) {
+            // Check the depth below both points
+            if(getWorld().getHighestBlockYAt(greater.getLocation()) - depth < location.getBlockY()) {
+                return true;
             }
         }
         return false;
     }
 
     public boolean contains(Location corner1, Location corner2) {
-        //TODO
+        if(!corner1.getWorld().equals(this.getWorld()) || !corner2.getWorld().equals(this.getWorld())) { return false; }
+
+        //Find the lesser/greater corners
+        SectorLocation g = getGreaterCorner(corner1, corner2);
+        SectorLocation l = getLesserCorner(corner1, corner2);
+        return isLesser(g, greater) && isGreater (l, lesser);
     }
 
     public boolean overlaps(Location corner1, Location corner2) {
@@ -117,5 +121,45 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
         return 3;
     }
 
+    /*
+     * Returns true if loc1 <= loc2 on both x & z points
+     */
+    private boolean isLesser(SectorLocation loc1, SectorLocation loc2) {
+        return (loc1.getX() <= loc2.getX() && loc1.getZ() <= loc2.getZ());
+    }
 
+    /*
+     * Returns true if loc1 >= loc2 on both x & z points
+     */
+    private boolean isGreater(SectorLocation loc1, SectorLocation loc2) {
+        return (loc1.getX() >= loc2.getX() && loc1.getZ() >= loc2.getZ());
+    }
+
+    private int getLesserPoint(int x1, int x2) {
+        return x1 < x2 ? x1 : x2;
+    }
+
+    private int getGreaterPoint(int x1, int x2) {
+        return x1 > x2 ? x1 : x2;
+    }
+
+    private SectorLocation getLesserCorner(Location loc1, Location loc2) {
+        UUID world = loc1.getWorld().getUID();
+        int y = getLesserPoint(loc1.getBlockY(), loc2.getBlockY());
+
+        int x = getLesserPoint(loc1.getBlockX(), loc2.getBlockX());
+        int z = getLesserPoint(loc1.getBlockZ(), loc2.getBlockZ());
+
+        return new SectorLocation(world, x, y, z);
+    }
+
+    private SectorLocation getGreaterCorner(Location loc1, Location loc2) {
+        UUID world = loc1.getWorld().getUID();
+        int y = getLesserPoint(loc1.getBlockY(), loc2.getBlockY());
+
+        int x = getGreaterPoint(loc1.getBlockX(), loc2.getBlockX());
+        int z = getGreaterPoint(loc1.getBlockZ(), loc2.getBlockZ());
+
+        return new SectorLocation(world, x, y, z);
+    }
 }

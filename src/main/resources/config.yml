@@ -57,7 +57,7 @@ Flags:
   # Sector Configuration
   #
   Sector:
-    DefaultDepth: 50
+    DefaultDepth: 25
     Tool: 'WOOD_SHOVEL'
   #
   # For supported land system plugins, Mr. Clean is a module that will remove data from the Flags database for

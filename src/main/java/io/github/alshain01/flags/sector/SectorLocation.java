@@ -16,6 +16,13 @@ public class SectorLocation {
         world = location.getWorld().getUID();
     }
 
+    protected SectorLocation(UUID world, int x, int y, int z) {
+        coords[0] = x;
+        coords[1] = y;
+        coords[2] = z;
+        this.world = world;
+    }
+
     protected SectorLocation(String location) {
         String[] arg = location.split(",");
 
