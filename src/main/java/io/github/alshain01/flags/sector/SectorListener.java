@@ -2,10 +2,13 @@ package io.github.alshain01.flags.sector;
 
 import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.Message;
+import io.github.alshain01.flags.events.SectorCreateEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -25,22 +28,26 @@ public class SectorListener implements Listener {
         this.tool = tool;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     private void onPlayerInteractEvent(PlayerInteractEvent e) {
         Player player = e.getPlayer();
-        if(e.getAction() != Action.RIGHT_CLICK_BLOCK
-                || e.getItem().getType() != tool
-                || !player.hasPermission("flags.sector.create")) { return; }
-
+        if(e.getItem().getType() != tool || !player.hasPermission("flags.sector.create")) { return; }
         Location corner1 = e.getClickedBlock().getLocation();
-        if(createQueue.containsKey(player.getUniqueId())) {
-            // Process the second corner and final creation
 
+        if(e.getAction() == Action.LEFT_CLICK_BLOCK) {
+            //Process the first corner
+            player.sendMessage(Message.SectorStarted.get());
+            createQueue.put(player.getUniqueId(), corner1);
+            e.setCancelled(true);
+        }
+
+        if(e.getAction() == Action.RIGHT_CLICK_BLOCK && createQueue.containsKey(player.getUniqueId())) {
+            // Process the second corner and final creation
             SectorManager sectors = Flags.getSectorManager();
             Location corner2 = createQueue.get(player.getUniqueId());
 
-            if(sectors.isOverlap(createQueue.get(player.getUniqueId()), e.getClickedBlock().getLocation())) {
-                UUID parent = sectors.isContained(createQueue.get(player.getUniqueId()), e.getClickedBlock().getLocation());
+            if(sectors.isOverlap(corner1, corner2)) {
+                UUID parent = sectors.isContained(corner1, corner2);
                 if(parent == null || sectors.get(parent).getParentID() != null) {
                     // Sector is only partially inside another or is inside another subdivison
                     player.sendMessage(Message.SectorOverlapError.get());
@@ -48,23 +55,18 @@ public class SectorListener implements Listener {
                 }
                 // Create Subdivision
                 player.sendMessage(Message.SubsectorCreated.get());
-                createQueue.remove(player.getUniqueId());
-                sectors.add(corner1, corner2, parent);
-                return;
+                Bukkit.getPluginManager().callEvent(new SectorCreateEvent(sectors.add(corner1, corner2, parent)));
+            } else {
+                // Create Parent Sector
+                player.sendMessage(Message.SectorCreated.get());
+                Bukkit.getPluginManager().callEvent(new SectorCreateEvent(sectors.add(corner1, corner2)));
             }
-            // Create Parent Sector
-            player.sendMessage(Message.SectorCreated.get());
             createQueue.remove(player.getUniqueId());
-            sectors.add(corner1, corner2);
-            return;
+            e.setCancelled(true);
         }
-
-        //Process the first corner
-        player.sendMessage(Message.SectorStarted.get());
-        createQueue.put(player.getUniqueId(), corner1);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     private void onPlayerPlayerItemHeld(PlayerItemHeldEvent e) {
         Player player = e.getPlayer();
         ItemStack prevSlot = player.getInventory().getItem(e.getPreviousSlot());
@@ -77,7 +79,7 @@ public class SectorListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     private void onPlayerQuit(PlayerQuitEvent e) {
         createQueue.remove(e.getPlayer().getUniqueId());
     }

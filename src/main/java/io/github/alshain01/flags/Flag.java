@@ -26,13 +26,17 @@ package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.economy.EPurchaseType;
 
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a flag registered with the plug-in.
  */
-public final class Flag {
+public final class Flag implements ConfigurationSerializable {
 	private final boolean def;
 	private final String name;
 	private final String description;
@@ -70,7 +74,7 @@ public final class Flag {
 		this.world = world;
 		this.player = player;
 	}
-/*
+
     protected Flag(String name, Map<String, Object> flag) {
         this.name = name;
         description = (String)flag.get("Description");
@@ -97,7 +101,7 @@ public final class Flag {
 
         return flag;
     }
-*/
+
 	/**
 	 * Gets the bypass permission string.
 	 * 
