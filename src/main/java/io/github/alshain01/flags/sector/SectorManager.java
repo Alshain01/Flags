@@ -1,9 +1,11 @@
 package io.github.alshain01.flags.sector;
 
+import io.github.alshain01.flags.data.CustomYML;
 import io.github.alshain01.flags.events.SectorDeleteEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.*;
 
@@ -11,18 +13,24 @@ public class SectorManager {
     private Map<UUID, Sector> sectors = new HashMap<UUID, Sector>();
     final int defaultDepth;
 
-    public SectorManager(ConfigurationSection config, int defaultDepth) {
+    public SectorManager(CustomYML cYml, int defaultDepth) {
+        this.defaultDepth = defaultDepth;
+        if(!cYml.getConfig().isConfigurationSection("Sectors")) { return; }
+        ConfigurationSection config = cYml.getConfig().getConfigurationSection("Sectors");
+
         for(String s : config.getKeys(false)) {
             UUID id = UUID.fromString(s);
             sectors.put(id, new Sector(id, config.getConfigurationSection(s).getValues(false)));
         }
-        this.defaultDepth = defaultDepth;
+
     }
 
-    public void write(ConfigurationSection config) {
+    public void write(CustomYML cYml) {
+        cYml.getConfig().set("Sectors", null);
         for(UUID u : sectors.keySet()) {
-            config.set(u.toString(), sectors.get(u).serialize());
+            cYml.getConfig().set("Sectors." + u.toString(), sectors.get(u).serialize());
         }
+        cYml.saveConfig();
     }
 
     public void clear() {

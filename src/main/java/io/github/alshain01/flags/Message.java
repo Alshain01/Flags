@@ -49,7 +49,7 @@ public enum Message {
 	SetPrice, GetPrice, LowFunds, Withdraw, Deposit,
     // Sector
     DeleteSector, NoSectorError, DeleteAllSectors, SectorOverlapError,
-    CancelCreateSector, SectorCreated, SubsectorCreated;
+    CancelCreateSector, SectorCreated, SectorStarted, SubsectorCreated;
 
 	/**
 	 * Gets the localized message for the enumeration

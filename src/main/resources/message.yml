@@ -75,6 +75,16 @@ Message:
   LowFunds: '&cThe {PurchaseType} &e{Flag} &ccosts &a{Price}&c. You do not have enough funds.'
   Withdraw: '&a{Price} &bhas been withdrawn from your account.'
   Deposit: '&a{Price} &bhas been deposited to your account.'
+
+  #Sector Messages
+  DeleteSector: '&bSector Deleted'
+  DeleteAllSectors: '&bAll Sectors Deleted'
+  SectorOverlapError: '&cThe sector cannot be created because it would intersect another sector.'
+  CancelCreateSector: '&bSector Creation Canceled'
+  SectorCreated: '&bSector Created'
+  SectorStarted: '&bSector corner set the second point.'
+  NoSectorError: '&cStand in the Sector you wish to delete.'
+  SubsectorCreated: '&bSubsector Created.'
   
   # Help Messages
   HelpHeader: '&6---------&f {Type}: {Group} ({Page}/{TotalPages})&6--------------------'

@@ -30,7 +30,7 @@ public class SectorCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(!command.toString().equalsIgnoreCase("sector")) { return false; }
+        //if(!command.toString().equalsIgnoreCase("sector")) { return false; }
 
         if(!(sender instanceof Player)) {
             sender.sendMessage(Message.NoConsoleError.get());

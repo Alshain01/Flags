@@ -19,7 +19,7 @@ import java.util.Set;
 public class BundleCommand extends PluginCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if(!cmd.toString().equalsIgnoreCase("flag")) { return false; }
+        //if(!cmd.toString().equalsIgnoreCase("bundle")) { return false; }
 
         if (args.length < 1) {
             if(sender instanceof Player) {

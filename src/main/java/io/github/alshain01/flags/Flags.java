@@ -81,20 +81,38 @@ public class Flags extends JavaPlugin {
 	@Override
 	public void onEnable() {
         PluginManager pm = getServer().getPluginManager();
-        ConfigurationSerialization.registerClass(Flag.class);
+        //ConfigurationSerialization.registerClass(Flag.class);
 
         // Set up the plugin's configuration file
         saveDefaultConfig();
         final ConfigurationSection pluginConfig = getConfig().getConfigurationSection("Flags");
 
         // Initialize the static variables
+        debugOn = pluginConfig.getBoolean("Debug");
         logger  = this.getLogger();
+        (messageStore = new CustomYML(this, "message.yml")).saveDefaultConfig();
         currentSystem = System.find(pm, pluginConfig.getList("AreaPlugins"));
         dataStore = DataStoreType.getByUrl(this, pluginConfig.getString("Database.Url"));
-        debugOn = pluginConfig.getBoolean("Debug");
         economy = setupEconomy();
-        (messageStore = new CustomYML(this, "message.yml")).saveDefaultConfig();
         sqlData = dataStore instanceof SQLDataStore;
+
+        //TODO Consider removing support for this
+        // Check for older database and import as necessary.
+        if (currentSystem == System.GRIEF_PREVENTION
+                && !pm.isPluginEnabled("GriefPreventionFlags")) {
+            GPFImport.importGPF();
+        }
+
+        // New installation
+        if (!dataStore.create(this)) {
+            logger.severe("Failed to create database schema. Shutting down Flags.");
+            pm.disablePlugin(this);
+            return;
+        }
+        dataStore.update(this);
+
+        // Load Mr. Clean
+        MrClean.enable(this, pluginConfig.getBoolean("MrClean"));
 
         // Configure the updater
         ConfigurationSection updateConfig = pluginConfig.getConfigurationSection("Update");
@@ -104,24 +122,6 @@ public class Flags extends JavaPlugin {
 			updater.runTaskTimer(this, 0, 1728000);
             pm.registerEvents(new UpdateListener(updater), this);
 		}
-
-        //TODO Consider removing support for this
-		// Check for older database and import as necessary.
-		if (currentSystem == System.GRIEF_PREVENTION
-				&& !pm.isPluginEnabled("GriefPreventionFlags")) {
-			GPFImport.importGPF();
-		}
-
-        // New installation
-        if (!dataStore.create(this)) {
-            logger.severe("Failed to create database schema. Shutting down Flags.");
-            pm.disablePlugin(this);
-            return;
-        }
-		dataStore.update(this);
-
-		// Load Mr. Clean
-	    MrClean.enable(this, pluginConfig.getBoolean("MrClean"));
 
 		// Load Border Patrol
         ConfigurationSection bpConfig = pluginConfig.getConfigurationSection("BorderPatrol");
@@ -135,7 +135,7 @@ public class Flags extends JavaPlugin {
         if(currentSystem == System.FLAGS) {
             ConfigurationSerialization.registerClass(Sector.class);
             ConfigurationSection sectorConfig = pluginConfig.getConfigurationSection("Sector");
-            sectors = new SectorManager(new CustomYML(this, "sector.yml").getConfig(), sectorConfig.getInt("DefaultDepth"));
+            sectors = new SectorManager(new CustomYML(this, "sector.yml"), sectorConfig.getInt("DefaultDepth"));
             pm.registerEvents(new SectorListener(Material.getMaterial(sectorConfig.getString("Tool"))), this);
             getCommand("sector").setExecutor(new SectorCommand());
         }
@@ -155,7 +155,7 @@ public class Flags extends JavaPlugin {
     @Override
     public void onDisable() {
         if(currentSystem == System.FLAGS) {
-            sectors.write(new CustomYML(this, "sector.yml").getConfig());
+            sectors.write(new CustomYML(this, "sector.yml"));
         }
 
         if(sqlData) { ((SQLDataStore)dataStore).close(); }

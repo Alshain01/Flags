@@ -39,25 +39,25 @@ import java.util.UUID;
 
 public enum System {
 	DEFAULT("Default", "Default", false) {
-        public Area getAreaAt(Location location) { return new Default(location); }
+        public Area getSystemAreaAt(Location location) { return new Default(location); }
         public Area getArea(String name) { return new Default(name); }
         public boolean hasArea(Location location) { return true; }
     },
 
 	WORLD("World", "World", false) {
-        public Area getAreaAt(Location location) { return new World(location); }
+        public Area getSystemAreaAt(Location location) { return new World(location); }
         public Area getArea(String name) { return new World(name); }
         public boolean hasArea(Location location) { return true; }
     },
 
     FLAGS("Flags", "Flags", true) {
-        public Area getAreaAt(Location location) { return new FlagsSector(location); }
+        public Area getSystemAreaAt(Location location) { return new FlagsSector(location); }
         public Area getArea(String name) { return new FlagsSector(UUID.fromString(name)); }
         public boolean hasArea(Location location) { return FlagsSector.hasSector(location); }
     },
 
 	GRIEF_PREVENTION("GriefPrevention",	"Grief Prevention", true) {
-        public Area getAreaAt(Location location) {
+        public Area getSystemAreaAt(Location location) {
             if(!hasArea(location)) { return new World(location); }
 
             final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention");
@@ -87,7 +87,7 @@ public enum System {
     } ,
 
 	WORLDGUARD("WorldGuard", "WorldGuard", false) {
-        public Area getAreaAt(Location location) {
+        public Area getSystemAreaAt(Location location) {
             if(!hasArea(location)) { return new World(location); }
             return new WorldGuardRegion(location);
         }
@@ -101,7 +101,7 @@ public enum System {
     },
 
 	RESIDENCE("Residence", "Residence", true) {
-        public Area getAreaAt(Location location) {
+        public Area getSystemAreaAt(Location location) {
             if(!hasArea(location)) { return new World(location); }
             return new ResidenceClaimedResidence(location);
         }
@@ -110,7 +110,7 @@ public enum System {
     },
 
 	INFINITEPLOTS("InfinitePlots", "InfinitePlots", false) {
-        public Area getAreaAt(Location location) {
+        public Area getSystemAreaAt(Location location) {
             if(!hasArea(location)) { return new World(location); }
             return new InfinitePlotsPlot(location);
         }
@@ -125,7 +125,7 @@ public enum System {
     },
 
 	FACTIONS("Factions", "Factions", false) {
-        public Area getAreaAt(Location location) {
+        public Area getSystemAreaAt(Location location) {
             if(!hasArea(location)) { return new World(location); }
             return new FactionsTerritory(location);
         }
@@ -139,7 +139,7 @@ public enum System {
     },
 
 	PLOTME("PlotMe", "PlotMe",false) {
-        public Area getAreaAt(Location location) {
+        public Area getSystemAreaAt(Location location) {
             if(!hasArea(location)) { return new World(location); }
             return new PlotMePlot(location);
         }
@@ -153,7 +153,7 @@ public enum System {
     },
 
 	REGIOS("Regios", "Regios", false) {
-        public Area getAreaAt(Location location) {
+        public Area getSystemAreaAt(Location location) {
             if(!hasArea(location)) { return new World(location); }
             return new RegiosRegion(location);
         }
@@ -162,7 +162,7 @@ public enum System {
     },
 
 	PRECIOUSSTONES("PreciousStones", "PreciousStones", true){
-        public Area getAreaAt(Location location) {
+        public Area getSystemAreaAt(Location location) {
             if(!hasArea(location)) { return new World(location); }
             return new PreciousStonesField(location);
         }
@@ -180,10 +180,9 @@ public enum System {
      *
      * @param location
      *            The location to request an area.
-     * @return An Area from the configured system or the world if no area is
-     *         defined.
+     * @return An Area from the configured system which may fail isArea()
      */
-    public abstract Area getAreaAt(Location location);
+    public abstract Area getSystemAreaAt(Location location);
 
     /*
      * Gets an area by system specific name. The name is formatted based on the
@@ -213,6 +212,19 @@ public enum System {
      * @return True if there is an area
      */
     public abstract boolean hasArea(Location location);
+
+    /*
+     * Gets an area from the data store at a specific location.
+     *
+     * @param location
+     *            The location to request an area.
+     * @return An Area from the configured system or the world if no area is
+     *         defined.
+     */
+    public Area getAreaAt(Location location) {
+        Area area = getSystemAreaAt(location);
+        return area.isArea() ? area : WORLD.getSystemAreaAt(location);
+    }
 
 	/**
 	 * Gets the enumeration that matches the case sensitive plugin.yml name.
@@ -311,7 +323,7 @@ public enum System {
                 }
             }
         }
-        Flags.log("No system detected. Enabling Flags Sectors.");
+        Flags.log("No system detected. Flags Sectors Enabled.");
         return System.FLAGS;
     }
 }

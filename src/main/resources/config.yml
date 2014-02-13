@@ -58,7 +58,7 @@ Flags:
   #
   Sector:
     DefaultDepth: 25
-    Tool: 'WOOD_SHOVEL'
+    Tool: 'GOLD_HOE'
   #
   # For supported land system plugins, Mr. Clean is a module that will remove data from the Flags database for
   # areas that are unclaimed, abandoned, or deleted by the respective system.

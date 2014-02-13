@@ -11,6 +11,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,27 +48,32 @@ public class SectorListener implements Listener {
                 }
                 // Create Subdivision
                 player.sendMessage(Message.SubsectorCreated.get());
+                createQueue.remove(player.getUniqueId());
                 sectors.add(corner1, corner2, parent);
+                return;
             }
             // Create Parent Sector
             player.sendMessage(Message.SectorCreated.get());
+            createQueue.remove(player.getUniqueId());
             sectors.add(corner1, corner2);
+            return;
         }
 
         //Process the first corner
+        player.sendMessage(Message.SectorStarted.get());
         createQueue.put(player.getUniqueId(), corner1);
     }
 
     @EventHandler
     private void onPlayerPlayerItemHeld(PlayerItemHeldEvent e) {
         Player player = e.getPlayer();
-        if(player.getInventory().getItem(e.getPreviousSlot()).getType() == tool) {
-            if(player.getInventory().getItem(e.getNewSlot()).getType() != tool) {
-                if(createQueue.containsKey(player.getUniqueId())) {
+        ItemStack prevSlot = player.getInventory().getItem(e.getPreviousSlot());
+        ItemStack newSlot = player.getInventory().getItem(e.getNewSlot());
+        if(prevSlot != null && prevSlot.getType() == tool
+                && (newSlot == null || newSlot.getType() != tool)
+                && createQueue.containsKey(player.getUniqueId())) {
                     createQueue.remove(player.getUniqueId());
                     player.sendMessage(Message.CancelCreateSector.get());
-                }
-            }
         }
     }
 

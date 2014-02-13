@@ -40,14 +40,14 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
         this.id = id;
         greater = new SectorLocation((String)sector.get("GreaterCorner"));
         lesser = new SectorLocation((String)sector.get("LesserCorner"));
-        parent = sector.get("Parent") == null ? null : UUID.fromString((String)sector.get("parent"));
+        parent = ((String)sector.get("Parent")).equals("null") ? null : UUID.fromString((String)sector.get("Parent"));
         depth = (Integer)sector.get("Depth");
     }
 
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> sector = new HashMap<String, Object>();
-        sector.put("Parent", parent.toString());
+        sector.put("Parent", parent != null ? parent.toString() : "null");
         sector.put("GreaterCorner", greater.toString());
         sector.put("LesserCorner", lesser.toString());
         sector.put("Depth", depth);
