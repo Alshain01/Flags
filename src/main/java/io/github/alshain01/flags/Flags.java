@@ -27,8 +27,9 @@ package io.github.alshain01.flags;
 import io.github.alshain01.flags.commands.BundleCommand;
 import io.github.alshain01.flags.commands.FlagCommand;
 import io.github.alshain01.flags.commands.SectorCommand;
-import io.github.alshain01.flags.sector.Sector;
+
 import io.github.alshain01.flags.sector.SectorListener;
+import io.github.alshain01.flags.sector.Sector;
 import io.github.alshain01.flags.sector.SectorManager;
 import io.github.alshain01.flags.update.UpdateListener;
 import io.github.alshain01.flags.update.UpdateScheduler;
@@ -81,7 +82,7 @@ public class Flags extends JavaPlugin {
 	@Override
 	public void onEnable() {
         PluginManager pm = getServer().getPluginManager();
-        ConfigurationSerialization.registerClass(Flag.class);
+        //ConfigurationSerialization.registerClass(Flag.class);
 
         // Set up the plugin's configuration file
         saveDefaultConfig();

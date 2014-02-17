@@ -40,7 +40,7 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
         this.id = id;
         greater = new SectorLocation((String)sector.get("GreaterCorner"));
         lesser = new SectorLocation((String)sector.get("LesserCorner"));
-        parent = ((String)sector.get("Parent")).equals("null") ? null : UUID.fromString((String)sector.get("Parent"));
+        parent = String.valueOf(sector.get("Parent")).equals("null") ? null : UUID.fromString((String)sector.get("Parent"));
         depth = (Integer)sector.get("Depth");
     }
 

@@ -9,14 +9,14 @@ public class SectorLocation {
     private UUID world;
     private int coords[] = new int[3];
 
-    protected SectorLocation(UUID world, int x, int y, int z) {
+    SectorLocation(UUID world, int x, int y, int z) {
         coords[0] = x;
         coords[1] = y;
         coords[2] = z;
         this.world = world;
     }
 
-    protected SectorLocation(String location) {
+    SectorLocation(String location) {
         String[] arg = location.split(",");
 
         world = UUID.fromString(arg[0]);

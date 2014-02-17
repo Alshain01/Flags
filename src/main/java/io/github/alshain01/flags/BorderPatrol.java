@@ -24,6 +24,8 @@
 
 package io.github.alshain01.flags;
 
+import io.github.alshain01.flags.*;
+import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Subdivision;
 import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
@@ -68,7 +70,7 @@ final class BorderPatrol implements Listener {
 		}
 	}
 
-	protected BorderPatrol(int eDivisor, int tDivisor) {
+	BorderPatrol(int eDivisor, int tDivisor) {
 		eventsDivisor = eDivisor;
 		timeDivisor = tDivisor;
 	}
@@ -128,7 +130,7 @@ final class BorderPatrol implements Listener {
 
 		if (process) {
 			// Acquire the area moving to and the area moving from.
-			final Area areaTo = System.getActive().getAreaAt(e.getTo());
+			final Area areaTo = io.github.alshain01.flags.System.getActive().getAreaAt(e.getTo());
 			final Area areaFrom = System.getActive().getAreaAt(playerPrevMove.location);
 
 			// If they are the same area, don't bother.

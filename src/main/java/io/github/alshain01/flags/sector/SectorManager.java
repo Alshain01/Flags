@@ -5,7 +5,6 @@ import io.github.alshain01.flags.events.SectorDeleteEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.*;
 
@@ -39,30 +38,31 @@ public class SectorManager {
         }
         sectors.clear();
     }
-    protected Sector add(Location corner1, Location corner2) {
+    Sector add(Location corner1, Location corner2) {
         Sector s = new Sector(corner1, corner2, defaultDepth);
         sectors.put(s.getID(), s);
         return s;
     }
 
-    protected Sector add(Location corner1, Location corner2, int depth) {
-        Sector s = new Sector(corner1, corner2, depth);
-        sectors.put(s.getID(), s);
-        return s;
-    }
-
-    protected Sector add(Location corner1, Location corner2, int depth, UUID parent) {
-        Sector s = new Sector(corner1, corner2, depth, parent);
-        sectors.put(s.getID(), s);
-        return s;
-    }
-
-    protected Sector add(Location corner1, Location corner2, UUID parent) {
+    Sector add(Location corner1, Location corner2, UUID parent) {
         Sector s = new Sector(corner1, corner2, defaultDepth, parent);
         sectors.put(s.getID(), s);
         return s;
     }
 
+/*
+    Sector add(Location corner1, Location corner2, int depth) {
+        Sector s = new Sector(corner1, corner2, depth);
+        sectors.put(s.getID(), s);
+        return s;
+    }
+
+    Sector add(Location corner1, Location corner2, int depth, UUID parent) {
+        Sector s = new Sector(corner1, corner2, depth, parent);
+        sectors.put(s.getID(), s);
+        return s;
+    }
+*/
     public void delete(UUID id) {
         Sector sector = get(id);
         if(sector.getParentID() == null) {
