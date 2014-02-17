@@ -11,7 +11,6 @@ import io.github.alshain01.flags.update.Updater.UpdateType;
 import java.io.File;
 
 public class UpdateScheduler extends BukkitRunnable{
-    private final int PLUGIN_ID = 65024;
     private final Updater.UpdateType type;
     private final String key;
     private final File file;
@@ -30,6 +29,8 @@ public class UpdateScheduler extends BukkitRunnable{
 
     @Override
     public void run() {
+        final int PLUGIN_ID = 65024;
+
         // Update script
         final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Flags");
         updater = new Updater(plugin, PLUGIN_ID, file, type, key, type == UpdateType.DEFAULT);

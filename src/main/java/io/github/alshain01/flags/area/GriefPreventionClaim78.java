@@ -30,6 +30,8 @@ import me.ryanhamshire.GriefPrevention.Claim;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+import javax.annotation.Nonnull;
+
 /**
  * Class for creating areas to manage a Grief Prevention Claim.
  */
@@ -115,7 +117,7 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 	 * @return The value of the comparison.
 	 */
 	@Override
-	public int compareTo(Area a) {
+	public int compareTo(@Nonnull Area a) {
 		if (!(a instanceof GriefPreventionClaim78)) {
 			return 3;
 		}

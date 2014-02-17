@@ -6,8 +6,8 @@ import org.bukkit.Location;
 import java.util.UUID;
 
 public class SectorLocation {
-    private UUID world;
-    private int coords[] = new int[3];
+    private final UUID world;
+    private final int coords[] = new int[3];
 
     SectorLocation(UUID world, int x, int y, int z) {
         coords[0] = x;

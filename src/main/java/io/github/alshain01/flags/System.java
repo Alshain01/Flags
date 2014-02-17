@@ -250,7 +250,7 @@ public enum System {
 	}
 
 	private String pluginName = null, displayName = null;
-    private boolean subdivisions;
+    private final boolean subdivisions;
     //private Logger logger;
 
 	private System(String name, String displayName, boolean hasSubivisions) {

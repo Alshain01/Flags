@@ -24,8 +24,6 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Subdivision;
 import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
@@ -75,8 +73,8 @@ final class BorderPatrol implements Listener {
 		timeDivisor = tDivisor;
 	}
 	
-	private int eventsDivisor;
-	private int timeDivisor;
+	private final int eventsDivisor;
+	private final int timeDivisor;
 	private final ConcurrentHashMap<String, PreviousMove> moveStore =
 			new ConcurrentHashMap<String, PreviousMove>();
 	private int eventCalls = 0;

@@ -196,7 +196,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     /*
  * Value Command Handlers
  */
-    protected static boolean get(Player player, CommandLocation location, Flag flag) {
+    private static boolean get(Player player, CommandLocation location, Flag flag) {
         // Acquire the area
         Area area = getArea(player, location);
         if(!Validate.isArea(player, area)) { return false; }
@@ -236,7 +236,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         return true;
     }
 
-    protected static void set(Player player, CommandLocation location, Flag flag, Boolean value) {
+    private static void set(Player player, CommandLocation location, Flag flag, Boolean value) {
         // Acquire the area
         Area area = getArea(player, location);
         if(!Validate.isArea(player, area)
@@ -256,7 +256,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         }
     }
 
-    protected static void remove(Player player, CommandLocation location, Flag flag) {
+    private static void remove(Player player, CommandLocation location, Flag flag) {
         // Acquire the area
         Area area = getArea(player, location);
         if(!Validate.isArea(player, area) || !Validate.isPermitted(player, area)) { return; }
@@ -290,7 +290,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     /*
      * Trust Command Handlers
      */
-    protected static void viewTrust(Player player, CommandLocation location, Flag flag) {
+    private static void viewTrust(Player player, CommandLocation location, Flag flag) {
         boolean first = true;
         StringBuilder message;
         Area area = getArea(player, location);
@@ -321,7 +321,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         player.sendMessage(message.toString());
     }
 
-    protected static boolean trust(Player player, CommandLocation location, Flag flag, Set<String> playerList) {
+    private static boolean trust(Player player, CommandLocation location, Flag flag, Set<String> playerList) {
         if(playerList.size() == 0) { return false; }
 
         Area area = getArea(player, location);
@@ -342,7 +342,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         return true;
     }
 
-    protected static void distrust(Player player, CommandLocation location, Flag flag, Set<String> playerList) {
+    private static void distrust(Player player, CommandLocation location, Flag flag, Set<String> playerList) {
         boolean success = true;
         Area area = getArea(player, location);
 
@@ -370,7 +370,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     /*
      * Message Command Handlers
      */
-    protected static boolean presentMessage(Player player, CommandLocation location, Flag flag) {
+    private static boolean presentMessage(Player player, CommandLocation location, Flag flag) {
         // Acquire the flag
         if(!flag.isPlayerFlag()) {
             player.sendMessage(Message.PlayerFlagError.get()
@@ -387,7 +387,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         return true;
     }
 
-    protected static void message(Player player, CommandLocation location, Flag flag, String message) {
+    private static void message(Player player, CommandLocation location, Flag flag, String message) {
         Area area = getArea(player, location);
 
         if(!Validate.isPlayerFlag(player, flag)
@@ -401,7 +401,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         }
     }
 
-    protected static void erase(Player player, CommandLocation location, Flag flag) {
+    private static void erase(Player player, CommandLocation location, Flag flag) {
         Area area = getArea(player, location);
 
         if(!Validate.isPlayerFlag(player, flag)
@@ -419,7 +419,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     /*
      * Inheritance Command Handlers
      */
-    protected static void inherit(Player player, Boolean value) {
+    private static void inherit(Player player, Boolean value) {
         Area area = getArea(player, CommandLocation.AREA);
         if(!Validate.canSubdivide(player)
                 || !Validate.isArea(player, area)
@@ -439,7 +439,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     /*
      * Price Command Handlers
      */
-    protected static void getPrice(CommandSender sender, EPurchaseType type, Flag flag) {
+    private static void getPrice(CommandSender sender, EPurchaseType type, Flag flag) {
         if(!Validate.hasEconomy(sender)) { return; }
 
         sender.sendMessage(Message.GetPrice.get()
@@ -448,7 +448,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
                 .replaceAll("\\{Price\\}", Flags.getEconomy().format(flag.getPrice(type))));
     }
 
-    protected static boolean setPrice(CommandSender sender, EPurchaseType type, Flag flag, String price) {
+    private static boolean setPrice(CommandSender sender, EPurchaseType type, Flag flag, String price) {
         if(!Validate.hasEconomy(sender)) { return true; }
         if((sender instanceof Player) && !Validate.canEditPrice(sender)) { return true; }
 
@@ -467,7 +467,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     /*
      * Help Command Handlers
      */
-    protected static void help (CommandSender sender, int page, String group) {
+    private static void help (CommandSender sender, int page, String group) {
         Registrar registrar = Flags.getRegistrar();
         List<String> groupNames = new ArrayList<String>();
         List<String> allowedFlagNames = new ArrayList<String>();

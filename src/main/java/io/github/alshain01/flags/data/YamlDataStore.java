@@ -83,13 +83,12 @@ public final class YamlDataStore implements DataStore {
     }
 
     @Override
-    public boolean reload() {
+    public void reload() {
         data.reload();
         def.reload();
         world.reload();
         bundle.reload();
         price.reload();
-        return true;
     }
 
     @Override

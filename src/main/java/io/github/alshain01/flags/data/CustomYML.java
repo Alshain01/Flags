@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
 
-import io.github.alshain01.flags.Flags;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -38,7 +37,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * Modified YAML manager from http://wiki.bukkit.org/Configuration_API_Reference
  */
 public final class CustomYML {
-	private static JavaPlugin plugin;
+	private final JavaPlugin plugin;
 	private final String dataFile;
 	private FileConfiguration customConfig = null;
 	private File customConfigFile = null;
@@ -81,7 +80,7 @@ public final class CustomYML {
 		try {
 			getConfig().save(customConfigFile);
 		} catch (final IOException ex) {
-			Flags.g.getLogger().log(Level.SEVERE,
+			plugin.getLogger().log(Level.SEVERE,
 					"Could not save config to " + customConfigFile, ex);
 		}
 	}

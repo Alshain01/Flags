@@ -9,7 +9,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import java.util.*;
 
 public class SectorManager {
-    private Map<UUID, Sector> sectors = new HashMap<UUID, Sector>();
+    private final Map<UUID, Sector> sectors = new HashMap<UUID, Sector>();
     final int defaultDepth;
 
     public SectorManager(CustomYML cYml, int defaultDepth) {

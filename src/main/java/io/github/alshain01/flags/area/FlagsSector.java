@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class FlagsSector extends Area implements Subdivision, Removable {
-    private Sector sector;
+    private final Sector sector;
 
     /**
      * Creates an instance of FlagsSector based on a Bukkit Location
