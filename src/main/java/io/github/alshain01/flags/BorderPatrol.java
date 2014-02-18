@@ -73,6 +73,10 @@ final class BorderPatrol implements Listener {
 	BorderPatrol(int eDivisor, int tDivisor) {
 		eventsDivisor = eDivisor;
 		timeDivisor = tDivisor;
+
+        for(Player p : Bukkit.getServer().getOnlinePlayers()) {
+            moveStore.put(p.getName(), new PreviousMove(p));
+        }
 	}
 	
 	private final int eventsDivisor;
@@ -112,17 +116,11 @@ final class BorderPatrol implements Listener {
 		PreviousMove playerPrevMove;
 		boolean process;
 
-		if (!moveStore.containsKey(e.getPlayer().getName())) {
-			// New player data, process it immediately. (Shouldn't happen anymore, just in case)
-			moveStore.put(e.getPlayer().getName(), playerPrevMove = new PreviousMove(e.getPlayer()));
-			process = true;
-		} else {
-			// Use the old player data
-			playerPrevMove = moveStore.get(e.getPlayer().getName());
+        // Use the old player data
+        playerPrevMove = moveStore.get(e.getPlayer().getName());
 
-			// Check to see if we have processed this player recently.
-			process = new Date().getTime() - playerPrevMove.time > timeDivisor;
-		}
+        // Check to see if we have processed this player recently.
+        process = new Date().getTime() - playerPrevMove.time > timeDivisor;
 
 		if (process) {
 			// Acquire the area moving to and the area moving from.
