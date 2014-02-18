@@ -113,7 +113,7 @@ final class BorderPatrol implements Listener {
 		boolean process;
 
 		if (!moveStore.containsKey(e.getPlayer().getName())) {
-			// New player data, process it immediately.
+			// New player data, process it immediately. (Shouldn't happen anymore, just in case)
 			moveStore.put(e.getPlayer().getName(), playerPrevMove = new PreviousMove(e.getPlayer()));
 			process = true;
 		} else {
@@ -126,7 +126,7 @@ final class BorderPatrol implements Listener {
 
 		if (process) {
 			// Acquire the area moving to and the area moving from.
-			final Area areaTo = io.github.alshain01.flags.System.getActive().getAreaAt(e.getTo());
+			final Area areaTo = System.getActive().getAreaAt(e.getTo());
 			final Area areaFrom = System.getActive().getAreaAt(playerPrevMove.location);
 
 			// If they are the same area, don't bother.
