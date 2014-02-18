@@ -37,13 +37,13 @@ enum FlagCommandType {
 	CHARGE('c', 3, 1, false, true, "Charge <flag|message> <flag> [price]"),
 	HELP ('h', 1, 2, false, null, "Help [group] [page]"),
 	INHERIT('i', 1, 1, false, null, "Inherit [true|false]");
-	
-	final char alias;
+
+    private final char alias;
 	final int requiredArgs;
 	final int optionalArgs; //-1 for infinite
 	final boolean requiresLocation;
 	final Boolean requiresFlag; // null if flag isn't even an optional arg.
-	final String help;
+    private final String help;
 	
 	//Note: requiredArgs INCLUDES the command action
 	FlagCommandType(char alias, int requiredArgs, int optionalArgs, boolean hasLocation, Boolean requiresFlag, String help) {
@@ -55,7 +55,7 @@ enum FlagCommandType {
 		this.requiresFlag = requiresFlag;
 	}
 	
-	protected static FlagCommandType get(String name) {
+	static FlagCommandType get(String name) {
 		for(FlagCommandType c : FlagCommandType.values()) {
 			if(name.toLowerCase().equals(c.toString().toLowerCase()) || name.toLowerCase().equals(String.valueOf(c.alias))) {
 				return c;
@@ -64,7 +64,7 @@ enum FlagCommandType {
 		return null;
 	}
 	
-	protected String getHelp() {
+	String getHelp() {
 		return "/flag " + this.help;
 	}
 }

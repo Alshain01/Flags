@@ -28,6 +28,7 @@ import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.permissions.Permissible;
 
 /**
  * Class for handling the registration of new flags
@@ -35,7 +36,7 @@ import org.bukkit.configuration.ConfigurationSection;
 public final class Registrar {
 	final Map<String, Flag> flagStore = new HashMap<String, Flag>();
 
-	protected Registrar() {
+	Registrar() {
 	}
 
 	/**
@@ -101,6 +102,86 @@ public final class Registrar {
 	public Collection<Flag> getFlags() {
 		return flagStore.values();
 	}
+
+    /**
+     * Gets a set of flags for the provided group
+     *
+     * @return A set of all the flags in the group.
+     */
+    public Set<Flag> getGroup(String group) {
+        final Set<Flag> flags = new HashSet<Flag>();
+
+        for (final Flag flag : flagStore.values()) {
+            if (group.equals(flag.getGroup())) {
+                flags.add(flag);
+            }
+        }
+        return flags;
+    }
+
+    /**
+     * Gets a set of flags not defined as player flags
+     *
+     * @return A set of flags that are not player flags
+     */
+    public Set<Flag> getStandardFlags() {
+        final Set<Flag> flags = new HashSet<Flag>();
+
+        for (final Flag flag : flagStore.values()) {
+            if (!flag.isPlayerFlag()) {
+                flags.add(flag);
+            }
+        }
+
+        return flags;
+    }
+
+    /**
+     * Gets a set of flags defined as player flags
+     *
+     * @return A set of flags that are player flags
+     */
+    public Set<Flag> getPlayerFlags() {
+        final Set<Flag> flags = new HashSet<Flag>();
+
+        for (final Flag flag : flagStore.values()) {
+            if (flag.isPlayerFlag()) {
+                flags.add(flag);
+            }
+        }
+
+        return flags;
+    }
+
+    /**
+     * Gets a set of flags for the provided permissible
+     *
+     * @return A set of all the flags the permissible may change
+     */
+    public Set<Flag> getPermittedFlags(Permissible permissible) {
+        final Set<Flag> flags = new HashSet<Flag>();
+        for(final Flag flag : flagStore.values()) {
+            if(permissible.hasPermission(flag.getPermission())) {
+                flags.add(flag);
+            }
+        }
+        return flags;
+    }
+
+    /**
+     * Gets a set of flags for the provided permissible
+     *
+     * @return A set of all the flags the permissible may bypass
+     */
+    public Set<Flag> getBypassedFlags(Permissible permissible) {
+        final Set<Flag> flags = new HashSet<Flag>();
+        for(final Flag flag : flagStore.values()) {
+            if(permissible.hasPermission(flag.getBypassPermission())) {
+                flags.add(flag);
+            }
+        }
+        return flags;
+    }
 
 	/**
 	 * Checks if a flag name has been registered.

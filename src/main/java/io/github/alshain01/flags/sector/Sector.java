@@ -4,6 +4,7 @@ import org.bukkit.World;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -11,7 +12,7 @@ import java.util.UUID;
 public class Sector implements ConfigurationSerializable, Comparable<Sector> {
     private final UUID id;
     private final UUID parent;
-    private SectorLocation greater, lesser;
+    private final SectorLocation greater, lesser;
     private int depth;
 
 
@@ -40,7 +41,7 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
         this.id = id;
         greater = new SectorLocation((String)sector.get("GreaterCorner"));
         lesser = new SectorLocation((String)sector.get("LesserCorner"));
-        parent = ((String)sector.get("Parent")).equals("null") ? null : UUID.fromString((String)sector.get("Parent"));
+        parent = String.valueOf(sector.get("Parent")).equals("null") ? null : UUID.fromString((String)sector.get("Parent"));
         depth = (Integer)sector.get("Depth");
     }
 
@@ -181,9 +182,7 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
     }
 
     @Override
-    public int compareTo(Sector s) {
-        if(s == null) { return 3; }
-
+    public int compareTo(@Nonnull Sector s) {
         if(this.getID().equals(s.getID())) {
             return 0;
         } else if (this.getParentID() != null && this.getParentID().equals(s.getID())) {

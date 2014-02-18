@@ -104,7 +104,7 @@ public class SQLDataStore implements DataStore {
     }
 
     @Override
-    public boolean reload() {
+    public void reload() {
         // Close the connection and reconnect.
         try {
             if(!(this.connection == null) && !this.connection.isClosed()) {
@@ -112,10 +112,10 @@ public class SQLDataStore implements DataStore {
             }
         } catch (SQLException e) {
             SqlError(e.getMessage());
-            return false;
+            return;
         }
 
-        return connect(url, user, password);
+        connect(url, user, password);
     }
 
     @Override

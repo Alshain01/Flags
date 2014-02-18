@@ -26,13 +26,20 @@ package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.economy.EPurchaseType;
 
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+
+import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * Represents a flag registered with the plug-in.
  */
-public final class Flag {
+public final class Flag implements ConfigurationSerializable, Comparable<Flag> {
 	private final boolean def;
 	private final String name;
 	private final String description;
@@ -60,7 +67,7 @@ public final class Flag {
 	 * @param world
 	 *            The default world message for the flag.
 	 */
-	protected Flag(String name, String description, boolean def, String plugin,
+	Flag(String name, String description, boolean def, String plugin,
             boolean player, String area, String world) {
 		this.name = name;
 		this.description = description;
@@ -70,15 +77,16 @@ public final class Flag {
 		this.world = world;
 		this.player = player;
 	}
-/*
-    protected Flag(String name, Map<String, Object> flag) {
+
+    @SuppressWarnings("unused") // Future use
+    Flag(String name, Map<String, Object> flag) {
         this.name = name;
         description = (String)flag.get("Description");
         plugin = (String)flag.get("Group");
         world = (String)flag.get("WorldMessage");
         area = (String)flag.get("AreaMessage");
         def = (Boolean)flag.get("Default");
-        player = (Boolean)flag.get("PlayerFlag");
+        player = (Boolean)flag.get("Player");
     }
 
     @Override
@@ -93,11 +101,11 @@ public final class Flag {
 
         // Boolean
         flag.put("Default", def);
-        flag.put("PlayerFlag", player);
+        flag.put("Player", player);
 
         return flag;
     }
-*/
+
 	/**
 	 * Gets the bypass permission string.
 	 * 
@@ -167,13 +175,10 @@ public final class Flag {
 	/**
 	 * Gets the flag permission string.
 	 * 
-	 * @return The permission string (flags.flag.FlagType)
+	 * @return The permission
 	 */
 	public Permission getPermission() {
-		final Permission perm = new Permission("flags.flag." + name,
-				"Grants ability to use the flag " + name, PermissionDefault.FALSE);
-		perm.addParent("flags.flag", true);
-		return perm;
+		return Bukkit.getPluginManager().getPermission("flags.flag." + name);
 	}
 
 	/**
@@ -218,4 +223,9 @@ public final class Flag {
 		return "N=" + name + ",V=" + def + ",P=" + player + ",G=" + plugin
 				+ ",D=" + description + ",A=" + area + ",W=" + world;
 	}
+
+    @Override
+    public int compareTo(@Nonnull Flag flag) {
+        return this.name.compareTo(flag.getName());
+    }
 }

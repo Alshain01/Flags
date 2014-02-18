@@ -27,8 +27,9 @@ package io.github.alshain01.flags;
 import io.github.alshain01.flags.commands.BundleCommand;
 import io.github.alshain01.flags.commands.FlagCommand;
 import io.github.alshain01.flags.commands.SectorCommand;
-import io.github.alshain01.flags.sector.Sector;
+
 import io.github.alshain01.flags.sector.SectorListener;
+import io.github.alshain01.flags.sector.Sector;
 import io.github.alshain01.flags.sector.SectorManager;
 import io.github.alshain01.flags.update.UpdateListener;
 import io.github.alshain01.flags.update.UpdateScheduler;
@@ -350,7 +351,7 @@ public class Flags extends JavaPlugin {
 				logger.info("No plugins have registered for Flags' Border Patrol listener. Unregistering PlayerMoveEvent.");
 			}
 
-            if (mcStats && Flags.checkAPI("1.3.2")) {
+            if (mcStats && !debugOn && Flags.checkAPI("1.3.2")) {
                 MetricsManager.StartMetrics(plugin);
             }
 		}

@@ -68,13 +68,13 @@ final class BorderPatrol implements Listener {
 		}
 	}
 
-	protected BorderPatrol(int eDivisor, int tDivisor) {
+	BorderPatrol(int eDivisor, int tDivisor) {
 		eventsDivisor = eDivisor;
 		timeDivisor = tDivisor;
 	}
 	
-	private int eventsDivisor;
-	private int timeDivisor;
+	private final int eventsDivisor;
+	private final int timeDivisor;
 	private final ConcurrentHashMap<String, PreviousMove> moveStore =
 			new ConcurrentHashMap<String, PreviousMove>();
 	private int eventCalls = 0;
@@ -125,7 +125,7 @@ final class BorderPatrol implements Listener {
 
 		if (process) {
 			// Acquire the area moving to and the area moving from.
-			final Area areaTo = System.getActive().getAreaAt(e.getTo());
+			final Area areaTo = io.github.alshain01.flags.System.getActive().getAreaAt(e.getTo());
 			final Area areaFrom = System.getActive().getAreaAt(playerPrevMove.location);
 
 			// If they are the same area, don't bother.

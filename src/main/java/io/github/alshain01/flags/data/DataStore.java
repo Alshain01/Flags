@@ -35,7 +35,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public interface DataStore {
 	public boolean create(JavaPlugin plugin);
 
-    public boolean reload();
+    public void reload();
 
     public DBVersion readVersion();
 

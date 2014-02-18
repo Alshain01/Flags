@@ -9,35 +9,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 
 public class SectorCommand implements CommandExecutor {
-    private enum SectorCommandType {
-        DELETE('d'), DELETEALL('a');
-
-        final char alias;
-
-        SectorCommandType(char alias) {
-            this.alias = alias;
-        }
-
-        public static SectorCommandType get(String name) {
-            for(SectorCommandType t : SectorCommandType.values()) {
-                if(name.toLowerCase().equals(t.toString().toLowerCase()) || name.toLowerCase().equals(String.valueOf(t.alias))) {
-                    return t;
-                }
-            }
-            return null;
-        }
-    }
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        //if(!command.toString().equalsIgnoreCase("sector")) { return false; }
-
         if(!(sender instanceof Player)) {
             sender.sendMessage(Message.NoConsoleError.get());
             return true;
         }
 
-        if(args.length < 1) {
+         if(args.length < 1) {
             sender.sendMessage(getUsage(sender));
             return true;
         }
@@ -48,24 +27,22 @@ public class SectorCommand implements CommandExecutor {
             return true;
         }
 
+        if(!cType.hasPermission(sender)) {
+            sender.sendMessage(Message.FlagPermError.get().replaceAll("\\{Type\\}", Message.Command.get()));
+            return true;
+        }
+
         switch(cType) {
             case DELETE:
-                if(!sender.hasPermission("flags.sector.delete")) {
-                    sender.sendMessage(Message.FlagPermError.get().replaceAll("\\{Type\\}", Message.Command.get()));
-                    return true;
-                }
-
                 sender.sendMessage(Flags.getSectorManager().delete(((Player)sender).getLocation())
                     ? Message.DeleteSector.get()
                     : Message.NoSectorError.get());
-
                 return true;
+            case DELETETOPLEVEL:
+                sender.sendMessage(Flags.getSectorManager().deleteTopLevel(((Player)sender).getLocation())
+                        ? Message.DeleteSector.get()
+                        : Message.NoSectorError.get());
             case DELETEALL:
-                if(!sender.hasPermission("flags.sector.deleteall")) {
-                    sender.sendMessage(Message.FlagPermError.get().replaceAll("\\{Type\\}", Message.Command.get()));
-                    return true;
-                }
-
                 Flags.getSectorManager().clear();
                 sender.sendMessage(Message.DeleteAllSectors.get());
                 return true;
@@ -75,21 +52,16 @@ public class SectorCommand implements CommandExecutor {
     }
 
     private String getUsage(Permissible player) {
-        StringBuilder permCommands = new StringBuilder();
+        StringBuilder helpText = new StringBuilder("/sector <");
         boolean first = true;
 
-        if(player.hasPermission("flags.sector.delete")) {
-            permCommands.append("delete");
-            first = false;
+        for(SectorCommandType c : SectorCommandType.values()) {
+            if(c.hasPermission(player)) {
+                if(!first) { helpText.append(" | "); }
+                helpText.append(c.toString().toLowerCase());
+                first = false;
+            }
         }
-
-        if (!first) {
-            permCommands.append(" | ");
-        }
-
-        if (player.hasPermission("flags.sector.deleteall")) {
-            permCommands.append("deleteall");
-        }
-        return "/sector <" + permCommands.toString() + ">";
+        return helpText.append(">").toString();
     }
 }

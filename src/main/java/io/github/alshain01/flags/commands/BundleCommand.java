@@ -130,7 +130,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         return usage.toString();
     }
 
-    protected static void get(Player player, CommandLocation location, String bundleName) {
+    static void get(Player player, CommandLocation location, String bundleName) {
         Area area = getArea(player, location);
         Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName);
 
@@ -147,7 +147,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         }
     }
 
-    protected static void set(Player player, CommandLocation location, String bundleName, Boolean value) {
+    static void set(Player player, CommandLocation location, String bundleName, Boolean value) {
         boolean success = true;
         Area area = getArea(player, location);
         Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName);
@@ -163,12 +163,12 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.SetBundle.get() : Message.SetMultipleFlagsError.get())
-                .replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
+                .replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
                 .replaceAll("\\{Bundle\\}", bundleName)
                 .replaceAll("\\{Value\\}", getFormattedValue(value).toLowerCase()));
     }
 
-    protected static void remove(Player player, CommandLocation location, String bundleName) {
+    static void remove(Player player, CommandLocation location, String bundleName) {
         boolean success = true;
         Area area = getArea(player, location);
         Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName);
@@ -184,19 +184,19 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.RemoveBundle.get() : Message.RemoveAllFlags.get())
-                .replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
+                .replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
                 .replaceAll("\\{Bundle\\}", bundleName));
     }
 
-    protected static boolean trust(Player player, CommandLocation location, String bundleName, Set<String> playerList) {
-        if(playerList.size() == 0) { return false; }
+    static void trust(Player player, CommandLocation location, String bundleName, Set<String> playerList) {
+        if(playerList.size() == 0) { return; }
 
         Area area = getArea(player, location);
         if(!Bundle.isBundle(bundleName)
                 || !Validate.isArea(player, area)
                 || !Validate.isBundlePermitted(player, bundleName)
                 || !Validate.isPermitted(player, area))
-        { return true; }
+        { return; }
 
         boolean success = true;
 
@@ -209,12 +209,12 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.SetTrust.get() : Message.SetTrustError.get())
-                .replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
+                .replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
                 .replaceAll("\\{Flag\\}", bundleName));
-        return true;
+        return;
     }
 
-    protected static void distrust(Player player, CommandLocation location, String bundleName, Set<String> playerList) {
+    static void distrust(Player player, CommandLocation location, String bundleName, Set<String> playerList) {
         boolean success = true;
         Area area = getArea(player, location);
 
@@ -237,11 +237,11 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.RemoveTrust.get() : Message.RemoveTrustError.get())
-                .replaceAll("\\{AreaType\\}", area.getAreaType().toLowerCase())
+                .replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
                 .replaceAll("\\{Flag\\}", bundleName));
     }
 
-    protected static void add(CommandSender sender, String bundleName, Set<String> flags) {
+    static void add(CommandSender sender, String bundleName, Set<String> flags) {
         if(sender instanceof Player && !Validate.canEditBundle(sender)){ return; }
 
         Flag flag;
@@ -270,7 +270,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
                 .replaceAll("\\{Bundle\\}", bundleName));
     }
 
-    protected static void delete(CommandSender sender, String bundleName, Set<String> flags) {
+    static void delete(CommandSender sender, String bundleName, Set<String> flags) {
         if(sender instanceof Player && !Validate.canEditBundle(sender)){
             return; }
 
@@ -291,7 +291,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
                 .replaceAll("\\{Bundle\\}", bundleName));
     }
 
-    protected static void erase(CommandSender sender, String bundleName) {
+    static void erase(CommandSender sender, String bundleName) {
         if(sender instanceof Player && !Validate.canEditBundle(sender)){ return; }
 
         Set<String> bundles = Flags.getDataStore().readBundles();
@@ -307,7 +307,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
                 .replaceAll("\\{Bundle\\}", bundleName));
     }
 
-    protected static void help (CommandSender sender, int page) {
+    static void help (CommandSender sender, int page) {
         Set<String> bundles = Flags.getDataStore().readBundles();
         if (bundles == null || bundles.size() == 0) {
             sender.sendMessage(Message.NoFlagFound.get()

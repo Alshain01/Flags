@@ -109,7 +109,7 @@ final class Validate {
 			if(p instanceof CommandSender) {
 				((CommandSender)p).sendMessage(((area instanceof World || area instanceof Default) 
 						? Message.WorldPermError.get() : Message.AreaPermError.get())
-							.replaceAll("\\{AreaType\\}", area.getAreaType())
+							.replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType())
 							.replaceAll("\\{OwnerName\\}", area.getOwners().toArray()[0].toString())
 							.replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
 			}
@@ -142,7 +142,7 @@ final class Validate {
 			if(p instanceof CommandSender) {
 				((CommandSender)p).sendMessage(((area instanceof World || area instanceof Default)
 						? Message.WorldPermError.get() : Message.AreaPermError.get())
-							.replaceAll("\\{AreaType\\}", area.getAreaType())
+							.replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType())
 							.replaceAll("\\{OwnerName\\}", area.getOwners().toArray()[0].toString())
 							.replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
 			}
