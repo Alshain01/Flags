@@ -29,6 +29,8 @@ import io.github.alshain01.flags.area.Subdivision;
 import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
@@ -75,8 +77,7 @@ final class BorderPatrol implements Listener {
 	
 	private final int eventsDivisor;
 	private final int timeDivisor;
-	private final ConcurrentHashMap<String, PreviousMove> moveStore =
-			new ConcurrentHashMap<String, PreviousMove>();
+	private final Map<String, PreviousMove> moveStore = new HashMap<String, PreviousMove>();
 	private int eventCalls = 0;
 
 	/*
