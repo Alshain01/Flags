@@ -80,14 +80,11 @@ final class BorderPatrol implements Listener {
 	private int eventCalls = 0;
 
 	/*
-	 * Remove any garbage entries that may have been left behind Probably won't
-	 * happen, but just in case.
+	 * Initialize for a new player
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	private void onPlayerJoin(PlayerJoinEvent event) {
-		if (moveStore.containsKey(event.getPlayer().getName())) {
-			moveStore.remove(event.getPlayer().getName());
-		}
+        moveStore.put(event.getPlayer().getName(), new PreviousMove(event.getPlayer()));
 	}
 
 	/*
@@ -97,7 +94,7 @@ final class BorderPatrol implements Listener {
 	private void onPlayerQuit(PlayerQuitEvent event) {
 		if (moveStore.containsKey(event.getPlayer().getName())) {
 			moveStore.remove(event.getPlayer().getName());
-		}
+        }
 	}
 
 	/*
