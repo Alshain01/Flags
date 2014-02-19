@@ -178,7 +178,10 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag> {
 	 * @return The permission
 	 */
 	public Permission getPermission() {
-		return Bukkit.getPluginManager().getPermission("flags.flag." + name);
+        final Permission perm = new Permission("flags.flag." + name,
+                "Grants ability to toggle the flag " + name,	PermissionDefault.OP);
+        perm.addParent("flags.flag", true);
+        return perm;
 	}
 
 	/**

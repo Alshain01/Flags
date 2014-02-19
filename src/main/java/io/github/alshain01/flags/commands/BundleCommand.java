@@ -132,7 +132,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
 
     static void get(Player player, CommandLocation location, String bundleName) {
         Area area = getArea(player, location);
-        Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName);
+        Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName.toLowerCase());
 
         if(!Validate.isArea(player, area)
                 || !Validate.isBundle(player, bundle, bundleName)
