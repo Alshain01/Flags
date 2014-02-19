@@ -42,7 +42,7 @@ public final class Bundle {
 	 * @return A list containing the bundle. Null if it doesn't exist.
 	 */
 	public static Set<Flag> getBundle(String bundle) {
-		return Flags.getDataStore().readBundle(bundle);
+		return Flags.getDataStore().readBundle(bundle.toLowerCase());
 	}
 
 	/**

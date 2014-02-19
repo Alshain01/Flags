@@ -132,7 +132,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
 
     static void get(Player player, CommandLocation location, String bundleName) {
         Area area = getArea(player, location);
-        Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName.toLowerCase());
+        Set<Flag> bundle = Bundle.getBundle(bundleName);
 
         if(!Validate.isArea(player, area)
                 || !Validate.isBundle(player, bundle, bundleName)
@@ -150,7 +150,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
     static void set(Player player, CommandLocation location, String bundleName, Boolean value) {
         boolean success = true;
         Area area = getArea(player, location);
-        Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName);
+        Set<Flag> bundle = Bundle.getBundle(bundleName);
 
         if(!Validate.isArea(player, area)
                 || !Validate.isBundle(player, bundle, bundleName)
@@ -171,7 +171,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
     static void remove(Player player, CommandLocation location, String bundleName) {
         boolean success = true;
         Area area = getArea(player, location);
-        Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName);
+        Set<Flag> bundle = Bundle.getBundle(bundleName);
 
         if(!Validate.isArea(player, area)
                 || !Validate.isBundle(player, bundle, bundleName)
@@ -245,7 +245,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         if(sender instanceof Player && !Validate.canEditBundle(sender)){ return; }
 
         Flag flag;
-        Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName);
+        Set<Flag> bundle = Bundle.getBundle(bundleName);
 
         if(bundle == null) {
             Permission perm = new Permission("flags.bundle." + bundleName,
@@ -265,7 +265,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
             bundle.add(flag);
         }
 
-        Flags.getDataStore().writeBundle(bundleName, bundle);
+        Bundle.setBundle(bundleName, bundle);
         sender.sendMessage(Message.UpdateBundle.get()
                 .replaceAll("\\{Bundle\\}", bundleName));
     }
@@ -275,7 +275,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
             return; }
 
         boolean success = true;
-        Set<Flag> bundle = Flags.getDataStore().readBundle(bundleName.toLowerCase());
+        Set<Flag> bundle = Bundle.getBundle(bundleName.toLowerCase());
 
         if(!Validate.isBundle(sender, bundle, bundleName)) {
             return; }
@@ -285,7 +285,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
             if (flag == null || !bundle.remove(flag)) {
                 success = false; }
         }
-        Flags.getDataStore().writeBundle(bundleName, bundle);
+        Bundle.setBundle(bundleName, bundle);
 
         sender.sendMessage((success ? Message.UpdateBundle.get() : Message.RemoveAllFlagsError.get())
                 .replaceAll("\\{Bundle\\}", bundleName));
@@ -294,13 +294,13 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
     static void erase(CommandSender sender, String bundleName) {
         if(sender instanceof Player && !Validate.canEditBundle(sender)){ return; }
 
-        Set<String> bundles = Flags.getDataStore().readBundles();
+        Set<String> bundles = Bundle.getBundleNames();
         if (bundles == null || bundles.size() == 0 || !bundles.contains(bundleName)) {
             sender.sendMessage(Message.EraseBundleError.get());
             return;
         }
 
-        Flags.getDataStore().writeBundle(bundleName, null);
+      Bundle.setBundle(bundleName, null);
         Bukkit.getServer().getPluginManager().removePermission("flags.bundle." + bundleName);
 
         sender.sendMessage(Message.EraseBundle.get()
@@ -308,7 +308,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
     }
 
     static void help (CommandSender sender, int page) {
-        Set<String> bundles = Flags.getDataStore().readBundles();
+        Set<String> bundles = Bundle.getBundleNames();
         if (bundles == null || bundles.size() == 0) {
             sender.sendMessage(Message.NoFlagFound.get()
                     .replaceAll("\\{Type\\}", Message.Bundle.get()));
@@ -357,7 +357,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
 
         // Show the flags
         for (; loop < bundles.size(); loop++) {
-            Set<Flag> flags = Flags.getDataStore().readBundle(bundleArray[loop]);
+            Set<Flag> flags = Bundle.getBundle(bundleArray[loop]);
             if (flags == null) { continue; }
             StringBuilder description = new StringBuilder("");
             boolean first = true;
