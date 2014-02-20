@@ -26,7 +26,6 @@ package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.economy.EPurchaseType;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -39,7 +38,7 @@ import java.util.Map;
 /**
  * Represents a flag registered with the plug-in.
  */
-public final class Flag implements ConfigurationSerializable, Comparable<Flag> {
+public final class Flag implements ConfigurationSerializable, Comparable<Flag>, Cloneable {
 	private final boolean def;
 	private final String name;
 	private final String description;
@@ -104,6 +103,11 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag> {
         flag.put("Player", player);
 
         return flag;
+    }
+
+    @Override
+    public Flag clone() {
+        return new Flag(name, description, def, plugin, player, area, world);
     }
 
 	/**

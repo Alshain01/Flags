@@ -82,6 +82,7 @@ public class Flags extends JavaPlugin {
 	@Override
 	public void onEnable() {
         PluginManager pm = getServer().getPluginManager();
+        //
         //ConfigurationSerialization.registerClass(Flag.class);
 
         // Set up the plugin's configuration file
@@ -356,9 +357,7 @@ public class Flags extends JavaPlugin {
 				logger.info("No plugins have registered for Flags' Border Patrol listener. Unregistering PlayerMoveEvent.");
 			}
 
-            if (mcStats && !debugOn && Flags.checkAPI("1.3.2")) {
-                MetricsManager.StartMetrics(plugin);
-            }
+            MetricsManager.StartMetrics(plugin);
 		}
 	}
 
