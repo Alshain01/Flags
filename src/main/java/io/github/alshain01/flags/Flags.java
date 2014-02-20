@@ -241,14 +241,19 @@ public class Flags extends JavaPlugin {
      * @return true if the version provided is compatible
      */
     public static boolean checkAPI(String version) {
-        final String bukkitVersion = Bukkit.getServer().getBukkitVersion();
-        final float apiVersion = Float.valueOf(bukkitVersion.substring(0, 3));
-        final float CompareVersion = Float.valueOf(version.substring(0, 3));
-        final int apiBuild = Integer.valueOf(bukkitVersion.substring(4, 5));
-        final int CompareBuild = Integer.valueOf(version.substring(4, 5));
+        try {
+            final String bukkitVersion = Bukkit.getServer().getBukkitVersion();
+            final float apiVersion = Float.valueOf(bukkitVersion.substring(0, 3));
+            final float CompareVersion = Float.valueOf(version.substring(0, 3));
+            final int apiBuild = Integer.valueOf(bukkitVersion.substring(4, 5));
+            final int CompareBuild = Integer.valueOf(version.substring(4, 5));
 
-        return (apiVersion > CompareVersion
-                || apiVersion == CompareVersion	&& apiBuild >= CompareBuild);
+            return (apiVersion > CompareVersion
+                    || apiVersion == CompareVersion	&& apiBuild >= CompareBuild);
+        } catch (NumberFormatException ex) {
+            warn("The API version could not be determined. Some compatible flags may be disabled.");
+            return false;
+        }
     }
 
     /**
