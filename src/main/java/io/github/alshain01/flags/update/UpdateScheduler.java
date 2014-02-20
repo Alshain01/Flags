@@ -31,7 +31,6 @@ public class UpdateScheduler extends BukkitRunnable{
         this.updateFolder = plugin.getServer().getUpdateFolder();
         this.authors = plugin.getDescription().getAuthors();
         this.logger = plugin.getLogger();
-        new UpdateNotifier().runTaskTimer(plugin, 54000, 1728000);
     }
 
     protected UpdateResult getResult() {
@@ -42,19 +41,12 @@ public class UpdateScheduler extends BukkitRunnable{
     public void run() {
         final int PLUGIN_ID = 65024;
         updater = new Updater(authors, dataFolder, updateFolder, version, logger, PLUGIN_ID, file, type, key, true);
-    }
 
-    private class UpdateNotifier extends BukkitRunnable {
-        @Override
-        public void run() {
-            if (updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
-                Bukkit.getServer().getConsoleSender().sendMessage("[Flags] " + ChatColor.DARK_PURPLE
-                        + "The version of Flags that this server is running is out of date. "
-                        + "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
-            } else if (updater.getResult() == UpdateResult.SUCCESS) {
-                Bukkit.getServer().getConsoleSender().sendMessage("[Flags] " + ChatColor.DARK_PURPLE
-                        + "An update to Flags has been downloaded and will be installed when the server is reloaded.");
-            }
+        if (updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
+            logger.info("The version of Flags that this server is running is out of date. "
+                    + "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
+        } else if (updater.getResult() == UpdateResult.SUCCESS) {
+            logger.info("An update to Flags has been downloaded and will be installed when the server is reloaded.");
         }
     }
 }
