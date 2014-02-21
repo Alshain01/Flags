@@ -509,7 +509,7 @@ public abstract class Area implements Comparable<Area> {
                     .get()
                     .replaceAll("\\{PurchaseType\\}",
                             product.getLocal().toLowerCase())
-                    .replaceAll("\\{Price\\}", Flags.getEconomy().format(price))
+                    .replace("{Price}", Flags.getEconomy().format(price))
                     .replaceAll("\\{Flag\\}", flag.getName()));
             return true;
         }
@@ -528,8 +528,7 @@ public abstract class Area implements Comparable<Area> {
                 : Flags.getEconomy().depositPlayer(player.getName(), price); // Deposit
 
         if (r.transactionSuccess()) {
-            player.sendMessage(transaction.getMessage().replaceAll(
-                    "\\{Price\\}", Flags.getEconomy().format(price)));
+            player.sendMessage(transaction.getMessage().replace("{Price}", Flags.getEconomy().format(price)));
             return true;
         }
 
