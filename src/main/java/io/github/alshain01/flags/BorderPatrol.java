@@ -31,8 +31,8 @@ import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
+import io.github.alshain01.flags.events.PlayerChangedUniqueAreaEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -132,12 +132,22 @@ final class BorderPatrol implements Listener {
                 //If there is a subdivsion and it is inheriting, don't call the event.
                 if((areaFrom.compareTo(areaTo) == -1 && ((Subdivision)areaFrom).isInherited()) //AreaFrom is a subdivision of AreaTo and is inheriting
                         || (areaFrom.compareTo(areaTo) == 1 && ((Subdivision)areaTo).isInherited())) { //AreaTo is a subdivision of AreaFrom and is inheriting
+
+                    // Call the inherited event
+                    final PlayerChangedAreaEvent event = new PlayerChangedAreaEvent(e.getPlayer(), areaTo, areaFrom);
+                    Bukkit.getServer().getPluginManager().callEvent(event);
+
+                    if (event.isCancelled()) {
+                        e.getPlayer().teleport(playerPrevMove.location,	TeleportCause.PLUGIN);
+                        playerPrevMove.update();
+                        return;
+                    }
                     playerPrevMove.update(e.getPlayer().getLocation());
                     return;
                 }
-				// Call the event
-				final PlayerChangedAreaEvent event =
-						new PlayerChangedAreaEvent(e.getPlayer(), areaTo, areaFrom);
+
+				// Call the non-inherited event
+				final PlayerChangedUniqueAreaEvent event = new PlayerChangedUniqueAreaEvent(e.getPlayer(), areaTo, areaFrom);
 				Bukkit.getServer().getPluginManager().callEvent(event);
 
 				if (event.isCancelled()) {
