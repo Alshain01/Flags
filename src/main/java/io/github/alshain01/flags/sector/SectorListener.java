@@ -31,7 +31,7 @@ public class SectorListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     private void onPlayerInteractEvent(PlayerInteractEvent e) {
         Player player = e.getPlayer();
-        if(e.getItem().getType() != tool || !player.hasPermission("flags.sector.create")) { return; }
+        if(e.getItem() == null || e.getItem().getType() != tool || !player.hasPermission("flags.sector.create")) { return; }
         Location corner1 = e.getClickedBlock().getLocation();
 
         if(e.getAction() == Action.LEFT_CLICK_BLOCK) {
