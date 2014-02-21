@@ -132,10 +132,11 @@ final class BorderPatrol implements Listener {
                 //If there is a subdivsion and it is inheriting, don't call the event.
                 if((areaFrom.compareTo(areaTo) == -1 && ((Subdivision)areaFrom).isInherited()) //AreaFrom is a subdivision of AreaTo and is inheriting
                         || (areaFrom.compareTo(areaTo) == 1 && ((Subdivision)areaTo).isInherited())) { //AreaTo is a subdivision of AreaFrom and is inheriting
+                    playerPrevMove.update(e.getPlayer().getLocation());
                     return;
                 }
 				// Call the event
-				final PlayerChangedAreaEvent event = 
+				final PlayerChangedAreaEvent event =
 						new PlayerChangedAreaEvent(e.getPlayer(), areaTo, areaFrom);
 				Bukkit.getServer().getPluginManager().callEvent(event);
 
