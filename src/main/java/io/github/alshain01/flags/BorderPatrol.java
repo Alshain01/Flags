@@ -129,26 +129,16 @@ final class BorderPatrol implements Listener {
 
 			// If they are the same area, don't bother.
 			if (areaFrom.compareTo(areaTo) != 0) {
-                //If there is a subdivsion and it is inheriting, don't call the event.
+                PlayerChangedAreaEvent event;
                 if((areaFrom.compareTo(areaTo) == -1 && ((Subdivision)areaFrom).isInherited()) //AreaFrom is a subdivision of AreaTo and is inheriting
                         || (areaFrom.compareTo(areaTo) == 1 && ((Subdivision)areaTo).isInherited())) { //AreaTo is a subdivision of AreaFrom and is inheriting
-
-                    // Call the inherited event
-                    final PlayerChangedAreaEvent event = new PlayerChangedAreaEvent(e.getPlayer(), areaTo, areaFrom);
-                    Bukkit.getServer().getPluginManager().callEvent(event);
-
-                    if (event.isCancelled()) {
-                        e.getPlayer().teleport(playerPrevMove.location,	TeleportCause.PLUGIN);
-                        playerPrevMove.update();
-                        return;
-                    }
-                    playerPrevMove.update(e.getPlayer().getLocation());
-                    return;
+                    //If there is a subdivsion and it is inheriting, call the parent event only.
+                    event = new PlayerChangedAreaEvent(e.getPlayer(), areaTo, areaFrom);
+                } else {
+				    // If it's not an inheriting subdivision, call the subclass event and the parent event
+				    event = new PlayerChangedUniqueAreaEvent(e.getPlayer(), areaTo, areaFrom);
                 }
-
-				// Call the non-inherited event
-				final PlayerChangedUniqueAreaEvent event = new PlayerChangedUniqueAreaEvent(e.getPlayer(), areaTo, areaFrom);
-				Bukkit.getServer().getPluginManager().callEvent(event);
+                Bukkit.getServer().getPluginManager().callEvent(event);
 
 				if (event.isCancelled()) {
 					e.getPlayer().teleport(playerPrevMove.location,	TeleportCause.PLUGIN);
