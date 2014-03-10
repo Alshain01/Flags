@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -90,10 +92,13 @@ public class World extends Area {
     public Set<String> getOwners() { return new HashSet<String>(Arrays.asList("world")); }
 
     @Override
-    public org.bukkit.World getWorld() { return worldName != null ? Bukkit.getWorld(worldName) : null; }
+    public org.bukkit.World getWorld() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return Bukkit.getWorld(worldName);
+    }
 
     @Override
-    public boolean isArea() { return worldName != null; }
+    public boolean isArea() { return worldName != null && Bukkit.getWorld(worldName) != null; }
 
     @Override
     public boolean hasPermission(Permissible p) { return p.hasPermission("flags.area.flag.world"); }
@@ -103,6 +108,9 @@ public class World extends Area {
 
     @Override
     public Boolean getValue(Flag flag, boolean absolute) {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(flag);
+
         final Boolean value = super.getValue(flag, true);
         if (absolute) {
             return value;
@@ -112,6 +120,9 @@ public class World extends Area {
 
 	@Override
 	public String getMessage(Flag flag, boolean parse) {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(flag);
+
 		String message = Flags.getDataStore().readMessage(this, flag);
 
 		if (message == null) {
@@ -133,5 +144,8 @@ public class World extends Area {
      * @return The value of the comparison.
      */
     @Override
-    public int compareTo(@Nonnull Area a) { return a instanceof World && a.getSystemID().equals(worldName) ? 0 : 3; }
+    public int compareTo(@Nonnull Area a) {
+        Validate.notNull(a);
+        return a instanceof World && a.getSystemID().equals(worldName) ? 0 : 3;
+    }
 }

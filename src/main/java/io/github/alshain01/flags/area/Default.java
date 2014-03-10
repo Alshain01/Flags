@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -92,10 +94,13 @@ public class Default extends Area {
     public Set<String> getOwners() { return new HashSet<String>(Arrays.asList("default")); }
 
     @Override
-    public World getWorld() { return worldName != null ? Bukkit.getWorld(worldName) : null; }
+    public World getWorld() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return Bukkit.getWorld(worldName);
+    }
 
     @Override
-    public boolean isArea() { return worldName != null; }
+    public boolean isArea() { return worldName != null && Bukkit.getWorld(worldName) != null; }
 
     @Override
     public boolean hasBundlePermission(Permissible p) { return p.hasPermission("flags.area.bundle.default"); }
@@ -105,6 +110,9 @@ public class Default extends Area {
 
     @Override
     public Boolean getValue(Flag flag, boolean absolute) {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(flag);
+
         final Boolean value = super.getValue(flag, true);
         if (absolute) {
             return value;
@@ -123,6 +131,9 @@ public class Default extends Area {
 	 */
 	@Override
 	public String getMessage(Flag flag, boolean parse) {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(flag);
+
 		// We are ignore parse here. We just want to override it.
 		final String message = Flags.getDataStore().readMessage(this, flag);
 		return message != null ? message : flag.getDefaultAreaMessage();
@@ -134,5 +145,8 @@ public class Default extends Area {
      * @return The value of the comparison.
      */
     @Override
-    public int compareTo(@Nonnull Area a) { return a instanceof Default && a.getSystemID().equals(worldName) ? 0 : 3; }
+    public int compareTo(@Nonnull Area a) {
+        Validate.notNull(a);
+        return a instanceof Default && a.getSystemID().equals(worldName) ? 0 : 3;
+    }
 }

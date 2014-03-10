@@ -37,8 +37,10 @@ import io.github.alshain01.flags.events.TrustChangedEvent;
 
 import java.util.Set;
 
+import io.github.alshain01.flags.exceptions.InvalidAreaException;
 import net.milkbowl.vault.economy.EconomyResponse;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -112,14 +114,11 @@ public abstract class Area implements Comparable<Area> {
      *         defaults if not defined.
      */
     public Boolean getValue(Flag flag, boolean absolute) {
-        if (!isArea()) {
-            return null;
-        }
+        if (!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(flag);
 
         Boolean value = Flags.getDataStore().readFlag(this, flag);
-        if (absolute) {
-            return value;
-        }
+        if (absolute) { return value; }
 
         return value != null ? value : new Default(getWorld()).getValue(flag, false);
     }
@@ -137,9 +136,8 @@ public abstract class Area implements Comparable<Area> {
      * @return False if the event was canceled.
      */
     public final boolean setValue(Flag flag, Boolean value, CommandSender sender) {
-        if (!isArea()) {
-            return false;
-        }
+        if (!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(flag);
 
         // Check to see if this can be paid for
         ETransactionType transaction = null;
@@ -219,6 +217,8 @@ public abstract class Area implements Comparable<Area> {
      * @return The message associated with the flag.
      */
     public final String getMessage(Flag flag, String playerName) {
+        Validate.notNull(playerName);
+
         return getMessage(flag, true)
                 .replaceAll("\\{Player\\}", playerName);
     }
@@ -234,9 +234,9 @@ public abstract class Area implements Comparable<Area> {
 	 * @return The message associated with the flag.
 	 */
 	public String getMessage(Flag flag, boolean parse) {
-		if (!isArea()) {
-			return null;
-		}
+		if (!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(flag);
+
 		String message = Flags.getDataStore().readMessage(this, flag);
 
 		if (message == null) {
@@ -265,9 +265,8 @@ public abstract class Area implements Comparable<Area> {
      * @return True if successful
      */
     public final boolean setMessage(Flag flag, String message, CommandSender sender) {
-        if (!isArea()) {
-            return false;
-        }
+        if (!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(flag);
 
         ETransactionType transaction = null;
 
@@ -331,7 +330,8 @@ public abstract class Area implements Comparable<Area> {
 	 * @return The list of trustees
 	 */
 	public final Set<String> getTrustList(Flag flag) {
-		if (!isArea()) { return null; }
+        if (!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(flag);
 
 		return Flags.getDataStore().readTrust(this,	flag);
 	}
@@ -344,7 +344,8 @@ public abstract class Area implements Comparable<Area> {
      * @return The list of players
      */
     public final Set<String> getPlayerTrustList(Flag flag) {
-        if (!isArea()) { return null; }
+        if (!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(flag);
 
         return Flags.getDataStore().readPlayerTrust(this, flag);
     }
@@ -358,7 +359,9 @@ public abstract class Area implements Comparable<Area> {
      */
     @SuppressWarnings("unused") // API
     public final Set<String> getPermissionTrustList(Flag flag) {
-        if (!isArea()) { return null; }
+        if (!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(flag);
+
         return Flags.getDataStore().readPermissionTrust(this, flag);
     }
 
@@ -377,9 +380,9 @@ public abstract class Area implements Comparable<Area> {
      * @return True if successful.
      */
     public final boolean setTrust(Flag flag, String trustee, boolean trusted, CommandSender sender) {
-        if (!isArea()) {
-            return false;
-        }
+        if (!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(flag);
+        Validate.notNull(trustee);
 
         final Set<String> trustList = Flags.getDataStore().readTrust(this, flag);
 
@@ -428,7 +431,10 @@ public abstract class Area implements Comparable<Area> {
      */
     @SuppressWarnings("unused") // API
     public final boolean hasTrust(Flag flag, Player player) {
-        if (!isArea()) { return false; }
+        if (!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(flag);
+        Validate.notNull(player);
+
         if (getOwners().contains(player.getName().toLowerCase())) { return true; }
 
         Set<String> tl = getTrustList(flag);
@@ -455,9 +461,8 @@ public abstract class Area implements Comparable<Area> {
      * @return true if the player has permissions.
      */
     public boolean hasPermission(Permissible p) {
-        if (!isArea()) {
-            return false;
-        }
+        if (!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(p);
 
         if (p instanceof HumanEntity
                 && getOwners().contains(((HumanEntity) p).getName())) {
@@ -480,9 +485,8 @@ public abstract class Area implements Comparable<Area> {
 	 * @return true if the player has permissions.
 	 */
 	public boolean hasBundlePermission(Permissible p) {
-		if (!isArea()) {
-			return false;
-		}
+        if (!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(p);
 
 		if (p instanceof HumanEntity
 				&& getOwners().contains(((HumanEntity) p).getName())) {
