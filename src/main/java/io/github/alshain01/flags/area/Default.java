@@ -82,6 +82,7 @@ public class Default extends Area {
 
     @Override
     public String getSystemID() {
+        if(!isArea()) { throw new InvalidAreaException(); }
         return worldName;
     }
 
@@ -91,7 +92,10 @@ public class Default extends Area {
     }
 
     @Override
-    public Set<String> getOwners() { return new HashSet<String>(Arrays.asList("default")); }
+    public Set<String> getOwners() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return new HashSet<String>(Arrays.asList("default"));
+    }
 
     @Override
     public World getWorld() {
@@ -103,10 +107,16 @@ public class Default extends Area {
     public boolean isArea() { return worldName != null && Bukkit.getWorld(worldName) != null; }
 
     @Override
-    public boolean hasBundlePermission(Permissible p) { return p.hasPermission("flags.area.bundle.default"); }
+    public boolean hasBundlePermission(Permissible p) {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return p.hasPermission("flags.area.bundle.default");
+    }
 
     @Override
-    public boolean hasPermission(Permissible p) { return p.hasPermission("flags.area.flag.default"); }
+    public boolean hasPermission(Permissible p) {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return p.hasPermission("flags.area.flag.default");
+    }
 
     @Override
     public Boolean getValue(Flag flag, boolean absolute) {

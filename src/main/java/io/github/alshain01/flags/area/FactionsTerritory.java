@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -93,7 +95,10 @@ public class FactionsTerritory extends Area implements Removable {
     }
 
     @Override
-    public String getSystemID() { return isArea() ? getFaction().getId() : null; }
+    public String getSystemID() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return getFaction().getId();
+    }
 
     @Override
     public System getSystemType() {
@@ -101,16 +106,25 @@ public class FactionsTerritory extends Area implements Removable {
     }
 
 	@Override
-	public Set<String> getOwners() { return new HashSet<String>(Arrays.asList(getFaction().getLeader().getName())); }
+	public Set<String> getOwners() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return new HashSet<String>(Arrays.asList(getFaction().getLeader().getName()));
+    }
 
 	@Override
-	public World getWorld() { return Bukkit.getWorld(worldName); }
+	public World getWorld() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return Bukkit.getWorld(worldName);
+    }
 
     @Override
-    public void remove() { Flags.getDataStore().remove(this); }
+    public void remove() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        Flags.getDataStore().remove(this);
+    }
 
 	@Override
-	public boolean isArea() { return getWorld() != null && getFaction() != null; }
+	public boolean isArea() { return worldName != null && Bukkit.getWorld(worldName) != null && getFaction() != null; }
 
     /**
      * 0 if the the plots are the same, 3 if they are not.
@@ -119,6 +133,7 @@ public class FactionsTerritory extends Area implements Removable {
      */
     @Override
     public int compareTo(@Nonnull Area a) {
+        Validate.notNull(a);
         return a instanceof FactionsTerritory && a.getSystemID().equals(getSystemID()) ? 0 : 3;
     }
 }

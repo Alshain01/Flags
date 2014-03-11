@@ -17,6 +17,47 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class BundleCommand extends PluginCommand implements CommandExecutor {
+    private enum BundleCommandType {
+        SET('s', 4, 0, true, true, "Set <area|world|default> <bundle> <true|false>"),
+        GET('g', 3, 0, true, true, "Get <area|world|default> <bundle>"),
+        REMOVE('r', 3, 0, true, true, "Remove <area|world|default> <bundle>"),
+        TRUST('t', 4, -1, true, true, "Trust <area|world|default> <bundle> <player> [player]..."),
+        DISTRUST('d', 3, -1, true, true, "Distrust <area|world|default> <bundle> [player] [player]..."),
+        HELP('h', 1, 1, false, null, "Help [page]"),
+        ADD('a', 3, -1, false, true, "Add <bundle> <flag> [flag]..."),
+        CUT ('c', 3, -1, false, true, "Cut <bundle> <flag> [flag]..."),
+        ERASE ('e', 2, 0, false, true, "Erase <bundle>");
+
+        final char alias;
+        final int requiredArgs;
+        final int optionalArgs; //-1 for infinite
+        final boolean requiresLocation;
+        final Boolean requiresBundle; // null if bundle isn't even an optional arg.
+        final String help;
+
+        BundleCommandType(char alias, int requiredArgs, int optionalArgs, boolean hasLocation, Boolean requiresBundle, String help) {
+            this.alias = alias;
+            this.requiredArgs = requiredArgs;
+            this.optionalArgs = optionalArgs;
+            this.help = help;
+            this.requiresLocation = hasLocation;
+            this.requiresBundle = requiresBundle;
+        }
+
+        protected static BundleCommandType get(String name) {
+            for(BundleCommandType c : BundleCommandType.values()) {
+                if(name.toLowerCase().equals(c.toString().toLowerCase()) || name.toLowerCase().equals(String.valueOf(c.alias))) {
+                    return c;
+                }
+            }
+            return null;
+        }
+
+        protected String getHelp() {
+            return "/bundle " + this.help;
+        }
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         //if(!cmd.toString().equalsIgnoreCase("bundle")) { return false; }

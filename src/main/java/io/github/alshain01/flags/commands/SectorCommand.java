@@ -9,6 +9,29 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 
 public class SectorCommand implements CommandExecutor {
+    private enum SectorCommandType {
+        DELETE('d'), DELETEALL('a'), DELETETOPLEVEL('t');
+
+        final char alias;
+
+        SectorCommandType(char alias) {
+            this.alias = alias;
+        }
+
+        static SectorCommandType get(String name) {
+            for(SectorCommandType t : SectorCommandType.values()) {
+                if(name.toLowerCase().equals(t.toString().toLowerCase()) || name.toLowerCase().equals(String.valueOf(t.alias))) {
+                    return t;
+                }
+            }
+            return null;
+        }
+
+        boolean hasPermission(Permissible permissible) {
+            return permissible.hasPermission("flags.sector." + this.toString().toLowerCase());
+        }
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player)) {
