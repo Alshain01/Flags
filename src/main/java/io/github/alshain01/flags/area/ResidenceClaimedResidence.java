@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import io.github.alshain01.flags.exceptions.InvalidSubdivisionException;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -115,7 +116,8 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	@Override
 	public String getSystemSubID() {
         if (!isArea()) { throw new InvalidAreaException(); }
-		return residence.getParent() != null ? residence.getName().split("\\.")[1] : null;
+        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
+		return residence.getName().split("\\.")[1];
 	}
 
     @Override
@@ -127,30 +129,29 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
     @Override
     public boolean isParent(Area area) {
         if (!isArea()) { throw new InvalidAreaException(); }
-        return area instanceof ResidenceClaimedResidence && residence.getParent() != null &&
+        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
+        return area instanceof ResidenceClaimedResidence &&
                 residence.getParent().equals(((ResidenceClaimedResidence)area).getResidence());
     }
 
     @Override
     public Area getParent() {
         if (!isArea()) { throw new InvalidAreaException(); }
-        if(residence.getParent() == null) { return null; }
+        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
         return new ResidenceClaimedResidence(residence.getParent().getName());
     }
 
     @Override
 	public boolean isInherited() {
         if (!isArea()) { throw new InvalidAreaException(); }
-		return residence.getParent() != null && Flags.getDataStore().readInheritance(this);
+        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
+		return Flags.getDataStore().readInheritance(this);
 	}
 
     @Override
     public void setInherited(boolean value) {
         if (!isArea()) { throw new InvalidAreaException(); }
-        if (residence.getParent() == null) {
-            return;
-        }
-
+        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
         Flags.getDataStore().writeInheritance(this, value);
     }
 

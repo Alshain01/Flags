@@ -3,6 +3,7 @@ package io.github.alshain01.flags.area;
 import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import io.github.alshain01.flags.exceptions.InvalidSubdivisionException;
 import io.github.alshain01.flags.sector.Sector;
 
 import org.apache.commons.lang.Validate;
@@ -84,48 +85,51 @@ public class FlagsSector extends Area implements Subdivision, Removable {
 
     @Override
     public void remove() {
-        if(!isArea()) { throw new InvalidAreaException(); }
+        if (!isArea()) { throw new InvalidAreaException(); }
         Flags.getDataStore().remove(this);
     }
 
     @Override
     public String getSystemSubID() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return sector.getParentID() != null ? String.valueOf(sector.getID()) : null;
+        if (!isArea()) { throw new InvalidAreaException(); }
+        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
+        return String.valueOf(sector.getID());
     }
 
     @Override
     public boolean isSubdivision() {
-        if(!isArea()) { throw new InvalidAreaException(); }
+        if (!isArea()) { throw new InvalidAreaException(); }
         return sector.getParentID() != null;
     }
 
     @Override
     public boolean isParent(Area area) {
         Validate.notNull(area);
-        if(!area.isArea()) { throw new InvalidAreaException(); }
+        if (!area.isArea()) { throw new InvalidAreaException(); }
+        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
 
-        return area instanceof FlagsSector && isSubdivision()
-                && area.getSystemID().equals(String.valueOf(getSystemSubID()));
+        return area instanceof FlagsSector
+                && getSystemSubID().equals(String.valueOf(area.getSystemID()));
     }
 
     @Override
     public Area getParent() {
-        if(!isArea()) { throw new InvalidAreaException(); }
+        if (!isArea()) { throw new InvalidAreaException(); }
+        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
         return sector.getParentID() == null ? null : new FlagsSector(sector.getParentID());
     }
 
     @Override
     public boolean isInherited() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return isSubdivision() && Flags.getDataStore().readInheritance(this);
+        if (!isArea()) { throw new InvalidAreaException(); }
+        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
+        return Flags.getDataStore().readInheritance(this);
     }
 
     @Override
     public void setInherited(boolean value) {
         if(!isArea()) { throw new InvalidAreaException(); }
-        if(sector.getParentID() == null) { return; }
-
+        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
         Flags.getDataStore().writeInheritance(this, value);
     }
 

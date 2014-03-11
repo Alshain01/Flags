@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import io.github.alshain01.flags.exceptions.InvalidSubdivisionException;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
@@ -159,6 +160,7 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
 	@Override
 	public String getSystemSubID() {
         if (!isArea()) { throw new InvalidAreaException(); }
+        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
 		return field.isChild() ? String.valueOf(field.getId()) : null;
 	}
 
@@ -171,22 +173,24 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
     @Override
     public boolean isParent(Area area) {
         if (!isArea()) { throw new InvalidAreaException(); }
+        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
         Validate.notNull(area);
 
-        return area instanceof PreciousStonesField && field != null
-                && field.isParent() && field.getChildren().contains(((PreciousStonesField)area).getField());
+        return area instanceof PreciousStonesField && field.isParent()
+                && field.getChildren().contains(((PreciousStonesField)area).getField());
     }
 
     @Override
     public Area getParent() {
         if (!isArea()) { throw new InvalidAreaException(); }
-        if(!field.isChild()) { return null; }
+        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
         return new PreciousStonesField(field.getParent().getLocation(), true);
     }
 
 	@Override
 	public boolean isInherited() {
         if (!isArea()) { throw new InvalidAreaException(); }
+        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
 		return field.isChild() && Flags.getDataStore().readInheritance(this);
 	}
 
@@ -194,15 +198,15 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
 	@Override
 	public void setInherited(boolean value) {
         if (!isArea()) { throw new InvalidAreaException(); }
-		if (!field.isChild()) {
-			return;
-		}
-
-		Flags.getDataStore().writeInheritance(this, value);
+        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
+    	Flags.getDataStore().writeInheritance(this, value);
 	}
 
     @Override
-    public void remove() { Flags.getDataStore().remove(this); }
+    public void remove() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        Flags.getDataStore().remove(this);
+    }
 
     @Override
     public int compareTo(@Nonnull Area a) {

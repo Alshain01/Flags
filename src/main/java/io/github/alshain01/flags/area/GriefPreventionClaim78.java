@@ -26,6 +26,7 @@ package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import io.github.alshain01.flags.exceptions.InvalidSubdivisionException;
 import me.ryanhamshire.GriefPrevention.Claim;
 
 import org.apache.commons.lang.Validate;
@@ -81,42 +82,42 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
     @Override
     public String getSystemSubID() {
         if(!isArea()) { throw new InvalidAreaException(); }
+        if(!isSubdivision()) { throw new InvalidSubdivisionException(); }
         return claim.parent != null ? String.valueOf(claim.getSubClaimID()) : null;
     }
 
     @Override
     public boolean isSubdivision() {
         if(!isArea()) { throw new InvalidAreaException(); }
-        return claim.parent != null; }
+        return claim.parent != null;
+    }
 
     @Override
     public boolean isParent(Area area) {
         if(!isArea()) { throw new InvalidAreaException(); }
+        if(!isSubdivision()) { throw new InvalidSubdivisionException(); }
         Validate.notNull(area);
-        return area instanceof GriefPreventionClaim78 && claim.parent != null
-                && claim.parent.equals(((GriefPreventionClaim78)area).getClaim());
+        return area instanceof GriefPreventionClaim78 && claim.parent.equals(((GriefPreventionClaim78)area).getClaim());
     }
 
     @Override
     public Area getParent() {
         if(!isArea()) { throw new InvalidAreaException(); }
-        if(claim.parent == null) { return null; }
+        if(!isSubdivision()) { throw new InvalidSubdivisionException(); }
         return new GriefPreventionClaim78(claim.getID());
     }
 
     @Override
     public boolean isInherited() {
         if(!isArea()) { throw new InvalidAreaException(); }
-        return claim.parent != null && Flags.getDataStore().readInheritance(this);
+        if(!isSubdivision()) { throw new InvalidSubdivisionException(); }
+        return Flags.getDataStore().readInheritance(this);
     }
 
     @Override
     public void setInherited(boolean value) {
         if(!isArea()) { throw new InvalidAreaException(); }
-        if (claim.parent == null) {
-            return;
-        }
-
+        if(!isSubdivision()) { throw new InvalidSubdivisionException(); }
         Flags.getDataStore().writeInheritance(this, value);
     }
 
