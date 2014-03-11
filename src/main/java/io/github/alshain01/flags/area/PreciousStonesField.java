@@ -33,10 +33,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import io.github.alshain01.flags.exceptions.InvalidAreaException;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -129,56 +131,70 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
 	
 	@Override
 	public String getSystemID() {
-		if (isArea() && field.isChild()) {
+        if (!isArea()) { throw new InvalidAreaException(); }
+		if (field.isChild()) {
 			return String.valueOf(field.getParent().getId());
-		} else if (isArea()) {
-			return String.valueOf(field.getId());
-		} else {
-			return null;
 		}
+		return String.valueOf(field.getId());
 	}
 
     @Override
     public System getSystemType() { return System.PRECIOUSSTONES; }
 
     @Override
-    public Set<String> getOwners() { return new HashSet<String>(Arrays.asList(field.getOwner())); }
+    public Set<String> getOwners() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return new HashSet<String>(Arrays.asList(field.getOwner()));
+    }
 
 	@Override
-	public World getWorld() {return Bukkit.getWorld(field.getWorld()); }
+	public World getWorld() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return Bukkit.getWorld(field.getWorld());
+    }
 
 	@Override
 	public boolean isArea() { return field != null; }
 
 	@Override
 	public String getSystemSubID() {
-		return field != null && field.isChild() ? String.valueOf(field.getId()) : null;
+        if (!isArea()) { throw new InvalidAreaException(); }
+		return field.isChild() ? String.valueOf(field.getId()) : null;
 	}
 
     @Override
-    public boolean isSubdivision() { return field.isChild(); }
+    public boolean isSubdivision() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return field.isChild();
+    }
 
     @Override
     public boolean isParent(Area area) {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(area);
+
         return area instanceof PreciousStonesField && field != null
                 && field.isParent() && field.getChildren().contains(((PreciousStonesField)area).getField());
     }
 
     @Override
     public Area getParent() {
+        if (!isArea()) { throw new InvalidAreaException(); }
         if(!field.isChild()) { return null; }
         return new PreciousStonesField(field.getParent().getLocation(), true);
     }
 
 	@Override
 	public boolean isInherited() {
-		return field != null && field.isChild() && Flags.getDataStore().readInheritance(this);
+        if (!isArea()) { throw new InvalidAreaException(); }
+		return field.isChild() && Flags.getDataStore().readInheritance(this);
 	}
 
 
 	@Override
 	public void setInherited(boolean value) {
-		if (field == null || !field.isChild()) {
+        if (!isArea()) { throw new InvalidAreaException(); }
+		if (!field.isChild()) {
 			return;
 		}
 
@@ -190,6 +206,7 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
 
     @Override
     public int compareTo(@Nonnull Area a) {
+        Validate.notNull(a);
         if (!(a instanceof PreciousStonesField)) {
             return 3;
         }

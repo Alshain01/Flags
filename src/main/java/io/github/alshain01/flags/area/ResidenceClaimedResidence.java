@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -87,10 +89,8 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 
     @Override
     public String getSystemID() {
-        if(residence != null) {
-            return residence.getParent() != null ? residence.getParent().getName() : residence.getName();
-        }
-        return null;
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return residence.getParent() != null ? residence.getParent().getName() : residence.getName();
     }
 
     @Override
@@ -99,45 +99,55 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
     }
 
 	@Override
-	public Set<String> getOwners() { return new HashSet<String>(Arrays.asList(residence.getOwner())); }
+	public Set<String> getOwners() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return new HashSet<String>(Arrays.asList(residence.getOwner()));
+    }
 
     @Override
-    public org.bukkit.World getWorld() { return Bukkit.getServer().getWorld(residence.getWorld()); }
+    public org.bukkit.World getWorld() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return Bukkit.getServer().getWorld(residence.getWorld()); }
 
     @Override
     public boolean isArea() { return residence != null; }
 
 	@Override
 	public String getSystemSubID() {
-		return residence != null && residence.getParent() != null 
-				? residence.getName().split("\\.")[1] : null;
+        if (!isArea()) { throw new InvalidAreaException(); }
+		return residence.getParent() != null ? residence.getName().split("\\.")[1] : null;
 	}
 
     @Override
     public boolean isSubdivision() {
-        return residence != null && residence.getParent() != null;
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return residence.getParent() != null;
     }
 
     @Override
     public boolean isParent(Area area) {
+        if (!isArea()) { throw new InvalidAreaException(); }
         return area instanceof ResidenceClaimedResidence && residence.getParent() != null &&
                 residence.getParent().equals(((ResidenceClaimedResidence)area).getResidence());
     }
 
     @Override
     public Area getParent() {
+        if (!isArea()) { throw new InvalidAreaException(); }
         if(residence.getParent() == null) { return null; }
         return new ResidenceClaimedResidence(residence.getParent().getName());
     }
 
     @Override
 	public boolean isInherited() {
-		return residence != null && residence.getParent() != null && Flags.getDataStore().readInheritance(this);
+        if (!isArea()) { throw new InvalidAreaException(); }
+		return residence.getParent() != null && Flags.getDataStore().readInheritance(this);
 	}
 
     @Override
     public void setInherited(boolean value) {
-        if (residence == null || residence.getParent() == null) {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        if (residence.getParent() == null) {
             return;
         }
 
@@ -148,7 +158,10 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
 	 * Permanently removes the area from the data store USE CAUTION!
 	 */
 	@Override
-	public void remove() { Flags.getDataStore().remove(this); }
+	public void remove() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        Flags.getDataStore().remove(this);
+    }
 
     /**
      * 0 if the the claims are the same
@@ -160,6 +173,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
      */
     @Override
     public int compareTo(@Nonnull Area a) {
+        Validate.notNull(a);
         if (!(a instanceof ResidenceClaimedResidence)) {
             return 3;
         }

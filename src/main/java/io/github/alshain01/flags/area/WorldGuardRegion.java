@@ -29,6 +29,8 @@ import io.github.alshain01.flags.System;
 
 import java.util.Set;
 
+import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -44,7 +46,7 @@ import javax.annotation.Nonnull;
  */
 public class WorldGuardRegion extends Area implements Removable {
 	private final ProtectedRegion region;
-	private final String worldName;
+	private final World world;
 
     /**
      * Creates an instance of WorldGuardRegion based on a Bukkit Location
@@ -53,7 +55,7 @@ public class WorldGuardRegion extends Area implements Removable {
      *            The Bukkit location
      */
 	public WorldGuardRegion(Location location) {
-		worldName = location.getWorld().getName();
+		world = location.getWorld();
 		ProtectedRegion tempRegion = null;
 		final ApplicableRegionSet regionSet = WGBukkit.getRegionManager(location.getWorld()).getApplicableRegions(location);
 		if (regionSet != null) {
@@ -78,7 +80,7 @@ public class WorldGuardRegion extends Area implements Removable {
      *            The ID of the region.
      */
 	public WorldGuardRegion(World world, String regionID) {
-		this.worldName = world.getName();
+		this.world = world;
 		region = WGBukkit.getRegionManager(world).getRegionExact(regionID);
 	}
 	
@@ -97,11 +99,15 @@ public class WorldGuardRegion extends Area implements Removable {
      * @return The region object
      */
     public ProtectedRegion getRegion() {
+        if(!isArea()) { throw new InvalidAreaException(); }
         return region;
     }
 
 	@Override
-	public String getSystemID() { return !isArea() ? null : region.getId(); }
+	public String getSystemID() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return region.getId();
+    }
 
     @Override
     public System getSystemType() {
@@ -109,16 +115,25 @@ public class WorldGuardRegion extends Area implements Removable {
     }
 
     @Override
-    public Set<String> getOwners() { return getRegion().getOwners().getPlayers(); }
+    public Set<String> getOwners() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return region.getOwners().getPlayers();
+    }
 
 	@Override
-	public org.bukkit.World getWorld() { return Bukkit.getWorld(worldName);	}
+	public org.bukkit.World getWorld() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return world;
+    }
 
 	@Override
-	public boolean isArea() { return region != null && getWorld() != null; }
+	public boolean isArea() { return region != null && world != null; }
 
 	@Override
-	public void remove() { Flags.getDataStore().remove(this); }
+	public void remove() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        Flags.getDataStore().remove(this);
+    }
 
     /**
      * 0 if the the worlds are the same, 3 if they are not.
@@ -127,6 +142,7 @@ public class WorldGuardRegion extends Area implements Removable {
      */
     @Override
     public int compareTo(@Nonnull Area a) {
-        return a instanceof WorldGuardRegion && a.getSystemID().equals(getSystemID()) ? 0 : 3;
+        Validate.notNull(a);
+        return a instanceof WorldGuardRegion && getSystemID().equals(a.getSystemID()) ? 0 : 3;
     }
 }

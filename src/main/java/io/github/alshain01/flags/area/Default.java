@@ -44,7 +44,7 @@ import javax.annotation.Nonnull;
  * Class for creating areas to manage server defaults.
  */
 public class Default extends Area {
-	private final String worldName;
+	private final World world;
 
 	/**
 	 * Creates an instance of Default based on a Bukkit Location
@@ -63,7 +63,7 @@ public class Default extends Area {
 	 *            The Bukkit world
 	 */
 	public Default(World world) {
-		this.worldName = world.getName();
+		this.world = world;
 	}
 	
 	/**
@@ -73,17 +73,13 @@ public class Default extends Area {
 	 *            The Bukkit world
 	 */
 	public Default(String worldName) {
-		if(Bukkit.getWorld(worldName) != null) {
-			this.worldName = worldName;
-		} else {
-			this.worldName = null;
-		}
+        this.world = Bukkit.getWorld(worldName);
 	}
 
     @Override
     public String getSystemID() {
         if(!isArea()) { throw new InvalidAreaException(); }
-        return worldName;
+        return world.getName();
     }
 
     @Override
@@ -100,21 +96,23 @@ public class Default extends Area {
     @Override
     public World getWorld() {
         if(!isArea()) { throw new InvalidAreaException(); }
-        return Bukkit.getWorld(worldName);
+        return world;
     }
 
     @Override
-    public boolean isArea() { return worldName != null && Bukkit.getWorld(worldName) != null; }
+    public boolean isArea() { return world != null; }
 
     @Override
     public boolean hasBundlePermission(Permissible p) {
         if(!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(p);
         return p.hasPermission("flags.area.bundle.default");
     }
 
     @Override
     public boolean hasPermission(Permissible p) {
         if(!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(p);
         return p.hasPermission("flags.area.flag.default");
     }
 
@@ -124,9 +122,7 @@ public class Default extends Area {
         Validate.notNull(flag);
 
         final Boolean value = super.getValue(flag, true);
-        if (absolute) {
-            return value;
-        }
+        if (absolute) { return value; }
         return value != null ? value : flag.getDefault();
     }
 
@@ -157,6 +153,6 @@ public class Default extends Area {
     @Override
     public int compareTo(@Nonnull Area a) {
         Validate.notNull(a);
-        return a instanceof Default && a.getSystemID().equals(worldName) ? 0 : 3;
+        return a instanceof Default && getSystemID().equals(a.getSystemID()) ? 0 : 3;
     }
 }

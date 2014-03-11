@@ -182,12 +182,9 @@ public abstract class Area implements Comparable<Area> {
             }
         }
 
-        final FlagChangedEvent event = new FlagChangedEvent(this, flag, sender,
-                value);
+        final FlagChangedEvent event = new FlagChangedEvent(this, flag, sender, value);
         Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            return false;
-        }
+        if (event.isCancelled()) { return false; }
 
         // Delay making the transaction in case the event is cancelled.
         if (transaction != null) {
@@ -227,8 +224,7 @@ public abstract class Area implements Comparable<Area> {
     public final String getMessage(Flag flag, String playerName) {
         Validate.notNull(playerName);
 
-        return getMessage(flag, true)
-                .replaceAll("\\{Player\\}", playerName);
+        return getMessage(flag, true).replaceAll("\\{Player\\}", playerName);
     }
 
 	/**

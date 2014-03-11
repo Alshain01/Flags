@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -87,22 +89,33 @@ public class PlotMePlot extends Area implements Removable {
     }
 
     @Override
-    public String getSystemID() { return isArea() ? getPlot().id : null; }
+    public String getSystemID() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return getPlot().id; }
 
     @Override
     public System getSystemType() { return System.PLOTME; }
 
 	@Override
-	public Set<String> getOwners() { return new HashSet<String>(Arrays.asList(getPlot().owner)); }
+	public Set<String> getOwners() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return new HashSet<String>(Arrays.asList(getPlot().owner));
+    }
 
 	@Override
-	public World getWorld() { return Bukkit.getWorld(plot.world); }
+	public World getWorld() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return Bukkit.getWorld(plot.world);
+    }
 
 	@Override
 	public boolean isArea() { return plot != null; }
 
 	@Override
-	public void remove() { Flags.getDataStore().remove(this); }
+	public void remove() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        Flags.getDataStore().remove(this);
+    }
 
     /**
      * 0 if the the worlds are the same, 3 if they are not.
@@ -111,6 +124,7 @@ public class PlotMePlot extends Area implements Removable {
      */
     @Override
     public int compareTo(@Nonnull Area a) {
-        return a instanceof PlotMePlot && a.getSystemID().equals(getSystemID()) ? 0	: 3;
+        Validate.notNull(a);
+        return a instanceof PlotMePlot && getSystemID().equals(a.getSystemID()) ? 0	: 3;
     }
 }

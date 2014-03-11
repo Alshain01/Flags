@@ -49,7 +49,7 @@ import javax.annotation.Nonnull;
  */
 public class FactionsTerritory extends Area implements Removable {
 	private final Faction faction;
-	private final String worldName;
+	private final World world;
 
 	/**
 	 * Creates an instance of FactionsTerritory based on a Bukkit Location
@@ -59,7 +59,7 @@ public class FactionsTerritory extends Area implements Removable {
 	 */
 	public FactionsTerritory(Location location) {
 		faction = BoardColls.get().getFactionAt(PS.valueOf(location));
-		worldName = location.getWorld().getName();
+		world = location.getWorld();
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class FactionsTerritory extends Area implements Removable {
 	 */
 	public FactionsTerritory(World world, String factionID) {
 		faction = FactionColls.get().getForWorld(world.getName()).get(factionID);
-		this.worldName = world.getName();
+		this.world = world;
 	}
 
     /**
@@ -114,7 +114,7 @@ public class FactionsTerritory extends Area implements Removable {
 	@Override
 	public World getWorld() {
         if(!isArea()) { throw new InvalidAreaException(); }
-        return Bukkit.getWorld(worldName);
+        return world;
     }
 
     @Override
@@ -124,7 +124,7 @@ public class FactionsTerritory extends Area implements Removable {
     }
 
 	@Override
-	public boolean isArea() { return worldName != null && Bukkit.getWorld(worldName) != null && getFaction() != null; }
+	public boolean isArea() { return world != null && faction != null; }
 
     /**
      * 0 if the the plots are the same, 3 if they are not.
@@ -134,6 +134,6 @@ public class FactionsTerritory extends Area implements Removable {
     @Override
     public int compareTo(@Nonnull Area a) {
         Validate.notNull(a);
-        return a instanceof FactionsTerritory && a.getSystemID().equals(getSystemID()) ? 0 : 3;
+        return a instanceof FactionsTerritory && getSystemID().equals(a.getSystemID()) ? 0 : 3;
     }
 }

@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -93,7 +95,8 @@ public class InfinitePlotsPlot extends Area implements Removable {
 
     @Override
     public String getSystemID() {
-        return isArea() ? getPlot().getLocation().getX() + ";" + getPlot().getLocation().getZ() : null;
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return getPlot().getLocation().getX() + ";" + getPlot().getLocation().getZ();
     }
 
     @Override
@@ -102,16 +105,25 @@ public class InfinitePlotsPlot extends Area implements Removable {
     }
 
 	@Override
-	public Set<String> getOwners() { return new HashSet<String>(Arrays.asList(getPlot().getAdmin())); }
+	public Set<String> getOwners() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return new HashSet<String>(Arrays.asList(getPlot().getAdmin()));
+    }
 
 	@Override
-	public World getWorld() { return getPlot().getLocation().getWorld(); }
+	public World getWorld() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return getPlot().getLocation().getWorld();
+    }
 
 	@Override
 	public boolean isArea() { return plot != null; }
 
 	@Override
-	public void remove() { Flags.getDataStore().remove(this); }
+	public void remove() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        Flags.getDataStore().remove(this);
+    }
 
     /**
      * 0 if the the worlds are the same, 3 if they are not.
@@ -120,6 +132,7 @@ public class InfinitePlotsPlot extends Area implements Removable {
      */
     @Override
     public int compareTo(@Nonnull Area a) {
-        return a instanceof InfinitePlotsPlot && a.getSystemID().equals(getSystemID()) ? 0 : 3;
+        Validate.notNull(a);
+        return a instanceof InfinitePlotsPlot && getSystemID().equals(a.getSystemID()) ? 0 : 3;
     }
 }

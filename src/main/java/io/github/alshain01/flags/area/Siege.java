@@ -24,6 +24,8 @@
 
 package io.github.alshain01.flags.area;
 
+import io.github.alshain01.flags.exceptions.InvalidAreaException;
+
 /**
  * Interface that defines area types that can be placed under siege by the land
  * management system
@@ -33,6 +35,7 @@ public interface Siege {
 	 * Checks if the area is under siege. (Grief Prevention Feature)
 	 * 
 	 * @return true if the area is under siege
+     * @throws InvalidAreaException
 	 */
     @SuppressWarnings("unused") // API
 	public boolean isUnderSiege();

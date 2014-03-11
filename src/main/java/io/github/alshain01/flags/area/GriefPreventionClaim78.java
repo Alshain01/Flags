@@ -25,8 +25,10 @@
 package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.Flags;
+import io.github.alshain01.flags.exceptions.InvalidAreaException;
 import me.ryanhamshire.GriefPrevention.Claim;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -72,36 +74,46 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 	}
 
     @Override
-    public org.bukkit.World getWorld() { return Bukkit.getServer().getWorld(claim.getClaimWorldName()); }
+    public org.bukkit.World getWorld() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return Bukkit.getServer().getWorld(claim.getClaimWorldName()); }
 
     @Override
     public String getSystemSubID() {
-        return claim != null && claim.parent != null ? String.valueOf(claim.getSubClaimID()) : null;
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return claim.parent != null ? String.valueOf(claim.getSubClaimID()) : null;
     }
 
     @Override
-    public boolean isSubdivision() { return claim != null && claim.parent != null; }
+    public boolean isSubdivision() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return claim.parent != null; }
 
     @Override
     public boolean isParent(Area area) {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(area);
         return area instanceof GriefPreventionClaim78 && claim.parent != null
                 && claim.parent.equals(((GriefPreventionClaim78)area).getClaim());
     }
 
     @Override
     public Area getParent() {
+        if(!isArea()) { throw new InvalidAreaException(); }
         if(claim.parent == null) { return null; }
         return new GriefPreventionClaim78(claim.getID());
     }
 
     @Override
     public boolean isInherited() {
-        return claim != null && claim.parent != null && Flags.getDataStore().readInheritance(this);
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return claim.parent != null && Flags.getDataStore().readInheritance(this);
     }
 
     @Override
     public void setInherited(boolean value) {
-        if (claim == null || claim.parent == null) {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        if (claim.parent == null) {
             return;
         }
 
@@ -118,6 +130,7 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 	 */
 	@Override
 	public int compareTo(@Nonnull Area a) {
+        Validate.notNull(a);
 		if (!(a instanceof GriefPreventionClaim78)) {
 			return 3;
 		}

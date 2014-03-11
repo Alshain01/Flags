@@ -24,6 +24,8 @@
 
 package io.github.alshain01.flags.area;
 
+import io.github.alshain01.flags.exceptions.InvalidAreaException;
+
 /**
  * Interface that defines area types that can be subdivided into parent/child
  * subdivisions.
@@ -34,6 +36,7 @@ public interface Subdivision {
 	 * Gets the id of the subdivision.
 	 * 
 	 * @return The subdivision ID, null if not a subdivision
+     * @throws InvalidAreaException
 	 */
 	public String getSystemSubID();
 
@@ -41,6 +44,7 @@ public interface Subdivision {
      * Checks if the area is a subdivision.
      *
      * @return True if the are is a subdivision of another area.
+     * @throws InvalidAreaException
      */
     public boolean isSubdivision();
 
@@ -49,6 +53,7 @@ public interface Subdivision {
      *
      * @param area The potential parent area
      * @return True if the area is a parent.
+     * @throws InvalidAreaException
      */
     @SuppressWarnings("unused") // API
     public boolean isParent(Area area);
@@ -57,6 +62,7 @@ public interface Subdivision {
      * Returns the parent of a subdivision area
      *
      * @return The parent of this area
+     * @throws InvalidAreaException
      */
     public Area getParent();
 
@@ -64,6 +70,7 @@ public interface Subdivision {
      * Checks if the subdivision is inheriting flags from it's parent
      *
      * @return True if the area is inheriting.
+     * @throws InvalidAreaException
      */
 	public boolean isInherited();
 
@@ -72,6 +79,7 @@ public interface Subdivision {
 	 * 
 	 * @param value
 	 *            True if the area should inherit from the parent area.
+     * @throws InvalidAreaException
 	 */
 	public void setInherited(boolean value);
 }

@@ -44,7 +44,7 @@ import javax.annotation.Nonnull;
  * Class for creating areas to manage a World.
  */
 public class World extends Area {
-	private final String worldName;
+	private final org.bukkit.World world;
 
 	/**
 	 * Creates an instance of World based on a Bukkit Location
@@ -63,7 +63,7 @@ public class World extends Area {
 	 *            The Bukkit world
 	 */
 	public World(org.bukkit.World world) {
-		this.worldName = world.getName();
+		this.world = world;
 	}
 	
 	/**
@@ -73,15 +73,14 @@ public class World extends Area {
 	 *            The Bukkit world
 	 */
 	public World(String worldName) {
-		if(Bukkit.getWorld(worldName) != null) {
-			this.worldName = worldName;
-		} else {
-			this.worldName = null;
-		}
+		this.world = Bukkit.getWorld(worldName);
 	}
 
     @Override
-    public String getSystemID() { return worldName; }
+    public String getSystemID() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return world.getName();
+    }
 
     @Override
     public System getSystemType() {
@@ -89,22 +88,33 @@ public class World extends Area {
     }
 
     @Override
-    public Set<String> getOwners() { return new HashSet<String>(Arrays.asList("world")); }
+    public Set<String> getOwners() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return new HashSet<String>(Arrays.asList("world"));
+    }
 
     @Override
     public org.bukkit.World getWorld() {
         if(!isArea()) { throw new InvalidAreaException(); }
-        return Bukkit.getWorld(worldName);
+        return world;
     }
 
     @Override
-    public boolean isArea() { return worldName != null && Bukkit.getWorld(worldName) != null; }
+    public boolean isArea() { return world != null; }
 
     @Override
-    public boolean hasPermission(Permissible p) { return p.hasPermission("flags.area.flag.world"); }
+    public boolean hasPermission(Permissible p) {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(p);
+        return p.hasPermission("flags.area.flag.world");
+    }
 
     @Override
-    public boolean hasBundlePermission(Permissible p) { return p.hasPermission("flags.area.bundle.world"); }
+    public boolean hasBundlePermission(Permissible p) {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        Validate.notNull(p);
+        return p.hasPermission("flags.area.bundle.world");
+    }
 
     @Override
     public Boolean getValue(Flag flag, boolean absolute) {
@@ -132,7 +142,7 @@ public class World extends Area {
 		if (parse) {
 			message = message
 					.replaceAll("\\{AreaType\\}", System.WORLD.getAreaType().toLowerCase())
-					.replaceAll("\\{World\\}", worldName);
+					.replaceAll("\\{World\\}", world.getName());
 			message = ChatColor.translateAlternateColorCodes('&', message);
 		}
 		return message;
@@ -146,6 +156,6 @@ public class World extends Area {
     @Override
     public int compareTo(@Nonnull Area a) {
         Validate.notNull(a);
-        return a instanceof World && a.getSystemID().equals(worldName) ? 0 : 3;
+        return a instanceof World && getSystemID().equals(a.getSystemID()) ? 0 : 3;
     }
 }

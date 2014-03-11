@@ -31,9 +31,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.github.alshain01.flags.exceptions.InvalidAreaException;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -85,6 +87,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 
     @Override
     public String getSystemID() {
+        if(!isArea()) { throw new InvalidAreaException(); }
         if (isArea() && claim.parent != null) {
             return String.valueOf(claim.parent.getID());
         } else if (isArea()) {
@@ -96,26 +99,40 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 
     @Override
     public System getSystemType() {
-        return io.github.alshain01.flags.System.GRIEF_PREVENTION;
+        return System.GRIEF_PREVENTION;
     }
 
 	@Override
-	public Set<String> getOwners() { return new HashSet<String>(Arrays.asList(claim.getOwnerName())); }
+	public Set<String> getOwners() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return new HashSet<String>(Arrays.asList(claim.getOwnerName()));
+    }
 
 	@Override
-	public World getWorld() { return claim.getGreaterBoundaryCorner().getWorld(); }
+	public World getWorld() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return claim.getGreaterBoundaryCorner().getWorld();
+    }
 
     @Override
     public boolean isArea() { return claim != null; }
 
 	@Override
-	public boolean isAdminArea() {	return claim.isAdminClaim(); }
+	public boolean isAdminArea() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return claim.isAdminClaim();
+    }
 
 	@Override
-	public boolean isUnderSiege() { return !(claim == null || claim.siegeData == null); }
+	public boolean isUnderSiege() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return claim.siegeData != null; }
 
 	@Override
-	public void remove() { Flags.getDataStore().remove(this); }
+	public void remove() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        Flags.getDataStore().remove(this);
+    }
 
     /**
      * 0 if the the worlds are the same, 3 if they are not.
@@ -124,6 +141,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
      */
     @Override
     public int compareTo(@Nonnull Area a) {
+        Validate.notNull(a);
         if(!(a instanceof GriefPreventionClaim)) {
             return 3;
         }

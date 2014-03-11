@@ -31,9 +31,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.github.alshain01.flags.exceptions.InvalidAreaException;
 import net.jzx7.regiosapi.RegiosAPI;
 import net.jzx7.regiosapi.regions.Region;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -92,12 +94,13 @@ public class RegiosRegion extends Area implements Removable{
      *
      * @return The region object
      */
-    public Region getRegion() {
-        return region;
-    }
+    public Region getRegion() { return region; }
 
 	@Override
-	public Set<String> getOwners() { return new HashSet<String>(Arrays.asList(region.getOwner())); }
+	public Set<String> getOwners() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return new HashSet<String>(Arrays.asList(region.getOwner()));
+    }
 
 	@Override
 	public System getSystemType() {
@@ -105,17 +108,29 @@ public class RegiosRegion extends Area implements Removable{
 	}
 
 	@Override
-	public String getSystemID() { return region.getName(); }
+	public String getSystemID() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return region.getName();
+    }
 
 	@Override
-	public World getWorld() { return Bukkit.getWorld(region.getWorld().getName()); }
+	public World getWorld() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return Bukkit.getWorld(region.getWorld().getName());
+    }
 
 	@Override
 	public boolean isArea() { return region != null; }
 
 	@Override
-	public void remove() { Flags.getDataStore().remove(this); }
+	public void remove() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        Flags.getDataStore().remove(this);
+    }
 
     @Override
-    public int compareTo(@Nonnull Area a) { return a instanceof RegiosRegion && a.getSystemID().equals(getSystemID()) ? 0 : 3; }
+    public int compareTo(@Nonnull Area a) {
+        Validate.notNull(a);
+        return a instanceof RegiosRegion && getSystemID().equals(a.getSystemID()) ? 0 : 3;
+    }
 }

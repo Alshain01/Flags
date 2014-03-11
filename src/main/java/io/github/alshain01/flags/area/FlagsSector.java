@@ -68,7 +68,10 @@ public class FlagsSector extends Area implements Subdivision, Removable {
     public System getSystemType() { return System.FLAGS; }
 
     @Override
-    public Set<String> getOwners() { return new HashSet<String>(Arrays.asList("Administrator")); }
+    public Set<String> getOwners() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return new HashSet<String>(Arrays.asList("Administrator"));
+    }
 
     @Override
     public World getWorld() {
