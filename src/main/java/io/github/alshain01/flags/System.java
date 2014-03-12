@@ -138,6 +138,19 @@ public enum System {
         public boolean hasArea(Location location) { return FactionsTerritory.hasTerritory(location); }
     },
 
+    FACTOID("Factoid", "Factoid", true) {
+        public Area getSystemAreaAt(Location location) {
+            if(!hasArea(location)) { return new World(location); }
+            return new FactoidLand(location);
+        }
+
+        public Area getArea(String name) {
+            return new FactoidLand(name);
+        }
+
+        public boolean hasArea(Location location) { return FactoidLand.hasLand(location); }
+    },
+
 	PLOTME("PlotMe", "PlotMe",false) {
         public Area getSystemAreaAt(Location location) {
             if(!hasArea(location)) { return new World(location); }

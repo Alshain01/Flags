@@ -15,6 +15,7 @@ Message:
   Default: 'Default'
   World: 'World'
   Factions: 'Territory'
+  Factoid: 'Land'
   Flags: 'Sector'
   GriefPrevention: 'Claim'
   InfinitePlots: 'Plot'
@@ -23,7 +24,6 @@ Message:
   Regios: 'Region'
   Residence: 'Residence'
   WorldGuard: 'Region'
-
 
   # Other Translations
   Message: 'Message'

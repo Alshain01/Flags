@@ -17,6 +17,7 @@ Flags:
   #
   AreaPlugins:
     - Factions
+    - Factoid
     - GriefPrevention
     - InfinitePlots
     - PlotMe
