@@ -111,6 +111,7 @@ public final class Registrar {
      *
      * @return A set of all the flags in the group.
      */
+    @SuppressWarnings("unused") // API
     public Set<Flag> getGroup(String group) {
         Validate.notNull(group);
         final Set<Flag> flags = new HashSet<Flag>();
@@ -128,6 +129,7 @@ public final class Registrar {
      *
      * @return A set of flags that are not player flags
      */
+    @SuppressWarnings("unused") // API
     public Set<Flag> getStandardFlags() {
         final Set<Flag> flags = new HashSet<Flag>();
 
@@ -145,6 +147,7 @@ public final class Registrar {
      *
      * @return A set of flags that are player flags
      */
+    @SuppressWarnings("unused") // API
     public Set<Flag> getPlayerFlags() {
         final Set<Flag> flags = new HashSet<Flag>();
 
@@ -162,6 +165,7 @@ public final class Registrar {
      *
      * @return A set of all the flags the permissible may change
      */
+    @SuppressWarnings("unused") // API
     public Set<Flag> getPermittedFlags(Permissible permissible) {
         Validate.notNull(permissible);
         final Set<Flag> flags = new HashSet<Flag>();
@@ -178,6 +182,7 @@ public final class Registrar {
      *
      * @return A set of all the flags the permissible may bypass
      */
+    @SuppressWarnings("unused") // API
     public Set<Flag> getBypassedFlags(Permissible permissible) {
         Validate.notNull(permissible);
         final Set<Flag> flags = new HashSet<Flag>();

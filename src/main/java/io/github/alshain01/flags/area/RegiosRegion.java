@@ -94,6 +94,7 @@ public class RegiosRegion extends Area implements Removable{
      *
      * @return The region object
      */
+    @SuppressWarnings("unused") // API
     public Region getRegion() { return region; }
 
 	@Override

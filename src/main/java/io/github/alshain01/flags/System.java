@@ -203,6 +203,7 @@ public enum System {
      * @return The Area requested, may be null in cases of invalid system
      *         selection.
      */
+    @SuppressWarnings("unused") // API
     public abstract Area getArea(String name);
 
     /*
@@ -211,6 +212,7 @@ public enum System {
      * @param location The location to check for an area
      * @return True if there is an area
      */
+    @SuppressWarnings("unused") // API
     public abstract boolean hasArea(Location location);
 
     /*

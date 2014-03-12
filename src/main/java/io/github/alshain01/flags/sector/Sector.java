@@ -114,6 +114,7 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
      *
      * @return The depth of the sector
      */
+    @SuppressWarnings("unused") // API
     public int getDepth() { return depth; }
 
     /**
@@ -121,6 +122,7 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
      *
      * @param depth The new depth of the sector
      */
+    @SuppressWarnings("unused") // API
     public void setDepth(int depth) { this.depth = depth; }
 
     /**

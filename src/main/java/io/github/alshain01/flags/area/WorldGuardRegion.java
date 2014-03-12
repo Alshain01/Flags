@@ -31,7 +31,6 @@ import java.util.Set;
 
 import io.github.alshain01.flags.exceptions.InvalidAreaException;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -98,6 +97,7 @@ public class WorldGuardRegion extends Area implements Removable {
      *
      * @return The region object
      */
+    @SuppressWarnings("unused") // API
     public ProtectedRegion getRegion() {
         if(!isArea()) { throw new InvalidAreaException(); }
         return region;

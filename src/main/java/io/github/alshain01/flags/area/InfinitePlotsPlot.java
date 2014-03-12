@@ -89,6 +89,7 @@ public class InfinitePlotsPlot extends Area implements Removable {
      *
      * @return The plot object
      */
+    @SuppressWarnings("unused") // API
     public Plot getPlot() {
         return plot;
     }
@@ -96,7 +97,7 @@ public class InfinitePlotsPlot extends Area implements Removable {
     @Override
     public String getSystemID() {
         if (!isArea()) { throw new InvalidAreaException(); }
-        return getPlot().getLocation().getX() + ";" + getPlot().getLocation().getZ();
+        return plot.getLocation().getX() + ";" + plot.getLocation().getZ();
     }
 
     @Override
@@ -107,13 +108,13 @@ public class InfinitePlotsPlot extends Area implements Removable {
 	@Override
 	public Set<String> getOwners() {
         if (!isArea()) { throw new InvalidAreaException(); }
-        return new HashSet<String>(Arrays.asList(getPlot().getAdmin()));
+        return new HashSet<String>(Arrays.asList(plot.getAdmin()));
     }
 
 	@Override
 	public World getWorld() {
         if (!isArea()) { throw new InvalidAreaException(); }
-        return getPlot().getLocation().getWorld();
+        return plot.getLocation().getWorld();
     }
 
 	@Override

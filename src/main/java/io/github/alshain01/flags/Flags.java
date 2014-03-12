@@ -294,6 +294,7 @@ public class Flags extends JavaPlugin {
      * @param message
      *            The message
      */
+    @SuppressWarnings("unused") // Debug
     public static void severe(String message) { logger.severe(message); }
 
     /**

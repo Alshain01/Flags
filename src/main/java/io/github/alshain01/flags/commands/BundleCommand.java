@@ -252,7 +252,6 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         player.sendMessage((success ? Message.SetTrust.get() : Message.SetTrustError.get())
                 .replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
                 .replaceAll("\\{Flag\\}", bundleName));
-        return;
     }
 
     static void distrust(Player player, CommandLocation location, String bundleName, Set<String> playerList) {

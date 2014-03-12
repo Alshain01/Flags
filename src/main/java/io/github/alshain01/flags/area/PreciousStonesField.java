@@ -104,6 +104,7 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
 	// This is private because it doesn't currently check parentOnly,
 	// should only be used when you know parentOnly will be true
 	// Works for now, but needs enhancement
+    @SuppressWarnings("unused")
 	private PreciousStonesField(Location location, boolean parentOnly) {
 		List<Field> fields = PreciousStones.API().getFieldsProtectingArea(FieldFlag.ALL, location);
 		for(Field field : fields) {

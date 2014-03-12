@@ -84,6 +84,7 @@ public class PlotMePlot extends Area implements Removable {
      *
      * @return The plot object
      */
+    @SuppressWarnings("unused") // API
     public Plot getPlot() {
         return plot;
     }
@@ -91,7 +92,7 @@ public class PlotMePlot extends Area implements Removable {
     @Override
     public String getSystemID() {
         if (!isArea()) { throw new InvalidAreaException(); }
-        return getPlot().id; }
+        return plot.id; }
 
     @Override
     public System getSystemType() { return System.PLOTME; }
@@ -99,7 +100,7 @@ public class PlotMePlot extends Area implements Removable {
 	@Override
 	public Set<String> getOwners() {
         if (!isArea()) { throw new InvalidAreaException(); }
-        return new HashSet<String>(Arrays.asList(getPlot().owner));
+        return new HashSet<String>(Arrays.asList(plot.owner));
     }
 
 	@Override

@@ -373,12 +373,14 @@ public final class YamlDataStore implements DataStore {
     /*
      * Used in SQL Import/Export
      */
+    @SuppressWarnings("unused") // Future Use
     protected Set<String> getAreaIDs() {
         ConfigurationSection cSec = getYml("data").getConfig().getConfigurationSection(System.getActive().toString() + "Data");
         if(cSec == null) { return new HashSet<String>(); }
         return cSec.getKeys(false);
     }
 
+    @SuppressWarnings("unused") // Future Use
     protected Set<String> getAreaSubIDs(String id) {
         ConfigurationSection cSec = getYml("data").getConfig().getConfigurationSection(System.getActive().toString() + "Data." + id);
         Set<String> subIDs = new HashSet<String>();

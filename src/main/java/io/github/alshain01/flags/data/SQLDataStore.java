@@ -65,6 +65,7 @@ public class SQLDataStore implements DataStore {
     /*
      * Public
      */
+    @SuppressWarnings("unused") // API
     public boolean isConnected() {
         try {
             return !connection.isClosed();
@@ -544,6 +545,7 @@ public class SQLDataStore implements DataStore {
         logger.info("Import Complete");
     }
 
+    @SuppressWarnings("unused") // Future enhancement
     public void exportDB() {
         logger.info("Exporting " + getType().getName() + " Database to YAML");
         DataStore yaml = new YamlDataStore((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
@@ -654,6 +656,7 @@ public class SQLDataStore implements DataStore {
         return (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : "'null'";
     }
 
+    @SuppressWarnings("unused") // Future enhancement
     private void writeVersion(DBVersion version) {
         executeQuery("UPDATE Version SET Major=" + version.major + ", Minor=" + version.minor + ", Build=" + version.build + ";");
     }
