@@ -100,8 +100,8 @@
         <dependency>
             <groupId>me.tabinol.factoid.Factoid</groupId>
             <artifactId>Factoid</artifactId>
-            <systemPath>${dependencydir}\Factoid-0.1-r170.jar</systemPath>
-            <version>0.1-R170</version>
+            <systemPath>${dependencydir}\Factoid-0.1-r172.jar</systemPath>
+            <version>0.1-R172</version>
             <scope>system</scope>
             <optional>true</optional>
         </dependency>

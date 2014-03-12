@@ -114,7 +114,7 @@ public class FactoidLand extends Area implements Removable, Subdivision {
 
     @Override
     public org.bukkit.World getWorld() {
-        if(isArea()) { return land.getWord(); }
+        if(isArea()) { return land.getWorld(); }
         throw new InvalidAreaException();
     }
 
