@@ -1,4 +1,4 @@
-package io.github.alshain01.flags.commands;
+package io.github.alshain01.flags.command;
 
 import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.Message;

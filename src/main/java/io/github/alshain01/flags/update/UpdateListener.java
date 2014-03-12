@@ -7,7 +7,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import io.github.alshain01.flags.update.Updater.UpdateResult;
 
 public class UpdateListener implements Listener {
-    final UpdateScheduler scheduler;
+    private final UpdateScheduler scheduler;
 
     public UpdateListener(UpdateScheduler scheduler) {
         this.scheduler = scheduler;

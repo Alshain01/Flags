@@ -2,8 +2,8 @@ package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.System;
-import io.github.alshain01.flags.exceptions.InvalidAreaException;
-import io.github.alshain01.flags.exceptions.InvalidSubdivisionException;
+import io.github.alshain01.flags.exception.InvalidAreaException;
+import io.github.alshain01.flags.exception.InvalidSubdivisionException;
 import io.github.alshain01.flags.sector.Sector;
 
 import org.apache.commons.lang.Validate;
@@ -53,6 +53,7 @@ public class FlagsSector extends Area implements Subdivision, Removable {
      *
      * @return The claim object
      */
+    @SuppressWarnings("WeakerAccess") // API
     public Sector getSector() { return sector; }
 
     @Override

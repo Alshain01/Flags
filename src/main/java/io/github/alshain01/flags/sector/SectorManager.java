@@ -10,7 +10,7 @@ import java.util.*;
 
 public class SectorManager {
     private final Map<UUID, Sector> sectors = new HashMap<UUID, Sector>();
-    final int defaultDepth;
+    private final int defaultDepth;
 
     public SectorManager(CustomYML cYml, int defaultDepth) {
         this.defaultDepth = defaultDepth;
@@ -63,6 +63,7 @@ public class SectorManager {
         return s;
     }
 */
+    @SuppressWarnings("WeakerAccess") // API
     public void delete(UUID id) {
         Sector sector = get(id);
         if(sector.getParentID() == null) {

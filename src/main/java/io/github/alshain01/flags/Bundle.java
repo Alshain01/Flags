@@ -63,7 +63,8 @@ public final class Bundle {
 	 *            A string bundle name.
 	 * @return True if the string is a valid bundle name.
 	 */
-	public static boolean isBundle(String bundle) {
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted") // API
+    public static boolean isBundle(String bundle) {
         Validate.notNull(bundle);
 		return getBundleNames().contains(bundle.toLowerCase());
 	}
@@ -99,7 +100,7 @@ public final class Bundle {
 	}
 
     // Used only on plugin enable
-    protected static void registerPermissions() {
+    static void registerPermissions() {
         for(String b : Flags.getDataStore().readBundles()) {
             addPermission(b);
         }

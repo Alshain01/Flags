@@ -24,8 +24,8 @@
 
 package io.github.alshain01.flags.area;
 
-import io.github.alshain01.flags.exceptions.InvalidAreaException;
-import io.github.alshain01.flags.exceptions.InvalidSubdivisionException;
+import io.github.alshain01.flags.exception.InvalidAreaException;
+import io.github.alshain01.flags.exception.InvalidSubdivisionException;
 
 /**
  * Interface that defines area types that can be subdivided into parent/child

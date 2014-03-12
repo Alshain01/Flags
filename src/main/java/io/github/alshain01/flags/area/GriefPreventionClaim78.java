@@ -25,8 +25,8 @@
 package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.Flags;
-import io.github.alshain01.flags.exceptions.InvalidAreaException;
-import io.github.alshain01.flags.exceptions.InvalidSubdivisionException;
+import io.github.alshain01.flags.exception.InvalidAreaException;
+import io.github.alshain01.flags.exception.InvalidSubdivisionException;
 import me.ryanhamshire.GriefPrevention.Claim;
 
 import org.apache.commons.lang.Validate;

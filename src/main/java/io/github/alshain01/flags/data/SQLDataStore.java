@@ -24,7 +24,8 @@
 
 package io.github.alshain01.flags.data;
 
-import io.github.alshain01.flags.*;
+import io.github.alshain01.flags.Flags;
+import io.github.alshain01.flags.Flag;
 import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Default;
@@ -46,7 +47,7 @@ import java.util.logging.Logger;
  */
 public class SQLDataStore implements DataStore {
     private Connection connection = null;
-    protected String url, user, password;
+    String url, user, password;
     private final Logger logger = Bukkit.getPluginManager().getPlugin("Flags").getLogger();
 
     /*
@@ -88,10 +89,10 @@ public class SQLDataStore implements DataStore {
      */
     //TODO: Implementation Specific (BOOLEAN)
     @Override
-    public boolean create(JavaPlugin plugin) {
+    public void create(JavaPlugin plugin) {
         // STANDARD BOOLEAN
         // OVERRIDE for Implementation Specific
-        if(!exists()) {
+        if(notExists()) {
             executeStatement("CREATE TABLE IF NOT EXISTS Version (Major INT, Minor INT, Build INT);");
             executeStatement("INSERT INTO Version (Major, Minor, Build) VALUES (1,3,0);");
             executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(25), FlagName VARCHAR(25), CONSTRAINT pk_BundleEntry PRIMARY KEY (BundleName, FlagName));");
@@ -101,7 +102,6 @@ public class SQLDataStore implements DataStore {
             executeStatement("CREATE TABLE IF NOT EXISTS DefaultFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), CONSTRAINT pk_DefaultFlag PRIMARY KEY (WorldName, FlagName));");
             executeStatement("CREATE TABLE IF NOT EXISTS DefaultTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_DefaultTrust PRIMARY KEY (WorldName, FlagName, Trustee));");
         }
-        return true;
     }
 
     @Override
@@ -248,7 +248,7 @@ public class SQLDataStore implements DataStore {
     }
 
     //For SQL Importer
-    protected void writeAreaFlag(Boolean value, String flagName, String areaType, String worldName, String systemID, String systemSubID) {
+    void writeAreaFlag(Boolean value, String flagName, String areaType, String worldName, String systemID, String systemSubID) {
         String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue)"
                 + " VALUES ('%world%', '%area%', %sub%, '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
 
@@ -471,7 +471,7 @@ public class SQLDataStore implements DataStore {
                 area.getSystemID(), ((Subdivision) area).getSystemSubID());
     }
 
-    protected void writeInheritance(boolean value, String areaType, String worldName, String systemID, String systemSubID) {
+    void writeInheritance(boolean value, String areaType, String worldName, String systemID, String systemSubID) {
         String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue) "
                 + "VALUES ('%world%', '%area%', %sub%, 'InheritParent', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
 
@@ -560,36 +560,34 @@ public class SQLDataStore implements DataStore {
     /*
      * Protected
      */
-    protected String areaBuilder(String query, Area area) {
+    String areaBuilder(String query, Area area) {
         return query.replaceAll("%table%", area.getSystemType().toString())
                 .replaceAll("%world%", area.getWorld().getName())
                 .replaceAll("%area%", area.getSystemID())
                 .replaceAll("%sub%", getSubID(area));
     }
 
-    protected String areaBuilder(String query, String systemName, String worldName, String systemID, String systemSubID) {
+    String areaBuilder(String query, String systemName, String worldName, String systemID, String systemSubID) {
         return query.replaceAll("%table%", systemName)
                 .replaceAll("%world%", worldName)
                 .replaceAll("%area%", systemID)
                 .replaceAll("%sub%", systemSubID);
     }
 
-    protected boolean connect(String url, String user, String password) {
+    void connect(String url, String user, String password) {
         // Connect to the database.
         try {
             connection = DriverManager.getConnection(url, user, password);
-            return true;
         } catch (SQLException e) {
             SqlError(e.getMessage());
-            return false;
         }
     }
 
-    protected void SqlError(String error) {
+    void SqlError(String error) {
         logger.severe("[SQL DataStore Error] " + error);
     }
 
-    protected void executeStatement(String statement) {
+    void executeStatement(String statement) {
         try {
             Statement SQL = connection.createStatement();
             SQL.execute(statement);
@@ -598,7 +596,7 @@ public class SQLDataStore implements DataStore {
         }
     }
 
-    protected ResultSet executeQuery(String query) {
+    ResultSet executeQuery(String query) {
         try {
             Statement SQL = connection.createStatement();
             return SQL.executeQuery(query);
@@ -609,7 +607,7 @@ public class SQLDataStore implements DataStore {
     }
 
     //TODO: Implementation Specific (BOOLEAN)
-    protected void createSystemDB() {
+    void createSystemDB() {
         // STANDARD BOOLEAN
         // OVERRIDE for Implementation Specific
         executeStatement("CREATE TABLE IF NOT EXISTS " + System.getActive().toString()
@@ -624,7 +622,7 @@ public class SQLDataStore implements DataStore {
     }
 
     //TODO: Implementation Specific (ROW LIMITING)
-    protected boolean exists() {
+    boolean notExists() {
         // We always need to create the system specific table
         // in case it changed since the database was created.
         // i.e. Grief Prevention was removed and WorldGuard was installed.
@@ -642,11 +640,11 @@ public class SQLDataStore implements DataStore {
                         .replaceAll("%database%", connection[connection.length-1]));
 
         try {
-            return results.next();
+            return !results.next();
         } catch (SQLException e) {
             SqlError(e.getMessage());
         }
-        return false;
+        return true;
     }
 
     /*

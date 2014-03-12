@@ -69,6 +69,7 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
      *
      * @return The location of the corner block
      */
+    @SuppressWarnings("WeakerAccess") // API
     public Location getGreaterCorner() {
         return greater.getLocation();
     }
@@ -78,6 +79,7 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
      *
      * @return The location of the corner block
      */
+    @SuppressWarnings("WeakerAccess") // API
     public Location getGreaterXCorner() {
         return new SectorLocation(greater.getWorld(), greater.getX(), greater.getY(), lesser.getZ()).getLocation();
     }
@@ -87,6 +89,7 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
      *
      * @return The location of the corner block
      */
+    @SuppressWarnings("WeakerAccess") // API
     public Location getGreaterZCorner() {
         return new SectorLocation(greater.getWorld(), lesser.getX(), greater.getY(), greater.getZ()).getLocation();
     }
@@ -96,6 +99,7 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
      *
      * @return The location of the corner block
      */
+    @SuppressWarnings("WeakerAccess") // API
     public Location getLesserCorner() {
         return lesser.getLocation();
     }

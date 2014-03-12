@@ -195,6 +195,7 @@ public enum System {
      *            The location to request an area.
      * @return An Area from the configured system which may fail isArea()
      */
+    @SuppressWarnings("WeakerAccess") // API
     public abstract Area getSystemAreaAt(Location location);
 
     /*
@@ -246,6 +247,7 @@ public enum System {
 	 * 
 	 * @return The enumeration. LandSystem.FLAGS if no matches found.
 	 */
+    @SuppressWarnings("WeakerAccess") // API
 	public static System getByName(String name) {
 		for (final System p : System.values()) {
 			if (name.equals(p.pluginName)) {
@@ -329,7 +331,7 @@ public enum System {
     /*
     * Acquires the land management plugin.
     */
-    protected static System find(PluginManager pm, List<?> plugins) {
+    static System find(PluginManager pm, List<?> plugins) {
         if(plugins != null && plugins.size() > 0) {
             for(Object o : plugins) {
                 if (pm.isPluginEnabled((String) o)) {

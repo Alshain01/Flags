@@ -33,8 +33,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import io.github.alshain01.flags.exceptions.InvalidAreaException;
-import io.github.alshain01.flags.exceptions.InvalidSubdivisionException;
+import io.github.alshain01.flags.exception.InvalidAreaException;
+import io.github.alshain01.flags.exception.InvalidSubdivisionException;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
@@ -129,6 +129,7 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
      *
      * @return The field object
      */
+    @SuppressWarnings("WeakerAccess") // API
 	public Field getField() { return field; }
 	
 	@Override

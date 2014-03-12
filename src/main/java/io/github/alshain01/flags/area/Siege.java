@@ -24,12 +24,13 @@
 
 package io.github.alshain01.flags.area;
 
-import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import io.github.alshain01.flags.exception.InvalidAreaException;
 
 /**
  * Interface that defines area types that can be placed under siege by the land
  * management system
  */
+@SuppressWarnings("WeakerAccess") // API
 public interface Siege {
 	/**
 	 * Checks if the area is under siege. (Grief Prevention Feature)

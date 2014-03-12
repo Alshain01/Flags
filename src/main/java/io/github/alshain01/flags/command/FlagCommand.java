@@ -1,4 +1,4 @@
-package io.github.alshain01.flags.commands;
+package io.github.alshain01.flags.command;
 
 import io.github.alshain01.flags.*;
 import io.github.alshain01.flags.System;
@@ -120,7 +120,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         if(command.requiresFlag != null) {
             if(command.requiresFlag || args.length >= 3) {
                 flag = Flags.getRegistrar().getFlagIgnoreCase(args[2]);
-                if (!Validate.isFlag(sender, flag, args[2])) { return true; }
+                if (Validate.notValid(sender, flag, args[2])) { return true; }
             }
         }
 
@@ -180,11 +180,11 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
             case CHARGE:
                 final EPurchaseType t = EPurchaseType.get(args[1]);
                 if (t != null && args.length > 3) {
-                    setPrice(sender, t, flag, args[3]);
+                    success = setPrice(sender, t, flag, args[3]);
                 } else {
                     getPrice(sender, t, flag);
+                    success = true;
                 }
-                success = true;
                 break;
         }
 
@@ -243,7 +243,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     private static boolean get(Player player, CommandLocation location, Flag flag) {
         // Acquire the area
         Area area = getArea(player, location);
-        if(!Validate.isArea(player, area)) { return false; }
+        if(Validate.notValid(player, area)) { return false; }
 
         // Return the single flag requested
         if (flag != null) {
@@ -283,9 +283,9 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     private static void set(Player player, CommandLocation location, Flag flag, Boolean value) {
         // Acquire the area
         Area area = getArea(player, location);
-        if(!Validate.isArea(player, area)
-                || !Validate.isPermitted(player, flag)
-                || !Validate.isPermitted(player, area))
+        if(Validate.notValid(player, area)
+                || Validate.notPermitted(player, flag)
+                || Validate.notPermitted(player, area))
         { return; }
 
         // Acquire the value (maybe)
@@ -303,11 +303,11 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     private static void remove(Player player, CommandLocation location, Flag flag) {
         // Acquire the area
         Area area = getArea(player, location);
-        if(!Validate.isArea(player, area) || !Validate.isPermitted(player, area)) { return; }
+        if(Validate.notValid(player, area) || Validate.notPermitted(player, area)) { return; }
 
         // Removing single flag type
         if (flag != null) {
-            if (!Validate.isPermitted(player, flag)) { return; }
+            if (Validate.notPermitted(player, flag)) { return; }
 
             if(area.setValue(flag, null, player)) {
                 player.sendMessage(Message.RemoveFlag.get()
@@ -346,9 +346,9 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
             trustList = area.getPlayerTrustList(flag);
         }
 
-        if(!Validate.isPlayerFlag(player, flag)
-                || !Validate.isArea(player, area)
-                || !Validate.isTrustList(player, trustList, area.getSystemType().getAreaType(), flag.getName())) { return; }
+        if(Validate.notPlayerFlag(player, flag)
+                || Validate.notValid(player, area)
+                || Validate.notTrustList(player, trustList, area.getSystemType().getAreaType(), flag.getName())) { return; }
 
         // List all set flags
         message = new StringBuilder(Message.GetTrust.get()
@@ -369,10 +369,10 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         if(playerList.size() == 0) { return false; }
 
         Area area = getArea(player, location);
-        if(!Validate.isPlayerFlag(player, flag)
-                || !Validate.isArea(player, area)
-                || !Validate.isPermitted(player, flag)
-                || !Validate.isPermitted(player, area))
+        if(Validate.notPlayerFlag(player, flag)
+                || Validate.notValid(player, area)
+                || Validate.notPermitted(player, flag)
+                || Validate.notPermitted(player, area))
         { return true; }
 
         boolean success = true;
@@ -390,14 +390,14 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         boolean success = true;
         Area area = getArea(player, location);
 
-        if(!Validate.isPlayerFlag(player, flag)
-                || !Validate.isArea(player, area)
-                || !Validate.isPermitted(player, flag)
-                || !Validate.isPermitted(player, area))
+        if(Validate.notPlayerFlag(player, flag)
+                || Validate.notValid(player, area)
+                || Validate.notPermitted(player, flag)
+                || Validate.notPermitted(player, area))
         { return; }
 
         Set<String> trustList = area.getTrustList(flag);
-        if(!Validate.isTrustList(player, trustList, area.getSystemType().getAreaType(), flag.getName())) {
+        if(Validate.notTrustList(player, trustList, area.getSystemType().getAreaType(), flag.getName())) {
             return;
         }
 
@@ -434,10 +434,10 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     private static void message(Player player, CommandLocation location, Flag flag, String message) {
         Area area = getArea(player, location);
 
-        if(!Validate.isPlayerFlag(player, flag)
-                || !Validate.isArea(player, area)
-                || !Validate.isPermitted(player, area)
-                || !Validate.isPermitted(player, flag))
+        if(Validate.notPlayerFlag(player, flag)
+                || Validate.notValid(player, area)
+                || Validate.notPermitted(player, area)
+                || Validate.notPermitted(player, flag))
         { return; }
 
         if(area.setMessage(flag, message, player)) {
@@ -448,10 +448,10 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     private static void erase(Player player, CommandLocation location, Flag flag) {
         Area area = getArea(player, location);
 
-        if(!Validate.isPlayerFlag(player, flag)
-                || !Validate.isArea(player, area)
-                || !Validate.isPermitted(player, area)
-                || !Validate.isPermitted(player, flag))
+        if(Validate.notPlayerFlag(player, flag)
+                || Validate.notValid(player, area)
+                || Validate.notPermitted(player, area)
+                || Validate.notPermitted(player, flag))
         { return; }
 
 
@@ -465,9 +465,9 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
      */
     private static void inherit(Player player, Boolean value) {
         Area area = getArea(player, CommandLocation.AREA);
-        if(!Validate.canSubdivide(player)
-                || !Validate.isArea(player, area)
-                || !Validate.isSubdivision(player, area)) {
+        if(Validate.notSubdividable(player)
+                || Validate.notValid(player, area)
+                || Validate.notSubdivision(player, area)) {
             return;
         }
 
@@ -484,7 +484,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
      * Price Command Handlers
      */
     private static void getPrice(CommandSender sender, EPurchaseType type, Flag flag) {
-        if(!Validate.hasEconomy(sender)) { return; }
+        if(Validate.noEconomyInstalled(sender)) { return; }
 
         sender.sendMessage(Message.GetPrice.get()
                 .replaceAll("\\{PurchaseType\\}", type.getLocal().toLowerCase())
@@ -493,8 +493,8 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     }
 
     private static boolean setPrice(CommandSender sender, EPurchaseType type, Flag flag, String price) {
-        if(!Validate.hasEconomy(sender)) { return true; }
-        if((sender instanceof Player) && !Validate.canEditPrice(sender)) { return true; }
+        if(Validate.noEconomyInstalled(sender)) { return true; }
+        if((sender instanceof Player) && Validate.notPermittedEditPrice(sender)) { return true; }
 
         double p;
         try { p = Double.valueOf(price); }

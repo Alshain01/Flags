@@ -31,7 +31,7 @@ public class UpdateScheduler extends BukkitRunnable{
         this.logger = plugin.getLogger();
     }
 
-    protected UpdateResult getResult() {
+    UpdateResult getResult() {
         return updater.getResult();
     }
 

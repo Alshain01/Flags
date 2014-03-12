@@ -34,7 +34,7 @@ import io.github.alshain01.flags.economy.ETransactionType;
 import io.github.alshain01.flags.events.FlagChangedEvent;
 import io.github.alshain01.flags.events.MessageChangedEvent;
 import io.github.alshain01.flags.events.TrustChangedEvent;
-import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import io.github.alshain01.flags.exception.InvalidAreaException;
 
 import java.util.Set;
 
@@ -185,7 +185,7 @@ public abstract class Area implements Comparable<Area> {
 
         // Delay making the transaction in case the event is cancelled.
         if (transaction != null) {
-            if (!makeTransaction(transaction, EPurchaseType.Flag, flag,
+            if (failedTransaction(transaction, EPurchaseType.Flag, flag,
                     (Player) sender)) {
                 return true;
             }
@@ -204,7 +204,8 @@ public abstract class Area implements Comparable<Area> {
 	 *            The flag to retrieve the message for.
 	 * @return The message associated with the flag.
 	 */
-	public final String getMessage(Flag flag) { return getMessage(flag, true); }
+	@SuppressWarnings("WeakerAccess") // API
+    public final String getMessage(Flag flag) { return getMessage(flag, true); }
 
     /**
      * Gets the message associated with a player flag and parses {AreaType},
@@ -232,7 +233,8 @@ public abstract class Area implements Comparable<Area> {
 	 *            and {World} and translate color codes
 	 * @return The message associated with the flag.
 	 */
-	public String getMessage(Flag flag, boolean parse) {
+	@SuppressWarnings("WeakerAccess") // API
+    public String getMessage(Flag flag, boolean parse) {
         Validate.notNull(flag);
 
 		String message = Flags.getDataStore().readMessage(this, flag);
@@ -310,7 +312,7 @@ public abstract class Area implements Comparable<Area> {
 
         // Delay making the transaction in case the event is cancelled.
         if (transaction != null) {
-            if (!makeTransaction(transaction, EPurchaseType.Message, flag, (Player) sender)) {
+            if (failedTransaction(transaction, EPurchaseType.Message, flag, (Player) sender)) {
                 return true;
             }
         }
@@ -513,7 +515,7 @@ public abstract class Area implements Comparable<Area> {
     /*
      * Makes the final purchase transaction.
      */
-    private static boolean makeTransaction(ETransactionType transaction,
+    private static boolean failedTransaction(ETransactionType transaction,
                                            EPurchaseType product, Flag flag, Player player) {
         final double price = flag.getPrice(product);
 
@@ -523,12 +525,12 @@ public abstract class Area implements Comparable<Area> {
 
         if (r.transactionSuccess()) {
             player.sendMessage(transaction.getMessage().replace("{Price}", Flags.getEconomy().format(price)));
-            return true;
+            return false;
         }
 
         // Something went wrong if we made it this far.
         Bukkit.getPluginManager().getPlugin("Flags").getLogger().warning(String.format("[Economy Error] %s", r.errorMessage));
         player.sendMessage(Message.Error.get().replaceAll("\\{Error\\}", r.errorMessage));
-        return false;
+        return true;
     }
 }

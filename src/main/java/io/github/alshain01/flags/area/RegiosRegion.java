@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import io.github.alshain01.flags.exception.InvalidAreaException;
 import net.jzx7.regiosapi.RegiosAPI;
 import net.jzx7.regiosapi.regions.Region;
 
@@ -47,7 +47,7 @@ import javax.annotation.Nonnull;
  * Class for creating areas to manage a Regios Region.
  */
 public class RegiosRegion extends Area implements Removable{
-	final Region region;
+	private final Region region;
 
 	/**
 	 * Creates an instance of RegiosRegion based on a Bukkit Location

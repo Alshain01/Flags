@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public class SectorListener implements Listener {
-    final Material tool;
-    final Map<UUID, Location> createQueue = new HashMap<UUID, Location>();
+    private final Material tool;
+    private final Map<UUID, Location> createQueue = new HashMap<UUID, Location>();
 
     public SectorListener(Material tool) {
         this.tool = tool;

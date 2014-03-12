@@ -37,10 +37,10 @@ public enum DataStoreType {
         }
     };
 
-    final String identifier;
-    final String niceName;
+    private final String identifier;
+    private final String niceName;
 
-    public abstract DataStore getDataStore(JavaPlugin plugin);
+    protected abstract DataStore getDataStore(JavaPlugin plugin);
 
     private DataStoreType(String identifier, String niceName) {
         this.identifier = identifier;
@@ -55,7 +55,7 @@ public enum DataStoreType {
         return getType(url).getDataStore(plugin);
     }
 
-    public static DataStoreType getType(String url) {
+    private static DataStoreType getType(String url) {
        for(DataStoreType d : DataStoreType.values()) {
            if(url.contains(d.identifier)) {
                return d;

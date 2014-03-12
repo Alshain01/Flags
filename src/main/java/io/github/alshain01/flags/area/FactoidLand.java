@@ -85,6 +85,7 @@ public class FactoidLand extends Area implements Removable, Subdivision {
      *
      * @return The Land object
      */
+    @SuppressWarnings("WeakerAccess") // API
     public Land getLand() {
         return land;
     }

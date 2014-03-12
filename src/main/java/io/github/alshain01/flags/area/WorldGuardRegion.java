@@ -29,7 +29,7 @@ import io.github.alshain01.flags.System;
 
 import java.util.Set;
 
-import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import io.github.alshain01.flags.exception.InvalidAreaException;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.World;

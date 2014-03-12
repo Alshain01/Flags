@@ -24,13 +24,14 @@
 
 package io.github.alshain01.flags.area;
 
-import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import io.github.alshain01.flags.exception.InvalidAreaException;
 
 /**
  * Interface that defines if the land system allows for administrator areas.
  * Administrator areas are special areas that differ from areas normal players
  * create.
  */
+@SuppressWarnings("WeakerAccess") // API
 public interface Administrator {
 	/**
 	 * Checks if the area is an Administrator area defined by the system.

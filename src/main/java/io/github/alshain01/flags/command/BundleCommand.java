@@ -1,4 +1,4 @@
-package io.github.alshain01.flags.commands;
+package io.github.alshain01.flags.command;
 
 import io.github.alshain01.flags.*;
 import io.github.alshain01.flags.System;
@@ -18,19 +18,19 @@ import java.util.Set;
 
 public class BundleCommand extends PluginCommand implements CommandExecutor {
     private enum BundleCommandType {
-        SET('s', 4, 0, true, true, "Set <area|world|default> <bundle> <true|false>"),
-        GET('g', 3, 0, true, true, "Get <area|world|default> <bundle>"),
-        REMOVE('r', 3, 0, true, true, "Remove <area|world|default> <bundle>"),
-        TRUST('t', 4, -1, true, true, "Trust <area|world|default> <bundle> <player> [player]..."),
-        DISTRUST('d', 3, -1, true, true, "Distrust <area|world|default> <bundle> [player] [player]..."),
-        HELP('h', 1, 1, false, null, "Help [page]"),
-        ADD('a', 3, -1, false, true, "Add <bundle> <flag> [flag]..."),
-        CUT ('c', 3, -1, false, true, "Cut <bundle> <flag> [flag]..."),
-        ERASE ('e', 2, 0, false, true, "Erase <bundle>");
+        SET('S', 4, 0, true, true, "Set <area|world|default> <bundle> <true|false>"),
+        GET('G', 3, 0, true, true, "Get <area|world|default> <bundle>"),
+        REMOVE('R', 3, 0, true, true, "Remove <area|world|default> <bundle>"),
+        TRUST('T', 4, -1, true, true, "Trust <area|world|default> <bundle> <player> [player]..."),
+        DISTRUST('D', 3, -1, true, true, "Distrust <area|world|default> <bundle> [player] [player]..."),
+        HELP('H', 1, 1, false, null, "Help [page]"),
+        ADD('A', 3, -1, false, true, "Add <bundle> <flag> [flag]..."),
+        CUT ('C', 3, -1, false, true, "Cut <bundle> <flag> [flag]..."),
+        ERASE ('E', 2, 0, false, true, "Erase <bundle>");
 
         final char alias;
         final int requiredArgs;
-        final int optionalArgs; //-1 for infinite
+        final int optionalArgs; // -1 for infinite
         final boolean requiresLocation;
         final Boolean requiresBundle; // null if bundle isn't even an optional arg.
         final String help;
@@ -44,27 +44,28 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
             this.requiresBundle = requiresBundle;
         }
 
-        protected static BundleCommandType get(String name) {
+        static BundleCommandType get(String name) {
+            if(name.length() > 1)  { return valueOf(name.toUpperCase()); }
+            return getByAlias(name.toUpperCase().toCharArray()[0]);
+        }
+
+        static BundleCommandType getByAlias(char alias) {
             for(BundleCommandType c : BundleCommandType.values()) {
-                if(name.toLowerCase().equals(c.toString().toLowerCase()) || name.toLowerCase().equals(String.valueOf(c.alias))) {
-                    return c;
-                }
+                if(alias == c.alias) { return c; }
             }
             return null;
         }
 
-        protected String getHelp() {
+        String getHelp() {
             return "/bundle " + this.help;
         }
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        //if(!cmd.toString().equalsIgnoreCase("bundle")) { return false; }
-
         if (args.length < 1) {
             if(sender instanceof Player) {
-                sender.sendMessage(getUsage((Player) sender, io.github.alshain01.flags.System.getActive().getAreaAt(((Player) sender).getLocation())));
+                sender.sendMessage(getUsage((Player) sender, System.getActive().getAreaAt(((Player) sender).getLocation())));
                 return true;
             }
             return false;
@@ -171,32 +172,32 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         return usage.toString();
     }
 
-    static void get(Player player, CommandLocation location, String bundleName) {
+    private static void get(Player player, CommandLocation location, String bundleName) {
         Area area = getArea(player, location);
         Set<Flag> bundle = Bundle.getBundle(bundleName);
 
-        if(!Validate.isArea(player, area)
-                || !Validate.isBundle(player, bundle, bundleName)
-                || !Validate.isBundlePermitted(player, area)
-                || !Validate.isBundlePermitted(player, bundleName))
+        if(Validate.notValid(player, area)
+                || Validate.notBundle(player, bundle, bundleName)
+                || Validate.notPermittedBundle(player, area)
+                || Validate.notPermittedBundle(player, bundleName))
         { return; }
 
         for(Flag flag : bundle) {
             player.sendMessage(Message.GetBundle.get()
-                    .replaceAll("\\{Bundle\\}", flag.getName())
-                    .replaceAll("\\{Value\\}", getFormattedValue(area.getValue(flag, false))));
+                    .replace("{Bundle}", flag.getName())
+                    .replace("{Value}", getFormattedValue(area.getValue(flag, false))));
         }
     }
 
-    static void set(Player player, CommandLocation location, String bundleName, Boolean value) {
+    private static void set(Player player, CommandLocation location, String bundleName, Boolean value) {
         boolean success = true;
         Area area = getArea(player, location);
         Set<Flag> bundle = Bundle.getBundle(bundleName);
 
-        if(!Validate.isArea(player, area)
-                || !Validate.isBundle(player, bundle, bundleName)
-                || !Validate.isBundlePermitted(player, area)
-                || !Validate.isBundlePermitted(player, bundleName))
+        if(Validate.notValid(player, area)
+                || Validate.notBundle(player, bundle, bundleName)
+                || Validate.notPermittedBundle(player, area)
+                || Validate.notPermittedBundle(player, bundleName))
         { return; }
 
         for(Flag flag : bundle) {
@@ -209,15 +210,15 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
                 .replaceAll("\\{Value\\}", getFormattedValue(value).toLowerCase()));
     }
 
-    static void remove(Player player, CommandLocation location, String bundleName) {
+    private static void remove(Player player, CommandLocation location, String bundleName) {
         boolean success = true;
         Area area = getArea(player, location);
         Set<Flag> bundle = Bundle.getBundle(bundleName);
 
-        if(!Validate.isArea(player, area)
-                || !Validate.isBundle(player, bundle, bundleName)
-                || !Validate.isBundlePermitted(player, area)
-                || !Validate.isBundlePermitted(player, bundleName))
+        if(Validate.notValid(player, area)
+                || Validate.notBundle(player, bundle, bundleName)
+                || Validate.notPermittedBundle(player, area)
+                || Validate.notPermittedBundle(player, bundleName))
         { return; }
 
         for (Flag flag : bundle) {
@@ -229,14 +230,14 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
                 .replaceAll("\\{Bundle\\}", bundleName));
     }
 
-    static void trust(Player player, CommandLocation location, String bundleName, Set<String> playerList) {
+    private static void trust(Player player, CommandLocation location, String bundleName, Set<String> playerList) {
         if(playerList.size() == 0) { return; }
 
         Area area = getArea(player, location);
         if(!Bundle.isBundle(bundleName)
-                || !Validate.isArea(player, area)
-                || !Validate.isBundlePermitted(player, bundleName)
-                || !Validate.isPermitted(player, area))
+                || Validate.notValid(player, area)
+                || Validate.notPermittedBundle(player, bundleName)
+                || Validate.notPermittedBundle(player, area))
         { return; }
 
         boolean success = true;
@@ -254,21 +255,21 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
                 .replaceAll("\\{Flag\\}", bundleName));
     }
 
-    static void distrust(Player player, CommandLocation location, String bundleName, Set<String> playerList) {
+    private static void distrust(Player player, CommandLocation location, String bundleName, Set<String> playerList) {
         boolean success = true;
         Area area = getArea(player, location);
 
         if(!Bundle.isBundle(bundleName)
-                || !Validate.isArea(player, area)
-                || !Validate.isBundlePermitted(player, bundleName)
-                || !Validate.isPermitted(player, area))
+                || Validate.notValid(player, area)
+                || Validate.notPermittedBundle(player, bundleName)
+                || Validate.notPermittedBundle(player, area))
         { return; }
 
         for(Flag f : Bundle.getBundle(bundleName)) {
             if(!f.isPlayerFlag()) { continue; }
 
             Set<String> trustList = area.getTrustList(f);
-            if(trustList == null || !trustList.isEmpty()) { continue; }
+            if(Validate.notTrustList(trustList)) { continue; }
 
             //If playerList is empty, remove everyone
             for(String p : playerList.isEmpty() ? trustList : playerList) {
@@ -281,8 +282,8 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
                 .replaceAll("\\{Flag\\}", bundleName));
     }
 
-    static void add(CommandSender sender, String bundleName, Set<String> flags) {
-        if(sender instanceof Player && !Validate.canEditBundle(sender)){ return; }
+    private static void add(CommandSender sender, String bundleName, Set<String> flags) {
+        if(sender instanceof Player && Validate.notPermittedEditBundle(sender)){ return; }
 
         Flag flag;
         Set<Flag> bundle = Bundle.getBundle(bundleName);
@@ -310,15 +311,14 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
                 .replaceAll("\\{Bundle\\}", bundleName));
     }
 
-    static void delete(CommandSender sender, String bundleName, Set<String> flags) {
-        if(sender instanceof Player && !Validate.canEditBundle(sender)){
+    private static void delete(CommandSender sender, String bundleName, Set<String> flags) {
+        if(sender instanceof Player && Validate.notPermittedEditBundle(sender)){
             return; }
 
         boolean success = true;
         Set<Flag> bundle = Bundle.getBundle(bundleName.toLowerCase());
 
-        if(!Validate.isBundle(sender, bundle, bundleName)) {
-            return; }
+        if(Validate.notBundle(sender, bundle, bundleName)) { return; }
 
         for(String s : flags) {
             Flag flag = Flags.getRegistrar().getFlag(s);
@@ -331,8 +331,8 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
                 .replaceAll("\\{Bundle\\}", bundleName));
     }
 
-    static void erase(CommandSender sender, String bundleName) {
-        if(sender instanceof Player && !Validate.canEditBundle(sender)){ return; }
+    private static void erase(CommandSender sender, String bundleName) {
+        if(sender instanceof Player && Validate.notPermittedEditBundle(sender)){ return; }
 
         Set<String> bundles = Bundle.getBundleNames();
         if (bundles == null || bundles.size() == 0 || !bundles.contains(bundleName)) {
@@ -347,7 +347,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
                 .replaceAll("\\{Bundle\\}", bundleName));
     }
 
-    static void help (CommandSender sender, int page) {
+    private static void help (CommandSender sender, int page) {
         Set<String> bundles = Bundle.getBundleNames();
         if (bundles == null || bundles.size() == 0) {
             sender.sendMessage(Message.NoFlagFound.get()

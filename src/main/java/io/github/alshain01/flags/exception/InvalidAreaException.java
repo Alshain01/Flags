@@ -1,4 +1,4 @@
-package io.github.alshain01.flags.exceptions;
+package io.github.alshain01.flags.exception;
 
 /*
  * Exception that indicates an area was used that had a null underlying instance.

@@ -74,12 +74,11 @@ public final class YamlDataStore implements DataStore {
      * Interface Methods
      */
     @Override
-    public boolean create(JavaPlugin plugin) {
+    public void create(JavaPlugin plugin) {
         // Don't change the version here, not needed (will change in update)
-        if (!exists(plugin)) {
+        if (notExists(plugin)) {
             writeVersion(new DBVersion(1, 0, 0));
         }
-        return true;
     }
 
     @Override
@@ -395,22 +394,22 @@ public final class YamlDataStore implements DataStore {
         return subIDs;
     }
 
-    protected Set<String> readKeys() {
+    Set<String> readKeys() {
         return data.getConfig().getKeys(true);
     }
 
-    protected Boolean getBoolean(String dataLocation) {
+    Boolean getBoolean(String dataLocation) {
         if(data.getConfig().isBoolean(dataLocation)) {
             return data.getConfig().getBoolean(dataLocation);
         }
         return null;
     }
 
-    protected String getString(String dataLocation) {
+    String getString(String dataLocation) {
         return data.getConfig().getString(dataLocation);
     }
 
-    protected List<?> getList(String dataLocation) {
+    List<?> getList(String dataLocation) {
         return data.getConfig().getList(dataLocation);
     }
 
@@ -432,9 +431,9 @@ public final class YamlDataStore implements DataStore {
         cYml.saveConfig();
     }
 
-    private boolean exists(JavaPlugin plugin) {
+    private boolean notExists(JavaPlugin plugin) {
         final File fileObject = new File(plugin.getDataFolder(), "default.yml");
-        return fileObject.exists();
+        return !fileObject.exists();
     }
 
     private String getAreaPath(Area area) {

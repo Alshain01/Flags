@@ -24,9 +24,9 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.commands.BundleCommand;
-import io.github.alshain01.flags.commands.FlagCommand;
-import io.github.alshain01.flags.commands.SectorCommand;
+import io.github.alshain01.flags.command.BundleCommand;
+import io.github.alshain01.flags.command.FlagCommand;
+import io.github.alshain01.flags.command.SectorCommand;
 
 import io.github.alshain01.flags.sector.SectorListener;
 import io.github.alshain01.flags.sector.Sector;
@@ -63,14 +63,14 @@ public class Flags extends JavaPlugin {
     private boolean sqlData = false;
 
     // Made static to access from enumerations and lower hefty method calls
-    protected static CustomYML messageStore;
+    static CustomYML messageStore;
     private static DataStore dataStore;
     private static Economy economy = null;
     private static Logger logger;
     private static boolean debugOn = false;
 
     // Made static for use by API
-    protected static System currentSystem = System.WORLD;
+    static System currentSystem = System.WORLD;
     private static Registrar flagRegistrar = new Registrar();
     private static SectorManager sectors;
     private static boolean borderPatrol = false;

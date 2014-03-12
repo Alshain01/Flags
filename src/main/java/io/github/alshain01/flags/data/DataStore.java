@@ -33,7 +33,7 @@ import java.util.Set;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public interface DataStore {
-	public boolean create(JavaPlugin plugin);
+    public void create(JavaPlugin plugin);
 
     public void reload();
 
@@ -41,6 +41,7 @@ public interface DataStore {
 
     public DataStoreType getType();
 
+    @SuppressWarnings("UnusedParameters") // Future use
     public void update(JavaPlugin plugin);
 
     public Set<String> readBundles();

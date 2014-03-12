@@ -21,7 +21,7 @@ public class MSSQLDataStore extends SQLDataStore {
     }
 
     @Override
-    protected void createSystemDB() {
+    void createSystemDB() {
         // BIT BASED BOOLEAN
         executeStatement("CREATE TABLE IF NOT EXISTS " + System.getActive().toString()
                 + "Flags (WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
@@ -35,9 +35,9 @@ public class MSSQLDataStore extends SQLDataStore {
     }
 
     @Override
-    public boolean create(JavaPlugin plugin) {
+    public void create(JavaPlugin plugin) {
         // BIT BASED BOOLEAN
-        if(!exists()) {
+        if(notExists()) {
             executeStatement("CREATE TABLE IF NOT EXISTS Version (Major INT, Minor INT, Build INT);");
             executeStatement("INSERT INTO Version (Major, Minor, Build) VALUES (1,3,0);");
             executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(25), FlagName VARCHAR(25), CONSTRAINT pk_BundleEntry PRIMARY KEY (BundleName, FlagName));");
@@ -47,11 +47,10 @@ public class MSSQLDataStore extends SQLDataStore {
             executeStatement("CREATE TABLE IF NOT EXISTS DefaultFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BIT, FlagMessage VARCHAR(255), CONSTRAINT pk_DefaultFlag PRIMARY KEY (WorldName, FlagName));");
             executeStatement("CREATE TABLE IF NOT EXISTS DefaultTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_DefaultTrust PRIMARY KEY (WorldName, FlagName, Trustee));");
         }
-        return true;
     }
 
     @Override
-    protected boolean exists() {
+    boolean notExists() {
         // We always need to create the system specific table
         // in case it changed since the database was created.
         // i.e. Grief Prevention was removed and WorldGuard was installed.
@@ -68,11 +67,11 @@ public class MSSQLDataStore extends SQLDataStore {
                         .replaceAll("%database%", connection[connection.length-1]));
 
         try {
-            return results.next();
+            return !results.next();
         } catch (SQLException e) {
             SqlError(e.getMessage());
         }
-        return false;
+        return true;
     }
 
     @Override

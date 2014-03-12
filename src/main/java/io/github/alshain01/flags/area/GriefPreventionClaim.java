@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import io.github.alshain01.flags.exception.InvalidAreaException;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
@@ -45,7 +45,7 @@ import javax.annotation.Nonnull;
  * Class for creating areas to manage a Grief Prevention Claim.
  */
 public class GriefPreventionClaim extends Area implements Removable, Siege, Administrator {
-	protected Claim claim;
+	Claim claim;
 
 	/**
 	 * Creates an instance of GriefPreventionClaim based on a Bukkit Location
@@ -81,6 +81,7 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
      *
      * @return The claim object
      */
+    @SuppressWarnings("WeakerAccess") // API
     public Claim getClaim() {
         return claim;
     }

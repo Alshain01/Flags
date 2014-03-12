@@ -5,6 +5,7 @@ import org.bukkit.Location;
 
 import java.util.UUID;
 
+@SuppressWarnings("WeakerAccess") // API
 public class SectorLocation {
     private final UUID world;
     private final int coords[] = new int[3];

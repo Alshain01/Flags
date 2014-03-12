@@ -1,4 +1,4 @@
-package io.github.alshain01.flags.commands;
+package io.github.alshain01.flags.command;
 
 import io.github.alshain01.flags.Message;
 import io.github.alshain01.flags.area.Area;
@@ -18,7 +18,7 @@ abstract class PluginCommand {
      * @param args Command arguments
      * @return The page number.
      */
-    protected static int getPage(String[] args) {
+    static int getPage(String[] args) {
         if(args.length < 2) { return 1; }
 
         String page;
@@ -40,7 +40,7 @@ abstract class PluginCommand {
      * @param args The argument to check for a Boolean value
      * @return The Boolean value
      */
-    protected static Boolean getValue(String[] args, int argument) {
+    static Boolean getValue(String[] args, int argument) {
         if (args.length > argument) {
             if(args[argument].toLowerCase().charAt(0) == 't') {
                 return true;
@@ -57,15 +57,15 @@ abstract class PluginCommand {
      * @param args Command arguments
      * @return A list of players
      */
-    protected static Set<String> getPlayers(String[] args, int start) {
+    static Set<String> getPlayers(String[] args, int start) {
         return new HashSet<String>(Arrays.asList(args).subList(start, args.length));
     }
 
-    protected static String getFormattedValue(boolean value) {
+    static String getFormattedValue(boolean value) {
         return (value) ? Message.ValueColorTrue.get() : Message.ValueColorFalse.get();
     }
 
-    protected static Area getArea(CommandSender sender, CommandLocation location) {
+    static Area getArea(CommandSender sender, CommandLocation location) {
         if (location == CommandLocation.DEFAULT) {
             return new Default((((Player)sender).getWorld()));
         } else if (location == CommandLocation.WORLD) {

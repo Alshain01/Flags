@@ -31,8 +31,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.github.alshain01.flags.exceptions.InvalidAreaException;
-import io.github.alshain01.flags.exceptions.InvalidSubdivisionException;
+import io.github.alshain01.flags.exception.InvalidAreaException;
+import io.github.alshain01.flags.exception.InvalidSubdivisionException;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -84,6 +84,7 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
      *
      * @return The ClaimedResidence object
      */
+    @SuppressWarnings("WeakerAccess") // API
     public ClaimedResidence getResidence() {
         return residence;
     }

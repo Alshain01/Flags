@@ -39,7 +39,7 @@ public final class MySQLDataStore extends SQLDataStore {
 	}
 	
     @Override
-	protected boolean exists() {
+	protected boolean notExists() {
 		// We always need to create the system specific table
 		// in case it changed since the database was created.
         // i.e. Grief Prevention was removed and WorldGuard was installed.
@@ -56,11 +56,11 @@ public final class MySQLDataStore extends SQLDataStore {
                         .replaceAll("%database%", connection[connection.length-1]));
 		
 		try {
-			return results.next();
+			return !results.next();
 		} catch (SQLException e) {
 			SqlError(e.getMessage());
 		}
-		return false;
+		return true;
 	}
 
     @Override

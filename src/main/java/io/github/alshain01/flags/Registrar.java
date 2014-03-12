@@ -35,7 +35,7 @@ import org.bukkit.permissions.Permissible;
  * Class for handling the registration of new flags
  */
 public final class Registrar {
-	final Map<String, Flag> flagStore = new HashMap<String, Flag>();
+	private final Map<String, Flag> flagStore = new HashMap<String, Flag>();
 
 	Registrar() {
 	}
@@ -219,6 +219,7 @@ public final class Registrar {
 	 *            The group the flag belongs in.
 	 * @return The flag if the flag was successfully registered. Null otherwise.
 	 */
+    @SuppressWarnings("WeakerAccess") // API
 	public Flag register(String name, String description, boolean def, String group) {
         Validate.notNull(name);
         Validate.notNull(description);
@@ -251,6 +252,7 @@ public final class Registrar {
 	 *            The default message for worlds.
 	 * @return The flag if the flag was successfully registered. Null otherwise.
 	 */
+    @SuppressWarnings("WeakerAccess") // API
 	public Flag register(String name, String description, boolean def,
 			String group, String areaMessage, String worldMessage) {
         Validate.notNull(name);

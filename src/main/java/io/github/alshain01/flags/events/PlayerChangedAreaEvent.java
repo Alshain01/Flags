@@ -41,7 +41,7 @@ public class PlayerChangedAreaEvent extends Event implements Cancellable {
     private final Player player;
     private final Area exitArea;
 
-	boolean cancel = false;
+	private boolean cancel = false;
 
 	/**
 	 * Creates a new PlayerChangedAreaEvent

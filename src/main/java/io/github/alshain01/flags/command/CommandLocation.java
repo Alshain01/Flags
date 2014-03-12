@@ -22,12 +22,12 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags.commands;
+package io.github.alshain01.flags.command;
 
 enum CommandLocation {
 	AREA('a'), WORLD('w'), DEFAULT('d');
 
-	final char alias;
+	private final char alias;
 	
 	CommandLocation(char alias) {
 		this.alias = alias;

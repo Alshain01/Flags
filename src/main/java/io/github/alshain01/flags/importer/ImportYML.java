@@ -39,12 +39,12 @@ class ImportYML {
 	private File customConfigFile = null;
 
 	// Construct a new CustomYML file
-	protected ImportYML(String dataFile) {
+	ImportYML(String dataFile) {
 		this.dataFile = dataFile;
 	}
 
 	// Gets the custom config file.
-	protected FileConfiguration getCustomConfig() {
+	FileConfiguration getCustomConfig() {
 		if (customConfig == null) {
 			reloadCustomConfig();
 		}
@@ -52,7 +52,7 @@ class ImportYML {
 	}
 
 	// Reloads the file to the MemorySection
-	protected void reloadCustomConfig() {
+	void reloadCustomConfig() {
 		if (customConfigFile == null) {
 			customConfigFile = new File(dataFile);
 		}

@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.github.alshain01.flags.exceptions.InvalidAreaException;
+import io.github.alshain01.flags.exception.InvalidAreaException;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -80,6 +80,7 @@ public class FactionsTerritory extends Area implements Removable {
      *
      * @return The faction object
      */
+    @SuppressWarnings("WeakerAccess") // API
     public Faction getFaction() {
         return faction;
     }
