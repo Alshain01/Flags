@@ -41,6 +41,7 @@ import java.util.Set;
 import net.milkbowl.vault.economy.EconomyResponse;
 
 import org.apache.commons.lang.Validate;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -116,10 +117,8 @@ public abstract class Area implements Comparable<Area> {
      *            False if you want the inherited default (ensures not null).
      * @return The value of the flag or the inherited value of the flag from
      *         defaults if not defined.
-     * @throws InvalidAreaException
      */
     public Boolean getValue(Flag flag, boolean absolute) {
-        if (!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(flag);
 
         Boolean value = Flags.getDataStore().readFlag(this, flag);
@@ -139,10 +138,8 @@ public abstract class Area implements Comparable<Area> {
      *            The command sender for event call and economy, may be null if
      *            no associated player or console.
      * @return False if the event was canceled.
-     * @throws InvalidAreaException
      */
     public final boolean setValue(Flag flag, Boolean value, CommandSender sender) {
-        if (!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(flag);
 
         // Check to see if this can be paid for
@@ -206,7 +203,6 @@ public abstract class Area implements Comparable<Area> {
 	 * @param flag
 	 *            The flag to retrieve the message for.
 	 * @return The message associated with the flag.
-     * @throws InvalidAreaException
 	 */
 	public final String getMessage(Flag flag) { return getMessage(flag, true); }
 
@@ -219,7 +215,6 @@ public abstract class Area implements Comparable<Area> {
      * @param playerName
      *            The player name to insert into the message.
      * @return The message associated with the flag.
-     * @throws InvalidAreaException
      */
     public final String getMessage(Flag flag, String playerName) {
         Validate.notNull(playerName);
@@ -236,10 +231,8 @@ public abstract class Area implements Comparable<Area> {
 	 *            True if you wish to populate instances of {AreaType}, {Owner},
 	 *            and {World} and translate color codes
 	 * @return The message associated with the flag.
-     * @throws InvalidAreaException
 	 */
 	public String getMessage(Flag flag, boolean parse) {
-		if (!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(flag);
 
 		String message = Flags.getDataStore().readMessage(this, flag);
@@ -268,10 +261,8 @@ public abstract class Area implements Comparable<Area> {
      *            CommandSender for event, may be null if no associated player
      *            or console.
      * @return True if successful
-     * @throws InvalidAreaException
      */
     public final boolean setMessage(Flag flag, String message, CommandSender sender) {
-        if (!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(flag);
 
         ETransactionType transaction = null;
@@ -334,10 +325,8 @@ public abstract class Area implements Comparable<Area> {
 	 * @param flag
 	 *            The flag to retrieve the trust list for.
 	 * @return The list of trustees
-     * @throws InvalidAreaException
 	 */
 	public final Set<String> getTrustList(Flag flag) {
-        if (!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(flag);
 
 		return Flags.getDataStore().readTrust(this,	flag);
@@ -349,10 +338,8 @@ public abstract class Area implements Comparable<Area> {
      * @param flag
      *            The flag to retrieve the trust list for.
      * @return The list of players
-     * @throws InvalidAreaException
      */
     public final Set<String> getPlayerTrustList(Flag flag) {
-        if (!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(flag);
 
         return Flags.getDataStore().readPlayerTrust(this, flag);
@@ -364,11 +351,9 @@ public abstract class Area implements Comparable<Area> {
      * @param flag
      *            The flag to retrieve the trust list for.
      * @return The list of permissions
-     * @throws InvalidAreaException
      */
     @SuppressWarnings("unused") // API
     public final Set<String> getPermissionTrustList(Flag flag) {
-        if (!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(flag);
 
         return Flags.getDataStore().readPermissionTrust(this, flag);
@@ -387,10 +372,8 @@ public abstract class Area implements Comparable<Area> {
      *            CommandSender for event, may be null if no associated player
      *            or console.
      * @return True if successful.
-     * @throws InvalidAreaException
      */
     public final boolean setTrust(Flag flag, String trustee, boolean trusted, CommandSender sender) {
-        if (!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(flag);
         Validate.notNull(trustee);
 
@@ -438,11 +421,9 @@ public abstract class Area implements Comparable<Area> {
      * @param player
      *            The player to check trust for.
      * @return The list of permissions
-     * @throws InvalidAreaException
      */
     @SuppressWarnings("unused") // API
     public final boolean hasTrust(Flag flag, Player player) {
-        if (!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(flag);
         Validate.notNull(player);
 
@@ -470,10 +451,8 @@ public abstract class Area implements Comparable<Area> {
      * @param p
      *            The player to check.
      * @return true if the player has permissions.
-     * @throws InvalidAreaException
      */
     public boolean hasPermission(Permissible p) {
-        if (!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(p);
 
         if (p instanceof HumanEntity
@@ -495,10 +474,8 @@ public abstract class Area implements Comparable<Area> {
 	 * @param p
 	 *            The player to check.
 	 * @return true if the player has permissions.
-     * @throws InvalidAreaException
 	 */
 	public boolean hasBundlePermission(Permissible p) {
-        if (!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(p);
 
 		if (p instanceof HumanEntity
