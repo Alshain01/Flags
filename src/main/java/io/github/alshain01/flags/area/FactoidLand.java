@@ -91,8 +91,8 @@ public class FactoidLand extends Area implements Removable, Subdivision {
 
     @Override
     public String getSystemID() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return land.getAncestor(land.getGenealogy()).getName();
+        if(isArea()) { return land.getAncestor(land.getGenealogy()).getName(); }
+        throw new InvalidAreaException();
     }
 
     @Override
@@ -101,18 +101,20 @@ public class FactoidLand extends Area implements Removable, Subdivision {
     }
     @Override
     public Set<String> getOwners() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        String owner = null;
-        if(land.getOwner().getContainerType() == PlayerContainerType.PLAYER) {
-            owner = land.getOwner().getName();
+        if(isArea()) {
+            String owner = null;
+            if(land.getOwner().getContainerType() == PlayerContainerType.PLAYER) {
+                owner = land.getOwner().getName();
+            }
+            return new HashSet<String>(Arrays.asList(owner));
         }
-        return new HashSet<String>(Arrays.asList(owner));
+        throw new InvalidAreaException();
     }
 
     @Override
     public org.bukkit.World getWorld() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return land.getWord();
+        if(isArea()) { return land.getWord(); }
+        throw new InvalidAreaException();
     }
 
     @Override
@@ -120,44 +122,54 @@ public class FactoidLand extends Area implements Removable, Subdivision {
 
     @Override
     public String getSystemSubID() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        if(!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        return land.getName();
+        if(isArea()) {
+            if(isSubdivision()) { return land.getName(); }
+            throw new InvalidSubdivisionException();
+        }
+        throw new InvalidAreaException();
     }
 
     @Override
     public boolean isSubdivision() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return land.getParent() != null;
+        if(isArea()) { return land.getParent() != null; }
+        throw new InvalidAreaException();
     }
 
     @Override
     public boolean isParent(Area area) {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        if(!isSubdivision()) { throw new InvalidSubdivisionException(); }
         Validate.notNull(area);
-        return area instanceof FactoidLand && land.getParent() == ((FactoidLand)area).getLand();
+        if(isArea()) {
+            if(isSubdivision()) { return area instanceof FactoidLand && land.getParent() == ((FactoidLand)area).getLand(); }
+            throw new InvalidSubdivisionException();
+        }
+        throw new InvalidAreaException();
     }
 
     @Override
     public Area getParent() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        if(!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        return new FactoidLand(land.getParent().getName());
+        if(isArea()) {
+            if(isSubdivision()) { return new FactoidLand(land.getParent().getName()); }
+            throw new InvalidSubdivisionException();
+        }
+        throw new InvalidAreaException();
     }
 
     @Override
     public boolean isInherited() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        if(!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        return Flags.getDataStore().readInheritance(this);
+        if(isArea()) {
+            if(!isSubdivision()) { return Flags.getDataStore().readInheritance(this); }
+            throw new InvalidAreaException();
+        }
+        throw new InvalidSubdivisionException();
     }
 
     @Override
     public void setInherited(boolean value) {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        if(!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        Flags.getDataStore().writeInheritance(this, value);
+        if(isArea()) {
+            if(isSubdivision()) { Flags.getDataStore().writeInheritance(this, value); }
+            throw new InvalidSubdivisionException();
+        }
+        throw new InvalidAreaException();
     }
 
     /**
@@ -165,8 +177,8 @@ public class FactoidLand extends Area implements Removable, Subdivision {
      */
     @Override
     public void remove() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        Flags.getDataStore().remove(this);
+        if(isArea()) { Flags.getDataStore().remove(this); }
+        throw new InvalidAreaException();
     }
 
     /**
