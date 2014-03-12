@@ -97,6 +97,15 @@
 			<optional>true</optional>
 		</dependency>
 
+        <dependency>
+            <groupId>me.tabinol.factoid.Factoid</groupId>
+            <artifactId>Factoid</artifactId>
+            <systemPath>${dependencydir}\Factoid-0.1-r170.jar</systemPath>
+            <version>0.1-R170</version>
+            <scope>system</scope>
+            <optional>true</optional>
+        </dependency>
+
 	<!-- Maven Dependencies -->
 		<dependency>
 			<groupId>org.bukkit</groupId>
