@@ -24,6 +24,7 @@
 
 package io.github.alshain01.flags;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -42,6 +43,7 @@ public final class Bundle {
 	 * @return A list containing the bundle. Null if it doesn't exist.
 	 */
 	public static Set<Flag> getBundle(String bundle) {
+        Validate.notNull(bundle);
 		return Flags.getDataStore().readBundle(bundle.toLowerCase());
 	}
 
@@ -62,6 +64,7 @@ public final class Bundle {
 	 * @return True if the string is a valid bundle name.
 	 */
 	public static boolean isBundle(String bundle) {
+        Validate.notNull(bundle);
 		return getBundleNames().contains(bundle.toLowerCase());
 	}
 
@@ -71,10 +74,17 @@ public final class Bundle {
 	 * @param name
 	 *            The bundle name
 	 * @param flags
-	 *            A list of flags in the bundle. (does not verify validity)
+	 *            A list of flags in the bundle.
 	 */
     @SuppressWarnings("unused") // API
 	public static void setBundle(String name, Set<Flag> flags) {
+        Validate.notNull(name);
+        if(flags != null) {
+            // The main variable may be null to remove
+            // but not the elements
+            Validate.noNullElements(flags);
+        }
+
 		Flags.getDataStore().writeBundle(name, flags);
         String permName = "flag.bundle." + name.toLowerCase();
         if(flags == null || flags.size() == 0) {
@@ -96,6 +106,8 @@ public final class Bundle {
     }
 
     private static void addPermission(String name) {
+        Validate.notNull(name);
+
         final Permission perm = new Permission("flags.bundle." + name.toLowerCase(),
                 "Grants ability to use the bundle " + name, PermissionDefault.FALSE);
         perm.addParent("flags.bundle", true);

@@ -24,6 +24,7 @@
 
 package io.github.alshain01.flags;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -46,7 +47,10 @@ public final class ModuleYML {
 	 *            The file name
 	 */
 	public ModuleYML(JavaPlugin plugin, String dataFile) {
-		this.plugin = plugin;
+        Validate.notNull(plugin);
+        Validate.notNull(dataFile);
+
+        this.plugin = plugin;
 		fileName = dataFile;
 	}
 

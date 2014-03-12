@@ -26,6 +26,7 @@ package io.github.alshain01.flags;
 
 import java.util.*;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.Permissible;
@@ -47,7 +48,8 @@ public final class Registrar {
 	 * @return The flag requested or null if it does not exist.
 	 */
 	public Flag getFlag(String flag) {
-		return isFlag(flag) ? flagStore.get(flag) : null;
+        Validate.notNull(flag);
+        return isFlag(flag) ? flagStore.get(flag) : null;
 	}
 
 	/**
@@ -76,6 +78,7 @@ public final class Registrar {
 	 * @return The flag requested or null if it does not exist.
 	 */
 	public Flag getFlagIgnoreCase(String flag) {
+        Validate.notNull(flag);
 		for (final Flag f : getFlags()) {
 			if (f.getName().equalsIgnoreCase(flag)) {
 				return f;
@@ -109,6 +112,7 @@ public final class Registrar {
      * @return A set of all the flags in the group.
      */
     public Set<Flag> getGroup(String group) {
+        Validate.notNull(group);
         final Set<Flag> flags = new HashSet<Flag>();
 
         for (final Flag flag : flagStore.values()) {
@@ -159,6 +163,7 @@ public final class Registrar {
      * @return A set of all the flags the permissible may change
      */
     public Set<Flag> getPermittedFlags(Permissible permissible) {
+        Validate.notNull(permissible);
         final Set<Flag> flags = new HashSet<Flag>();
         for(final Flag flag : flagStore.values()) {
             if(permissible.hasPermission(flag.getPermission())) {
@@ -174,6 +179,7 @@ public final class Registrar {
      * @return A set of all the flags the permissible may bypass
      */
     public Set<Flag> getBypassedFlags(Permissible permissible) {
+        Validate.notNull(permissible);
         final Set<Flag> flags = new HashSet<Flag>();
         for(final Flag flag : flagStore.values()) {
             if(permissible.hasPermission(flag.getBypassPermission())) {
@@ -191,6 +197,7 @@ public final class Registrar {
 	 * @return True if the flag name has been registered
 	 */
 	public boolean isFlag(String flag) {
+        Validate.notNull(flag);
 		return flagStore.containsKey(flag);
 	}
 
@@ -208,6 +215,9 @@ public final class Registrar {
 	 * @return The flag if the flag was successfully registered. Null otherwise.
 	 */
 	public Flag register(String name, String description, boolean def, String group) {
+        Validate.notNull(name);
+        Validate.notNull(description);
+        Validate.notNull(group);
 		if (flagStore.containsKey(name)) {
 			return null;
 		}
@@ -238,6 +248,12 @@ public final class Registrar {
 	 */
 	public Flag register(String name, String description, boolean def,
 			String group, String areaMessage, String worldMessage) {
+        Validate.notNull(name);
+        Validate.notNull(description);
+        Validate.notNull(group);
+        Validate.notNull(areaMessage);
+        Validate.notNull(worldMessage);
+
 		if (flagStore.containsKey(name)) {
 			return null;
 		}
@@ -261,10 +277,9 @@ public final class Registrar {
 	 */
     @SuppressWarnings("unused") // API
 	public Set<Flag> register(ModuleYML yaml, String group) {
-		if(yaml == null || group == null) {
-			return null;
-		}
-		
+        Validate.notNull(yaml);
+        Validate.notNull(group);
+
 		Set<Flag> flags = new HashSet<Flag>();
 		for (final String f : yaml.getModuleData().getConfigurationSection("Flag").getKeys(false)) {
 			final ConfigurationSection data = yaml.getModuleData().getConfigurationSection("Flag." + f);
