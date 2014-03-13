@@ -53,7 +53,7 @@ public class SQLDataStore implements DataStore {
     /*
      * Constructor
      */
-    protected SQLDataStore() { }
+    SQLDataStore() { }
 
     public SQLDataStore(String url, String user, String pw) {
         this.url = url;

@@ -60,20 +60,6 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 		super(ID);
 	}
 
-	/**
-	 * Creates an instance of GriefPreventionClaim78 based on a claim ID and
-	 * sub-claimID
-	 * 
-	 * @param ID
-	 *            The claim ID
-	 * @param subID
-	 *            The sub-claim ID
-	 */
-	public GriefPreventionClaim78(long ID, long subID) {
-		super(ID);
-		this.claim = (claim == null) ? null : claim.getSubClaim(subID);
-	}
-
     @Override
     public org.bukkit.World getWorld() {
         if(!isArea()) { throw new InvalidAreaException(); }
@@ -81,9 +67,13 @@ public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subd
 
     @Override
     public String getSystemSubID() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        if(!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        return claim.parent != null ? String.valueOf(claim.getSubClaimID()) : null;
+        if(isArea()) {
+            if(isSubdivision()) {
+                return String.valueOf(claim.getID());
+            }
+            throw new InvalidSubdivisionException();
+        }
+        throw new InvalidAreaException();
     }
 
     @Override

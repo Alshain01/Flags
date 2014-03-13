@@ -24,6 +24,7 @@
 
 package io.github.alshain01.flags;
 
+import io.github.alshain01.flags.exception.InvalidBundleException;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
@@ -44,6 +45,7 @@ public final class Bundle {
 	 */
 	public static Set<Flag> getBundle(String bundle) {
         Validate.notNull(bundle);
+        if(!isBundle(bundle)) { throw new InvalidBundleException(); }
 		return Flags.getDataStore().readBundle(bundle.toLowerCase());
 	}
 
@@ -80,6 +82,8 @@ public final class Bundle {
     @SuppressWarnings("unused") // API
 	public static void setBundle(String name, Set<Flag> flags) {
         Validate.notNull(name);
+        if(!isBundle(name)) { throw new InvalidBundleException(); }
+
         if(flags != null) {
             // The main variable may be null to remove
             // but not the elements

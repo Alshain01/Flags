@@ -120,7 +120,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         if(command.requiresFlag != null) {
             if(command.requiresFlag || args.length >= 3) {
                 flag = Flags.getRegistrar().getFlagIgnoreCase(args[2]);
-                if (Validate.notValid(sender, flag, args[2])) { return true; }
+                if (Validate.notFlag(sender, flag, args[2])) { return true; }
             }
         }
 
@@ -243,7 +243,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     private static boolean get(Player player, CommandLocation location, Flag flag) {
         // Acquire the area
         Area area = getArea(player, location);
-        if(Validate.notValid(player, area)) { return false; }
+        if(Validate.notArea(player, area)) { return false; }
 
         // Return the single flag requested
         if (flag != null) {
@@ -283,7 +283,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     private static void set(Player player, CommandLocation location, Flag flag, Boolean value) {
         // Acquire the area
         Area area = getArea(player, location);
-        if(Validate.notValid(player, area)
+        if(Validate.notArea(player, area)
                 || Validate.notPermitted(player, flag)
                 || Validate.notPermitted(player, area))
         { return; }
@@ -303,7 +303,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     private static void remove(Player player, CommandLocation location, Flag flag) {
         // Acquire the area
         Area area = getArea(player, location);
-        if(Validate.notValid(player, area) || Validate.notPermitted(player, area)) { return; }
+        if(Validate.notArea(player, area) || Validate.notPermitted(player, area)) { return; }
 
         // Removing single flag type
         if (flag != null) {
@@ -347,7 +347,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         }
 
         if(Validate.notPlayerFlag(player, flag)
-                || Validate.notValid(player, area)
+                || Validate.notArea(player, area)
                 || Validate.notTrustList(player, trustList, area.getSystemType().getAreaType(), flag.getName())) { return; }
 
         // List all set flags
@@ -370,7 +370,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
 
         Area area = getArea(player, location);
         if(Validate.notPlayerFlag(player, flag)
-                || Validate.notValid(player, area)
+                || Validate.notArea(player, area)
                 || Validate.notPermitted(player, flag)
                 || Validate.notPermitted(player, area))
         { return true; }
@@ -391,7 +391,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         Area area = getArea(player, location);
 
         if(Validate.notPlayerFlag(player, flag)
-                || Validate.notValid(player, area)
+                || Validate.notArea(player, area)
                 || Validate.notPermitted(player, flag)
                 || Validate.notPermitted(player, area))
         { return; }
@@ -435,7 +435,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         Area area = getArea(player, location);
 
         if(Validate.notPlayerFlag(player, flag)
-                || Validate.notValid(player, area)
+                || Validate.notArea(player, area)
                 || Validate.notPermitted(player, area)
                 || Validate.notPermitted(player, flag))
         { return; }
@@ -449,7 +449,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         Area area = getArea(player, location);
 
         if(Validate.notPlayerFlag(player, flag)
-                || Validate.notValid(player, area)
+                || Validate.notArea(player, area)
                 || Validate.notPermitted(player, area)
                 || Validate.notPermitted(player, flag))
         { return; }
@@ -466,7 +466,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     private static void inherit(Player player, Boolean value) {
         Area area = getArea(player, CommandLocation.AREA);
         if(Validate.notSubdividable(player)
-                || Validate.notValid(player, area)
+                || Validate.notArea(player, area)
                 || Validate.notSubdivision(player, area)) {
             return;
         }

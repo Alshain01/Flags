@@ -39,23 +39,63 @@ import org.bukkit.permissions.Permissible;
 final class Validate {
 	private Validate() {}
 	
-    static boolean notValid(CommandSender cs, Area a) {
-        if(a == null || !a.isArea()) {
-            cs.sendMessage(Message.NoAreaError.get()
-                    .replace("{AreaType}", System.getActive().getAreaType().toLowerCase()));
-            return true;
-        }
-        return false;
+    static boolean notArea(CommandSender cs, Area area) {
+        if(area != null && area.isArea()) { return false; }
+        cs.sendMessage(Message.NoAreaError.get()
+                .replace("{AreaType}", System.getActive().getAreaType().toLowerCase()));
+        return true;
     }
 
-    static boolean notValid(CommandSender cs, Flag f, String n) {
-        if(f == null) {
-            cs.sendMessage(Message.InvalidFlagError.get()
-                    .replace("{RequestedName}", n)
-                    .replace("{Type}", Message.Flag.get().toLowerCase()));
-            return true;
+    static boolean notFlag(CommandSender sender, Flag flag, String requestedFlag) {
+        if(flag != null) { return false; }
+        sender.sendMessage(Message.InvalidFlagError.get()
+                .replace("{RequestedName}", requestedFlag)
+                .replace("{Type}", Message.Flag.get().toLowerCase()));
+        return true;
+    }
+
+    static boolean notBundle(CommandSender sender, String bundle) {
+        if (Bundle.isBundle(bundle)) { return false; }
+        sender.sendMessage(Message.InvalidFlagError.get()
+                .replace("{RequestedName}", bundle)
+                .replace("{Type}", Message.Bundle.get().toLowerCase()));
+        return true;
+    }
+
+    static boolean notPermittedBundle(Permissible p, String bundleName) {
+        if(p.hasPermission("flags.bundle." + bundleName)) { return false; }
+        if(p instanceof CommandSender) {
+            ((CommandSender)p).sendMessage(Message.FlagPermError.get()
+                    .replace("{Type}", Message.Bundle.get().toLowerCase()));
         }
-        return false;
+        return true;
+    }
+
+    static boolean notPermittedBundle(Permissible p, Area area) {
+        if (area.hasBundlePermission(p)) { return false; }
+        if(p instanceof CommandSender) {
+            ((CommandSender)p).sendMessage(((area instanceof World || area instanceof Default)
+                    ? Message.WorldPermError.get() : Message.AreaPermError.get())
+                    .replace("{AreaType}", area.getSystemType().getAreaType())
+                    .replace("{OwnerName}", area.getOwners().toArray()[0].toString())
+                    .replace("{Type}", Message.Bundle.get().toLowerCase()));
+        }
+        return true;
+    }
+
+    static boolean notPermittedBundle(CommandSender sender, Area area, String bundleName) {
+        return notArea(sender, area)
+                || notBundle(sender, bundleName)
+                || notPermittedBundle(sender, bundleName)
+                || notPermittedBundle(sender, area);
+    }
+
+    static boolean notPermittedEditBundle(Permissible p) {
+        if (p.hasPermission("flags.command.bundle.edit")) { return false; }
+        if(p instanceof CommandSender) {
+            ((CommandSender)p).sendMessage(Message.BundlePermError.get());
+        }
+        return true;
     }
 
     static boolean notPlayerFlag(CommandSender cs, Flag f) {
@@ -100,21 +140,7 @@ final class Validate {
         return false;
     }
 
-	static boolean notBundle(CommandSender cs, Set<Flag> b, String n) {
-        try {
-            org.apache.commons.lang.Validate.notNull(b);
-            org.apache.commons.lang.Validate.notEmpty(b);
-            org.apache.commons.lang.Validate.noNullElements(b);
-        } catch (IllegalArgumentException ex) {
-		    cs.sendMessage(Message.InvalidFlagError.get()
-                    .replace("{RequestedName}", n)
-				    .replace("{Type}", Message.Bundle.get().toLowerCase()));
-            return true;
-        }
-		return false; 
-	}
-	
-	static boolean notPermitted(Permissible p, Flag f) {
+    static boolean notPermitted(Permissible p, Flag f) {
         if(p.hasPermission((f).getPermission())) { return false; }
         if(p instanceof CommandSender) {
             ((CommandSender)p).sendMessage(Message.FlagPermError.get().replace("{Type}", Message.Flag.get().toLowerCase()));
@@ -140,35 +166,6 @@ final class Validate {
 			return true;
 		}
 		return false;
-	}
-	
-	static boolean notPermittedBundle(Permissible p, String b) {
-        if(p.hasPermission("flags.bundle." + b)) { return false; }
-        if(p instanceof CommandSender) {
-            ((CommandSender)p).sendMessage(Message.FlagPermError.get()
-                    .replace("{Type}", Message.Bundle.get().toLowerCase()));
-        }
-        return true;
-    }
-
-    static boolean notPermittedBundle(Permissible p, Area a) {
-        if (a.hasBundlePermission(p)) { return false; }
-        if(p instanceof CommandSender) {
-            ((CommandSender)p).sendMessage(((a instanceof World || a instanceof Default)
-                    ? Message.WorldPermError.get() : Message.AreaPermError.get())
-                        .replace("{AreaType}", a.getSystemType().getAreaType())
-                        .replace("{OwnerName}", a.getOwners().toArray()[0].toString())
-                        .replace("{Type}", Message.Bundle.get().toLowerCase()));
-        }
-        return true;
-	}
-	
-	static boolean notPermittedEditBundle(Permissible p) {
-		if (p.hasPermission("flags.command.bundle.edit")) { return false; }
-		if(p instanceof CommandSender) {
-			((CommandSender)p).sendMessage(Message.BundlePermError.get());
-		}
-		return true;
 	}
 	
 	static boolean notPermittedEditPrice(Permissible p) {

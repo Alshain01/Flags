@@ -173,14 +173,10 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
     }
 
     private static void get(Player player, CommandLocation location, String bundleName) {
-        Area area = getArea(player, location);
-        Set<Flag> bundle = Bundle.getBundle(bundleName);
+        final Area area = getArea(player, location);
 
-        if(Validate.notValid(player, area)
-                || Validate.notBundle(player, bundle, bundleName)
-                || Validate.notPermittedBundle(player, area)
-                || Validate.notPermittedBundle(player, bundleName))
-        { return; }
+        if(Validate.notPermittedBundle(player, area, bundleName)) { return; }
+        final Set<Flag> bundle = Bundle.getBundle(bundleName);
 
         for(Flag flag : bundle) {
             player.sendMessage(Message.GetBundle.get()
@@ -191,56 +187,42 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
 
     private static void set(Player player, CommandLocation location, String bundleName, Boolean value) {
         boolean success = true;
-        Area area = getArea(player, location);
-        Set<Flag> bundle = Bundle.getBundle(bundleName);
+        final Area area = getArea(player, location);
 
-        if(Validate.notValid(player, area)
-                || Validate.notBundle(player, bundle, bundleName)
-                || Validate.notPermittedBundle(player, area)
-                || Validate.notPermittedBundle(player, bundleName))
-        { return; }
+        if(Validate.notPermittedBundle(player, area, bundleName)) { return; }
+        final Set<Flag> bundle = Bundle.getBundle(bundleName);
 
         for(Flag flag : bundle) {
             if(!area.setValue(flag, value, player)) { success = false; }
         }
 
         player.sendMessage((success ? Message.SetBundle.get() : Message.SetMultipleFlagsError.get())
-                .replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
-                .replaceAll("\\{Bundle\\}", bundleName)
-                .replaceAll("\\{Value\\}", getFormattedValue(value).toLowerCase()));
+                .replace("{AreaType}", area.getSystemType().getAreaType().toLowerCase())
+                .replace("{Bundle}", bundleName)
+                .replace("{Value}", getFormattedValue(value).toLowerCase()));
     }
 
     private static void remove(Player player, CommandLocation location, String bundleName) {
         boolean success = true;
-        Area area = getArea(player, location);
-        Set<Flag> bundle = Bundle.getBundle(bundleName);
+        final Area area = getArea(player, location);
 
-        if(Validate.notValid(player, area)
-                || Validate.notBundle(player, bundle, bundleName)
-                || Validate.notPermittedBundle(player, area)
-                || Validate.notPermittedBundle(player, bundleName))
-        { return; }
+        if(Validate.notPermittedBundle(player, area, bundleName)) { return; }
+        final Set<Flag> bundle = Bundle.getBundle(bundleName);
 
         for (Flag flag : bundle) {
             if (!area.setValue(flag, null, player)) { success = false; }
         }
 
         player.sendMessage((success ? Message.RemoveBundle.get() : Message.RemoveAllFlags.get())
-                .replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
-                .replaceAll("\\{Bundle\\}", bundleName));
+                .replace("{AreaType}", area.getSystemType().getAreaType().toLowerCase())
+                .replace("{Bundle}", bundleName));
     }
 
     private static void trust(Player player, CommandLocation location, String bundleName, Set<String> playerList) {
-        if(playerList.size() == 0) { return; }
-
-        Area area = getArea(player, location);
-        if(!Bundle.isBundle(bundleName)
-                || Validate.notValid(player, area)
-                || Validate.notPermittedBundle(player, bundleName)
-                || Validate.notPermittedBundle(player, area))
-        { return; }
-
         boolean success = true;
+        Area area = getArea(player, location);
+
+        if(Validate.notPermittedBundle(player, area, bundleName)) { return; }
 
         for(Flag f : Bundle.getBundle(bundleName)) {
             if(!f.isPlayerFlag()) { continue; }
@@ -251,19 +233,15 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.SetTrust.get() : Message.SetTrustError.get())
-                .replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
-                .replaceAll("\\{Flag\\}", bundleName));
+                .replace("{AreaType}", area.getSystemType().getAreaType().toLowerCase())
+                .replace("{Flag}", bundleName));
     }
 
     private static void distrust(Player player, CommandLocation location, String bundleName, Set<String> playerList) {
         boolean success = true;
         Area area = getArea(player, location);
 
-        if(!Bundle.isBundle(bundleName)
-                || Validate.notValid(player, area)
-                || Validate.notPermittedBundle(player, bundleName)
-                || Validate.notPermittedBundle(player, area))
-        { return; }
+        if(Validate.notPermittedBundle(player, area, bundleName)) { return; }
 
         for(Flag f : Bundle.getBundle(bundleName)) {
             if(!f.isPlayerFlag()) { continue; }
@@ -278,8 +256,8 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.RemoveTrust.get() : Message.RemoveTrustError.get())
-                .replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
-                .replaceAll("\\{Flag\\}", bundleName));
+                .replace("{AreaType}", area.getSystemType().getAreaType().toLowerCase())
+                .replace("{Flag}", bundleName));
     }
 
     private static void add(CommandSender sender, String bundleName, Set<String> flags) {
@@ -313,12 +291,13 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
 
     private static void delete(CommandSender sender, String bundleName, Set<String> flags) {
         if(sender instanceof Player && Validate.notPermittedEditBundle(sender)){
-            return; }
+            return;
+        }
 
         boolean success = true;
-        Set<Flag> bundle = Bundle.getBundle(bundleName.toLowerCase());
 
-        if(Validate.notBundle(sender, bundle, bundleName)) { return; }
+        if(Validate.notBundle(sender, bundleName)) { return; }
+        Set<Flag> bundle = Bundle.getBundle(bundleName.toLowerCase());
 
         for(String s : flags) {
             Flag flag = Flags.getRegistrar().getFlag(s);
