@@ -16,6 +16,16 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
     private int depth;
 
 
+    protected Sector(UUID id, Location corner1, Location corner2, int depth) {
+        this.id = id;
+        parent = null;
+        this.depth = depth;
+
+        //Find the lesser/greater corners
+        greater = getGreaterCorner(corner1, corner2);
+        lesser = getLesserCorner(corner1, corner2);
+    }
+
     protected Sector(Location corner1, Location corner2, int depth) {
         id = UUID.randomUUID();
         parent = null;
@@ -26,9 +36,8 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
         lesser = getLesserCorner(corner1, corner2);
     }
 
-
-    protected Sector(Location corner1, Location corner2, int depth, UUID parentID) {
-        id = UUID.randomUUID();
+    protected Sector(UUID id, Location corner1, Location corner2, int depth, UUID parentID) {
+        this.id = id;
         parent = parentID;
         this.depth = depth;
 
