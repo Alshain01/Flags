@@ -39,7 +39,12 @@ public class SectorManager {
         sectors.clear();
     }
     Sector add(Location corner1, Location corner2) {
-        Sector s = new Sector(corner1, corner2, defaultDepth);
+        UUID newID;
+        do {
+            newID = UUID.randomUUID();
+        } while (!sectors.containsKey(newID));
+
+        Sector s = new Sector(newID, corner1, corner2, defaultDepth);
         sectors.put(s.getID(), s);
         return s;
     }
