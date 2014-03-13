@@ -27,6 +27,7 @@ package io.github.alshain01.flags;
 import io.github.alshain01.flags.area.*;
 import io.github.alshain01.flags.events.SectorDeleteEvent;
 import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
+import me.tabinol.factoid.event.LandDeleteEvent;
 import net.jzx7.regiosapi.events.RegionDeleteEvent;
 
 import org.bukkit.Bukkit;
@@ -130,4 +131,15 @@ class MrClean {
 			new RegiosRegion(e.getRegion().getName()).remove();
 		}
 	}
+
+    /*
+ * Regios Cleaner
+ */
+    private static class FactoidCleaner implements Listener {
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        private void onRegionDelete(LandDeleteEvent e) {
+            // Cleanup the database, keep the file from growing too large.
+            new RegiosRegion(e.getLand().getName()).remove();
+        }
+    }
 }
