@@ -261,12 +261,14 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
     }
 
     private static void add(CommandSender sender, String bundleName, Set<String> flags) {
-        if(sender instanceof Player && Validate.notPermittedEditBundle(sender)){ return; }
+        if(Validate.notPermittedEditBundle(sender)){ return; }
 
         Flag flag;
-        Set<Flag> bundle = Bundle.getBundle(bundleName);
+        Set<Flag> bundle;
 
-        if(bundle == null) {
+        if(Bundle.isBundle(bundleName)) {
+            bundle = Bundle.getBundle(bundleName);
+        } else {
             Permission perm = new Permission("flags.bundle." + bundleName,
                     "Grants ability to use the bundle " + bundleName, PermissionDefault.FALSE);
             perm.addParent("flags.bundle", true);
@@ -286,17 +288,14 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
 
         Bundle.setBundle(bundleName, bundle);
         sender.sendMessage(Message.UpdateBundle.get()
-                .replaceAll("\\{Bundle\\}", bundleName));
+                .replace("{Bundle}", bundleName));
     }
 
     private static void delete(CommandSender sender, String bundleName, Set<String> flags) {
-        if(sender instanceof Player && Validate.notPermittedEditBundle(sender)){
-            return;
-        }
+        if(Validate.notPermittedEditBundle(sender)){ return; }
+        if(Validate.notBundle(sender, bundleName)) { return; }
 
         boolean success = true;
-
-        if(Validate.notBundle(sender, bundleName)) { return; }
         Set<Flag> bundle = Bundle.getBundle(bundleName.toLowerCase());
 
         for(String s : flags) {
@@ -307,11 +306,11 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         Bundle.setBundle(bundleName, bundle);
 
         sender.sendMessage((success ? Message.UpdateBundle.get() : Message.RemoveAllFlagsError.get())
-                .replaceAll("\\{Bundle\\}", bundleName));
+                .replace("{Bundle}", bundleName));
     }
 
     private static void erase(CommandSender sender, String bundleName) {
-        if(sender instanceof Player && Validate.notPermittedEditBundle(sender)){ return; }
+        if(Validate.notPermittedEditBundle(sender)){ return; }
 
         Set<String> bundles = Bundle.getBundleNames();
         if (bundles == null || bundles.size() == 0 || !bundles.contains(bundleName)) {
@@ -319,18 +318,15 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
             return;
         }
 
-      Bundle.setBundle(bundleName, null);
-        Bukkit.getServer().getPluginManager().removePermission("flags.bundle." + bundleName);
-
-        sender.sendMessage(Message.EraseBundle.get()
-                .replaceAll("\\{Bundle\\}", bundleName));
+        Bundle.setBundle(bundleName, null);
+        sender.sendMessage(Message.EraseBundle.get().replace("{Bundle}", bundleName));
     }
 
     private static void help (CommandSender sender, int page) {
         Set<String> bundles = Bundle.getBundleNames();
         if (bundles == null || bundles.size() == 0) {
             sender.sendMessage(Message.NoFlagFound.get()
-                    .replaceAll("\\{Type\\}", Message.Bundle.get()));
+                    .replace("{Type}", Message.Bundle.get()));
             return;
         }
 
@@ -347,11 +343,11 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         }
 
         sender.sendMessage(Message.HelpHeader.get()
-                .replaceAll("\\{Type\\}", Message.Bundle.get())
-                .replaceAll("\\{Group}", Message.Index.get())
-                .replaceAll("\\{Page\\}", String.valueOf(page))
-                .replaceAll("\\{TotalPages\\}", String.valueOf(total))
-                .replaceAll("\\{Type\\}", Message.Bundle.get()));
+                .replace("{Type}", Message.Bundle.get())
+                .replace("{Group}", Message.Index.get())
+                .replace("{Page}", String.valueOf(page))
+                .replace("{TotalPages}", String.valueOf(total))
+                .replace("{Type}", Message.Bundle.get()));
 
         // Setup for only displaying 10 lines at a time
         int lineCount = 1;
@@ -359,7 +355,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         // Usage line.  Displays only on the first page.
         if (page == 1) {
             sender.sendMessage(Message.HelpInfo.get()
-                    .replaceAll("\\{Type\\}", Message.Bundle.get().toLowerCase()));
+                    .replace("{Type}", Message.Bundle.get().toLowerCase()));
             lineCount++;
         }
 
@@ -391,8 +387,8 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
                 description.append(flag.getName());
             }
             sender.sendMessage(Message.HelpTopic.get()
-                    .replaceAll("\\{Topic\\}", bundleArray[loop])
-                    .replaceAll("\\{Description\\}", description.toString()));
+                    .replace("{Topic}", bundleArray[loop])
+                    .replace("{Description}", description.toString()));
 
             lineCount++;
 

@@ -42,6 +42,7 @@ public final class Bundle {
 	 * @param bundle
 	 *            The bundle name to retrieve
 	 * @return A list containing the bundle. Null if it doesn't exist.
+     * @throws InvalidBundleException
 	 */
 	public static Set<Flag> getBundle(String bundle) {
         Validate.notNull(bundle);
@@ -65,7 +66,6 @@ public final class Bundle {
 	 *            A string bundle name.
 	 * @return True if the string is a valid bundle name.
 	 */
-	@SuppressWarnings("BooleanMethodIsAlwaysInverted") // API
     public static boolean isBundle(String bundle) {
         Validate.notNull(bundle);
 		return getBundleNames().contains(bundle.toLowerCase());
@@ -82,7 +82,6 @@ public final class Bundle {
     @SuppressWarnings("unused") // API
 	public static void setBundle(String name, Set<Flag> flags) {
         Validate.notNull(name);
-        if(!isBundle(name)) { throw new InvalidBundleException(); }
 
         if(flags != null) {
             // The main variable may be null to remove
