@@ -51,7 +51,7 @@ public class SectorCommand implements CommandExecutor {
         }
 
         if(!cType.hasPermission(sender)) {
-            sender.sendMessage(Message.FlagPermError.get().replaceAll("\\{Type\\}", Message.Command.get()));
+            sender.sendMessage(Message.FlagPermError.get().replace("{Type}", Message.Command.get()));
             return true;
         }
 
