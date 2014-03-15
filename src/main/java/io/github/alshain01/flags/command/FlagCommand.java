@@ -1,7 +1,6 @@
 package io.github.alshain01.flags.command;
 
 import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Default;
 import io.github.alshain01.flags.area.Subdivision;
@@ -67,7 +66,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
 
         if (args.length < 1) {
             if(sender instanceof Player) {
-                sender.sendMessage(getFlagUsage((Player)sender, System.getActive().getAreaAt(((Player)sender).getLocation())));
+                sender.sendMessage(getFlagUsage((Player)sender, CuboidType.getActive().getAreaAt(((Player)sender).getLocation())));
                 return true;
             }
             return false;
@@ -76,7 +75,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         final FlagCommandType command = FlagCommandType.get(args[0]);
         if(command == null) {
             if(sender instanceof Player) {
-                sender.sendMessage(getFlagUsage((Player)sender, System.getActive().getAreaAt(((Player)sender).getLocation())));
+                sender.sendMessage(getFlagUsage((Player)sender, CuboidType.getActive().getAreaAt(((Player)sender).getLocation())));
                 return true;
             }
             return false;
@@ -103,7 +102,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
             }
 
             // Make sure we can set flags at that location
-            if (System.getActive() == System.WORLD && (location == CommandLocation.AREA || location == CommandLocation.DEFAULT)) {
+            if (CuboidType.getActive() == CuboidType.WORLD && (location == CommandLocation.AREA || location == CommandLocation.DEFAULT)) {
                 sender.sendMessage(Message.NoSystemError.get());
                 return true;
             }
@@ -212,7 +211,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
             usage.append("|charge");
         }
 
-        if(player.hasPermission("flags.command.flag.set") && area.hasPermission(player) && System.getActive().hasSubdivisions()) {
+        if(player.hasPermission("flags.command.flag.set") && area.hasPermission(player) && CuboidType.getActive().hasSubdivisions()) {
             usage.append("|inherit");
         }
 
@@ -248,7 +247,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         // Return the single flag requested
         if (flag != null) {
             player.sendMessage(Message.GetFlag.get()
-                    .replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
+                    .replaceAll("\\{AreaType\\}", area.getCuboidType().getCuboidName().toLowerCase())
                     .replaceAll("\\{Flag\\}", flag.getName())
                     .replaceAll("\\{Value\\}", getFormattedValue(area.getValue(flag, false)).toLowerCase()));
             return true;
@@ -256,7 +255,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
 
         // No flag provided, list all set flags for the area
         StringBuilder message = new StringBuilder(Message.GetAllFlags.get()
-                .replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase()));
+                .replaceAll("\\{AreaType\\}", area.getCuboidType().getCuboidName().toLowerCase()));
         boolean first = true; // Governs whether we insert a comma or not (true means no)
         Boolean value;
         Area defaultArea = new Default(player.getWorld());
@@ -294,7 +293,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         // Set the flag
         if(area.setValue(flag, value, player)) {
             player.sendMessage(Message.SetFlag.get()
-                    .replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
+                    .replaceAll("\\{AreaType\\}", area.getCuboidType().getCuboidName().toLowerCase())
                     .replaceAll("\\{Flag\\}", flag.getName())
                     .replaceAll("\\{Value\\}", getFormattedValue(value).toLowerCase()));
         }
@@ -311,7 +310,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
 
             if(area.setValue(flag, null, player)) {
                 player.sendMessage(Message.RemoveFlag.get()
-                        .replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
+                        .replaceAll("\\{AreaType\\}", area.getCuboidType().getCuboidName().toLowerCase())
                         .replaceAll("\\{Flag\\}", flag.getName()));
             }
             return;
@@ -328,7 +327,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.RemoveAllFlags.get() : Message.RemoveAllFlagsError.get())
-                .replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase()));
+                .replaceAll("\\{AreaType\\}", area.getCuboidType().getCuboidName().toLowerCase()));
     }
 
     /*
@@ -348,11 +347,11 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
 
         if(Validate.notPlayerFlag(player, flag)
                 || Validate.notArea(player, area)
-                || Validate.notTrustList(player, trustList, area.getSystemType().getAreaType(), flag.getName())) { return; }
+                || Validate.notTrustList(player, trustList, area.getCuboidType().getCuboidName(), flag.getName())) { return; }
 
         // List all set flags
         message = new StringBuilder(Message.GetTrust.get()
-                .replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
+                .replaceAll("\\{AreaType\\}", area.getCuboidType().getCuboidName().toLowerCase())
                 .replaceAll("\\{Flag\\}", flag.getName()));
 
         for (String p : trustList) {
@@ -381,7 +380,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.SetTrust.get() : Message.SetTrustError.get())
-                .replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
+                .replaceAll("\\{AreaType\\}", area.getCuboidType().getCuboidName().toLowerCase())
                 .replaceAll("\\{Flag\\}", flag.getName()));
         return true;
     }
@@ -397,7 +396,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         { return; }
 
         Set<String> trustList = area.getTrustList(flag);
-        if(Validate.notTrustList(player, trustList, area.getSystemType().getAreaType(), flag.getName())) {
+        if(Validate.notTrustList(player, trustList, area.getCuboidType().getCuboidName(), flag.getName())) {
             return;
         }
 
@@ -407,7 +406,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.RemoveTrust.get() : Message.RemoveTrustError.get())
-                .replaceAll("\\{AreaType\\}", area.getSystemType().getAreaType().toLowerCase())
+                .replaceAll("\\{AreaType\\}", area.getCuboidType().getCuboidName().toLowerCase())
                 .replaceAll("\\{Flag\\}", flag.getName()));
     }
 

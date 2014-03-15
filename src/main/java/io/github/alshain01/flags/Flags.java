@@ -35,7 +35,6 @@ import io.github.alshain01.flags.update.UpdateListener;
 import io.github.alshain01.flags.update.UpdateScheduler;
 import io.github.alshain01.flags.data.*;
 import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
-import io.github.alshain01.flags.importer.GPFImport;
 import io.github.alshain01.flags.metrics.MetricsManager;
 
 import java.util.logging.Logger;
@@ -70,7 +69,7 @@ public class Flags extends JavaPlugin {
     private static boolean debugOn = false;
 
     // Made static for use by API
-    static System currentSystem = System.WORLD;
+    static CuboidType currentSystem = CuboidType.WORLD;
     private static Registrar flagRegistrar = new Registrar();
     private static SectorManager sectors;
     private static boolean borderPatrol = false;
@@ -92,24 +91,13 @@ public class Flags extends JavaPlugin {
         debugOn = pluginConfig.getBoolean("Debug");
         logger  = this.getLogger();
         (messageStore = new CustomYML(this, "message.yml")).saveDefaultConfig();
-        currentSystem = System.find(pm, pluginConfig.getList("AreaPlugins"));
+        currentSystem = CuboidType.find(pm, pluginConfig.getList("AreaPlugins"));
         dataStore = DataStoreType.getByUrl(this, pluginConfig.getString("Database.Url"));
         economy = setupEconomy();
         sqlData = dataStore instanceof SQLDataStore;
 
-        //TODO Consider removing support for this
-        // Check for older database and import as necessary.
-        if (currentSystem == System.GRIEF_PREVENTION
-                && !pm.isPluginEnabled("GriefPreventionFlags")) {
-            GPFImport.importGPF();
-        }
-
         // New installation
-        if (!dataStore.create(this)) {
-            logger.severe("Failed to create database schema. Shutting down Flags.");
-            pm.disablePlugin(this);
-            return;
-        }
+        dataStore.create(this);
         dataStore.update(this);
 
         // Load Mr. Clean
@@ -137,7 +125,7 @@ public class Flags extends JavaPlugin {
 		}
 
         // Load Sectors
-        if(currentSystem == System.FLAGS) {
+        if(currentSystem == CuboidType.FLAGS) {
             ConfigurationSerialization.registerClass(Sector.class);
             ConfigurationSection sectorConfig = pluginConfig.getConfigurationSection("Sector");
             sectors = new SectorManager(new CustomYML(this, "sector.yml"), sectorConfig.getInt("DefaultDepth"));
@@ -159,7 +147,7 @@ public class Flags extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        if(currentSystem == System.FLAGS) {
+        if(currentSystem == CuboidType.FLAGS) {
             sectors.write(new CustomYML(this, "sector.yml"));
         }
 

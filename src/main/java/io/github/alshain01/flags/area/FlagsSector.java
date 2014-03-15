@@ -1,5 +1,6 @@
 package io.github.alshain01.flags.area;
 
+import io.github.alshain01.flags.CuboidType;
 import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.exception.InvalidAreaException;
@@ -66,8 +67,14 @@ public class FlagsSector extends Area implements Subdivision, Removable {
         }
     }
 
+    @SuppressWarnings("deprecation")
+    @Deprecated
     @Override
     public System getSystemType() { return System.FLAGS; }
+
+    @Override
+    public CuboidType getCuboidType() { return CuboidType.FLAGS; }
+
 
     @Override
     public Set<String> getOwners() {

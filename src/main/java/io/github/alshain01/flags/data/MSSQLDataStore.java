@@ -1,7 +1,6 @@
 package io.github.alshain01.flags.data;
 
 import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Default;
 import io.github.alshain01.flags.area.Subdivision;
@@ -23,12 +22,12 @@ public class MSSQLDataStore extends SQLDataStore {
     @Override
     void createSystemDB() {
         // BIT BASED BOOLEAN
-        executeStatement("CREATE TABLE IF NOT EXISTS " + System.getActive().toString()
+        executeStatement("CREATE TABLE IF NOT EXISTS " + CuboidType.getActive().toString()
                 + "Flags (WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
                 + "FlagName VARCHAR(25), FlagValue BIT, FlagMessage VARCHAR(255), "
                 + "CONSTRAINT pk_AreaFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
 
-        executeStatement("CREATE TABLE IF NOT EXISTS " + System.getActive().toString()
+        executeStatement("CREATE TABLE IF NOT EXISTS " + CuboidType.getActive().toString()
                 + "Trust (WorldName VARCHAR(50), AreaID VARCHAR(50), "
                 + "AreaSubID VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), "
                 + "CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName, Trustee));");
@@ -54,7 +53,7 @@ public class MSSQLDataStore extends SQLDataStore {
         // We always need to create the system specific table
         // in case it changed since the database was created.
         // i.e. Grief Prevention was removed and WorldGuard was installed.
-        if(System.getActive() != io.github.alshain01.flags.System.WORLD) {
+        if(CuboidType.getActive() != CuboidType.WORLD) {
             createSystemDB();
         }
 

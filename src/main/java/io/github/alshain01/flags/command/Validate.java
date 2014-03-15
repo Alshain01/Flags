@@ -25,7 +25,6 @@
 package io.github.alshain01.flags.command;
 
 import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Default;
 import io.github.alshain01.flags.area.Subdivision;
@@ -42,7 +41,7 @@ final class Validate {
     static boolean notArea(CommandSender cs, Area area) {
         if(area != null && area.isArea()) { return false; }
         cs.sendMessage(Message.NoAreaError.get()
-                .replace("{AreaType}", System.getActive().getAreaType().toLowerCase()));
+                .replace("{AreaType}", CuboidType.getActive().getCuboidName().toLowerCase()));
         return true;
     }
 
@@ -62,7 +61,7 @@ final class Validate {
         return true;
     }
 
-    static boolean notPermittedBundle(Permissible p, String bundleName) {
+    private static boolean notPermittedBundle(Permissible p, String bundleName) {
         if(p.hasPermission("flags.bundle." + bundleName)) { return false; }
         if(p instanceof CommandSender) {
             ((CommandSender)p).sendMessage(Message.FlagPermError.get()
@@ -71,12 +70,12 @@ final class Validate {
         return true;
     }
 
-    static boolean notPermittedBundle(Permissible p, Area area) {
+    private static boolean notPermittedBundle(Permissible p, Area area) {
         if (area.hasBundlePermission(p)) { return false; }
         if(p instanceof CommandSender) {
             ((CommandSender)p).sendMessage(((area instanceof World || area instanceof Default)
                     ? Message.WorldPermError.get() : Message.AreaPermError.get())
-                    .replace("{AreaType}", area.getSystemType().getAreaType())
+                    .replace("{AreaType}", area.getCuboidType().getCuboidName())
                     .replace("{OwnerName}", area.getOwners().toArray()[0].toString())
                     .replace("{Type}", Message.Bundle.get().toLowerCase()));
         }
@@ -106,8 +105,8 @@ final class Validate {
     }
 
     static boolean notSubdividable(CommandSender cs) {
-        if(System.getActive().hasSubdivisions()) { return false; }
-        cs.sendMessage(Message.SubdivisionSupportError.get().replace("{System}", System.getActive().getDisplayName()));
+        if(CuboidType.getActive().hasSubdivisions()) { return false; }
+        cs.sendMessage(Message.SubdivisionSupportError.get().replace("{System}", CuboidType.getActive().getDisplayName()));
         return true;
     }
 	
@@ -153,7 +152,7 @@ final class Validate {
         if(p instanceof CommandSender) {
             ((CommandSender)p).sendMessage(((a instanceof World || a instanceof Default)
                     ? Message.WorldPermError.get() : Message.AreaPermError.get())
-                        .replace("{AreaType}", a.getSystemType().getAreaType())
+                        .replace("{AreaType}", a.getCuboidType().getCuboidName())
                         .replace("{OwnerName}", a.getOwners().toArray()[0].toString())
                         .replace("{Type}", Message.Flag.get().toLowerCase()));
         }

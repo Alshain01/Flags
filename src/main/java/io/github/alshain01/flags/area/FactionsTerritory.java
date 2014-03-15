@@ -24,6 +24,7 @@
 
 package io.github.alshain01.flags.area;
 
+import io.github.alshain01.flags.CuboidType;
 import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.System;
 
@@ -100,9 +101,16 @@ public class FactionsTerritory extends Area implements Removable {
         return getFaction().getId();
     }
 
+    @SuppressWarnings("deprecation")
+    @Deprecated
     @Override
     public System getSystemType() {
         return System.FACTIONS;
+    }
+
+    @Override
+    public CuboidType getCuboidType() {
+        return CuboidType.FACTIONS;
     }
 
 	@Override

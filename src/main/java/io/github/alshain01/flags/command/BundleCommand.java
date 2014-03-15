@@ -1,7 +1,6 @@
 package io.github.alshain01.flags.command;
 
 import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.System;
 
 import io.github.alshain01.flags.area.Area;
 import org.bukkit.Bukkit;
@@ -65,7 +64,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length < 1) {
             if(sender instanceof Player) {
-                sender.sendMessage(getUsage((Player) sender, System.getActive().getAreaAt(((Player) sender).getLocation())));
+                sender.sendMessage(getUsage((Player) sender, CuboidType.getActive().getAreaAt(((Player) sender).getLocation())));
                 return true;
             }
             return false;
@@ -74,7 +73,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         final BundleCommandType command = BundleCommandType.get(args[0]);
         if(command == null) {
             if(sender instanceof Player) {
-                sender.sendMessage(getUsage((Player) sender, System.getActive().getAreaAt(((Player) sender).getLocation())));
+                sender.sendMessage(getUsage((Player) sender, CuboidType.getActive().getAreaAt(((Player) sender).getLocation())));
                 return true;
             }
             return false;
@@ -105,7 +104,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
             }
 
             // Make sure we can set flags at that location
-            if (System.getActive() == System.WORLD && (location == CommandLocation.AREA || location == CommandLocation.DEFAULT)) {
+            if (CuboidType.getActive() == CuboidType.WORLD && (location == CommandLocation.AREA || location == CommandLocation.DEFAULT)) {
                 sender.sendMessage(Message.NoSystemError.get());
                 return true;
             }
@@ -197,7 +196,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.SetBundle.get() : Message.SetMultipleFlagsError.get())
-                .replace("{AreaType}", area.getSystemType().getAreaType().toLowerCase())
+                .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
                 .replace("{Bundle}", bundleName)
                 .replace("{Value}", getFormattedValue(value).toLowerCase()));
     }
@@ -214,7 +213,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.RemoveBundle.get() : Message.RemoveAllFlags.get())
-                .replace("{AreaType}", area.getSystemType().getAreaType().toLowerCase())
+                .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
                 .replace("{Bundle}", bundleName));
     }
 
@@ -233,7 +232,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.SetTrust.get() : Message.SetTrustError.get())
-                .replace("{AreaType}", area.getSystemType().getAreaType().toLowerCase())
+                .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
                 .replace("{Flag}", bundleName));
     }
 
@@ -256,7 +255,7 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.RemoveTrust.get() : Message.RemoveTrustError.get())
-                .replace("{AreaType}", area.getSystemType().getAreaType().toLowerCase())
+                .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
                 .replace("{Flag}", bundleName));
     }
 

@@ -94,8 +94,13 @@ public class PlotMePlot extends Area implements Removable {
         if (!isArea()) { throw new InvalidAreaException(); }
         return plot.id; }
 
+    @SuppressWarnings("deprecation")
     @Override
+    @Deprecated
     public System getSystemType() { return System.PLOTME; }
+
+    @Override
+    public CuboidType getCuboidType() { return CuboidType.PLOTME; }
 
 	@Override
 	public Set<String> getOwners() {

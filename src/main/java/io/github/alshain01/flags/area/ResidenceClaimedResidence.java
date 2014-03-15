@@ -96,8 +96,13 @@ public class ResidenceClaimedResidence extends Area implements Removable, Subdiv
     }
 
     @Override
-    public System getSystemType() {
-        return System.RESIDENCE;
+    @Deprecated
+    @SuppressWarnings("deprecation")
+    public System getSystemType() { return System.RESIDENCE; }
+
+    @Override
+    public CuboidType getCuboidType() {
+        return CuboidType.RESIDENCE;
     }
 
 	@Override

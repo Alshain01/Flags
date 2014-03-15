@@ -24,7 +24,7 @@
 
 package io.github.alshain01.flags.data;
 
-import io.github.alshain01.flags.System;
+import io.github.alshain01.flags.CuboidType;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,7 +43,7 @@ public final class MySQLDataStore extends SQLDataStore {
 		// We always need to create the system specific table
 		// in case it changed since the database was created.
         // i.e. Grief Prevention was removed and WorldGuard was installed.
-        if(System.getActive() != System.WORLD) {
+        if(CuboidType.getActive() != CuboidType.WORLD) {
             createSystemDB();
         }
 

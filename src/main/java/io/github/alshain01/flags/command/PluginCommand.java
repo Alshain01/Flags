@@ -1,5 +1,6 @@
 package io.github.alshain01.flags.command;
 
+import io.github.alshain01.flags.CuboidType;
 import io.github.alshain01.flags.Message;
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Default;
@@ -71,7 +72,7 @@ abstract class PluginCommand {
         } else if (location == CommandLocation.WORLD) {
             return new World((((Player)sender).getWorld()));
         } else if (location == CommandLocation.AREA) {
-            Area area = io.github.alshain01.flags.System.getActive().getAreaAt(((Player) sender).getLocation());
+            Area area = CuboidType.getActive().getAreaAt(((Player) sender).getLocation());
             return (area instanceof World) ? null : area;
         }
         // Invalid location selection

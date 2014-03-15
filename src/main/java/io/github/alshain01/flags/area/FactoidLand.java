@@ -96,10 +96,19 @@ public class FactoidLand extends Area implements Removable, Subdivision {
         throw new InvalidAreaException();
     }
 
+    @SuppressWarnings("deprecation")
+    @Deprecated
     @Override
     public System getSystemType() {
         return System.FACTOID;
     }
+
+    @Override
+    public CuboidType getCuboidType() {
+        return CuboidType.FACTIONS;
+    }
+
+
     @Override
     public Set<String> getOwners() {
         if(isArea()) {

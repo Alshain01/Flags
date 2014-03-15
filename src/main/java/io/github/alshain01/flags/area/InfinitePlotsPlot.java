@@ -24,6 +24,7 @@
 
 package io.github.alshain01.flags.area;
 
+import io.github.alshain01.flags.CuboidType;
 import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.System;
 
@@ -101,8 +102,15 @@ public class InfinitePlotsPlot extends Area implements Removable {
     }
 
     @Override
+    @Deprecated
+    @SuppressWarnings("deprecation")
     public System getSystemType() {
         return System.INFINITEPLOTS;
+    }
+
+    @Override
+    public CuboidType getCuboidType() {
+        return CuboidType.INFINITEPLOTS;
     }
 
 	@Override

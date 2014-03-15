@@ -45,7 +45,7 @@ import javax.annotation.Nonnull;
  * Class for creating areas to manage a Grief Prevention Claim.
  */
 public class GriefPreventionClaim extends Area implements Removable, Siege, Administrator {
-	Claim claim;
+	final Claim claim;
 
 	/**
 	 * Creates an instance of GriefPreventionClaim based on a Bukkit Location
@@ -98,9 +98,16 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
+    @Deprecated
     public System getSystemType() {
         return System.GRIEF_PREVENTION;
+    }
+
+    @Override
+    public CuboidType getCuboidType() {
+        return CuboidType.GRIEF_PREVENTION;
     }
 
 	@Override

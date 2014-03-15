@@ -27,166 +27,38 @@ package io.github.alshain01.flags;
 import io.github.alshain01.flags.area.*;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 
-import java.util.List;
-import java.util.UUID;
-
+@Deprecated
+/**
+ * @deprecated Use CuboidType instead
+ */
 public enum System {
-	DEFAULT("Default", "Default", false) {
-        public Area getSystemAreaAt(Location location) { return new Default(location); }
-        public Area getArea(String name) { return new Default(name); }
-        public boolean hasArea(Location location) { return true; }
-    },
-
-	WORLD("World", "World", false) {
-        public Area getSystemAreaAt(Location location) { return new World(location); }
-        public Area getArea(String name) { return new World(name); }
-        public boolean hasArea(Location location) { return true; }
-    },
-
-    FLAGS("Flags", "Flags", true) {
-        public Area getSystemAreaAt(Location location) { return new FlagsSector(location); }
-        public Area getArea(String name) { return new FlagsSector(UUID.fromString(name)); }
-        public boolean hasArea(Location location) { return FlagsSector.hasSector(location); }
-    },
-
-	GRIEF_PREVENTION("GriefPrevention",	"Grief Prevention", true) {
-        public Area getSystemAreaAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
-
-            final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention");
-            final float pluginVersion = Float.valueOf(plugin.getDescription().getVersion().substring(0, 3));
-
-            return pluginVersion >= (float)7.8
-                    ? new GriefPreventionClaim78(location)
-                    : new GriefPreventionClaim(location);
-        }
-
-        public Area getArea(String name) {
-            final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention");
-            final float pluginVersion = Float.valueOf(plugin.getDescription().getVersion().substring(0, 3));
-            String[] id = name.split("\\.");
-
-            if (pluginVersion >= (float)7.8) {
-                if(id.length > 1) {
-                    return new GriefPreventionClaim78(Long.parseLong(id[0]), Long.parseLong(id[1]));
-                } else {
-                    return new GriefPreventionClaim78(Long.parseLong(id[0]));
-                }
-            }
-            return new GriefPreventionClaim(Long.parseLong(id[0]));
-        }
-
-        public boolean hasArea(Location location) { return GriefPreventionClaim.hasClaim(location); }
-    } ,
-
-	WORLDGUARD("WorldGuard", "WorldGuard", false) {
-        public Area getSystemAreaAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
-            return new WorldGuardRegion(location);
-        }
-
-        public Area getArea(String name) {
-            String path[] = name.split("\\.");
-            return new WorldGuardRegion(Bukkit.getWorld(path[0]), path[1]);
-        }
-
-        public boolean hasArea(Location location) { return WorldGuardRegion.hasRegion(location); }
-    },
-
-	RESIDENCE("Residence", "Residence", true) {
-        public Area getSystemAreaAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
-            return new ResidenceClaimedResidence(location);
-        }
-        public Area getArea(String name) { return new ResidenceClaimedResidence(name); }
-        public boolean hasArea(Location location) { return ResidenceClaimedResidence.hasResidence(location); }
-    },
-
-	INFINITEPLOTS("InfinitePlots", "InfinitePlots", false) {
-        public Area getSystemAreaAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
-            return new InfinitePlotsPlot(location);
-        }
-
-        public Area getArea(String name) {
-            String path[] = name.split("\\.");
-            final String[] coordinates = path[1].split(";");
-            return new InfinitePlotsPlot(Bukkit.getWorld(path[0]), Integer.valueOf(coordinates[0]), Integer.valueOf(coordinates[1]));
-        }
-
-        public boolean hasArea(Location location) { return InfinitePlotsPlot.hasPlot(location); }
-    },
-
-	FACTIONS("Factions", "Factions", false) {
-        public Area getSystemAreaAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
-            return new FactionsTerritory(location);
-        }
-
-        public Area getArea(String name) {
-            String path[] = name.split("\\.");
-            return new FactionsTerritory(Bukkit.getWorld(path[0]), path[1]);
-        }
-
-        public boolean hasArea(Location location) { return FactionsTerritory.hasTerritory(location); }
-    },
-
-    FACTOID("Factoid", "Factoid", true) {
-        public Area getSystemAreaAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
-            return new FactoidLand(location);
-        }
-
-        public Area getArea(String name) {
-            return new FactoidLand(name);
-        }
-
-        public boolean hasArea(Location location) { return FactoidLand.hasLand(location); }
-    },
-
-	PLOTME("PlotMe", "PlotMe",false) {
-        public Area getSystemAreaAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
-            return new PlotMePlot(location);
-        }
-
-        public Area getArea(String name) {
-            String path[] = name.split("\\.");
-            return new PlotMePlot(Bukkit.getWorld(path[0]), path[1]);
-        }
-
-        public boolean hasArea(Location location) { return PlotMePlot.hasPlot(location); }
-    },
-
-	REGIOS("Regios", "Regios", false) {
-        public Area getSystemAreaAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
-            return new RegiosRegion(location);
-        }
-        public Area getArea(String name) { return new RegiosRegion(name); }
-        public boolean hasArea(Location location) { return RegiosRegion.hasRegion(location); }
-    },
-
-	PRECIOUSSTONES("PreciousStones", "PreciousStones", true){
-        public Area getSystemAreaAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
-            return new PreciousStonesField(location);
-        }
-
-        public Area getArea(String name) {
-            String path[] = name.split("\\.");
-            return new PreciousStonesField(Bukkit.getWorld(path[0]), Long.valueOf(path[1]));
-        }
-
-        public boolean hasArea(Location location) { return PreciousStonesField.hasField(location); }
-    };
+    @Deprecated
+	DEFAULT("Default", "Default", false),
+    @Deprecated
+	WORLD("World", "World", false),
+    @Deprecated
+    FLAGS("Flags", "Flags", true),
+    @Deprecated
+	GRIEF_PREVENTION("GriefPrevention",	"Grief Prevention", true),
+    @Deprecated
+	WORLDGUARD("WorldGuard", "WorldGuard", false),
+    @Deprecated
+	RESIDENCE("Residence", "Residence", true),
+    @Deprecated
+	INFINITEPLOTS("InfinitePlots", "InfinitePlots", false),
+    @Deprecated
+	FACTIONS("Factions", "Factions", false),
+    @Deprecated
+    FACTOID("Factoid", "Factoid", true),
+    @Deprecated
+	PLOTME("PlotMe", "PlotMe",false),
+    @Deprecated
+	REGIOS("Regios", "Regios", false),
+    @Deprecated
+	PRECIOUSSTONES("PreciousStones", "PreciousStones", true);
 
     /*
      * Gets an area from the data store at a specific location.
@@ -194,9 +66,13 @@ public enum System {
      * @param location
      *            The location to request an area.
      * @return An Area from the configured system which may fail isArea()
+     * @deprecated Use CuboidType.getCuboidAt() instead
      */
-    @SuppressWarnings("WeakerAccess") // API
-    public abstract Area getSystemAreaAt(Location location);
+    @SuppressWarnings("unused, deprecation")
+    @Deprecated
+    Area getSystemAreaAt(Location location) {
+        return CuboidType.getByName(this.toString()).getCuboidAt(location);
+    }
 
     /*
      * Gets an area by system specific name. The name is formatted based on the
@@ -216,18 +92,26 @@ public enum System {
      *            The system specific name of the area or world name
      * @return The Area requested, may be null in cases of invalid system
      *         selection.
+     * @deprecated Use CuboidType.getByName() instead
      */
-    @SuppressWarnings("unused") // API
-    public abstract Area getArea(String name);
+    @SuppressWarnings("unused, deprecation") // API
+    @Deprecated
+    public Area getArea(String name) {
+        return CuboidType.getByName(this.toString()).getArea(name);
+    }
 
     /*
      * Gets whether there is an area for this system that Flags can use at the location
      *
      * @param location The location to check for an area
      * @return True if there is an area
+     * @deprecated Use CuboidType.hasArea() instead
      */
-    @SuppressWarnings("unused") // API
-    public abstract boolean hasArea(Location location);
+    @SuppressWarnings("unused, deprecation") // API
+    @Deprecated
+    public boolean hasArea(Location location) {
+        return CuboidType.getByName(this.toString()).hasArea(location);
+    }
 
     /*
      * Gets an area from the data store at a specific location.
@@ -236,18 +120,23 @@ public enum System {
      *            The location to request an area.
      * @return An Area from the configured system or the world if no area is
      *         defined.
+     * @deprecated Use CuboidType.getAreaAt() instead
      */
+    @Deprecated
+    @SuppressWarnings("unused, deprecation")
     public Area getAreaAt(Location location) {
         Area area = getSystemAreaAt(location);
-        return area.isArea() ? area : WORLD.getSystemAreaAt(location);
+        return area.isArea() ? area : CuboidType.WORLD.getCuboidAt(location);
     }
 
 	/**
 	 * Gets the enumeration that matches the case sensitive plugin.yml name.
 	 * 
 	 * @return The enumeration. LandSystem.FLAGS if no matches found.
+     * @deprecated Use CuboidType.getByName() instead
 	 */
-    @SuppressWarnings("WeakerAccess") // API
+    @SuppressWarnings("unused, deprecation")
+    @Deprecated
 	public static System getByName(String name) {
 		for (final System p : System.values()) {
 			if (name.equals(p.pluginName)) {
@@ -261,9 +150,12 @@ public enum System {
 	 * Gets the area type enumeration of the land system that Flags is currently using.
 	 * 
 	 * @return The enumeration.
+     * @deprecated Use CuboidType.getActive() instead
 	 */
+    @SuppressWarnings("unused, deprecation")
+    @Deprecated
 	public static System getActive() {
-		return Flags.currentSystem;
+		return getByName(Flags.currentSystem.toString());
 	}
 
 	private String pluginName = null, displayName = null;
@@ -274,14 +166,16 @@ public enum System {
 		pluginName = name;
 		this.displayName = displayName;
         this.subdivisions = hasSubivisions;
-        //this.logger = Bukkit.getPluginManager().getPlugin("Flags").getLogger();
 	}
 	
 	/**
 	 * Gets a user friendly string, including spaces, for the plug-in.
 	 * 
 	 * @return The user friendly name of the plugin
+     * @deprecated Use CuboidType.getDisplayName() instead
 	 */
+    @SuppressWarnings("unused, deprecation")
+    @Deprecated
 	public String getDisplayName() {
 		return displayName;
 	}
@@ -290,21 +184,22 @@ public enum System {
      * Gets the name of the area division for the system (i.e. Claim, Residence, Territory, Region, etc.)
      *
      * @return The name of the area division
+     * @deprecated Use CuboidType.getCuboidName() instead
      */
+    @SuppressWarnings("unused, deprecation")
+    @Deprecated
 	public String getAreaType() {
-		final String message = Flags.messageStore.getConfig().getString("Message." + toString());
-		if (message == null) {
-			//logger.warning("ERROR: Invalid message.yml Message for " + toString());
-			return "ERROR: Invalid message.yml Message. Please contact your server administrator.";
-		}
-		return ChatColor.translateAlternateColorCodes('&', message);
+        return CuboidType.getByName(this.toString()).getCuboidName();
 	}
 
 	/**
 	 * Gets the plug-in name as indicated in it's plugin.yml
 	 * 
 	 * @return The case sensitive plugin.yml name for the enumerated value
+     * @deprecated Use CuboidType.toString() instead
 	 */
+    @SuppressWarnings("unused, deprecation")
+    @Deprecated
 	@Override
 	public String toString() {
 		return pluginName;
@@ -317,30 +212,18 @@ public enum System {
 	 *            The player to request information for
 	 * @return True if the player is in pvp combat, false is not or if system is
 	 *         unsupported.
+     * @deprecated Use CuboidType.inPvpCombat() instead
 	 */
-    @SuppressWarnings("unused") // API
+    @SuppressWarnings("unused, deprecation")
+    @Deprecated
 	public boolean inPvpCombat(Player player) {
 		return this == System.GRIEF_PREVENTION
                 && GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
 	}
 
+    @SuppressWarnings("unused, deprecation")
+    @Deprecated
     public boolean hasSubdivisions() {
         return subdivisions;
-    }
-
-    /*
-    * Acquires the land management plugin.
-    */
-    static System find(PluginManager pm, List<?> plugins) {
-        if(plugins != null && plugins.size() > 0) {
-            for(Object o : plugins) {
-                if (pm.isPluginEnabled((String) o)) {
-                    Flags.log(o + " detected. Enabling integrated support.");
-                    return getByName((String) o);
-                }
-            }
-        }
-        Flags.log("No system detected. Flags Sectors Enabled.");
-        return System.FLAGS;
     }
 }

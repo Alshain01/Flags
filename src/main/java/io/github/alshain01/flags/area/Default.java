@@ -82,9 +82,16 @@ public class Default extends Area {
         return world.getName();
     }
 
+    @SuppressWarnings("deprecation")
+    @Deprecated
     @Override
     public System getSystemType() {
         return System.DEFAULT;
+    }
+
+    @Override
+    public CuboidType getCuboidType() {
+        return CuboidType.DEFAULT;
     }
 
     @Override

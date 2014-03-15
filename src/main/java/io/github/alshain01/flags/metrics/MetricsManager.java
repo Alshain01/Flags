@@ -24,8 +24,8 @@
 
 package io.github.alshain01.flags.metrics;
 
+import io.github.alshain01.flags.CuboidType;
 import io.github.alshain01.flags.Flags;
-import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.metrics.Metrics.Graph;
 
 import java.io.IOException;
@@ -45,7 +45,7 @@ public class MetricsManager {
              * Land System Graph
              */
 			final Graph systemGraph = metrics.createGraph("Land System");
-			systemGraph.addPlotter(new Metrics.Plotter(System.getActive().getDisplayName()) {
+			systemGraph.addPlotter(new Metrics.Plotter(CuboidType.getActive().getDisplayName()) {
 				@Override
 				public int getValue() {
                     return 1;
@@ -56,7 +56,7 @@ public class MetricsManager {
 			 * Land System by PlayersGraph
 			 */
 			final Graph systemPlayersGraph = metrics.createGraph("Land System by Players");
-		    systemPlayersGraph.addPlotter(new Metrics.Plotter(System.getActive().getDisplayName()) {
+		    systemPlayersGraph.addPlotter(new Metrics.Plotter(CuboidType.getActive().getDisplayName()) {
 				@Override
 				public int getValue() {
                     return Bukkit.getOnlinePlayers().length;

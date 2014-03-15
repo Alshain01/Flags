@@ -24,9 +24,7 @@ http://creativecommons.org/licenses/by-nc/3.0/
 
 package io.github.alshain01.flags.area;
 
-import io.github.alshain01.flags.Flag;
-import io.github.alshain01.flags.Flags;
-import io.github.alshain01.flags.Message;
+import io.github.alshain01.flags.*;
 import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.economy.EBaseValue;
 import io.github.alshain01.flags.economy.EPurchaseType;
@@ -68,20 +66,18 @@ public abstract class Area implements Comparable<Area> {
      * Returns the system type that this object belongs to.
      *
      * @return The LandSystem that created this object
+     * @deprecated Use getCuboidType instead
      */
+    @SuppressWarnings("deprecation")
+    @Deprecated
     public abstract System getSystemType();
 
-	/**
-	 * Gets the friendly name of the area type.
-	 * 
-	 * @return the area's type as a user friendly name.
-     * @deprecated Redundant. Use Area.getSystemType().getAreaType() instead
-	 */
-    @Deprecated
-    @SuppressWarnings("unused") // Deprecated
-	public String getAreaType() {
-        return getSystemType().getAreaType();
-    }
+    /**
+     * Returns the system type that this object belongs to.
+     *
+     * @return The LandSystem that created this object
+     */
+    public abstract CuboidType getCuboidType();
 
     /**
      * Gets a set of owners for the area. On many systems, there will only be
@@ -245,7 +241,7 @@ public abstract class Area implements Comparable<Area> {
 
 		if (parse) {
 			message = message.replaceAll("\\{AreaType\\}",
-					getSystemType().getAreaType().toLowerCase()).replaceAll("\\{Owner\\}",
+				    getCuboidType().getCuboidName().toLowerCase()).replaceAll("\\{Owner\\}",
 					getOwners().toArray()[0].toString());
 			message = ChatColor.translateAlternateColorCodes('&', message);
 		}

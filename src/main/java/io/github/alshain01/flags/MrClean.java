@@ -52,9 +52,9 @@ class MrClean {
     static void enable(Plugin plugin, boolean enable) {
         if(!enable) { return; }
         PluginManager pm = plugin.getServer().getPluginManager();
-        switch (System.getActive()) {
+        switch (CuboidType.getActive()) {
             case GRIEF_PREVENTION:
-                if (Float.valueOf(pm.getPlugin(System.getActive().toString())
+                if (Float.valueOf(pm.getPlugin(CuboidType.getActive().toString())
                         .getDescription().getVersion().substring(0, 3)) >= 7.8) {
 
                     pm.registerEvents(new GriefPreventionCleaner(),	plugin);
@@ -71,6 +71,9 @@ class MrClean {
                 break;
             case FLAGS:
                 pm.registerEvents(new FlagsCleaner(), plugin);
+                break;
+            case FACTOID:
+                pm.registerEvents(new FactoidCleaner(), plugin);
                 break;
             default:
                 break;
@@ -133,8 +136,8 @@ class MrClean {
 	}
 
     /*
- * Regios Cleaner
- */
+     * Factoid Cleaner
+     */
     private static class FactoidCleaner implements Listener {
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         private void onRegionDelete(LandDeleteEvent e) {

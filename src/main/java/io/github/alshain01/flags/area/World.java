@@ -83,9 +83,12 @@ public class World extends Area {
     }
 
     @Override
-    public System getSystemType() {
-        return System.WORLD;
-    }
+    @Deprecated
+    @SuppressWarnings("deprecation")
+    public System getSystemType() { return System.WORLD; }
+
+    @Override
+    public CuboidType getCuboidType() { return CuboidType.WORLD; }
 
     @Override
     public Set<String> getOwners() {
@@ -141,8 +144,8 @@ public class World extends Area {
 
 		if (parse) {
 			message = message
-					.replaceAll("\\{AreaType\\}", System.WORLD.getAreaType().toLowerCase())
-					.replaceAll("\\{World\\}", world.getName());
+					.replace("{AreaType}", CuboidType.WORLD.getCuboidName().toLowerCase())
+					.replace("{World}", world.getName());
 			message = ChatColor.translateAlternateColorCodes('&', message);
 		}
 		return message;

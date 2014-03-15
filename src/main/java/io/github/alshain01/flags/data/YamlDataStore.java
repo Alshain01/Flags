@@ -25,7 +25,6 @@
 package io.github.alshain01.flags.data;
 
 import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Default;
 import io.github.alshain01.flags.area.Subdivision;
@@ -114,10 +113,10 @@ public final class YamlDataStore implements DataStore {
         if (ver.major <= 1 && ver.minor <= 2 && ver.build < 2) {
             CustomYML cYml = getYml("data");
             ConfigurationSection cSec;
-            System system = System.getActive();
-            if(cYml.getConfig().isConfigurationSection(System.getActive().toString() + "Data")) {
-                if (system == System.GRIEF_PREVENTION || System.getActive() == System.RESIDENCE) {
-                    cSec = cYml.getConfig().getConfigurationSection(System.getActive().toString() + "Data");
+            CuboidType system = CuboidType.getActive();
+            if(cYml.getConfig().isConfigurationSection(CuboidType.getActive().toString() + "Data")) {
+                if (system == CuboidType.GRIEF_PREVENTION || CuboidType.getActive() == CuboidType.RESIDENCE) {
+                    cSec = cYml.getConfig().getConfigurationSection(CuboidType.getActive().toString() + "Data");
 
                     final Set<String> keys = cSec.getKeys(true);
                     for (final String k : keys) {
@@ -128,7 +127,7 @@ public final class YamlDataStore implements DataStore {
                             final String id = k.split("\\.")[0];
                             String world;
 
-                            if (System.getActive() == System.GRIEF_PREVENTION) {
+                            if (CuboidType.getActive() == CuboidType.GRIEF_PREVENTION) {
                                 world = GriefPrevention.instance.dataStore
                                         .getClaim(Long.valueOf(id))
                                         .getGreaterBoundaryCorner().getWorld()
@@ -168,9 +167,9 @@ public final class YamlDataStore implements DataStore {
 
                 //Remove "Data" from the root heading.
                 cYml = getYml("data");
-                cSec = getYml("data").getConfig().getConfigurationSection(System.getActive().toString() + "Data");
-                getYml("data").getConfig().createSection(System.getActive().toString());
-                ConfigurationSection newCSec = getYml("data").getConfig().getConfigurationSection(System.getActive().toString());
+                cSec = getYml("data").getConfig().getConfigurationSection(CuboidType.getActive().toString() + "Data");
+                getYml("data").getConfig().createSection(CuboidType.getActive().toString());
+                ConfigurationSection newCSec = getYml("data").getConfig().getConfigurationSection(CuboidType.getActive().toString());
                 Set<String> keys = cSec.getKeys(true);
                 for (final String k : keys) {
                     if (k.contains("Value") || k.contains("Message")
@@ -180,7 +179,7 @@ public final class YamlDataStore implements DataStore {
                         cYml.saveConfig();
                     }
                 }
-                cYml.getConfig().set(io.github.alshain01.flags.System.getActive().toString() + "Data", null);
+                cYml.getConfig().set(CuboidType.getActive().toString() + "Data", null);
                 cYml.saveConfig();
             }
             writeVersion(new DBVersion(1, 2, 2));
@@ -333,7 +332,7 @@ public final class YamlDataStore implements DataStore {
             return true;
         }
 
-        final String path = area.getSystemType().toString() + "." + area.getWorld().getName() + "." + area.getSystemID() + "."	+ ((Subdivision) area).getSystemSubID() + ".InheritParent";
+        final String path = area.getCuboidType().toString() + "." + area.getWorld().getName() + "." + area.getSystemID() + "."	+ ((Subdivision) area).getSystemSubID() + ".InheritParent";
 
         final FileConfiguration cYml = getYml(path).getConfig();
         return !cYml.isSet(path) || cYml.getBoolean(path);
@@ -345,7 +344,7 @@ public final class YamlDataStore implements DataStore {
             return;
         }
 
-        final String path = area.getSystemType().toString() + "." + area.getWorld().getName() + "." + area.getSystemID() + "."	+ ((Subdivision) area).getSystemSubID() + ".InheritParent";
+        final String path = area.getCuboidType().toString() + "." + area.getWorld().getName() + "." + area.getSystemID() + "."	+ ((Subdivision) area).getSystemSubID() + ".InheritParent";
 
         final CustomYML cYml = getYml(path);
 
@@ -355,7 +354,7 @@ public final class YamlDataStore implements DataStore {
 
 	@Override
 	public void remove(Area area) {
-        String path = area.getSystemType().toString() + "." + area.getWorld().getName();
+        String path = area.getCuboidType().toString() + "." + area.getWorld().getName();
 
         if (!(area instanceof World || area instanceof Default)) {
             path += "." + area.getSystemID();
@@ -374,14 +373,14 @@ public final class YamlDataStore implements DataStore {
      */
     @SuppressWarnings("unused") // Future Use
     protected Set<String> getAreaIDs() {
-        ConfigurationSection cSec = getYml("data").getConfig().getConfigurationSection(System.getActive().toString() + "Data");
+        ConfigurationSection cSec = getYml("data").getConfig().getConfigurationSection(CuboidType.getActive().toString() + "Data");
         if(cSec == null) { return new HashSet<String>(); }
         return cSec.getKeys(false);
     }
 
     @SuppressWarnings("unused") // Future Use
     protected Set<String> getAreaSubIDs(String id) {
-        ConfigurationSection cSec = getYml("data").getConfig().getConfigurationSection(System.getActive().toString() + "Data." + id);
+        ConfigurationSection cSec = getYml("data").getConfig().getConfigurationSection(CuboidType.getActive().toString() + "Data." + id);
         Set<String> subIDs = new HashSet<String>();
         if(cSec == null) { return subIDs; }
 
@@ -437,7 +436,7 @@ public final class YamlDataStore implements DataStore {
     }
 
     private String getAreaPath(Area area) {
-        String path = area.getSystemType().toString() + "." + area.getWorld().getName();
+        String path = area.getCuboidType().toString() + "." + area.getWorld().getName();
 
         if (!(area instanceof World || area instanceof Default)) {
             path += "." + area.getSystemID();

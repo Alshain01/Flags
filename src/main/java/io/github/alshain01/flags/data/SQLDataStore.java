@@ -24,9 +24,9 @@
 
 package io.github.alshain01.flags.data;
 
+import io.github.alshain01.flags.CuboidType;
 import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.Flag;
-import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Default;
 import io.github.alshain01.flags.area.Subdivision;
@@ -467,7 +467,7 @@ public class SQLDataStore implements DataStore {
             return;
         }
 
-        writeInheritance(value, area.getSystemType().getAreaType(), area.getWorld().getName(),
+        writeInheritance(value, area.getCuboidType().getCuboidName(), area.getWorld().getName(),
                 area.getSystemID(), ((Subdivision) area).getSystemSubID());
     }
 
@@ -517,17 +517,17 @@ public class SQLDataStore implements DataStore {
             }
 
             if(key.contains("InheritParent")) {
-                writeInheritance(((YamlDataStore) yaml).getBoolean(key), System.getActive().toString(), world, id, subID);
+                writeInheritance(((YamlDataStore) yaml).getBoolean(key), CuboidType.getActive().toString(), world, id, subID);
                 continue;
             }
 
             if(key.contains("Value")) {
-                writeAreaFlag(((YamlDataStore) yaml).getBoolean(key), flag, System.getActive().toString(), world, id, subID);
+                writeAreaFlag(((YamlDataStore) yaml).getBoolean(key), flag, CuboidType.getActive().toString(), world, id, subID);
                 continue;
             }
 
             if(key.contains("Message")) {
-                writeAreaMessage("'" + ((YamlDataStore) yaml).getString(key) + "'", flag, System.getActive().toString(), world, id, subID);
+                writeAreaMessage("'" + ((YamlDataStore) yaml).getString(key) + "'", flag, CuboidType.getActive().toString(), world, id, subID);
                 continue;
             }
 
@@ -538,7 +538,7 @@ public class SQLDataStore implements DataStore {
                     players.add((String)o);
                 }
 
-                writeAreaTrust(players, flag, System.getActive().toString(), world, id, subID);
+                writeAreaTrust(players, flag, CuboidType.getActive().toString(), world, id, subID);
             }
         }
 
@@ -561,7 +561,7 @@ public class SQLDataStore implements DataStore {
      * Protected
      */
     String areaBuilder(String query, Area area) {
-        return query.replaceAll("%table%", area.getSystemType().toString())
+        return query.replaceAll("%table%", area.getCuboidType().toString())
                 .replaceAll("%world%", area.getWorld().getName())
                 .replaceAll("%area%", area.getSystemID())
                 .replaceAll("%sub%", getSubID(area));
@@ -610,12 +610,12 @@ public class SQLDataStore implements DataStore {
     void createSystemDB() {
         // STANDARD BOOLEAN
         // OVERRIDE for Implementation Specific
-        executeStatement("CREATE TABLE IF NOT EXISTS " + System.getActive().toString()
+        executeStatement("CREATE TABLE IF NOT EXISTS " + CuboidType.getActive().toString()
                 + "Flags (WorldName VARCHAR(50), AreaID VARCHAR(50), AreaSubID VARCHAR(50), "
                 + "FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), "
                 + "CONSTRAINT pk_AreaFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName));");
 
-        executeStatement("CREATE TABLE IF NOT EXISTS " + System.getActive().toString()
+        executeStatement("CREATE TABLE IF NOT EXISTS " + CuboidType.getActive().toString()
                 + "Trust (WorldName VARCHAR(50), AreaID VARCHAR(50), "
                 + "AreaSubID VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), "
                 + "CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName, Trustee));");
@@ -626,7 +626,7 @@ public class SQLDataStore implements DataStore {
         // We always need to create the system specific table
         // in case it changed since the database was created.
         // i.e. Grief Prevention was removed and WorldGuard was installed.
-        if(System.getActive() != System.WORLD) {
+        if(CuboidType.getActive() != CuboidType.WORLD) {
             createSystemDB();
         }
 

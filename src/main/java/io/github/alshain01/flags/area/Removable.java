@@ -30,7 +30,7 @@ import io.github.alshain01.flags.exception.InvalidAreaException;
  * Interface that defines area types that can be removed from the server by
  * practical non-administrative means.
  */
-public interface Removable {
+interface Removable {
 	/**
 	 * Permanently removes the area from the data store USE CAUTION!
      * @throws InvalidAreaException

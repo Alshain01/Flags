@@ -110,8 +110,15 @@ public class WorldGuardRegion extends Area implements Removable {
     }
 
     @Override
+    @Deprecated
+    @SuppressWarnings("deprecation")
     public System getSystemType() {
         return System.WORLDGUARD;
+    }
+
+    @Override
+    public CuboidType getCuboidType() {
+        return CuboidType.WORLDGUARD;
     }
 
     @Override

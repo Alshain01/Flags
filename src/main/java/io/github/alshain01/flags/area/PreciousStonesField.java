@@ -141,8 +141,13 @@ public class PreciousStonesField extends Area implements Subdivision, Removable 
 		return String.valueOf(field.getId());
 	}
 
+    @SuppressWarnings("deprecation")
     @Override
+    @Deprecated
     public System getSystemType() { return System.PRECIOUSSTONES; }
+
+    @Override
+    public CuboidType getCuboidType() { return CuboidType.PRECIOUSSTONES; }
 
     @Override
     public Set<String> getOwners() {

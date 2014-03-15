@@ -104,9 +104,16 @@ public class RegiosRegion extends Area implements Removable{
     }
 
 	@Override
+    @Deprecated
+    @SuppressWarnings("deprecation")
 	public System getSystemType() {
 		return System.REGIOS;
 	}
+
+    @Override
+    public CuboidType getCuboidType() {
+        return CuboidType.REGIOS;
+    }
 
 	@Override
 	public String getSystemID() {
