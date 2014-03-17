@@ -25,7 +25,7 @@
 * authors and contributors and should not be interpreted as representing official policies,
 * either expressed or implied, of anybody else.
 */
-package io.github.alshain01.flags.metrics;
+package io.github.alshain01.flags;
 
 import org.bukkit.Bukkit;
 //import org.bukkit.configuration.InvalidConfigurationException;
@@ -34,6 +34,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.lang.System;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -54,8 +55,118 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
-@SuppressWarnings("ALL")
-public class Metrics {
+class Metrics {
+
+/**
+ * Start Flags Metrics Code
+ */
+static void StartFlagsMetrics(Plugin plugin) {
+    try {
+        final Metrics metrics = new Metrics(plugin);
+
+            /*
+             * Land System Graph
+             */
+        final Graph systemGraph = metrics.createGraph("Land System");
+        systemGraph.addPlotter(new Metrics.Plotter(CuboidType.getActive().getDisplayName()) {
+            @Override
+            public int getValue() {
+                return 1;
+            }
+        });
+
+			/*
+			 * Land System by PlayersGraph
+			 */
+        final Graph systemPlayersGraph = metrics.createGraph("Land System by Players");
+        systemPlayersGraph.addPlotter(new Metrics.Plotter(CuboidType.getActive().getDisplayName()) {
+            @Override
+            public int getValue() {
+                return Bukkit.getOnlinePlayers().length;
+            }
+        });
+
+            /*
+             * Database Type
+             */
+        final Graph dbGraph = metrics.createGraph("Data Storage Type");
+        dbGraph.addPlotter(new Metrics.Plotter(Flags.getDataStore().getType().getName()) {
+            @Override
+            public int getValue() {
+                return 1;
+            }
+        });
+
+            /*
+			 * Border Patrol Status
+			 */
+        final Graph bpGraph = metrics.createGraph("BorderPatrol Enabled");
+        bpGraph.addPlotter(new Metrics.Plotter(Flags.getBorderPatrolEnabled() ? "Enabled" : "Disabled") {
+            @Override
+            public int getValue() {
+                return 1;
+            }
+        });
+
+   			/*
+			 * Economy Graph
+			 */
+        final Graph econGraph = metrics.createGraph("Economy Enabled");
+        econGraph.addPlotter(new Metrics.Plotter(Flags.getEconomy() != null ? "No" : "Yes") {
+            @Override
+            public int getValue() {
+                return 1;
+            }
+        });
+
+			/*
+			 * Flag groups installed
+			 */
+        final Graph groupGraph = metrics.createGraph("Flag Groups");
+        for (final String group : Flags.getRegistrar().getFlagGroups()) {
+            groupGraph.addPlotter(new Metrics.Plotter(group) {
+                @Override
+                public int getValue() {
+                    return 1;
+                }
+            });
+        }
+
+			/*
+			 * Auto Update settings
+			 */
+        final Graph updateGraph = metrics.createGraph("Update Configuration");
+        if (!plugin.getConfig().getBoolean("flags.Update.Check")) {
+            updateGraph.addPlotter(new Metrics.Plotter("No Updates") {
+                @Override
+                public int getValue() {
+                    return 1;
+                }
+            });
+        } else if (!plugin.getConfig().getBoolean("flags.Update.Download")) {
+            updateGraph.addPlotter(new Metrics.Plotter("Check for Updates") {
+                @Override
+                public int getValue() {
+                    return 1;
+                }
+            });
+        } else {
+            updateGraph.addPlotter(new Metrics.Plotter("Download Updates") {
+                @Override
+                public int getValue() {
+                    return 1;
+                }
+            });
+        }
+
+        metrics.start();
+    } catch (final IOException e) {
+        plugin.getLogger().info(e.getMessage());
+    }
+}
+/**
+ * End Flags Metrics Code
+ */
 
     /**
      * The current revision number

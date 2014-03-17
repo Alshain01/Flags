@@ -104,6 +104,15 @@ public abstract class Area implements Comparable<Area> {
     public abstract boolean isArea();
 
     /**
+     * Returns the system type that this object belongs to.
+     *
+     * @return The LandSystem that created this object
+     */
+    public String getCuboidName() {
+        return getCuboidType().getCuboidName();
+    }
+
+    /**
      * Gets the value of the flag for this area.
      *
      * @param flag

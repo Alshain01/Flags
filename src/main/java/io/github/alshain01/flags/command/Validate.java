@@ -54,6 +54,33 @@ final class Validate {
         return true;
     }
 
+    static boolean notPermittedFlag(Permissible p, Area a) {
+        if (a.hasPermission(p)) { return false; }
+        if(p instanceof CommandSender) {
+            ((CommandSender)p).sendMessage(((a instanceof World || a instanceof Default)
+                    ? Message.WorldPermError.get() : Message.AreaPermError.get())
+                    .replace("{AreaType}", a.getCuboidType().getCuboidName())
+                    .replace("{OwnerName}", a.getOwners().toArray()[0].toString())
+                    .replace("{Type}", Message.Flag.get().toLowerCase()));
+        }
+        return true;
+    }
+
+    static boolean notPermittedFlag(Permissible p, Flag f) {
+        if(p.hasPermission((f).getPermission())) { return false; }
+        if(p instanceof CommandSender) {
+            ((CommandSender)p).sendMessage(Message.FlagPermError.get().replace("{Type}", Message.Flag.get().toLowerCase()));
+        }
+        return true;
+    }
+
+    static boolean notPermittedFlag(CommandSender sender, Area area, Flag flag, String request) {
+        return notArea(sender, area)
+                || notFlag(sender, flag, request)
+                || notPermittedFlag(sender, flag)
+                || notPermittedFlag(sender, area);
+    }
+
     static boolean notBundle(CommandSender sender, String bundle) {
         if (Bundle.isBundle(bundle)) { return false; }
         sender.sendMessage(Message.InvalidFlagError.get()
@@ -140,26 +167,6 @@ final class Validate {
         return false;
     }
 
-    static boolean notPermitted(Permissible p, Flag f) {
-        if(p.hasPermission((f).getPermission())) { return false; }
-        if(p instanceof CommandSender) {
-            ((CommandSender)p).sendMessage(Message.FlagPermError.get().replace("{Type}", Message.Flag.get().toLowerCase()));
-        }
-        return true;
-    }
-
-    static boolean notPermitted(Permissible p, Area a) {
-        if (a.hasPermission(p)) { return false; }
-        if(p instanceof CommandSender) {
-            ((CommandSender)p).sendMessage(((a instanceof World || a instanceof Default)
-                    ? Message.WorldPermError.get() : Message.AreaPermError.get())
-                        .replace("{AreaType}", a.getCuboidType().getCuboidName())
-                        .replace("{OwnerName}", a.getOwners().toArray()[0].toString())
-                        .replace("{Type}", Message.Flag.get().toLowerCase()));
-        }
-        return true;
-	}
-	
 	static boolean noEconomyInstalled(CommandSender cs) {
 		if(Flags.getEconomy() == null) {
 			cs.sendMessage(Message.EconomyError.get());

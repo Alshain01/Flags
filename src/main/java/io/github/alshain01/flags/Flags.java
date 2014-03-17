@@ -26,23 +26,18 @@ package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.command.BundleCommand;
 import io.github.alshain01.flags.command.FlagCommand;
-import io.github.alshain01.flags.command.SectorCommand;
 
-import io.github.alshain01.flags.sector.SectorListener;
-import io.github.alshain01.flags.sector.Sector;
 import io.github.alshain01.flags.sector.SectorManager;
 import io.github.alshain01.flags.update.UpdateListener;
 import io.github.alshain01.flags.update.UpdateScheduler;
 import io.github.alshain01.flags.data.*;
 import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
-import io.github.alshain01.flags.metrics.MetricsManager;
 
 import java.util.logging.Logger;
 
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -69,7 +64,6 @@ public class Flags extends JavaPlugin {
     private static boolean debugOn = false;
 
     // Made static for use by API
-    static CuboidType currentSystem = CuboidType.WORLD;
     private static Registrar flagRegistrar = new Registrar();
     private static SectorManager sectors;
     private static boolean borderPatrol = false;
@@ -91,7 +85,7 @@ public class Flags extends JavaPlugin {
         debugOn = pluginConfig.getBoolean("Debug");
         logger  = this.getLogger();
         (messageStore = new CustomYML(this, "message.yml")).saveDefaultConfig();
-        currentSystem = CuboidType.find(pm, pluginConfig.getList("AreaPlugins"));
+        CuboidType.find(pm, pluginConfig.getList("AreaPlugins"));
         dataStore = DataStoreType.getByUrl(this, pluginConfig.getString("Database.Url"));
         economy = setupEconomy();
         sqlData = dataStore instanceof SQLDataStore;
@@ -125,12 +119,8 @@ public class Flags extends JavaPlugin {
 		}
 
         // Load Sectors
-        if(currentSystem == CuboidType.FLAGS) {
-            ConfigurationSerialization.registerClass(Sector.class);
-            ConfigurationSection sectorConfig = pluginConfig.getConfigurationSection("Sector");
-            sectors = new SectorManager(new CustomYML(this, "sector.yml"), sectorConfig.getInt("DefaultDepth"));
-            pm.registerEvents(new SectorListener(Material.getMaterial(sectorConfig.getString("Tool"))), this);
-            getCommand("sector").setExecutor(new SectorCommand());
+        if(CuboidType.getActive() == CuboidType.FLAGS) {
+            sectors = new SectorManager(this, pluginConfig.getConfigurationSection("Sector"));
         }
 
         // Set Command Executors
@@ -147,7 +137,7 @@ public class Flags extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        if(currentSystem == CuboidType.FLAGS) {
+        if(CuboidType.getActive() == CuboidType.FLAGS) {
             sectors.write(new CustomYML(this, "sector.yml"));
         }
 
@@ -159,7 +149,6 @@ public class Flags extends JavaPlugin {
         economy = null;
         logger = null;
         flagRegistrar = null;
-        currentSystem = null;
         sectors = null;
         this.getLogger().info("Flags Has Been Disabled.");
     }
@@ -350,7 +339,7 @@ public class Flags extends JavaPlugin {
 			}
 
             if (mcStats && !debugOn && Flags.checkAPI("1.3.2")) {
-                MetricsManager.StartMetrics(plugin);
+                Metrics.StartFlagsMetrics(plugin);
             }
 		}
 	}

@@ -68,6 +68,23 @@ public final class Registrar {
 		return groups;
 	}
 
+    /**
+     * Gets a set of all registered flag group names that
+     * contain flags the permissible is allowed to use.
+     *
+     * @return A list of names of all the flags registered.
+     */
+    public Set<String> getPermittedFlagGroups(Permissible p) {
+        final Set<String> groups = new HashSet<String>();
+
+        for (final Flag flag : flagStore.values()) {
+            if(p.hasPermission(flag.getPermission()) && !groups.contains(flag.getGroup())) {
+                groups.add(flag.getGroup());
+            }
+        }
+        return groups;
+    }
+
 	/**
 	 * Gets a flag, ignoring the case.
 	 * 
@@ -122,6 +139,36 @@ public final class Registrar {
             }
         }
         return flags;
+    }
+
+    public Map<String, Set<Flag>> getFlagsByGroup() {
+        Map<String, Set<Flag>> flagMap = new HashMap<String, Set<Flag>>();
+        for(Flag f : flagStore.values()) {
+            if(flagMap.containsKey(f.getGroup())) {
+                Set<Flag> flags = flagMap.get(f.getGroup());
+                flags.add(f);
+                flagMap.put(f.getGroup(), flags);
+            } else {
+                flagMap.put(f.getGroup(), new HashSet<Flag>(Arrays.asList(f)));
+            }
+        }
+        return flagMap;
+    }
+
+    public Map<String, Set<Flag>> getPermittedFlagsByGroup(Permissible p) {
+        Map<String, Set<Flag>> flagMap = new HashMap<String, Set<Flag>>();
+        for(Flag f : flagStore.values()) {
+            if(p.hasPermission(f.getPermission())) {
+                if(flagMap.containsKey(f.getGroup())) {
+                    Set<Flag> flags = flagMap.get(f.getGroup());
+                    flags.add(f);
+                    flagMap.put(f.getGroup(), flags);
+                } else {
+                    flagMap.put(f.getGroup(), new HashSet<Flag>(Arrays.asList(f)));
+                }
+            }
+        }
+        return flagMap;
     }
 
     /**

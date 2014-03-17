@@ -183,6 +183,8 @@ public enum CuboidType {
         public boolean hasArea(Location location) { return PreciousStonesField.hasField(location); }
     };
 
+    private static CuboidType currentCuboidSystem = CuboidType.WORLD;
+
     /*
      * Gets an area from the data store at a specific location.
      *
@@ -259,7 +261,7 @@ public enum CuboidType {
      * @return The enumeration.
      */
     public static CuboidType getActive() {
-        return Flags.currentSystem;
+        return currentCuboidSystem;
     }
 
     private String pluginName = null, displayName = null;
@@ -328,16 +330,17 @@ public enum CuboidType {
     /*
     * Acquires the land management plugin.
     */
-    static CuboidType find(PluginManager pm, List<?> plugins) {
+    static void find(PluginManager pm, List<?> plugins) {
         if(plugins != null && plugins.size() > 0) {
             for(Object o : plugins) {
                 if (pm.isPluginEnabled((String) o)) {
                     Flags.log(o + " detected. Enabling integrated support.");
-                    return getByName((String) o);
+                    currentCuboidSystem = getByName((String) o);
+                    return;
                 }
             }
         }
         Flags.log("No cuboid system detected. Flags Sectors Enabled.");
-        return CuboidType.FLAGS;
+        currentCuboidSystem = CuboidType.FLAGS;
     }
 }

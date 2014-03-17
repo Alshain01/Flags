@@ -4,7 +4,10 @@ import io.github.alshain01.flags.data.CustomYML;
 import io.github.alshain01.flags.events.SectorDeleteEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
@@ -12,16 +15,21 @@ public class SectorManager {
     private final Map<UUID, Sector> sectors = new HashMap<UUID, Sector>();
     private final int defaultDepth;
 
-    public SectorManager(CustomYML cYml, int defaultDepth) {
-        this.defaultDepth = defaultDepth;
-        if(!cYml.getConfig().isConfigurationSection("Sectors")) { return; }
-        ConfigurationSection config = cYml.getConfig().getConfigurationSection("Sectors");
+    public SectorManager(JavaPlugin plugin, ConfigurationSection config) {
+        this.defaultDepth = config.getInt("DefaultDepth");
+        ConfigurationSerialization.registerClass(Sector.class);
 
-        for(String s : config.getKeys(false)) {
+        CustomYML cYml = new CustomYML(plugin, "sector.yml");
+        if(!cYml.getConfig().isConfigurationSection("Sectors")) { return; }
+        ConfigurationSection sectors = cYml.getConfig().getConfigurationSection("Sectors");
+
+        for(String s : sectors.getKeys(false)) {
             UUID id = UUID.fromString(s);
-            sectors.put(id, new Sector(id, config.getConfigurationSection(s).getValues(false)));
+            this.sectors.put(id, new Sector(id, config.getConfigurationSection(s).getValues(false)));
         }
 
+        plugin.getServer().getPluginManager().registerEvents(new SectorListener(Material.getMaterial(config.getString("Tool"))), plugin);
+        plugin.getCommand("sector").setExecutor(new SectorCommand());
     }
 
     public void write(CustomYML cYml) {
