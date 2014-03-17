@@ -156,7 +156,7 @@
 		<dependency>
 			<groupId>com.sk89q</groupId>
 			<artifactId>worldguard</artifactId>
-			<version>RELEASE</version>
+			<version>5.8</version>
 			<optional>true</optional>
 			<exclusions>
 				<exclusion>
