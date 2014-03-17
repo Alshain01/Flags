@@ -11,9 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class BundleCommand extends PluginCommand implements CommandExecutor {
     private enum BundleCommandType {
@@ -322,57 +320,49 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
     }
 
     private static void help (CommandSender sender, int page) {
-        Set<String> bundles = Bundle.getBundleNames();
-        if (bundles == null || bundles.size() == 0) {
-            sender.sendMessage(Message.NoFlagFound.get()
-                    .replace("{Type}", Message.Bundle.get()));
-            return;
-        }
+        int startIndex, endIndex, totalPages;
+        List<String> bundles = new ArrayList<String>(Bundle.getBundleNames());
+        if (Validate.notNullOrEmpty(sender, bundles, Message.Bundle)) { return; }
+        Collections.sort(bundles);
 
-        //Get total pages: 1 header per page
-        //9 flags per page, except on the first which has a usage line and 8 flags
-        int total = ((bundles.size() + 1) / 9);
-        if ((bundles.size() + 1) % 9 != 0) {
-            total++; // Add the last page, if the last page is not full (less than 9 flags)
-        }
+        // Get total pages: 1 header per page
+        // 9 flags per page, except on the first which has a usage line and 8 flags
+        // Add the last page, if the last page is not full (less than 9 flags)
+        totalPages = ((bundles.size() + 1) / 9);
+        if ((bundles.size() + 1) % 9 != 0) { totalPages++; }
 
         //Check the page number requested
-        if (page < 1 || page > total) {
-            page = 1;
-        }
+        if (page < 1 || page > totalPages) { page = 1; }
 
+        // Find the sub list for this page
+        startIndex = ((page - 1) * 9) - 1;
+        if(startIndex < 0) { startIndex = 0; }
+
+        endIndex = startIndex + page > 1 ? 9 : 8;
+        if(endIndex > bundles.size() - 1) { endIndex = bundles.size() - 1; }
+
+        bundles = bundles.subList(startIndex, endIndex);
+
+        // Send the help header
         sender.sendMessage(Message.HelpHeader.get()
                 .replace("{Type}", Message.Bundle.get())
                 .replace("{Group}", Message.Index.get())
                 .replace("{Page}", String.valueOf(page))
-                .replace("{TotalPages}", String.valueOf(total))
+                .replace("{TotalPages}", String.valueOf(totalPages))
                 .replace("{Type}", Message.Bundle.get()));
 
-        // Setup for only displaying 10 lines at a time
-        int lineCount = 1;
-
-        // Usage line.  Displays only on the first page.
+        // Send the usage line.  Displays only on the first page.
         if (page == 1) {
             sender.sendMessage(Message.HelpInfo.get()
                     .replace("{Type}", Message.Bundle.get().toLowerCase()));
-            lineCount++;
         }
 
-        // Because the first page has 1 less flag count than the rest,
-        // manually initialize the loop counter by subtracting one from the
-        // start position of all pages other than the first.
-        int loop = 0;
-        if (page > 1) {
-            loop = ((page-1)*9)-1;
-        }
+        // Send the help lines
+        for(String b : bundles) {
+            Set<Flag> flags = Bundle.getBundle(b);
+            if (flags == null || flags.size() == 0) { continue; }
 
-        String[] bundleArray = new String[bundles.size()];
-        bundleArray = bundles.toArray(bundleArray);
-
-        // Show the flags
-        for (; loop < bundles.size(); loop++) {
-            Set<Flag> flags = Bundle.getBundle(bundleArray[loop]);
-            if (flags == null) { continue; }
+            // Build the help line
             StringBuilder description = new StringBuilder("");
             boolean first = true;
 
@@ -386,14 +376,8 @@ public class BundleCommand extends PluginCommand implements CommandExecutor {
                 description.append(flag.getName());
             }
             sender.sendMessage(Message.HelpTopic.get()
-                    .replace("{Topic}", bundleArray[loop])
+                    .replace("{Topic}", b)
                     .replace("{Description}", description.toString()));
-
-            lineCount++;
-
-            if (lineCount > 9) {
-                return; // Page is full, we're done
-            }
         }
     }
 }

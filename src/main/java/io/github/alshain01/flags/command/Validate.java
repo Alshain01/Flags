@@ -30,6 +30,7 @@ import io.github.alshain01.flags.area.Default;
 import io.github.alshain01.flags.area.Subdivision;
 import io.github.alshain01.flags.area.World;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.bukkit.command.CommandSender;
@@ -174,4 +175,12 @@ final class Validate {
 		}
 		return true;
 	}
+
+    static boolean notNullOrEmpty(CommandSender sender, Collection c, Message m) {
+        if (c == null || c.size() == 0) {
+            sender.sendMessage(m.get().replace("{Type}", Message.Bundle.get()));
+            return true;
+        }
+        return false;
+    }
 }

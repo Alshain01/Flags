@@ -71,6 +71,10 @@ public final class Bundle {
 		return getBundleNames().contains(bundle.toLowerCase());
 	}
 
+    public static int count() {
+        return getBundleNames().size();
+    }
+
 	/**
 	 * Sets a bundle to the data file.
 	 * 
