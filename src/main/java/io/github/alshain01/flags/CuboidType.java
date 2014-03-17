@@ -139,8 +139,8 @@ public enum CuboidType {
             return new FactoidLand(location);
         }
 
-        public Area getArea(String name) {
-            return new FactoidLand(name);
+        public Area getArea(String id) {
+            return new FactoidLand(UUID.fromString(id));
         }
 
         public boolean hasArea(Location location) { return FactoidLand.hasLand(location); }
@@ -202,6 +202,7 @@ public enum CuboidType {
      * Residence = Residence name OR ResidenceName.Sub-zoneName
      * PreciousStones = WorldName.ID
      * InfinitePlots = WorldName.PlotLoc (X;Z)
+     * Factoid = Land UUID
      * Factions = WorldName.FactionID
      * PlotMe = WorldName.PlotID
      * Flags = Sector UUID
@@ -269,7 +270,6 @@ public enum CuboidType {
         pluginName = name;
         this.displayName = displayName;
         this.subdivisions = hasSubivisions;
-        //this.logger = Bukkit.getPluginManager().getPlugin("Flags").getLogger();
     }
 
     /**

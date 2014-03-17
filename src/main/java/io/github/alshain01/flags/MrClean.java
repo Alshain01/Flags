@@ -142,7 +142,7 @@ class MrClean {
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         private void onRegionDelete(LandDeleteEvent e) {
             // Cleanup the database, keep the file from growing too large.
-            new RegiosRegion(e.getLand().getName()).remove();
+            new FactoidLand(e.getLand().getUUID()).remove();
         }
     }
 }

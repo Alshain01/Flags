@@ -31,14 +31,14 @@
 		</repository>
 
 		<repository>
-			<id>sk89q-repo</id>
-			<url>http://maven.sk89q.com/repo/</url>
-		</repository>
-
-		<repository>
 			<id>SacredCoding</id>
 			<url>http://repo.sacredlabyrinth.net:8081/artifactory/snapshots</url>
 		</repository>
+
+        <repository>
+            <id>sk89q-repo</id>
+            <url>http://maven.sk89q.com/repo/</url>
+        </repository>
 
         <repository>
             <id>Tabinol.me Artifactory</id>
@@ -137,7 +137,7 @@
         <dependency>
             <groupId>me.tabinol.factoid</groupId>
             <artifactId>Factoid</artifactId>
-            <version>RELEASE</version>
+            <version>LATEST</version>
         </dependency>
 
 		<dependency>

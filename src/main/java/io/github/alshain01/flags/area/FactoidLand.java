@@ -30,11 +30,13 @@ import io.github.alshain01.flags.System;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import io.github.alshain01.flags.exception.InvalidAreaException;
 import io.github.alshain01.flags.exception.InvalidSubdivisionException;
 import me.tabinol.factoid.Factoid;
 import me.tabinol.factoid.lands.Land;
+import me.tabinol.factoid.playercontainer.PlayerContainerPlayer;
 import me.tabinol.factoid.playercontainer.PlayerContainerType;
 
 import org.apache.commons.lang.Validate;
@@ -64,11 +66,11 @@ public class FactoidLand extends Area implements Removable, Subdivision {
      * Creates an instance of FactoidLand based on a Land
      * name
      *
-     * @param name
-     *            The land name
+     * @param id
+     *            The land UUID
      */
-    public FactoidLand(String name) {
-        land = Factoid.getLands().getLand(name);
+    public FactoidLand(UUID id) {
+        land = Factoid.getLands().getLand(id);
     }
 
     /**
@@ -92,7 +94,7 @@ public class FactoidLand extends Area implements Removable, Subdivision {
 
     @Override
     public String getSystemID() {
-        if(isArea()) { return land.getAncestor(land.getGenealogy()).getName(); }
+        if(isArea()) { return land.getAncestor(land.getGenealogy()).getUUID().toString(); }
         throw new InvalidAreaException();
     }
 
@@ -114,7 +116,7 @@ public class FactoidLand extends Area implements Removable, Subdivision {
         if(isArea()) {
             String owner = null;
             if(land.getOwner().getContainerType() == PlayerContainerType.PLAYER) {
-                owner = land.getOwner().getName();
+                owner = ((PlayerContainerPlayer)land.getOwner()).getPlayerName();
             }
             return new HashSet<String>(Arrays.asList(owner));
         }
@@ -133,7 +135,7 @@ public class FactoidLand extends Area implements Removable, Subdivision {
     @Override
     public String getSystemSubID() {
         if(isArea()) {
-            if(isSubdivision()) { return land.getName(); }
+            if(isSubdivision()) { return land.getUUID().toString(); }
             throw new InvalidSubdivisionException();
         }
         throw new InvalidAreaException();
@@ -158,7 +160,7 @@ public class FactoidLand extends Area implements Removable, Subdivision {
     @Override
     public Area getParent() {
         if(isArea()) {
-            if(isSubdivision()) { return new FactoidLand(land.getParent().getName()); }
+            if(isSubdivision()) { return new FactoidLand(land.getParent().getUUID()); }
             throw new InvalidSubdivisionException();
         }
         throw new InvalidAreaException();
