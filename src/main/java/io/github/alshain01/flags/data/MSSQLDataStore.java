@@ -10,7 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class MSSQLDataStore extends SQLDataStore {
+class MSSQLDataStore extends SQLDataStore {
     public MSSQLDataStore(String url, String user, String password) {
         this.url = url;
         this.password = password;
