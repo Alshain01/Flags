@@ -28,8 +28,6 @@ import io.github.alshain01.flags.command.BundleCommand;
 import io.github.alshain01.flags.command.FlagCommand;
 
 import io.github.alshain01.flags.sector.SectorManager;
-import io.github.alshain01.flags.update.UpdateListener;
-import io.github.alshain01.flags.update.UpdateScheduler;
 import io.github.alshain01.flags.data.*;
 import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
 
@@ -98,16 +96,8 @@ public class Flags extends JavaPlugin {
         MrClean.enable(this, pluginConfig.getBoolean("MrClean"));
 
         // Configure the updater
-        ConfigurationSection updateConfig = pluginConfig.getConfigurationSection("Update");
-		if (updateConfig.getBoolean("Check")) {
-            UpdateScheduler updater = new UpdateScheduler(this, updateConfig);
-            long timer = updateConfig.getLong("Interval");
-            if(timer < 1) {
-                updater.runTaskAsynchronously(this);
-            } else {
-			    updater.runTaskTimerAsynchronously(this, 0, timer * 1200);
-            }
-            pm.registerEvents(new UpdateListener(updater), this);
+		if (pluginConfig.getBoolean("Update.Enabled")) {
+            new Updater(this);
 		}
 
 		// Load Border Patrol

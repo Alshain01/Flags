@@ -66,7 +66,7 @@ Flags:
   #
   MrClean: true
   #
-  # Enable to check for updates and notify the console of an existing update
+  # Enable to check for updates and notify the console and permitted players of an existing update
   # Interval defines the amount of time between checks in approximate minutes. 0 = Startup only
   # ServerModsAPIKey is optional and can be found here https://dev.bukkit.org/home/servermods-apikey/  
   # DO NOT SHARE WITH ANYONE!  The API key will only be uploaded to BukkitDev, not the author of this plugin.

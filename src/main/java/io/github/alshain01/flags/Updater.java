@@ -1,4 +1,4 @@
-package io.github.alshain01.flags.update;
+package io.github.alshain01.flags;
 
 /*
 * Updater for Bukkit.
@@ -11,6 +11,14 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.*;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -21,10 +29,8 @@ final class Updater {
 
     private final Logger log;
     private final String version;
-    private String versionName;
 
     private URL url; // Connecting to RSS
-    private final Thread thread; // Updater thread
     private String apiKey = null; // BukkitDev ServerMods API key
     private UpdateResult result = UpdateResult.NO_UPDATE; // Used for determining the outcome of the update process
 
@@ -54,9 +60,51 @@ final class Updater {
         UPDATE_AVAILABLE
     }
 
-    public Updater(String version, Logger log, String key) {
-        this.version = version;
-        this.log = log;
+    public class NewUpdateFoundEvent extends Event {
+        final HandlerList handlers = new HandlerList();
+
+        NewUpdateFoundEvent() {
+            super(true);
+        }
+
+        @Override
+        public HandlerList getHandlers() {
+            return handlers;
+        }
+    }
+
+    public class UpdateListener implements Listener {
+        private final String UPDATE_MESSAGE = "The version of" + PLUGIN_NAME + " that this server is running is out of date. "
+                + "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/" + PLUGIN_NAME.toLowerCase() + "/.";
+
+        private void notifyUpdate(Player p) {
+            if (p.hasPermission("flags.admin.notifyupdate")) {
+                p.sendMessage(ChatColor.DARK_PURPLE + UPDATE_MESSAGE);
+            }
+        }
+
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        private void onPlayerJoin(PlayerJoinEvent e) {
+            if(Updater.this.getResult() == UpdateResult.UPDATE_AVAILABLE) {
+                notifyUpdate(e.getPlayer());
+            }
+        }
+
+        @EventHandler(priority = EventPriority.MONITOR)
+        private void onNewUpdateFound(NewUpdateFoundEvent e) {
+            for(Player p : Bukkit.getOnlinePlayers()) {
+                notifyUpdate(p);
+            }
+
+            Flags.log(UPDATE_MESSAGE);
+        }
+    }
+
+    public Updater(Plugin plugin) {
+        this.version = plugin.getDescription().getVersion();
+        this.log = plugin.getLogger();
+        long interval = plugin.getConfig().getLong("Flags.Update.Interval");
+        String key = plugin.getConfig().getString("Flags.Update.ServerModsAPIKey");
 
         if (key == null || key.equalsIgnoreCase("null") || key.equals("")) { key = null; }
         this.apiKey = key;
@@ -67,30 +115,19 @@ final class Updater {
             log.severe("An error occured generating the update URL.");
         }
 
-        this.thread = new Thread(new UpdateRunnable());
-        this.thread.start();
+        if(interval < 1) {
+            new UpdateRunnable(plugin.getServer().getPluginManager()).runTaskAsynchronously(plugin);
+        } else {
+            new UpdateRunnable(plugin.getServer().getPluginManager()).runTaskTimerAsynchronously(plugin, 0, interval * 1200);
+        }
+        plugin.getServer().getPluginManager().registerEvents(new UpdateListener(), plugin);
     }
 
     /**
      * Get the result of the update process.
      */
     public Updater.UpdateResult getResult() {
-        this.waitForThread();
         return this.result;
-    }
-
-    /**
-     * As the result of Updater output depends on the thread's completion, it is necessary to wait for the thread to finish
-     * before allowing anyone to check the result.
-     */
-    private void waitForThread() {
-        if (this.thread.isAlive()) {
-            try {
-                this.thread.join();
-            } catch (final InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     /**
@@ -148,7 +185,7 @@ final class Updater {
         return false;
     }
 
-    private boolean read() {
+    private String read() {
         try {
             final URLConnection conn = this.url.openConnection();
             conn.setConnectTimeout(5000);
@@ -157,7 +194,6 @@ final class Updater {
                 conn.addRequestProperty("X-API-Key", this.apiKey);
             }
             conn.addRequestProperty("User-Agent", PLUGIN_NAME + " Updater");
-
             conn.setDoOutput(true);
 
             final BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -165,8 +201,7 @@ final class Updater {
 
             final JSONArray array = (JSONArray) JSONValue.parse(response);
 
-            this.versionName = (String) ((JSONObject) array.get(array.size() - 1)).get("name");
-            return true;
+            return (String) ((JSONObject) array.get(array.size() - 1)).get("name");
         } catch (final IOException e) {
             if (e.getMessage().contains("HTTP response code: 403")) {
                 this.log.warning("dev.bukkit.org rejected the API key provided in plugins/" + PLUGIN_NAME + "/config.yml");
@@ -178,15 +213,24 @@ final class Updater {
                 this.result = UpdateResult.FAIL_DBO;
             }
             //e.printStackTrace();
-            return false;
+            return null;
         }
     }
 
-    private class UpdateRunnable implements Runnable {
+    private class UpdateRunnable extends BukkitRunnable {
+        PluginManager pm;
+
+        UpdateRunnable(PluginManager pm) {
+            this.pm = pm;
+        }
+
         @Override
         public void run() {
-            if (Updater.this.url != null && Updater.this.read() && Updater.this.versionCheck(Updater.this.versionName)) {
+            if (Updater.this.result == UpdateResult.UPDATE_AVAILABLE) { return; } // Don't check again
+            String versionName = Updater.this.read();
+            if (versionName != null && Updater.this.versionCheck(versionName)) {
                 Updater.this.result = UpdateResult.UPDATE_AVAILABLE;
+                pm.callEvent(new NewUpdateFoundEvent());
             }
         }
     }
