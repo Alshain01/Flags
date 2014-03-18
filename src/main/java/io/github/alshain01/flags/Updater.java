@@ -198,7 +198,6 @@ final class Updater {
 
             final BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             final String response = reader.readLine();
-
             final JSONArray array = (JSONArray) JSONValue.parse(response);
 
             return (String) ((JSONObject) array.get(array.size() - 1)).get("name");
@@ -212,7 +211,6 @@ final class Updater {
                 this.log.warning("If you have not recently modified your configuration and this is the first time you are seeing this message, the site may be experiencing temporary downtime.");
                 this.result = UpdateResult.FAIL_DBO;
             }
-            //e.printStackTrace();
             return null;
         }
     }
