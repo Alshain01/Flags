@@ -21,44 +21,29 @@
  Notice: For any reuse or distribution, you must make clear to others the license terms of this work. The best way to do this is with a link to this web page.
  http://creativecommons.org/licenses/by-nc/3.0/
  */
+
 package io.github.alshain01.flags.economy;
 
 import org.bukkit.Bukkit;
 
 /**
- * Enumeration for handling the purchasable product type
+ * Enumeration for handling the BaseFlagValue setting
  */
-public enum EPurchaseType {
-	Flag('f'), Message('m');
+public enum EconomyBaseValue {
+	PLUGIN, DEFAULT, ALWAYS;
 
-	public static EPurchaseType get(String name) {
-		for (final EPurchaseType p : EPurchaseType.values()) {
-			if (name.toLowerCase().equals(p.toString().toLowerCase())
-					|| name.toLowerCase().equals(String.valueOf(p.alias))) {
-				return p;
-			}
-		}
-		return null;
-	}
+    boolean set;
 
-    private final char alias;
-
-	EPurchaseType(char alias) {
-		this.alias = alias;
-	}
+    EconomyBaseValue() {
+        final String message = Bukkit.getServer().getPluginManager().getPlugin("Flags").getConfig()
+                .getString("Flags.Economy.BaseValue");
+        this.set = this.toString().equalsIgnoreCase(toString());
+    }
 
 	/**
-	 * @return The localized name of the purchase type
+	 * @return True if the BaseFlagValue is set to this type.
 	 */
-	public String getLocal() {
-		return io.github.alshain01.flags.Message.valueOf(toString()).get();
-	}
-
-	/**
-	 * @return True if the refund setting is true for this type
-	 */
-	public boolean isRefundable() {
-		return Bukkit.getServer().getPluginManager().getPlugin("flags").getConfig()
-				.getBoolean("flags.Economy.Refund." + toString());
+	public boolean isSet() {
+        return this.set;
 	}
 }

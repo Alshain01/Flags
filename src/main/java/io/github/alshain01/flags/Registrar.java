@@ -34,6 +34,7 @@ import org.bukkit.permissions.Permissible;
 /**
  * Class for handling the registration of new flags
  */
+@SuppressWarnings("unused, WeakerAccess") // API Class
 public final class Registrar {
 	private final Map<String, Flag> flagStore = new HashMap<String, Flag>();
 
@@ -109,7 +110,6 @@ public final class Registrar {
 	 * 
 	 * @return A list of names of all the flags registered.
 	 */
-    @SuppressWarnings("unused") // API
 	public Set<String> getFlagNames() {
 		return flagStore.keySet();
 	}
@@ -128,7 +128,6 @@ public final class Registrar {
      *
      * @return A set of all the flags in the group.
      */
-    @SuppressWarnings("unused") // API
     public Set<Flag> getGroup(String group) {
         Validate.notNull(group);
         final Set<Flag> flags = new HashSet<Flag>();
@@ -141,6 +140,11 @@ public final class Registrar {
         return flags;
     }
 
+    /**
+     * Gets a map of flag sets ordered by group
+     *
+     * @return A map of all the flags for all groups.
+     */
     public Map<String, Set<Flag>> getFlagsByGroup() {
         Map<String, Set<Flag>> flagMap = new HashMap<String, Set<Flag>>();
         for(Flag f : flagStore.values()) {
@@ -155,6 +159,12 @@ public final class Registrar {
         return flagMap;
     }
 
+    /**
+     * Gets a map of flag sets ordered by group that are permitted for use
+     *
+     * @param p The permissibile to check
+     * @return A map of all the flags for all groups.
+     */
     public Map<String, Set<Flag>> getPermittedFlagsByGroup(Permissible p) {
         Map<String, Set<Flag>> flagMap = new HashMap<String, Set<Flag>>();
         for(Flag f : flagStore.values()) {
@@ -176,7 +186,6 @@ public final class Registrar {
      *
      * @return A set of flags that are not player flags
      */
-    @SuppressWarnings("unused") // API
     public Set<Flag> getStandardFlags() {
         final Set<Flag> flags = new HashSet<Flag>();
 
@@ -194,7 +203,6 @@ public final class Registrar {
      *
      * @return A set of flags that are player flags
      */
-    @SuppressWarnings("unused") // API
     public Set<Flag> getPlayerFlags() {
         final Set<Flag> flags = new HashSet<Flag>();
 
@@ -212,7 +220,6 @@ public final class Registrar {
      *
      * @return A set of all the flags the permissible may change
      */
-    @SuppressWarnings("unused") // API
     public Set<Flag> getPermittedFlags(Permissible permissible) {
         Validate.notNull(permissible);
         final Set<Flag> flags = new HashSet<Flag>();
@@ -229,7 +236,6 @@ public final class Registrar {
      *
      * @return A set of all the flags the permissible may bypass
      */
-    @SuppressWarnings("unused") // API
     public Set<Flag> getBypassedFlags(Permissible permissible) {
         Validate.notNull(permissible);
         final Set<Flag> flags = new HashSet<Flag>();
@@ -266,7 +272,6 @@ public final class Registrar {
 	 *            The group the flag belongs in.
 	 * @return The flag if the flag was successfully registered. Null otherwise.
 	 */
-    @SuppressWarnings("WeakerAccess") // API
 	public Flag register(String name, String description, boolean def, String group) {
         Validate.notNull(name);
         Validate.notNull(description);
@@ -299,7 +304,6 @@ public final class Registrar {
 	 *            The default message for worlds.
 	 * @return The flag if the flag was successfully registered. Null otherwise.
 	 */
-    @SuppressWarnings("WeakerAccess") // API
 	public Flag register(String name, String description, boolean def,
 			String group, String areaMessage, String worldMessage) {
         Validate.notNull(name);
@@ -329,7 +333,6 @@ public final class Registrar {
 	 *            The group the flags belong in.
 	 * @return The set of flags if the flags were successfully registered. May be null or empty.
 	 */
-    @SuppressWarnings("unused") // API
 	public Set<Flag> register(ModuleYML yaml, String group) {
         Validate.notNull(yaml);
         Validate.notNull(group);

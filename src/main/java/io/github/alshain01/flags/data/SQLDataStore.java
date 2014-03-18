@@ -31,7 +31,7 @@ import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Default;
 import io.github.alshain01.flags.area.Subdivision;
 import io.github.alshain01.flags.area.World;
-import io.github.alshain01.flags.economy.EPurchaseType;
+import io.github.alshain01.flags.economy.EconomyPurchaseType;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -308,7 +308,7 @@ public class SQLDataStore implements DataStore {
     }
 
     @Override
-    public double readPrice(Flag flag, EPurchaseType type) {
+    public double readPrice(Flag flag, EconomyPurchaseType type) {
         String selectString = "SELECT * FROM Price WHERE FlagName='%flag%' AND ProductType='%type%';";
         ResultSet results = executeQuery(selectString
                 .replaceAll("%flag%", flag.getName())
@@ -326,7 +326,7 @@ public class SQLDataStore implements DataStore {
     }
 
     @Override
-    public void writePrice(Flag flag, EPurchaseType type, double price) {
+    public void writePrice(Flag flag, EconomyPurchaseType type, double price) {
         String insertString = "INSERT INTO Price (FlagName, ProductType, Cost) VALUES ('%flag%', '%product%', %price%) ON DUPLICATE KEY UPDATE Cost=%price%;";
         executeStatement(insertString
                 .replaceAll("%flag%", flag.getName())
@@ -667,14 +667,14 @@ public class SQLDataStore implements DataStore {
 
         //Convert the prices
         for(Flag f : Flags.getRegistrar().getFlags()) {
-            double price = convertFrom.readPrice(f, EPurchaseType.Flag);
+            double price = convertFrom.readPrice(f, EconomyPurchaseType.Flag);
             if(price > (double)0) {
-                convertTo.writePrice(f, EPurchaseType.Flag, price);
+                convertTo.writePrice(f, EconomyPurchaseType.Flag, price);
             }
 
-            price = convertFrom.readPrice(f, EPurchaseType.Message);
+            price = convertFrom.readPrice(f, EconomyPurchaseType.Message);
             if(price > (double)0) {
-                convertTo.writePrice(f, EPurchaseType.Message, price);
+                convertTo.writePrice(f, EconomyPurchaseType.Message, price);
             }
         }
 

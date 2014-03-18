@@ -51,18 +51,23 @@ public enum Message {
     DeleteSector, NoSectorError, DeleteAllSectors, SectorOverlapError,
     CancelCreateSector, SectorCreated, SectorStarted, SubsectorCreated;
 
+    String message;
+
+    Message() {
+        final String message = Flags.messageStore.getConfig().getString("Message." + toString());
+        if (message == null) {
+            Flags.warn("ERROR: Invalid message.yml Message for " + toString());
+            this.message = "ERROR: Invalid message.yml Message. Please contact your server administrator.";
+        }
+        this.message = ChatColor.translateAlternateColorCodes('&', message);
+    }
+
 	/**
 	 * Gets the localized message for the enumeration
 	 * 
 	 * @return the message associated with the enumeration
 	 */
 	public final String get() {
-		final String message = Flags.messageStore.getConfig().getString(
-				"Message." + toString());
-		if (message == null) {
-			Flags.warn("ERROR: Invalid message.yml Message for " + toString());
-			return "ERROR: Invalid message.yml Message. Please contact your server administrator.";
-		}
-		return ChatColor.translateAlternateColorCodes('&', message);
+        return this.message;
 	}
 }

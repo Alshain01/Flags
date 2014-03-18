@@ -100,7 +100,7 @@ public class Flags extends JavaPlugin {
         // Configure the updater
         ConfigurationSection updateConfig = pluginConfig.getConfigurationSection("Update");
 		if (updateConfig.getBoolean("Check")) {
-            UpdateScheduler updater = new UpdateScheduler(this, getFile(), updateConfig);
+            UpdateScheduler updater = new UpdateScheduler(this, updateConfig);
             long timer = updateConfig.getLong("Interval");
             if(timer < 1) {
                 updater.runTaskAsynchronously(this);

@@ -66,15 +66,14 @@ Flags:
   #
   MrClean: true
   #
-  # Check for updates and notify the console or download and install (Check must be true to auto update)
+  # Enable to check for updates and notify the console of an existing update
   # Interval defines the amount of time between checks in approximate minutes. 0 = Startup only
   # ServerModsAPIKey is optional and can be found here https://dev.bukkit.org/home/servermods-apikey/  
   # DO NOT SHARE WITH ANYONE!  The API key will only be uploaded to BukkitDev, not the author of this plugin.
   #
   Update:
-    Check: true
+    Enabled: true
     Interval: 1440
-    Download: false
     ServerModsAPIKey: null
   #
   # Enable or Disable MCStats metrics logging

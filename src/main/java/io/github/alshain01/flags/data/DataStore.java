@@ -26,7 +26,7 @@ package io.github.alshain01.flags.data;
 
 import io.github.alshain01.flags.Flag;
 import io.github.alshain01.flags.area.Area;
-import io.github.alshain01.flags.economy.EPurchaseType;
+import io.github.alshain01.flags.economy.EconomyPurchaseType;
 
 import java.util.Set;
 
@@ -58,9 +58,9 @@ public interface DataStore {
 
     public void writeMessage(Area area, Flag flag, String message);
 
-	public double readPrice(Flag flag, EPurchaseType type);
+	public double readPrice(Flag flag, EconomyPurchaseType type);
 
-    public void writePrice(Flag flag, EPurchaseType type, double price);
+    public void writePrice(Flag flag, EconomyPurchaseType type, double price);
 
 	public Set<String> readTrust(Area area, Flag flag);
 

@@ -4,7 +4,7 @@ import io.github.alshain01.flags.*;
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Default;
 import io.github.alshain01.flags.area.Subdivision;
-import io.github.alshain01.flags.economy.EPurchaseType;
+import io.github.alshain01.flags.economy.EconomyPurchaseType;
 
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -178,7 +178,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
                 success = true;
                 break;
             case CHARGE:
-                final EPurchaseType t = EPurchaseType.get(args[1]);
+                final EconomyPurchaseType t = EconomyPurchaseType.get(args[1]);
                 if (t != null && args.length > 3) {
                     success = setPrice(sender, t, flag, args[3]);
                 } else {
@@ -466,7 +466,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     /*
      * Price Command Handlers
      */
-    private static void getPrice(CommandSender sender, EPurchaseType type, Flag flag) {
+    private static void getPrice(CommandSender sender, EconomyPurchaseType type, Flag flag) {
         if(Validate.noEconomyInstalled(sender)) { return; }
 
         sender.sendMessage(Message.GetPrice.get()
@@ -475,7 +475,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
                 .replace("{Price}", Flags.getEconomy().format(flag.getPrice(type))));
     }
 
-    private static boolean setPrice(CommandSender sender, EPurchaseType type, Flag flag, String price) {
+    private static boolean setPrice(CommandSender sender, EconomyPurchaseType type, Flag flag, String price) {
         if(Validate.noEconomyInstalled(sender)) { return true; }
         if((sender instanceof Player) && Validate.notPermittedEditPrice(sender)) { return true; }
 

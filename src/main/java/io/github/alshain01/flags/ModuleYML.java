@@ -33,7 +33,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * Modified YAML manager from http://wiki.bukkit.org/Configuration_API_Reference
  * Handles reading YAML from a source file without saving it to disk.
  */
-@SuppressWarnings("WeakerAccess") // API
+@SuppressWarnings("WeakerAccess") // API Class
 public final class ModuleYML {
 	private final JavaPlugin plugin;
 	private final String fileName;
@@ -70,7 +70,6 @@ public final class ModuleYML {
 	/**
 	 * Reloads the file to the MemorySection
 	 */
-    @SuppressWarnings("WeakerAccess") // API
 	public void reloadModuleData() {
 		try {
 			fileConfig = new YamlConfiguration();

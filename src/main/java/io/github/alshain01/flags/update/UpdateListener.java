@@ -21,9 +21,6 @@ public class UpdateListener implements Listener {
                 e.getPlayer().sendMessage(ChatColor.DARK_PURPLE
                         + "The version of Flags that this server is running is out of date. "
                         + "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/flags/.");
-            } else if(scheduler.getResult() == UpdateResult.SUCCESS) {
-                e.getPlayer().sendMessage("[Flags] " + ChatColor.DARK_PURPLE
-                        + "An update to Flags has been downloaded and will be installed when the server is reloaded.");
             }
         }
     }

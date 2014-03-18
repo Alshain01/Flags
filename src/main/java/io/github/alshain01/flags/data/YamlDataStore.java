@@ -29,7 +29,7 @@ import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Default;
 import io.github.alshain01.flags.area.Subdivision;
 import io.github.alshain01.flags.area.World;
-import io.github.alshain01.flags.economy.EPurchaseType;
+import io.github.alshain01.flags.economy.EconomyPurchaseType;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -259,13 +259,13 @@ public final class YamlDataStore implements DataStore {
     }
 
 	@Override
-	public double readPrice(Flag flag, EPurchaseType type) {
+	public double readPrice(Flag flag, EconomyPurchaseType type) {
 		final String path = "Price." + type.toString() + "." + flag.getName();
 		return getYml(path).getConfig().isSet(path) ? getYml(path).getConfig().getDouble(path) : 0;
 	}
 
     @Override
-    public void writePrice(Flag flag, EPurchaseType type, double price) {
+    public void writePrice(Flag flag, EconomyPurchaseType type, double price) {
         final String path = "Price." + type.toString() + "." + flag.getName();
         final CustomYML cYml = getYml(path);
         cYml.getConfig().set(path, price);

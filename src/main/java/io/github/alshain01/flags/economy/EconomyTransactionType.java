@@ -24,20 +24,16 @@
 
 package io.github.alshain01.flags.economy;
 
-import org.bukkit.Bukkit;
-
 /**
- * Enumeration for handling the BaseFlagValue setting
+ * Enumeration for handling withdrawal and deposit
  */
-public enum EBaseValue {
-	PLUGIN, DEFAULT, ALWAYS;
+public enum EconomyTransactionType {
+	Withdraw, Deposit;
 
 	/**
-	 * @return True if the BaseFlagValue is set to this type.
+	 * @return The localized message of the transaction type.
 	 */
-	public boolean isSet() {
-		final String message = Bukkit.getServer().getPluginManager().getPlugin("flags").getConfig()
-				.getString("flags.Economy.BaseValue");
-		return message.equalsIgnoreCase(toString());
+	public String getMessage() {
+		return io.github.alshain01.flags.Message.valueOf(toString()).get();
 	}
 }
