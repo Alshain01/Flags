@@ -29,7 +29,7 @@ import io.github.alshain01.flags.CuboidType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public final class MySQLDataStore extends SQLDataStore {
+final class MySQLDataStore extends SQLDataStore {
 	public MySQLDataStore(String url, String user, String password) {
         this.url = url;
         this.password = password;

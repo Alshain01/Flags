@@ -46,7 +46,7 @@ import com.bekvon.bukkit.residence.Residence;
 /**
  * Class for managing YAML Database Storage
  */
-public final class YamlDataStore implements DataStore {
+final class YamlDataStore implements DataStore {
 	private static CustomYML data;
 	private static CustomYML def;
 	private static CustomYML world;
@@ -56,7 +56,7 @@ public final class YamlDataStore implements DataStore {
     /*
      * Constructor
      */
-	public YamlDataStore(JavaPlugin plugin) {
+	YamlDataStore(JavaPlugin plugin) {
 		def = new CustomYML(plugin, "default.yml");
 		world = new CustomYML(plugin, "world.yml");
 		data = new CustomYML(plugin, "data.yml");

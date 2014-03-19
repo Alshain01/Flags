@@ -24,7 +24,7 @@
 
 package io.github.alshain01.flags.data;
 
-public class DBVersion {
+class DBVersion {
 	public final int major;
 	public final int minor;
 	public final int build;
