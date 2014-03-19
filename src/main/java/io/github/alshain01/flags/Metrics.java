@@ -132,32 +132,16 @@ static void StartFlagsMetrics(Plugin plugin) {
             });
         }
 
-			/*
-			 * Auto Update settings
-			 */
-        final Graph updateGraph = metrics.createGraph("Update Configuration");
-        if (!plugin.getConfig().getBoolean("flags.Update.Check")) {
-            updateGraph.addPlotter(new Metrics.Plotter("No Updates") {
-                @Override
-                public int getValue() {
-                    return 1;
-                }
-            });
-        } else if (!plugin.getConfig().getBoolean("flags.Update.Download")) {
-            updateGraph.addPlotter(new Metrics.Plotter("Check for Updates") {
-                @Override
-                public int getValue() {
-                    return 1;
-                }
-            });
-        } else {
-            updateGraph.addPlotter(new Metrics.Plotter("Download Updates") {
-                @Override
-                public int getValue() {
-                    return 1;
-                }
-            });
-        }
+        /*
+         * Auto Update settings
+         */
+        final Graph updateGraph = metrics.createGraph("Check for Updates");
+        updateGraph.addPlotter(new Metrics.Plotter(plugin.getConfig().getBoolean("Flags.Update.Enabled") ? "Yes" : "No") {
+            @Override
+            public int getValue() {
+                return 1;
+            }
+        });
 
         metrics.start();
     } catch (final IOException e) {
