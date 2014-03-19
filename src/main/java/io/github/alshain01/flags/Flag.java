@@ -67,8 +67,7 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
 	 * @param world
 	 *            The default world message for the flag.
 	 */
-	Flag(String name, String description, boolean def, String plugin,
-            boolean player, String area, String world) {
+	Flag(String name, String description, boolean def, String plugin, boolean player, String area, String world) {
 		this.name = name;
 		this.description = description;
 		this.def = def;

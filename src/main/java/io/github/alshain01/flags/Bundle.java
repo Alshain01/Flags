@@ -24,7 +24,6 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.exception.InvalidBundleException;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
@@ -42,11 +41,11 @@ public final class Bundle {
 	 * @param bundle
 	 *            The bundle name to retrieve
 	 * @return A list containing the bundle. Null if it doesn't exist.
-     * @throws InvalidBundleException
+     * @throws java.lang.IllegalArgumentException
 	 */
 	public static Set<Flag> getBundle(String bundle) {
         Validate.notNull(bundle);
-        if(!isBundle(bundle)) { throw new InvalidBundleException(); }
+        if(!isBundle(bundle)) { throw new IllegalArgumentException("The provided bundle name does not exist."); }
 		return Flags.getDataStore().readBundle(bundle.toLowerCase());
 	}
 
