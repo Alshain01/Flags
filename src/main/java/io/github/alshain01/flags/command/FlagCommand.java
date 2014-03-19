@@ -6,15 +6,28 @@ import io.github.alshain01.flags.area.Default;
 import io.github.alshain01.flags.area.Subdivision;
 import io.github.alshain01.flags.economy.EconomyPurchaseType;
 
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.Command;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.*;
 
-public class FlagCommand extends PluginCommand implements CommandExecutor {
+public class FlagCommand extends PluginCommand implements CommandExecutor, Listener {
+    Material tool;
+
+    public FlagCommand(Material tool) {
+        this.tool = tool;
+    }
+
     private enum FlagCommandType {
         SET('s', 3, 1, true, true, "Set <area|world|default> <flag> [true|false]"),
         GET('g', 2, 1, true, false, "Get <area|world|default> [flag]"),
@@ -57,6 +70,21 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
 
         String getHelp() {
             return "/flag " + this.help;
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    private void onPlayerInteract(PlayerInteractEvent e) {
+        if(e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            if(tool != null && e.getPlayer().getItemInHand().getType() == tool) {
+                if (e.getPlayer().hasPermission("flags.command.flag")) {
+                    CommandLocation loc = CommandLocation.WORLD;
+                    if(CuboidType.getActive().hasArea(e.getPlayer().getLocation())) {
+                        loc = CommandLocation.AREA;
+                    }
+                    get(e.getPlayer(), e.getClickedBlock().getLocation(), loc, null);
+                }
+            }
         }
     }
 
@@ -240,9 +268,13 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
     /*
  * Value Command Handlers
  */
-    private void get(Player player, CommandLocation location, Flag flag) {
+    private void get(Player player, CommandLocation locType, Flag flag) {
+        get(player, player.getLocation(), locType, flag);
+    }
+
+    private void get(Player player, Location location, CommandLocation locType, Flag flag) {
         // Acquire the area
-        final Area area = getArea(player, location);
+        final Area area = getArea(location, locType);
 
         if(Validate.notArea(player, area)) { return; }
 

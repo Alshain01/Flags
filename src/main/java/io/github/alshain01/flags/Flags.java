@@ -36,6 +36,7 @@ import java.util.logging.Logger;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -114,7 +115,9 @@ public class Flags extends JavaPlugin {
         }
 
         // Set Command Executors
-        getCommand("flag").setExecutor(new FlagCommand());
+        FlagCommand executor = new FlagCommand(Material.valueOf(pluginConfig.getString("Tools.FlagQuery")));
+        getCommand("flag").setExecutor(executor);
+        pm.registerEvents(executor, this);
         getCommand("bundle").setExecutor(new BundleCommand());
 
  		// Schedule tasks to perform after server is running

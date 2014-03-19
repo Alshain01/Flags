@@ -5,6 +5,7 @@ import io.github.alshain01.flags.Message;
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Default;
 import io.github.alshain01.flags.area.Wilderness;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -66,16 +67,20 @@ abstract class PluginCommand {
         return (value) ? Message.ValueColorTrue.get() : Message.ValueColorFalse.get();
     }
 
-    static Area getArea(CommandSender sender, CommandLocation location) {
+    static Area getArea(Location loc, CommandLocation location) {
         if (location == CommandLocation.DEFAULT) {
-            return new Default((((Player)sender).getWorld()));
+            return new Default(loc.getWorld());
         } else if (location == CommandLocation.WORLD) {
-            return new Wilderness((((Player)sender).getWorld()));
+            return new Wilderness(loc.getWorld());
         } else if (location == CommandLocation.AREA) {
-            Area area = CuboidType.getActive().getAreaAt(((Player) sender).getLocation());
+            Area area = CuboidType.getActive().getAreaAt(loc);
             return (area instanceof Wilderness) ? null : area;
         }
         // Invalid location selection
         return null;
+    }
+
+    static Area getArea(Player player, CommandLocation location) {
+        return getArea(player.getLocation(), location);
     }
 }
