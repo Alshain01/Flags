@@ -25,10 +25,7 @@
 package io.github.alshain01.flags.command;
 
 import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.area.Area;
-import io.github.alshain01.flags.area.Default;
-import io.github.alshain01.flags.area.Subdivision;
-import io.github.alshain01.flags.area.World;
+import io.github.alshain01.flags.area.*;
 
 import java.util.Collection;
 import java.util.Set;
@@ -57,7 +54,7 @@ final class Validate {
     static boolean notPermittedFlag(Permissible p, Area a) {
         if (a.hasPermission(p)) { return false; }
         if(p instanceof CommandSender) {
-            ((CommandSender)p).sendMessage(((a instanceof World || a instanceof Default)
+            ((CommandSender)p).sendMessage(((a instanceof Wilderness || a instanceof Default)
                     ? Message.WorldPermError.get() : Message.AreaPermError.get())
                     .replace("{AreaType}", a.getCuboidType().getCuboidName())
                     .replace("{OwnerName}", a.getOwners().toArray()[0].toString())
@@ -101,7 +98,7 @@ final class Validate {
     private static boolean notPermittedBundle(Permissible p, Area area) {
         if (area.hasBundlePermission(p)) { return false; }
         if(p instanceof CommandSender) {
-            ((CommandSender)p).sendMessage(((area instanceof World || area instanceof Default)
+            ((CommandSender)p).sendMessage(((area instanceof Wilderness || area instanceof Default)
                     ? Message.WorldPermError.get() : Message.AreaPermError.get())
                     .replace("{AreaType}", area.getCuboidType().getCuboidName())
                     .replace("{OwnerName}", area.getOwners().toArray()[0].toString())

@@ -42,7 +42,9 @@ import javax.annotation.Nonnull;
 
 /**
  * Class for creating areas to manage a World.
+ * @deprecated Use Wilderness instead
  */
+@Deprecated
 public class World extends Area {
 	private final org.bukkit.World world;
 
@@ -88,7 +90,7 @@ public class World extends Area {
     public System getSystemType() { return System.WORLD; }
 
     @Override
-    public CuboidType getCuboidType() { return CuboidType.WORLD; }
+    public CuboidType getCuboidType() { return CuboidType.WILDERNESS; }
 
     @Override
     public Set<String> getOwners() {
@@ -144,7 +146,7 @@ public class World extends Area {
 
 		if (parse) {
 			message = message
-					.replace("{AreaType}", CuboidType.WORLD.getCuboidName().toLowerCase())
+					.replace("{AreaType}", CuboidType.WILDERNESS.getCuboidName().toLowerCase())
 					.replace("{World}", world.getName());
 			message = ChatColor.translateAlternateColorCodes('&', message);
 		}

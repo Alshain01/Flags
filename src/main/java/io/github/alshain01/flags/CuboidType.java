@@ -45,9 +45,9 @@ public enum CuboidType {
         public boolean hasArea(Location location) { return true; }
     },
 
-    WORLD("World", "World", false) {
-        Area getCuboidAt(Location location) { return new World(location); }
-        public Area getArea(String name) { return new World(name); }
+    WILDERNESS("World", "World", false) {
+        Area getCuboidAt(Location location) { return new Wilderness(location); }
+        public Area getArea(String name) { return new Wilderness(name); }
         public boolean hasArea(Location location) { return true; }
     },
 
@@ -59,7 +59,7 @@ public enum CuboidType {
 
     GRIEF_PREVENTION("GriefPrevention",	"Grief Prevention", true) {
         Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
+            if(!hasArea(location)) { return new Wilderness(location); }
 
             final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention");
             final float pluginVersion = Float.valueOf(plugin.getDescription().getVersion().substring(0, 3));
@@ -83,7 +83,7 @@ public enum CuboidType {
 
     WORLDGUARD("WorldGuard", "WorldGuard", false) {
         Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
+            if(!hasArea(location)) { return new Wilderness(location); }
             return new WorldGuardRegion(location);
         }
 
@@ -97,7 +97,7 @@ public enum CuboidType {
 
     RESIDENCE("Residence", "Residence", true) {
         Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
+            if(!hasArea(location)) { return new Wilderness(location); }
             return new ResidenceClaimedResidence(location);
         }
         public Area getArea(String name) { return new ResidenceClaimedResidence(name); }
@@ -106,7 +106,7 @@ public enum CuboidType {
 
     INFINITEPLOTS("InfinitePlots", "InfinitePlots", false) {
         Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
+            if(!hasArea(location)) { return new Wilderness(location); }
             return new InfinitePlotsPlot(location);
         }
 
@@ -121,7 +121,7 @@ public enum CuboidType {
 
     FACTIONS("Factions", "Factions", false) {
         Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
+            if(!hasArea(location)) { return new Wilderness(location); }
             return new FactionsTerritory(location);
         }
 
@@ -135,7 +135,7 @@ public enum CuboidType {
 
     FACTOID("Factoid", "Factoid", true) {
         Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
+            if(!hasArea(location)) { return new Wilderness(location); }
             return new FactoidLand(location);
         }
 
@@ -148,7 +148,7 @@ public enum CuboidType {
 
     PLOTME("PlotMe", "PlotMe",false) {
         Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
+            if(!hasArea(location)) { return new Wilderness(location); }
             return new PlotMePlot(location);
         }
 
@@ -162,7 +162,7 @@ public enum CuboidType {
 
     REGIOS("Regios", "Regios", false) {
         Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
+            if(!hasArea(location)) { return new Wilderness(location); }
             return new RegiosRegion(location);
         }
         public Area getArea(String name) { return new RegiosRegion(name); }
@@ -171,7 +171,7 @@ public enum CuboidType {
 
     PRECIOUSSTONES("PreciousStones", "PreciousStones", true){
         Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new World(location); }
+            if(!hasArea(location)) { return new Wilderness(location); }
             return new PreciousStonesField(location);
         }
 
@@ -183,7 +183,7 @@ public enum CuboidType {
         public boolean hasArea(Location location) { return PreciousStonesField.hasField(location); }
     };
 
-    private static CuboidType currentCuboidSystem = CuboidType.WORLD;
+    private static CuboidType currentCuboidSystem = CuboidType.WILDERNESS;
 
     /*
      * Gets an area from the data store at a specific location.
@@ -237,7 +237,7 @@ public enum CuboidType {
     public Area getAreaAt(Location location) {
         Validate.notNull(location);
         Area area = getCuboidAt(location);
-        return area.isArea() ? area : WORLD.getCuboidAt(location);
+        return area.isArea() ? area : WILDERNESS.getCuboidAt(location);
     }
 
     /**

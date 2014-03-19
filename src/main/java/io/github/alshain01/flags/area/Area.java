@@ -155,7 +155,7 @@ public abstract class Area implements Comparable<Area> {
                 && value != getValue(flag, true) // The flag isn't actually
                 // changing
                 && flag.getPrice(EconomyPurchaseType.Flag) != 0 // No defined price
-                && !(this instanceof World) // No charge for world flags
+                && !(this instanceof Wilderness) // No charge for world flags
                 && !(this instanceof Default) // No charge for defaults
                 && !(this instanceof Administrator && ((Administrator) this)
                 .isAdminArea())) // No charge for admin areas
@@ -279,7 +279,7 @@ public abstract class Area implements Comparable<Area> {
                 && sender != null
                 && sender instanceof Player // Need a player to charge
                 && flag.getPrice(EconomyPurchaseType.Message) != 0 // No defined price
-                && !(this instanceof World) // No charge for world flags
+                && !(this instanceof Wilderness) // No charge for world flags
                 && !(this instanceof Default) // No charge for defaults
                 && !(this instanceof Administrator && ((Administrator) this)
                 .isAdminArea())) // No charge for admin areas

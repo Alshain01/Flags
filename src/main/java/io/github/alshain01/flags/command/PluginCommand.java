@@ -4,7 +4,7 @@ import io.github.alshain01.flags.CuboidType;
 import io.github.alshain01.flags.Message;
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Default;
-import io.github.alshain01.flags.area.World;
+import io.github.alshain01.flags.area.Wilderness;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -70,10 +70,10 @@ abstract class PluginCommand {
         if (location == CommandLocation.DEFAULT) {
             return new Default((((Player)sender).getWorld()));
         } else if (location == CommandLocation.WORLD) {
-            return new World((((Player)sender).getWorld()));
+            return new Wilderness((((Player)sender).getWorld()));
         } else if (location == CommandLocation.AREA) {
             Area area = CuboidType.getActive().getAreaAt(((Player) sender).getLocation());
-            return (area instanceof World) ? null : area;
+            return (area instanceof Wilderness) ? null : area;
         }
         // Invalid location selection
         return null;

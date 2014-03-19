@@ -37,7 +37,7 @@ public enum EconomyBaseValue {
     EconomyBaseValue() {
         final String message = Bukkit.getServer().getPluginManager().getPlugin("Flags").getConfig()
                 .getString("Flags.Economy.BaseValue");
-        this.set = this.toString().equalsIgnoreCase(toString());
+        this.set = this.toString().equalsIgnoreCase(message);
     }
 
 	/**

@@ -43,7 +43,7 @@ public final class MySQLDataStore extends SQLDataStore {
 		// We always need to create the system specific table
 		// in case it changed since the database was created.
         // i.e. Grief Prevention was removed and WorldGuard was installed.
-        if(CuboidType.getActive() != CuboidType.WORLD) {
+        if(CuboidType.getActive() != CuboidType.WILDERNESS) {
             createSystemDB();
         }
 

@@ -1,10 +1,7 @@
 package io.github.alshain01.flags.data;
 
 import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.area.Area;
-import io.github.alshain01.flags.area.Default;
-import io.github.alshain01.flags.area.Subdivision;
-import io.github.alshain01.flags.area.World;
+import io.github.alshain01.flags.area.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.ResultSet;
@@ -53,7 +50,7 @@ public class MSSQLDataStore extends SQLDataStore {
         // We always need to create the system specific table
         // in case it changed since the database was created.
         // i.e. Grief Prevention was removed and WorldGuard was installed.
-        if(CuboidType.getActive() != CuboidType.WORLD) {
+        if(CuboidType.getActive() != CuboidType.WILDERNESS) {
             createSystemDB();
         }
 
@@ -78,7 +75,7 @@ public class MSSQLDataStore extends SQLDataStore {
         // BIT BASED BOOLEAN
         String insertString;
 
-        if((area instanceof World) || (area instanceof Default)) {
+        if((area instanceof Wilderness) || (area instanceof Default)) {
             insertString = "INSERT INTO %table%Flags (WorldName, FlagName, FlagValue)"
                     + " VALUES ('%world%', '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
         } else {

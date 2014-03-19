@@ -25,10 +25,7 @@
 package io.github.alshain01.flags.data;
 
 import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.area.Area;
-import io.github.alshain01.flags.area.Default;
-import io.github.alshain01.flags.area.Subdivision;
-import io.github.alshain01.flags.area.World;
+import io.github.alshain01.flags.area.*;
 import io.github.alshain01.flags.economy.EconomyPurchaseType;
 
 import java.io.File;
@@ -356,7 +353,7 @@ public final class YamlDataStore implements DataStore {
 	public void remove(Area area) {
         String path = area.getCuboidType().toString() + "." + area.getWorld().getName();
 
-        if (!(area instanceof World || area instanceof Default)) {
+        if (!(area instanceof Wilderness || area instanceof Default)) {
             path += "." + area.getSystemID();
         }
 
@@ -438,7 +435,7 @@ public final class YamlDataStore implements DataStore {
     private String getAreaPath(Area area) {
         String path = area.getCuboidType().toString() + "." + area.getWorld().getName();
 
-        if (!(area instanceof World || area instanceof Default)) {
+        if (!(area instanceof Wilderness || area instanceof Default)) {
             path += "." + area.getSystemID();
         }
 

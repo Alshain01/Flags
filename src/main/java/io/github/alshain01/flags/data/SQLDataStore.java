@@ -27,10 +27,7 @@ package io.github.alshain01.flags.data;
 import io.github.alshain01.flags.CuboidType;
 import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.Flag;
-import io.github.alshain01.flags.area.Area;
-import io.github.alshain01.flags.area.Default;
-import io.github.alshain01.flags.area.Subdivision;
-import io.github.alshain01.flags.area.World;
+import io.github.alshain01.flags.area.*;
 import io.github.alshain01.flags.economy.EconomyPurchaseType;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -207,7 +204,7 @@ public class SQLDataStore implements DataStore {
     @Override
     public Boolean readFlag(Area area, Flag flag) {
         StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Flags WHERE WorldName='%world%'");
-        if(!(area instanceof Default || area instanceof World)) {
+        if(!(area instanceof Default || area instanceof Wilderness)) {
             selectString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
         }
         selectString.append(" AND FlagName='%flag%';");
@@ -233,7 +230,7 @@ public class SQLDataStore implements DataStore {
     public void writeFlag(Area area, Flag flag, Boolean value) {
         String insertString;
 
-        if((area instanceof World) || (area instanceof Default)) {
+        if((area instanceof Wilderness) || (area instanceof Default)) {
             insertString = "INSERT INTO %table%Flags (WorldName, FlagName, FlagValue)"
                     + " VALUES ('%world%', '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
         } else {
@@ -260,7 +257,7 @@ public class SQLDataStore implements DataStore {
     @Override
     public String readMessage(Area area, Flag flag) {
         StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Flags WHERE WorldName='%world%'");
-        if(!(area instanceof Default || area instanceof World)) {
+        if(!(area instanceof Default || area instanceof Wilderness)) {
             selectString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
         }
         selectString.append(" AND FlagName='%flag%';");
@@ -288,7 +285,7 @@ public class SQLDataStore implements DataStore {
             message = "'" + message.replaceAll("'", "''") + "'";
         }
 
-        if(area instanceof Default || area instanceof World) {
+        if(area instanceof Default || area instanceof Wilderness) {
             insertString = "INSERT INTO %table%Flags (WorldName, FlagName, FlagMessage) VALUES ('%world%', '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
         } else {
             insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagMessage) VALUES ('%world%', '%area%', %sub%, '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
@@ -337,7 +334,7 @@ public class SQLDataStore implements DataStore {
     @Override
     public Set<String> readTrust(Area area, Flag flag) {
         StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Trust WHERE WorldName='%world%'");
-        if(!(area instanceof Default || area instanceof World)) {
+        if(!(area instanceof Default || area instanceof Wilderness)) {
             selectString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
         }
         selectString.append(" AND FlagName='%flag%';");
@@ -360,7 +357,7 @@ public class SQLDataStore implements DataStore {
     @Override
     public Set<String> readPlayerTrust(Area area, Flag flag) {
         StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Trust WHERE WorldName='%world%'");
-        if(!(area instanceof Default || area instanceof World)) {
+        if(!(area instanceof Default || area instanceof Wilderness)) {
             selectString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
         }
         selectString.append(" AND FlagName='%flag%';");
@@ -385,7 +382,7 @@ public class SQLDataStore implements DataStore {
     @Override
     public Set<String> readPermissionTrust(Area area, Flag flag) {
         StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Trust WHERE WorldName='%world%'");
-        if(!(area instanceof Default || area instanceof World)) {
+        if(!(area instanceof Default || area instanceof Wilderness)) {
             selectString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
         }
         selectString.append(" AND FlagName='%flag%';");
@@ -411,7 +408,7 @@ public class SQLDataStore implements DataStore {
     public void writeTrust(Area area, Flag flag, Set<String> players) {
         // Delete the old list to be replaced
         StringBuilder deleteString = new StringBuilder("DELETE FROM %table%Trust WHERE WorldName='%world%'");
-        if(!(area instanceof Default || area instanceof World)) {
+        if(!(area instanceof Default || area instanceof Wilderness)) {
             deleteString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
         }
         deleteString.append(" AND FlagName='%flag%';");
@@ -419,7 +416,7 @@ public class SQLDataStore implements DataStore {
         executeStatement(areaBuilder(deleteString.toString(), area).replaceAll("%flag%", flag.getName()));
 
         String insertString;
-        if(area instanceof Default || area instanceof World) {
+        if(area instanceof Default || area instanceof Wilderness) {
             insertString = "INSERT INTO %table%Trust (WorldName, FlagName, Trustee) VALUES('%world%', '%flag%', '%player%');";
         } else {
             insertString = "INSERT INTO %table%Trust (WorldName, AreaID, AreaSubID, FlagName, Trustee) VALUES('%world%', '%area%', %sub%, '%flag%', '%player%');";
@@ -626,7 +623,7 @@ public class SQLDataStore implements DataStore {
         // We always need to create the system specific table
         // in case it changed since the database was created.
         // i.e. Grief Prevention was removed and WorldGuard was installed.
-        if(CuboidType.getActive() != CuboidType.WORLD) {
+        if(CuboidType.getActive() != CuboidType.WILDERNESS) {
             createSystemDB();
         }
 
@@ -681,7 +678,7 @@ public class SQLDataStore implements DataStore {
         //Convert world & default data
         for(org.bukkit.World w : Bukkit.getWorlds()) {
             for(Flag f : Flags.getRegistrar().getFlags()) {
-                World world = new World(w);
+                Wilderness world = new Wilderness(w);
                 Default def = new Default(w);
 
                 //Flags

@@ -126,7 +126,7 @@ public enum System {
     @SuppressWarnings("unused, deprecation")
     public Area getAreaAt(Location location) {
         Area area = getSystemAreaAt(location);
-        return area.isArea() ? area : CuboidType.WORLD.getCuboidAt(location);
+        return area.isArea() ? area : CuboidType.WILDERNESS.getCuboidAt(location);
     }
 
 	/**
@@ -155,7 +155,7 @@ public enum System {
     @SuppressWarnings("unused, deprecation")
     @Deprecated
 	public static System getActive() {
-		return getByName(Flags.currentSystem.toString());
+		return getByName(CuboidType.getActive().toString());
 	}
 
 	private String pluginName = null, displayName = null;

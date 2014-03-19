@@ -102,7 +102,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor {
             }
 
             // Make sure we can set flags at that location
-            if (CuboidType.getActive() == CuboidType.WORLD && (location == CommandLocation.AREA || location == CommandLocation.DEFAULT)) {
+            if (CuboidType.getActive() == CuboidType.WILDERNESS && (location == CommandLocation.AREA || location == CommandLocation.DEFAULT)) {
                 sender.sendMessage(Message.NoSystemError.get());
                 return true;
             }
