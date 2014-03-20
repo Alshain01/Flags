@@ -69,9 +69,9 @@ public enum Message {
         this.message = message;
     }
 
-    static void load(CustomYML messageConfig) {
+    static void load(ConfigurationSection messages) {
         for(Message m : io.github.alshain01.flags.Message.values()) {
-            final String message = messageConfig.getConfig().getString("Message." + m.toString());
+            final String message = messages.getString(m.toString());
             if (message == null) {
                 Flags.warn("ERROR: Invalid message.yml Message for " + m.toString());
                 m.set("ERROR: Invalid message.yml Message. Please contact your server administrator.");

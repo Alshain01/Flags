@@ -24,6 +24,7 @@
 
 package io.github.alshain01.flags;
 
+import io.github.alshain01.flags.economy.EconomyBaseValue;
 import io.github.alshain01.flags.sector.SectorManager;
 import io.github.alshain01.flags.DataStore.DataStoreType;
 import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
@@ -83,11 +84,15 @@ public class Flags extends JavaPlugin {
         // Acquire the messages from configuration
         CustomYML messages = new CustomYML(this, "message.yml");
         messages.saveDefaultConfig();
-        Message.load(messages);
+        ConfigurationSection messageConfig = messages.getConfig().getConfigurationSection("Messages");
+        Message.load(messageConfig);
+        CuboidType.loadNames(messageConfig);
+
+        economy = setupEconomy();
+        EconomyBaseValue.valueOf(pluginConfig.getString("Economy.BaseValue")).set();
 
         CuboidType.find(pm, pluginConfig.getList("AreaPlugins"));
         dataStore = DataStoreType.getByUrl(this, pluginConfig.getString("Database.Url"));
-        economy = setupEconomy();
         sqlData = dataStore instanceof DataStoreMySQL;
 
         // New installation
@@ -112,7 +117,8 @@ public class Flags extends JavaPlugin {
 
         // Load Sectors
         if(CuboidType.getActive() == CuboidType.FLAGS) {
-            sectors = new SectorManager(this, pluginConfig.getConfigurationSection("Sector"));
+            sectors = new SectorManager(this, pluginConfig.getConfigurationSection("Sector"),
+                    new CustomYML(this, "sectors.yml").getConfig().getConfigurationSection("Sectors"));
         }
 
         // Set Command Executors
@@ -132,7 +138,9 @@ public class Flags extends JavaPlugin {
     @Override
     public void onDisable() {
         if(CuboidType.getActive() == CuboidType.FLAGS) {
-            sectors.write(new CustomYML(this, "sector.yml"));
+            CustomYML sectorConfig = new CustomYML(this, "sector.yml");
+            sectors.write(sectorConfig.getConfig());
+            sectorConfig.saveConfig();
         }
 
         if(sqlData) { ((DataStoreMySQL)dataStore).close(); }
@@ -204,7 +212,9 @@ public class Flags extends JavaPlugin {
         // Acquire the messages from configuration
         CustomYML messages = new CustomYML(this, "message.yml");
         messages.saveDefaultConfig();
-        Message.load(messages);
+        Message.load(messages.getConfig().getConfigurationSection("Messages"));
+
+        EconomyBaseValue.valueOf(this.getConfig().getString("Flags.Economy.BaseValue")).set();
 
         debugOn = getConfig().getBoolean("Flags.Debug");
         dataStore.reload();

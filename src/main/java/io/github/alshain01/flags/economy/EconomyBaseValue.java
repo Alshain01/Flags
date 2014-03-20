@@ -24,21 +24,13 @@
 
 package io.github.alshain01.flags.economy;
 
-import org.bukkit.Bukkit;
-
 /**
  * Enumeration for handling the BaseFlagValue setting
  */
 public enum EconomyBaseValue {
 	PLUGIN, DEFAULT, ALWAYS;
 
-    private final boolean set;
-
-    EconomyBaseValue() {
-        final String message = Bukkit.getServer().getPluginManager().getPlugin("Flags").getConfig()
-                .getString("Flags.Economy.BaseValue");
-        this.set = this.toString().equalsIgnoreCase(message);
-    }
+    private boolean set;
 
 	/**
 	 * @return True if the BaseFlagValue is set to this type.
@@ -46,4 +38,26 @@ public enum EconomyBaseValue {
 	public boolean isSet() {
         return this.set;
 	}
+
+    public void set() {
+        this.set = true;
+        for(EconomyBaseValue v : EconomyBaseValue.values()) {
+            if (v != this) {
+                v.set = false;
+            }
+        }
+    }
+
+    /**
+     * Gets the enumerated value of the active setting
+     *
+     * @return The current option selected
+     */
+
+    public static EconomyBaseValue getSetting() {
+        for(EconomyBaseValue v : EconomyBaseValue.values()) {
+            if(v.isSet()) { return v; }
+        }
+        return PLUGIN;
+    }
 }

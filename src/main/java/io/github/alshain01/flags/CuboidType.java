@@ -31,6 +31,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -187,6 +188,7 @@ public enum CuboidType {
     };
 
     private static CuboidType currentCuboidSystem = CuboidType.WILDERNESS;
+    private String cuboidName;
 
     /*
      * Gets an area from the data store at a specific location.
@@ -293,12 +295,18 @@ public enum CuboidType {
      * @return The name of the area division
      */
     public String getCuboidName() {
-        final String message = Flags.messageStore.getConfig().getString("Message." + toString());
-        if (message == null) {
-            //logger.warning("ERROR: Invalid message.yml Message for " + toString());
-            return "ERROR: Invalid message.yml Message. Please contact your server administrator.";
+        return cuboidName;
+    }
+
+    static void loadNames(ConfigurationSection messages) {
+        for (CuboidType t : CuboidType.values()) {
+            t.cuboidName = messages.getString(t.toString());
+            if(t.cuboidName == null) {
+                t.cuboidName = "ERROR: Invalid message.yml Message. Please contact your server administrator.";
+            } else {
+                t.cuboidName = ChatColor.translateAlternateColorCodes('&', t.cuboidName);
+            }
         }
-        return ChatColor.translateAlternateColorCodes('&', message);
     }
 
     /**

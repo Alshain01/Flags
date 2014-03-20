@@ -1,6 +1,5 @@
 package io.github.alshain01.flags.sector;
 
-import io.github.alshain01.flags.CustomYML;
 import io.github.alshain01.flags.events.SectorDeleteEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -15,29 +14,26 @@ final public class SectorManager {
     private final Map<UUID, Sector> sectors = new HashMap<UUID, Sector>();
     private final int defaultDepth;
 
-    public SectorManager(JavaPlugin plugin, ConfigurationSection config) {
+    public SectorManager(JavaPlugin plugin, ConfigurationSection config, ConfigurationSection sectors) {
         this.defaultDepth = config.getInt("DefaultDepth");
         ConfigurationSerialization.registerClass(Sector.class);
 
-        CustomYML cYml = new CustomYML(plugin, "sector.yml");
-        if(!cYml.getConfig().isConfigurationSection("Sectors")) { return; }
-        ConfigurationSection sectors = cYml.getConfig().getConfigurationSection("Sectors");
-
-        for(String s : sectors.getKeys(false)) {
-            UUID id = UUID.fromString(s);
-            this.sectors.put(id, new Sector(id, sectors.getConfigurationSection(s).getValues(false)));
+        if(sectors != null) {
+            for (String s : sectors.getKeys(false)) {
+                UUID id = UUID.fromString(s);
+                this.sectors.put(id, new Sector(id, sectors.getConfigurationSection(s).getValues(false)));
+            }
         }
 
         plugin.getServer().getPluginManager().registerEvents(new SectorListener(Material.getMaterial(config.getString("Tool"))), plugin);
         plugin.getCommand("sector").setExecutor(new SectorCommand());
     }
 
-    public void write(CustomYML cYml) {
-        cYml.getConfig().set("Sectors", null);
+    public void write(ConfigurationSection sectorConfig) {
+        sectorConfig.set("Sectors", null);
         for(UUID u : sectors.keySet()) {
-            cYml.getConfig().set("Sectors." + u.toString(), sectors.get(u).serialize());
+            sectorConfig.set("Sectors." + u.toString(), sectors.get(u).serialize());
         }
-        cYml.saveConfig();
     }
 
     public void clear() {
