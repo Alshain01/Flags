@@ -53,7 +53,7 @@ public enum EconomyBaseValue {
      *
      * @return The current option selected
      */
-
+    @SuppressWarnings("unused") // API
     public static EconomyBaseValue getSetting() {
         for(EconomyBaseValue v : EconomyBaseValue.values()) {
             if(v.isSet()) { return v; }

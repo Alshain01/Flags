@@ -24,10 +24,8 @@
 
 package io.github.alshain01.flags;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Class for retrieving localized messages.
@@ -65,7 +63,7 @@ public enum Message {
         return this.message;
 	}
 
-    public final void set(String message) {
+    final void set(String message) {
         this.message = message;
     }
 

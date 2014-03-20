@@ -178,7 +178,7 @@ public class Flags extends JavaPlugin {
         }
 
         if(args[0].equalsIgnoreCase("reload")) {
-            this.reload(true);
+            this.reload();
         }
 
         if(args[0].equalsIgnoreCase("import")) {
@@ -206,7 +206,7 @@ public class Flags extends JavaPlugin {
     /*
      * Reloads YAML files
      */
-    private void reload(boolean log) {
+    private void reload() {
         this.reloadConfig();
 
         // Acquire the messages from configuration
@@ -218,7 +218,7 @@ public class Flags extends JavaPlugin {
 
         debugOn = getConfig().getBoolean("Flags.Debug");
         dataStore.reload();
-        if(log) { logger.info("Flag Database Reloaded"); }
+        logger.info("Flag Database Reloaded");
     }
 
     /**
