@@ -32,7 +32,7 @@ import org.bukkit.Bukkit;
 public enum EconomyBaseValue {
 	PLUGIN, DEFAULT, ALWAYS;
 
-    boolean set;
+    private final boolean set;
 
     EconomyBaseValue() {
         final String message = Bukkit.getServer().getPluginManager().getPlugin("Flags").getConfig()

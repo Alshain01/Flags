@@ -28,7 +28,7 @@ import io.github.alshain01.flags.command.BundleCommand;
 import io.github.alshain01.flags.command.FlagCommand;
 
 import io.github.alshain01.flags.sector.SectorManager;
-import io.github.alshain01.flags.data.*;
+import io.github.alshain01.flags.DataStore.DataStoreType;
 import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
 
 import java.util.logging.Logger;
@@ -87,7 +87,7 @@ public class Flags extends JavaPlugin {
         CuboidType.find(pm, pluginConfig.getList("AreaPlugins"));
         dataStore = DataStoreType.getByUrl(this, pluginConfig.getString("Database.Url"));
         economy = setupEconomy();
-        sqlData = dataStore instanceof SQLDataStore;
+        sqlData = dataStore instanceof DataStoreMySQL;
 
         // New installation
         dataStore.create(this);
@@ -134,7 +134,7 @@ public class Flags extends JavaPlugin {
             sectors.write(new CustomYML(this, "sector.yml"));
         }
 
-        if(sqlData) { ((SQLDataStore)dataStore).close(); }
+        if(sqlData) { ((DataStoreMySQL)dataStore).close(); }
 
         // Static cleanup
         messageStore = null;
@@ -175,7 +175,7 @@ public class Flags extends JavaPlugin {
 
         if(args[0].equalsIgnoreCase("import")) {
             if(sqlData) {
-                ((SQLDataStore)dataStore).importDB();
+                ((DataStoreMySQL)dataStore).importDB();
                 return true;
             }
             sender.sendMessage(Message.SQLDatabaseError.get());
@@ -185,7 +185,7 @@ public class Flags extends JavaPlugin {
         /*
         if(args[0].equalsIgnoreCase("export")) {
             if(sqlData) {
-                ((SQLDataStore)dataStore).exportDB();
+                ((DataStoreMySQL)dataStore).exportDB();
                 return true;
             }
             sender.sendMessage(Message.SQLDatabaseError.get());

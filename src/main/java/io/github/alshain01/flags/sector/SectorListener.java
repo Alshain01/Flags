@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-class SectorListener implements Listener {
+final class SectorListener implements Listener {
     private final Material tool;
     private final Map<UUID, Location> createQueue = new HashMap<UUID, Location>();
 

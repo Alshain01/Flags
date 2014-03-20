@@ -2,7 +2,8 @@ package io.github.alshain01.flags.area;
 
 import org.bukkit.Location;
 
-public class Wilderness extends World {
+@SuppressWarnings("deprecation")
+final public class Wilderness extends World {
     /**
      * Creates an instance of World based on a Bukkit Location
      *

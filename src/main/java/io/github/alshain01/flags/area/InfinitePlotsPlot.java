@@ -46,7 +46,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a InfinitePlots Plot.
  */
-public class InfinitePlotsPlot extends Area implements Removable {
+final public class InfinitePlotsPlot extends Area implements Removable {
 	private final Plot plot;
 
 	/**

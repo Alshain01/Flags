@@ -22,9 +22,8 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags.data;
+package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.Flag;
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.economy.EconomyPurchaseType;
 
@@ -33,11 +32,71 @@ import java.util.Set;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public interface DataStore {
+    public final class DataStoreVersion {
+        private final int major;
+        private final int minor;
+        private final int build;
+
+        DataStoreVersion(int major, int minor, int build) {
+            this.major = major;
+            this.minor = minor;
+            this.build = build;
+        }
+
+        public int getMajor() { return major; }
+        public int getMinor() { return minor; }
+        public int getBuild() { return build; }
+    }
+
+    public enum DataStoreType {
+        YAML("yaml", "YAML") {
+            public DataStore getDataStore(JavaPlugin plugin) {
+                return new DataStoreYaml(plugin);
+            }
+        },
+        MYSQL("mysql", "MySQL") {
+            public DataStore getDataStore(JavaPlugin plugin) {
+                final String url = plugin.getConfig().getString("Flags.Database.Url");
+                final String user = plugin.getConfig().getString("Flags.Database.User");
+                final String pw = plugin.getConfig().getString("Flags.Database.Password");
+
+                return new DataStoreMySQL(url, user, pw);
+            }
+        };
+
+        private final String identifier;
+        private final String niceName;
+
+        protected abstract DataStore getDataStore(JavaPlugin plugin);
+
+        private DataStoreType(String identifier, String niceName) {
+            this.identifier = identifier;
+            this.niceName = niceName;
+        }
+
+        public String getName() {
+            return niceName;
+        }
+
+        public static DataStore getByUrl(JavaPlugin plugin, String url) {
+            return getType(url).getDataStore(plugin);
+        }
+
+        private static DataStoreType getType(String url) {
+            for(DataStoreType d : DataStoreType.values()) {
+                if(url.contains(d.identifier)) {
+                    return d;
+                }
+            }
+            return DataStoreType.YAML;
+        }
+    }
+
     public void create(JavaPlugin plugin);
 
     public void reload();
 
-    public DBVersion readVersion();
+    public DataStoreVersion readVersion();
 
     public DataStoreType getType();
 

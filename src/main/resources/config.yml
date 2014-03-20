@@ -13,7 +13,7 @@ Flags:
   #
   # DO NOT ALTER THE NAMES
   #
-  # If no system is discovered, you will be limited to world flags only.
+  # If no system is discovered, Flags will use it's internal Sectors system.
   #
   AreaPlugins:
     - Factions

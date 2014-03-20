@@ -13,7 +13,7 @@ import org.bukkit.permissions.PermissionDefault;
 
 import java.util.*;
 
-public class BundleCommand extends PluginCommand implements CommandExecutor {
+final public class BundleCommand extends PluginCommand implements CommandExecutor {
     private enum BundleCommandType {
         SET('S', 4, 0, true, true, "Set <area|world|default> <bundle> <true|false>"),
         GET('G', 3, 0, true, true, "Get <area|world|default> <bundle>"),

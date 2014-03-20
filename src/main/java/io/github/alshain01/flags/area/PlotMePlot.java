@@ -45,7 +45,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a PlotMe Plot.
  */
-public class PlotMePlot extends Area implements Removable {
+final public class PlotMePlot extends Area implements Removable {
 	private final Plot plot;
 
 	/**

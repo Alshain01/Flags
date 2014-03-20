@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class FlagsSector extends Area implements Subdivision, Removable {
+final public class FlagsSector extends Area implements Subdivision, Removable {
     private final Sector sector;
 
     /**

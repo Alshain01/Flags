@@ -47,7 +47,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a Factions Territory.
  */
-public class FactionsTerritory extends Area implements Removable {
+final public class FactionsTerritory extends Area implements Removable {
 	private final Faction faction;
 	private final World world;
 

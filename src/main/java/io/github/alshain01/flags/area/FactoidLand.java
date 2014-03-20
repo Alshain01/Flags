@@ -48,7 +48,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a Factoid Land.
  */
-public class FactoidLand extends Area implements Removable, Subdivision {
+final public class FactoidLand extends Area implements Removable, Subdivision {
     private final Land land;
 
     /**

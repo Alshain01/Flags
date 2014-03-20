@@ -46,7 +46,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a Regios Region.
  */
-public class RegiosRegion extends Area implements Removable{
+final public class RegiosRegion extends Area implements Removable{
 	private final Region region;
 
 	/**

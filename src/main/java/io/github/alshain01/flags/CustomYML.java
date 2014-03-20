@@ -22,7 +22,7 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags.data;
+package io.github.alshain01.flags;
 
 import java.io.File;
 import java.io.IOException;

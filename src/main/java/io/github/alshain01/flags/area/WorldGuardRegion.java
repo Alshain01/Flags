@@ -43,7 +43,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a WorldGuard Region.
  */
-public class WorldGuardRegion extends Area implements Removable {
+final public class WorldGuardRegion extends Area implements Removable {
 	private final ProtectedRegion region;
 	private final World world;
 

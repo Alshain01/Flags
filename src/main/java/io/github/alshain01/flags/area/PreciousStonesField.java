@@ -49,7 +49,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a PreciousStones Field.
  */
-public class PreciousStonesField extends Area implements Subdivision, Removable {
+final public class PreciousStonesField extends Area implements Subdivision, Removable {
 	private Field field;
 
     /**

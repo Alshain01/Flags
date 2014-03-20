@@ -7,7 +7,6 @@ package io.github.alshain01.flags;
 */
 import java.io.*;
 import java.lang.*;
-import java.lang.System;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -117,7 +116,7 @@ final class Updater {
     /**
      * Get the result of the update process.
      */
-    public Updater.UpdateResult getResult() {
+    Updater.UpdateResult getResult() {
         return this.result;
     }
 
@@ -215,7 +214,7 @@ final class Updater {
     }
 
     private class UpdateRunnable extends BukkitRunnable {
-        PluginManager pm;
+        private final PluginManager pm;
 
         UpdateRunnable(PluginManager pm) {
             this.pm = pm;

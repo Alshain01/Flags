@@ -158,6 +158,7 @@ public class World extends Area {
      *
      * @return The value of the comparison.
      */
+    @SuppressWarnings("deprecation")
     @Override
     public int compareTo(@Nonnull Area a) {
         Validate.notNull(a);

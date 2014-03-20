@@ -22,11 +22,8 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags.data;
+package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.CuboidType;
-import io.github.alshain01.flags.Flags;
-import io.github.alshain01.flags.Flag;
 import io.github.alshain01.flags.area.*;
 import io.github.alshain01.flags.economy.EconomyPurchaseType;
 import org.bukkit.Bukkit;
@@ -42,17 +39,12 @@ import java.util.logging.Logger;
 /**
  * Class for handling SQL Database Storage
  */
-public class SQLDataStore implements DataStore {
+final class DataStoreMySQL implements DataStore {
     private Connection connection = null;
-    String url, user, password;
+    private final String url, user, password;
     private final Logger logger = Bukkit.getPluginManager().getPlugin("Flags").getLogger();
 
-    /*
-     * Constructor
-     */
-    SQLDataStore() { }
-
-    public SQLDataStore(String url, String user, String pw) {
+    DataStoreMySQL(String url, String user, String pw) {
         this.url = url;
         this.user = user;
         this.password = pw;
@@ -84,7 +76,6 @@ public class SQLDataStore implements DataStore {
     /*
      * Interface Methods
      */
-    //TODO: Implementation Specific (BOOLEAN)
     @Override
     public void create(JavaPlugin plugin) {
         // STANDARD BOOLEAN
@@ -117,20 +108,20 @@ public class SQLDataStore implements DataStore {
     }
 
     @Override
-    public DBVersion readVersion() {
+    public DataStoreVersion readVersion() {
         ResultSet results = executeQuery("SELECT * FROM Version;");
         try {
             results.next();
-            return new DBVersion(results.getInt("Major"), results.getInt("Minor"), results.getInt("Build"));
+            return new DataStoreVersion(results.getInt("Major"), results.getInt("Minor"), results.getInt("Build"));
         } catch (SQLException ex) {
             SqlError(ex.getMessage());
         }
-        return new DBVersion(0,0,0);
+        return new DataStoreVersion(0,0,0);
     }
 
     @Override
     public DataStoreType getType() {
-        return DataStoreType.POSTGRESQL;
+        return DataStoreType.MYSQL;
     }
 
     @Override
@@ -177,7 +168,6 @@ public class SQLDataStore implements DataStore {
         executeStatement("DELETE FROM Bundle WHERE BundleName='" + name + "';");
     }
 
-    //TODO: Oracle doesn't support standard for inserting multiple rows
     @Override
     public void writeBundle(String bundleName, Set<Flag> flags) {
         StringBuilder values = new StringBuilder();
@@ -225,7 +215,6 @@ public class SQLDataStore implements DataStore {
         return null;
     }
 
-    //TODO: Implementation Specific (BOOLEAN)
     @Override
     public void writeFlag(Area area, Flag flag, Boolean value) {
         String insertString;
@@ -457,7 +446,6 @@ public class SQLDataStore implements DataStore {
         return true;
     }
 
-    //TODO: Implementation Specific (BOOLEAN)
     @Override
     public void writeInheritance(Area area, boolean value) {
         if(!(area instanceof Subdivision) || !((Subdivision)area).isSubdivision()) {
@@ -491,12 +479,12 @@ public class SQLDataStore implements DataStore {
      */
     public void importDB() {
         logger.info("Importing YAML Database to " + getType().getName());
-        DataStore yaml = new YamlDataStore((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
+        DataStore yaml = new DataStoreYaml((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
 
         convertGenericData(yaml, this);
 
         // Import the system data
-        Set<String> keys = ((YamlDataStore)yaml).readKeys();
+        Set<String> keys = ((DataStoreYaml)yaml).readKeys();
         for(String key : keys) {
             String[] keyNodes = key.split("\\.");
 
@@ -514,22 +502,22 @@ public class SQLDataStore implements DataStore {
             }
 
             if(key.contains("InheritParent")) {
-                writeInheritance(((YamlDataStore) yaml).getBoolean(key), CuboidType.getActive().toString(), world, id, subID);
+                writeInheritance(((DataStoreYaml) yaml).getBoolean(key), CuboidType.getActive().toString(), world, id, subID);
                 continue;
             }
 
             if(key.contains("Value")) {
-                writeAreaFlag(((YamlDataStore) yaml).getBoolean(key), flag, CuboidType.getActive().toString(), world, id, subID);
+                writeAreaFlag(((DataStoreYaml) yaml).getBoolean(key), flag, CuboidType.getActive().toString(), world, id, subID);
                 continue;
             }
 
             if(key.contains("Message")) {
-                writeAreaMessage("'" + ((YamlDataStore) yaml).getString(key) + "'", flag, CuboidType.getActive().toString(), world, id, subID);
+                writeAreaMessage("'" + ((DataStoreYaml) yaml).getString(key) + "'", flag, CuboidType.getActive().toString(), world, id, subID);
                 continue;
             }
 
             if(key.contains("Trust")) {
-                List<?> rawPlayers = ((YamlDataStore) yaml).getList(key);
+                List<?> rawPlayers = ((DataStoreYaml) yaml).getList(key);
                 Set<String> players = new HashSet<String>();
                 for(Object o : rawPlayers) {
                     players.add((String)o);
@@ -545,7 +533,7 @@ public class SQLDataStore implements DataStore {
     @SuppressWarnings("unused") // Future enhancement
     public void exportDB() {
         logger.info("Exporting " + getType().getName() + " Database to YAML");
-        DataStore yaml = new YamlDataStore((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
+        DataStore yaml = new DataStoreYaml((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
 
         convertGenericData(this, yaml);
 
@@ -603,7 +591,6 @@ public class SQLDataStore implements DataStore {
         }
     }
 
-    //TODO: Implementation Specific (BOOLEAN)
     void createSystemDB() {
         // STANDARD BOOLEAN
         // OVERRIDE for Implementation Specific
@@ -618,8 +605,7 @@ public class SQLDataStore implements DataStore {
                 + "CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, AreaID, AreaSubID, FlagName, Trustee));");
     }
 
-    //TODO: Implementation Specific (ROW LIMITING)
-    boolean notExists() {
+    private boolean notExists() {
         // We always need to create the system specific table
         // in case it changed since the database was created.
         // i.e. Grief Prevention was removed and WorldGuard was installed.
@@ -629,11 +615,10 @@ public class SQLDataStore implements DataStore {
 
         String[] connection = url.split("/");
 
-        // STANDARD ROW LIMITING
-        // OVERRIDE for Implementation Specific
+        // Result Limiting, requires MYSQL exclusively
         ResultSet results =
                 executeQuery("SELECT * FROM information_schema.tables "
-                        + "WHERE table_schema = '%database%' AND table_name = 'Version' FETCH FIRST 1 ROWS ONLY;"
+                        + "WHERE table_schema = '%database%' AND table_name = 'Version' LIMIT 1;"
                         .replaceAll("%database%", connection[connection.length-1]));
 
         try {
@@ -652,8 +637,8 @@ public class SQLDataStore implements DataStore {
     }
 
     @SuppressWarnings("unused") // Future enhancement
-    private void writeVersion(DBVersion version) {
-        executeQuery("UPDATE Version SET Major=" + version.major + ", Minor=" + version.minor + ", Build=" + version.build + ";");
+    private void writeVersion(DataStoreVersion version) {
+        executeQuery("UPDATE Version SET Major=" + version.getMajor() + ", Minor=" + version.getMinor() + ", Build=" + version.getBuild() + ";");
     }
 
     private static void convertGenericData(DataStore convertFrom, DataStore convertTo) {

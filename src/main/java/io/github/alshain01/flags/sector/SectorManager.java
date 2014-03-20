@@ -1,6 +1,6 @@
 package io.github.alshain01.flags.sector;
 
-import io.github.alshain01.flags.data.CustomYML;
+import io.github.alshain01.flags.CustomYML;
 import io.github.alshain01.flags.events.SectorDeleteEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,7 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
-public class SectorManager {
+final public class SectorManager {
     private final Map<UUID, Sector> sectors = new HashMap<UUID, Sector>();
     private final int defaultDepth;
 

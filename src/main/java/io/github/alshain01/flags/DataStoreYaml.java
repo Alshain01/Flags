@@ -22,9 +22,8 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags.data;
+package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.*;
 import io.github.alshain01.flags.area.*;
 import io.github.alshain01.flags.economy.EconomyPurchaseType;
 
@@ -46,7 +45,7 @@ import com.bekvon.bukkit.residence.Residence;
 /**
  * Class for managing YAML Database Storage
  */
-final class YamlDataStore implements DataStore {
+final class DataStoreYaml implements DataStore {
 	private static CustomYML data;
 	private static CustomYML def;
 	private static CustomYML world;
@@ -56,7 +55,7 @@ final class YamlDataStore implements DataStore {
     /*
      * Constructor
      */
-	YamlDataStore(JavaPlugin plugin) {
+	DataStoreYaml(JavaPlugin plugin) {
 		def = new CustomYML(plugin, "default.yml");
 		world = new CustomYML(plugin, "world.yml");
 		data = new CustomYML(plugin, "data.yml");
@@ -73,7 +72,7 @@ final class YamlDataStore implements DataStore {
     public void create(JavaPlugin plugin) {
         // Don't change the version here, not needed (will change in update)
         if (notExists(plugin)) {
-            writeVersion(new DBVersion(1, 0, 0));
+            writeVersion(new DataStoreVersion(1, 0, 0));
         }
     }
 
@@ -87,14 +86,14 @@ final class YamlDataStore implements DataStore {
     }
 
     @Override
-    public DBVersion readVersion() {
+    public DataStoreVersion readVersion() {
         final String path = "Default.Database.Version";
         final FileConfiguration cYml = getYml(path).getConfig();
         if (!cYml.isSet("Default.Database.Version")) {
-            return new DBVersion(0, 0, 0);
+            return new DataStoreVersion(0, 0, 0);
         }
         final String[] ver = cYml.getString("Default.Database.Version").split("\\.");
-        return new DBVersion(Integer.valueOf(ver[0]), Integer.valueOf(ver[1]),
+        return new DataStoreVersion(Integer.valueOf(ver[0]), Integer.valueOf(ver[1]),
                 Integer.valueOf(ver[2]));
     }
 
@@ -106,8 +105,8 @@ final class YamlDataStore implements DataStore {
 
     @Override
     public void update(JavaPlugin plugin) {
-        final DBVersion ver = readVersion();
-        if (ver.major <= 1 && ver.minor <= 2 && ver.build < 2) {
+        final DataStoreVersion ver = readVersion();
+        if (ver.getMajor() <= 1 && ver.getMinor() <= 2 && ver.getBuild() < 2) {
             CustomYML cYml = getYml("data");
             ConfigurationSection cSec;
             CuboidType system = CuboidType.getActive();
@@ -179,7 +178,7 @@ final class YamlDataStore implements DataStore {
                 cYml.getConfig().set(CuboidType.getActive().toString() + "Data", null);
                 cYml.saveConfig();
             }
-            writeVersion(new DBVersion(1, 2, 2));
+            writeVersion(new DataStoreVersion(1, 2, 2));
         }
     }
 
@@ -412,11 +411,11 @@ final class YamlDataStore implements DataStore {
     /*
      * Private
      */
-    private void writeVersion(DBVersion version) {
+    private void writeVersion(DataStoreVersion version) {
         final String path = "Default.Database.Version";
         final CustomYML cYml = getYml(path);
         cYml.getConfig().set("Default.Database.Version",
-                version.major + "." + version.minor + "." + version.build);
+                version.getMajor() + "." + version.getMinor() + "." + version.getBuild());
         cYml.saveConfig();
     }
 

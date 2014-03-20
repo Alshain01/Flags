@@ -43,7 +43,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage server defaults.
  */
-public class Default extends Area {
+final public class Default extends Area {
 	private final World world;
 
 	/**

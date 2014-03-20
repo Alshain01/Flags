@@ -38,7 +38,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a Grief Prevention Claim.
  */
-public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subdivision {
+final public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subdivision {
 
 	/**
 	 * Creates an instance of GriefPreventionClaim78 based on a Bukkit Location

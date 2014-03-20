@@ -45,7 +45,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a Residence Claimed Residences.
  */
-public class ResidenceClaimedResidence extends Area implements Removable, Subdivision {
+final public class ResidenceClaimedResidence extends Area implements Removable, Subdivision {
 	private final ClaimedResidence residence;
 
 	/**

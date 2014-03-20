@@ -9,14 +9,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class Sector implements ConfigurationSerializable, Comparable<Sector> {
+final public class Sector implements ConfigurationSerializable, Comparable<Sector> {
     private final UUID id;
     private final UUID parent;
     private final SectorLocation greater, lesser;
     private int depth;
 
 
-    protected Sector(UUID id, Location corner1, Location corner2, int depth) {
+    Sector(UUID id, Location corner1, Location corner2, int depth) {
         this.id = id;
         parent = null;
         this.depth = depth;
@@ -26,7 +26,7 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
         lesser = getLesserCorner(corner1, corner2);
     }
 
-    protected Sector(Location corner1, Location corner2, int depth) {
+    Sector(Location corner1, Location corner2, int depth) {
         id = UUID.randomUUID();
         parent = null;
         this.depth = depth;
@@ -36,7 +36,7 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
         lesser = getLesserCorner(corner1, corner2);
     }
 
-    protected Sector(UUID id, Location corner1, Location corner2, int depth, UUID parentID) {
+    Sector(UUID id, Location corner1, Location corner2, int depth, UUID parentID) {
         this.id = id;
         parent = parentID;
         this.depth = depth;
@@ -46,7 +46,7 @@ public class Sector implements ConfigurationSerializable, Comparable<Sector> {
         lesser = getLesserCorner(corner1, corner2);
     }
 
-    protected Sector(UUID id, Map<String, Object> sector) {
+    Sector(UUID id, Map<String, Object> sector) {
         this.id = id;
         greater = new SectorLocation((String)sector.get("GreaterCorner"));
         lesser = new SectorLocation((String)sector.get("LesserCorner"));

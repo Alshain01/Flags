@@ -21,8 +21,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.*;
 
-public class FlagCommand extends PluginCommand implements CommandExecutor, Listener {
-    Material tool;
+final public class FlagCommand extends PluginCommand implements CommandExecutor, Listener {
+    private final Material tool;
 
     public FlagCommand(Material tool) {
         this.tool = tool;
@@ -548,11 +548,7 @@ public class FlagCommand extends PluginCommand implements CommandExecutor, Liste
 
         // No flags were found, there should always be flags.
         List<String> combinedHelp = new ArrayList<String>();
-        if(allowedFlagNames.size() == 0) {
-            sender.sendMessage(Message.NoFlagFound.get()
-                    .replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
-            return;
-        }
+        if(Validate.notNullOrEmpty(sender, combinedHelp, Message.Flag)) { return; }
 
         // Show them alphabetically and group them together for easier coding
         if(groupNames.size() > 0) {

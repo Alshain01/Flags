@@ -182,7 +182,7 @@ final class Validate {
 
     static boolean notNullOrEmpty(CommandSender sender, Collection c, Message m) {
         if (c == null || c.size() == 0) {
-            sender.sendMessage(m.get().replace("{Type}", Message.Bundle.get()));
+            sender.sendMessage(Message.NoFlagFound.get().replace("{Type}", m.get()));
             return true;
         }
         return false;

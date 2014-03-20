@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 
-public class SectorCommand implements CommandExecutor {
+final public class SectorCommand implements CommandExecutor {
     private enum SectorCommandType {
         DELETE('d'), DELETEALL('a'), DELETETOPLEVEL('t');
 
