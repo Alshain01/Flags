@@ -291,8 +291,7 @@ public class Flags extends JavaPlugin {
     public static boolean getBorderPatrolEnabled() { return borderPatrol; }
 
     /**
-     * Gets the DataStore used by Flags. In most cases, plugins should not
-     * attempt to access this directly.
+     * Gets the DataStore used by Flags, this should not be used by plugins.
      *
      * @return The dataStore object in Flags.
      */

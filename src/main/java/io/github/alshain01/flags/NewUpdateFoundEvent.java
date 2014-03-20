@@ -1,9 +1,9 @@
-package io.github.alshain01.flags.events;
+package io.github.alshain01.flags;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class NewUpdateFoundEvent extends Event {
+class NewUpdateFoundEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     public NewUpdateFoundEvent() {

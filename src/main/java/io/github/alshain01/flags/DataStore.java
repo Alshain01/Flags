@@ -32,7 +32,7 @@ import java.util.Set;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public interface DataStore {
-    public final class DataStoreVersion {
+    final class DataStoreVersion {
         private final int major;
         private final int minor;
         private final int build;
@@ -48,7 +48,7 @@ public interface DataStore {
         public int getBuild() { return build; }
     }
 
-    public enum DataStoreType {
+    enum DataStoreType {
         YAML("yaml", "YAML") {
             public DataStore getDataStore(JavaPlugin plugin) {
                 return new DataStoreYaml(plugin);
@@ -74,11 +74,15 @@ public interface DataStore {
             this.niceName = niceName;
         }
 
+        /**
+         * Gets the formatted name of this DataStore type
+         * @return The DataStore type name
+         */
         public String getName() {
             return niceName;
         }
 
-        public static DataStore getByUrl(JavaPlugin plugin, String url) {
+        static DataStore getByUrl(JavaPlugin plugin, String url) {
             return getType(url).getDataStore(plugin);
         }
 

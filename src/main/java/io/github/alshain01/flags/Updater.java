@@ -12,7 +12,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Logger;
 
-import io.github.alshain01.flags.events.NewUpdateFoundEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
