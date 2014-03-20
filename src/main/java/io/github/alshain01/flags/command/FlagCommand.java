@@ -548,7 +548,7 @@ final public class FlagCommand extends PluginCommand implements CommandExecutor,
 
         // No flags were found, there should always be flags.
         List<String> combinedHelp = new ArrayList<String>();
-        if(Validate.notNullOrEmpty(sender, combinedHelp, Message.Flag)) { return; }
+        if(Validate.isNullOrEmpty(sender, combinedHelp, Message.Flag)) { return; }
 
         // Show them alphabetically and group them together for easier coding
         if(groupNames.size() > 0) {

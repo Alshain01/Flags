@@ -322,7 +322,7 @@ final public class BundleCommand extends PluginCommand implements CommandExecuto
     private static void help (CommandSender sender, int page) {
         int startIndex, endIndex, totalPages;
         List<String> bundles = new ArrayList<String>(Bundle.getBundleNames());
-        if (Validate.notNullOrEmpty(sender, bundles, Message.Bundle)) { return; }
+        if (Validate.isNullOrEmpty(sender, bundles, Message.Bundle)) { return; }
         Collections.sort(bundles);
 
         // Get total pages: 1 header per page

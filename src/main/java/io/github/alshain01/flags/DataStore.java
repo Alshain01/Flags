@@ -96,6 +96,7 @@ public interface DataStore {
 
     public void reload();
 
+    @SuppressWarnings("unused") // Future use
     public DataStoreVersion readVersion();
 
     public DataStoreType getType();

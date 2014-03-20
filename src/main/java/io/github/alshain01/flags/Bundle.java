@@ -70,6 +70,12 @@ public final class Bundle {
 		return getBundleNames().contains(bundle.toLowerCase());
 	}
 
+    /**
+     * Gets the total number of bundles defined on the server
+     *
+     * @return A count of the bundles on the server
+     */
+    @SuppressWarnings("unused") // API
     public static int count() {
         return getBundleNames().size();
     }

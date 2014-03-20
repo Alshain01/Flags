@@ -54,6 +54,7 @@ public class World extends Area {
 	 * @param location
 	 *            The Bukkit location
 	 */
+    @SuppressWarnings("unused") // API
 	public World(Location location) {
 		this(location.getWorld());
 	}
@@ -64,7 +65,8 @@ public class World extends Area {
 	 * @param world
 	 *            The Bukkit world
 	 */
-	public World(org.bukkit.World world) {
+	@SuppressWarnings("WeakerAccess") //API
+    public World(org.bukkit.World world) {
 		this.world = world;
 	}
 	
@@ -74,7 +76,8 @@ public class World extends Area {
 	 * @param worldName
 	 *            The Bukkit world
 	 */
-	public World(String worldName) {
+	@SuppressWarnings("WeakerAccess") // API
+    public World(String worldName) {
 		this.world = Bukkit.getWorld(worldName);
 	}
 

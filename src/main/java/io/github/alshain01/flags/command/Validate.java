@@ -180,7 +180,7 @@ final class Validate {
 		return true;
 	}
 
-    static boolean notNullOrEmpty(CommandSender sender, Collection c, Message m) {
+    static boolean isNullOrEmpty(CommandSender sender, Collection c, Message m) {
         if (c == null || c.size() == 0) {
             sender.sendMessage(Message.NoFlagFound.get().replace("{Type}", m.get()));
             return true;

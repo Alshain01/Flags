@@ -68,7 +68,7 @@ public abstract class Area implements Comparable<Area> {
      * @return The LandSystem that created this object
      * @deprecated Use getCuboidType instead
      */
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings("deprecation, unused")
     @Deprecated
     public abstract System getSystemType();
 
