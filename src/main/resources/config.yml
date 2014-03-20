@@ -60,7 +60,7 @@ Flags:
   Sector:
     DefaultDepth: 25
   #
-  # Too configuration
+  # Tool configuration
   #
   Tools:
     FlagQuery: 'FEATHER'

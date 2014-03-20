@@ -25,7 +25,7 @@ public class SectorManager {
 
         for(String s : sectors.getKeys(false)) {
             UUID id = UUID.fromString(s);
-            this.sectors.put(id, new Sector(id, config.getConfigurationSection(s).getValues(false)));
+            this.sectors.put(id, new Sector(id, sectors.getConfigurationSection(s).getValues(false)));
         }
 
         plugin.getServer().getPluginManager().registerEvents(new SectorListener(Material.getMaterial(config.getString("Tool"))), plugin);

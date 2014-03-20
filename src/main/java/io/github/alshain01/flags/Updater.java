@@ -6,11 +6,14 @@ package io.github.alshain01.flags;
 * This class provides the means to safely and easily update a plugin, or check to see if it is updated using dev.bukkit.org
 */
 import java.io.*;
+import java.lang.*;
+import java.lang.System;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Logger;
 
+import io.github.alshain01.flags.events.NewUpdateFoundEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -53,6 +56,7 @@ final class Updater {
         /**
          * The server administrator has improperly configured their API key in the configuration
          */
+        FAIL_BADID,
         FAIL_APIKEY,
         /**
          * The updater found an update, but because of the UpdateType being set to NO_DOWNLOAD, it wasn't downloaded.
@@ -60,21 +64,8 @@ final class Updater {
         UPDATE_AVAILABLE
     }
 
-    public class NewUpdateFoundEvent extends Event {
-        final HandlerList handlers = new HandlerList();
-
-        NewUpdateFoundEvent() {
-            super(true);
-        }
-
-        @Override
-        public HandlerList getHandlers() {
-            return handlers;
-        }
-    }
-
     public class UpdateListener implements Listener {
-        private final String UPDATE_MESSAGE = "The version of" + PLUGIN_NAME + " that this server is running is out of date. "
+        private final String UPDATE_MESSAGE = "The version of " + PLUGIN_NAME + " that this server is running is out of date. "
                 + "Please consider updating to the latest version at dev.bukkit.org/bukkit-plugins/" + PLUGIN_NAME.toLowerCase() + "/.";
 
         private void notifyUpdate(Player p) {
@@ -115,12 +106,12 @@ final class Updater {
             log.severe("An error occured generating the update URL.");
         }
 
-        if(interval < 1) {
-            new UpdateRunnable(plugin.getServer().getPluginManager()).runTaskAsynchronously(plugin);
-        } else {
-            new UpdateRunnable(plugin.getServer().getPluginManager()).runTaskTimerAsynchronously(plugin, 0, interval * 1200);
-        }
         plugin.getServer().getPluginManager().registerEvents(new UpdateListener(), plugin);
+        if(interval < 1) {
+            new UpdateRunnable(plugin.getServer().getPluginManager()).runTaskLaterAsynchronously(plugin, 100);
+        } else {
+            new UpdateRunnable(plugin.getServer().getPluginManager()).runTaskTimerAsynchronously(plugin, 100, interval * 1200);
+        }
     }
 
     /**
@@ -152,8 +143,9 @@ final class Updater {
             // The file's name did not contain the string 'vVersion'
             this.log.warning("The updater found a malformed file version. Please notify the author of this error.");
             this.result = Updater.UpdateResult.FAIL_NOVERSION;
+            return false;
         }
-        return false;
+        return true;
     }
 
     /**
@@ -198,7 +190,14 @@ final class Updater {
 
             final BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             final String response = reader.readLine();
+
             final JSONArray array = (JSONArray) JSONValue.parse(response);
+
+            if (array.size() == 0) {
+                log.warning("The updater could not find any files for the project Flags.");
+                this.result = UpdateResult.FAIL_BADID;
+                return null;
+            }
 
             return (String) ((JSONObject) array.get(array.size() - 1)).get("name");
         } catch (final IOException e) {
@@ -224,11 +223,11 @@ final class Updater {
 
         @Override
         public void run() {
-            if (Updater.this.result == UpdateResult.UPDATE_AVAILABLE) { return; } // Don't check again
             String versionName = Updater.this.read();
             if (versionName != null && Updater.this.versionCheck(versionName)) {
                 Updater.this.result = UpdateResult.UPDATE_AVAILABLE;
                 pm.callEvent(new NewUpdateFoundEvent());
+                this.cancel();
             }
         }
     }
