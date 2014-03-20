@@ -1,10 +1,7 @@
-package io.github.alshain01.flags.command;
-
-import io.github.alshain01.flags.*;
+package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.area.Area;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -13,7 +10,7 @@ import org.bukkit.permissions.PermissionDefault;
 
 import java.util.*;
 
-final public class BundleCommand extends PluginCommand implements CommandExecutor {
+final class CommandBundle extends Command implements CommandExecutor {
     private enum BundleCommandType {
         SET('S', 4, 0, true, true, "Set <area|world|default> <bundle> <true|false>"),
         GET('G', 3, 0, true, true, "Get <area|world|default> <bundle>"),
@@ -59,7 +56,7 @@ final public class BundleCommand extends PluginCommand implements CommandExecuto
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args) {
         if (args.length < 1) {
             if(sender instanceof Player) {
                 sender.sendMessage(getUsage((Player) sender, CuboidType.getActive().getAreaAt(((Player) sender).getLocation())));

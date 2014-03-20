@@ -38,6 +38,9 @@ import org.bukkit.plugin.PluginManager;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Class for acquiring data from the active cuboid system
+ */
 public enum CuboidType {
     DEFAULT("Default", "Default", false) {
         Area getCuboidAt(Location location) { return new Default(location); }

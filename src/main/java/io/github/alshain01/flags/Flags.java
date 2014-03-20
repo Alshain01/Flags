@@ -24,9 +24,6 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.command.BundleCommand;
-import io.github.alshain01.flags.command.FlagCommand;
-
 import io.github.alshain01.flags.sector.SectorManager;
 import io.github.alshain01.flags.DataStore.DataStoreType;
 import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
@@ -115,10 +112,10 @@ public class Flags extends JavaPlugin {
         }
 
         // Set Command Executors
-        FlagCommand executor = new FlagCommand(Material.valueOf(pluginConfig.getString("Tools.FlagQuery")));
+        CommandFlag executor = new CommandFlag(Material.valueOf(pluginConfig.getString("Tools.FlagQuery")));
         getCommand("flag").setExecutor(executor);
         pm.registerEvents(executor, this);
-        getCommand("bundle").setExecutor(new BundleCommand());
+        getCommand("bundle").setExecutor(new CommandBundle());
 
  		// Schedule tasks to perform after server is running
 		new onServerEnabledTask(this, pluginConfig.getBoolean("Metrics.Enabled")).runTask(this);

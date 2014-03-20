@@ -32,6 +32,7 @@ import org.bukkit.entity.Player;
 
 @Deprecated
 /**
+ * Class for acquiring data from the active cuboid system
  * @deprecated Use CuboidType instead
  */
 public enum System {

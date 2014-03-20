@@ -1,21 +1,22 @@
 package io.github.alshain01.flags.area;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 @SuppressWarnings("deprecation")
 final public class Wilderness extends World {
     /**
-     * Creates an instance of World based on a Bukkit Location
+     * Creates an instance of Wilderness based on a Bukkit Location
      *
      * @param location
      *            The Bukkit location
      */
     public Wilderness(Location location) {
-        super(location.getWorld());
+        this(location.getWorld());
     }
 
     /**
-     * Creates an instance of World based on a Bukkit World
+     * Creates an instance of Wilderness based on a Bukkit World
      *
      * @param world
      *            The Bukkit world
@@ -25,12 +26,12 @@ final public class Wilderness extends World {
     }
 
     /**
-     * Creates an instance of World based on a Bukkit World name
+     * Creates an instance of Wilderness based on a Bukkit World name
      *
      * @param worldName
      *            The Bukkit world
      */
     public Wilderness(String worldName) {
-        super(worldName);
+        this(Bukkit.getWorld(worldName));
     }
 }

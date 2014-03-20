@@ -76,10 +76,8 @@ public class World extends Area {
 	 * @param worldName
 	 *            The Bukkit world
 	 */
-	@SuppressWarnings("WeakerAccess") // API
-    public World(String worldName) {
-		this.world = Bukkit.getWorld(worldName);
-	}
+	@SuppressWarnings("WeakerAccess, unused") // API
+    public World(String worldName) { this(Bukkit.getWorld(worldName)); }
 
     @Override
     public String getSystemID() {

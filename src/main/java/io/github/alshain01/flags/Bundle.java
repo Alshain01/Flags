@@ -34,6 +34,7 @@ import java.util.Set;
 /**
  * API for bundle management.
  */
+@SuppressWarnings("WeakerAccess") // API
 public final class Bundle {
 	/**
 	 * Gets a bundle from the data store.
