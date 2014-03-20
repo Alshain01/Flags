@@ -53,7 +53,6 @@ public class Flags extends JavaPlugin {
     private boolean sqlData = false;
 
     // Made static to access from enumerations and lower hefty method calls
-    static CustomYML messageStore;
     private static DataStore dataStore;
     private static Economy economy = null;
     private static Logger logger;
@@ -80,7 +79,12 @@ public class Flags extends JavaPlugin {
         // Initialize the static variables
         debugOn = pluginConfig.getBoolean("Debug");
         logger  = this.getLogger();
-        (messageStore = new CustomYML(this, "message.yml")).saveDefaultConfig();
+
+        // Acquire the messages from configuration
+        CustomYML messages = new CustomYML(this, "message.yml");
+        messages.saveDefaultConfig();
+        Message.load(messages);
+
         CuboidType.find(pm, pluginConfig.getList("AreaPlugins"));
         dataStore = DataStoreType.getByUrl(this, pluginConfig.getString("Database.Url"));
         economy = setupEconomy();
@@ -134,7 +138,6 @@ public class Flags extends JavaPlugin {
         if(sqlData) { ((DataStoreMySQL)dataStore).close(); }
 
         // Static cleanup
-        messageStore = null;
         dataStore = null;
         economy = null;
         logger = null;
@@ -167,7 +170,7 @@ public class Flags extends JavaPlugin {
         }
 
         if(args[0].equalsIgnoreCase("reload")) {
-            this.reload();
+            this.reload(true);
         }
 
         if(args[0].equalsIgnoreCase("import")) {
@@ -195,12 +198,17 @@ public class Flags extends JavaPlugin {
     /*
      * Reloads YAML files
      */
-    private void reload() {
+    private void reload(boolean log) {
         this.reloadConfig();
+
+        // Acquire the messages from configuration
+        CustomYML messages = new CustomYML(this, "message.yml");
+        messages.saveDefaultConfig();
+        Message.load(messages);
+
         debugOn = getConfig().getBoolean("Flags.Debug");
-        messageStore.reload();
         dataStore.reload();
-        logger.info("Flag Database Reloaded");
+        if(log) { logger.info("Flag Database Reloaded"); }
     }
 
     /**

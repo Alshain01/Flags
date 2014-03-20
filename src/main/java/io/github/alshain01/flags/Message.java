@@ -24,7 +24,10 @@
 
 package io.github.alshain01.flags;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Class for retrieving localized messages.
@@ -53,15 +56,6 @@ public enum Message {
 
     String message;
 
-    Message() {
-        final String message = Flags.messageStore.getConfig().getString("Message." + toString());
-        if (message == null) {
-            Flags.warn("ERROR: Invalid message.yml Message for " + toString());
-            this.message = "ERROR: Invalid message.yml Message. Please contact your server administrator.";
-        }
-        this.message = ChatColor.translateAlternateColorCodes('&', message);
-    }
-
 	/**
 	 * Gets the localized message for the enumeration
 	 * 
@@ -70,4 +64,20 @@ public enum Message {
 	public final String get() {
         return this.message;
 	}
+
+    public final void set(String message) {
+        this.message = message;
+    }
+
+    static void load(CustomYML messageConfig) {
+        for(Message m : io.github.alshain01.flags.Message.values()) {
+            final String message = messageConfig.getConfig().getString("Message." + m.toString());
+            if (message == null) {
+                Flags.warn("ERROR: Invalid message.yml Message for " + m.toString());
+                m.set("ERROR: Invalid message.yml Message. Please contact your server administrator.");
+            } else {
+                m.set(ChatColor.translateAlternateColorCodes('&', message));
+            }
+        }
+    }
 }
