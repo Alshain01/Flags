@@ -138,6 +138,7 @@
             <groupId>me.tabinol.factoid</groupId>
             <artifactId>Factoid</artifactId>
             <version>LATEST</version>
+            <optional>true</optional>
         </dependency>
 
 		<dependency>
