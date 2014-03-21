@@ -42,11 +42,12 @@ final public class SectorManager {
         }
         sectors.clear();
     }
+
     Sector add(Location corner1, Location corner2) {
         UUID newID;
         do {
             newID = UUID.randomUUID();
-        } while (!sectors.containsKey(newID));
+        } while (sectors.containsKey(newID));
 
         Sector s = new Sector(newID, corner1, corner2, defaultDepth);
         sectors.put(s.getID(), s);
@@ -57,7 +58,7 @@ final public class SectorManager {
         UUID newID;
         do {
             newID = UUID.randomUUID();
-        } while (!sectors.containsKey(newID));
+        } while (sectors.containsKey(newID));
         Sector s = new Sector(newID, corner1, corner2, defaultDepth, parent);
         sectors.put(s.getID(), s);
         return s;

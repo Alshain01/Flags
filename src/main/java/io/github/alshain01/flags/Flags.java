@@ -84,7 +84,7 @@ public class Flags extends JavaPlugin {
         // Acquire the messages from configuration
         CustomYML messages = new CustomYML(this, "message.yml");
         messages.saveDefaultConfig();
-        ConfigurationSection messageConfig = messages.getConfig().getConfigurationSection("Messages");
+        ConfigurationSection messageConfig = messages.getConfig().getConfigurationSection("Message");
         Message.load(messageConfig);
         CuboidType.loadNames(messageConfig);
 

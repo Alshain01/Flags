@@ -1,6 +1,5 @@
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.*;
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Default;
 import io.github.alshain01.flags.area.Subdivision;
@@ -184,7 +183,7 @@ abstract class Command {
 
         static boolean isNullOrEmpty(CommandSender sender, Collection c, Message m) {
             if (c == null || c.size() == 0) {
-                sender.sendMessage(Message.NoFlagFound.get().replace("{Type}", m.get()));
+                sender.sendMessage(Message.NoFlagFound.get().replace("{Type}", m.get().toLowerCase()));
                 return true;
             }
             return false;

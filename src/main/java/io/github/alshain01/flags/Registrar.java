@@ -133,10 +133,29 @@ public final class Registrar {
         final Set<Flag> flags = new HashSet<Flag>();
 
         for (final Flag flag : flagStore.values()) {
-            if (group.equals(flag.getGroup())) {
+            if (group.equalsIgnoreCase(flag.getGroup())) {
                 flags.add(flag);
             }
         }
+        return flags;
+    }
+
+    /**
+     * Gets a set of flags for the provided group
+     * that the permissible has permission to use.
+     *
+     * @return A set of all the flags in the group.
+     */
+    public Set<Flag> getPermittedGroup(Permissible p, String group) {
+        Validate.notNull(p);
+        final Set<Flag> flags = new HashSet<Flag>();
+
+        for(Flag f : getGroup(group)) {
+            if(p.hasPermission(f.getPermission())) {
+                flags.add(f);
+            }
+        }
+
         return flags;
     }
 
@@ -282,7 +301,7 @@ public final class Registrar {
 		final Flag flag = new Flag(name, description, def, group, false, null, null);
 
 		Bukkit.getServer().getPluginManager().addPermission(flag.getPermission());
-
+        Flags.debug("Registering " + name);
 		flagStore.put(name, flag);
 		return flag;
 	}
@@ -320,6 +339,7 @@ public final class Registrar {
 		Bukkit.getServer().getPluginManager().addPermission(flag.getPermission());
 		Bukkit.getServer().getPluginManager().addPermission(flag.getBypassPermission());
 
+        Flags.debug("Registering " + name);
 		flagStore.put(name, flag);
 		return flag;
 	}
@@ -340,7 +360,7 @@ public final class Registrar {
 		Set<Flag> flags = new HashSet<Flag>();
 		for (final String f : yaml.getModuleData().getConfigurationSection("Flag").getKeys(false)) {
 			final ConfigurationSection data = yaml.getModuleData().getConfigurationSection("Flag." + f);
-	
+	        Flags.debug("Registering " + f);
 			// We don't want to register flags that aren't supported.
 			// It would just muck up the help menu.
 			// Null value is assumed to support all versions.

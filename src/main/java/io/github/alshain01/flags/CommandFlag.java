@@ -526,60 +526,54 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
      */
     private static void help (CommandSender sender, int page, String group) {
         Registrar registrar = Flags.getRegistrar();
-        List<String> groupNames = new ArrayList<String>();
-        List<String> allowedFlagNames = new ArrayList<String>();
 
-        // First we need to filter out the flags and groups to show to the particular user.
-        for(Flag flag : Flags.getRegistrar().getFlags()) {
-            // Add flags for the requested group only
-            if(group == null || group.equalsIgnoreCase(flag.getGroup())) {
-                // Only show flags that can be used.
-                if((sender).hasPermission(flag.getPermission())){
-                    allowedFlagNames.add(flag.getName());
-                    // Add the group, but only once and only if a group hasn't been requested
-                    if(group == null && !groupNames.contains(flag.getGroup())) {
-                        groupNames.add(flag.getGroup()); // Add the flags group.
-                    }
-                }
-            }
+        //Build the list of help topics
+        Set<String> groupNames = new HashSet<String>();
+
+        //Get all flags or a group of flags
+        Set<Flag> flags;
+        if(group == null) {
+            flags = registrar.getPermittedFlags(sender);
+            groupNames = registrar.getPermittedFlagGroups(sender);
+        } else {
+            flags = registrar.getPermittedGroup(sender, group);
         }
+
+        // Sort the flags
+        List<String> flagNames= new ArrayList<String>();
+        for(Flag f : flags) { flagNames.add(f.getName()); }
+        Collections.sort(flagNames);
+
+        // Combine the lists
+        List<String> topics = new ArrayList<String>(groupNames);
+        Collections.sort(topics);
+        topics.addAll(flagNames);
 
         // No flags were found, there should always be flags.
-        List<String> combinedHelp = new ArrayList<String>();
-        if(Validate.isNullOrEmpty(sender, combinedHelp, Message.Flag)) { return; }
-
-        // Show them alphabetically and group them together for easier coding
-        if(groupNames.size() > 0) {
-            Collections.sort(groupNames);
-            combinedHelp.addAll(groupNames);
-        }
-
-        Collections.sort(allowedFlagNames);
-        combinedHelp.addAll(allowedFlagNames);
-
+        if(Validate.isNullOrEmpty(sender, topics, Message.Flag)) { return; }
 
         //Get total pages
         //1 header per page
         //9 flags per page, except on the first which has a usage line and 8 flags
-        int total = ((combinedHelp.size() + 1) / 9);
+        int total = ((topics.size() + 1) / 9);
 
 
         // Add the last page, if the last page is not full (less than 9 flags)
-        if ((combinedHelp.size() + 1) % 9 != 0) { total++; }
+        if ((topics.size() + 1) % 9 != 0) { total++; }
 
         //Check the page number requested
         if (page < 1 || page > total) { page = 1; }
 
         String indexType = Message.Index.get();
         if(group != null) {
-            indexType = registrar.getFlag(combinedHelp.get(0)).getGroup();
+            indexType = registrar.getFlag(topics.get(0)).getGroup();
         }
 
         sender.sendMessage(Message.HelpHeader.get()
-                .replaceAll("\\{Group\\}", indexType)
-                .replaceAll("\\{Page\\}", String.valueOf(page))
-                .replaceAll("\\{TotalPages\\}", String.valueOf(total))
-                .replaceAll("\\{Type\\}", Message.Flag.get()));
+                .replace("{Group}", indexType)
+                .replace("{Page}", String.valueOf(page))
+                .replace("{TotalPages}", String.valueOf(total))
+                .replace("{Type}", Message.Flag.get()));
 
         // Setup for only displaying 10 lines at a time (including the header)
         int lineCount = 0;
@@ -588,12 +582,12 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         if (page == 1) {
             if(group == null) {
                 sender.sendMessage(Message.HelpInfo.get()
-                        .replaceAll("\\{Type\\}", Message.Flag.get().toLowerCase()));
-                lineCount++;
+                        .replace("{Type}", Message.Flag.get().toLowerCase()));
             } else {
                 sender.sendMessage(Message.GroupHelpInfo.get()
-                        .replaceAll("\\{Type\\}", registrar.getFlag(combinedHelp.get(0)).getGroup()));
+                        .replace("{Type}", registrar.getFlag(flagNames.get(0)).getGroup()));
             }
+            lineCount++;
         }
 
         // Find the start position in the array of names
@@ -603,15 +597,15 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
 
 
         // Output the results
-        while (position < combinedHelp.size()) {
-            if(groupNames.contains(combinedHelp.get(position))) {
+        while (position < topics.size()) {
+            if(groupNames.contains(topics.get(position))) {
                 sender.sendMessage(Message.HelpTopic.get()
-                        .replaceAll("\\{Topic\\}", combinedHelp.get(position))
-                        .replaceAll("\\{Description\\}", Message.GroupHelpDescription.get().replaceAll("\\{Group\\}", combinedHelp.get(position))));
+                        .replace("{Topic}", topics.get(position))
+                        .replace("{Description}", Message.GroupHelpDescription.get().replace("{Group}", topics.get(position))));
             } else {
                 sender.sendMessage(Message.HelpTopic.get()
-                        .replaceAll("\\{Topic\\}", combinedHelp.get(position))
-                        .replaceAll("\\{Description\\}", registrar.getFlag(combinedHelp.get(position)).getDescription()));
+                        .replace("{Topic}", topics.get(position))
+                        .replace("{Description}", registrar.getFlag(topics.get(position)).getDescription()));
             }
 
             if(++lineCount == 9) {

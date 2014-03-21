@@ -24,6 +24,8 @@
 
 package io.github.alshain01.flags.economy;
 
+import io.github.alshain01.flags.Message;
+
 /**
  * Enumeration for handling withdrawal and deposit
  */
@@ -34,6 +36,6 @@ public enum EconomyTransactionType {
 	 * @return The localized message of the transaction type.
 	 */
 	public String getMessage() {
-		return io.github.alshain01.flags.Message.valueOf(toString()).get();
+		return Message.valueOf(toString()).get();
 	}
 }

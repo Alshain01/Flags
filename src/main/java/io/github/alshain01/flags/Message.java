@@ -38,11 +38,11 @@ public enum Message {
 	EraseBundleError, BundlePermError, PricePermError, SubdivisionError, NoSystemError,
 	PlayerFlagError, EconomyError, SQLDatabaseError, SubdivisionSupportError,
 	// Commands
-	SetFlag, GetFlag, RemoveFlag, InheritedFlag, SetTrust, GetTrust, RemoveTrust,
+	SetFlag, GetFlag, RemoveFlag, SetTrust, GetTrust, RemoveTrust,
 	GetAllFlags, RemoveAllFlags, GetBundle, SetBundle, RemoveBundle, UpdateBundle,
 	EraseBundle, SetInherited,
 	// Help
-	ConsoleHelpHeader, HelpHeader, HelpTopic, HelpInfo, FlagCount, SetFlagTrustError,
+	HelpHeader, HelpTopic, HelpInfo,
 	GroupHelpDescription, GroupHelpInfo,
 	// General Translations
 	Flag, Bundle, Message, ValueColorTrue, ValueColorFalse, Index, Error, Command,
