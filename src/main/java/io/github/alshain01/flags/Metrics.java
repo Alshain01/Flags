@@ -135,8 +135,8 @@ static void StartFlagsMetrics(Plugin plugin) {
         /*
          * Auto Update settings
          */
-        final Graph updateGraph = metrics.createGraph("Check for Updates");
-        updateGraph.addPlotter(new Metrics.Plotter(plugin.getConfig().getBoolean("Flags.Update.Enabled") ? "Yes" : "No") {
+        final Graph updateGraph = metrics.createGraph("Update Configuration");
+        updateGraph.addPlotter(new Metrics.Plotter(plugin.getConfig().getBoolean("Flags.Update.Enabled") ? "Check for Updates" : "No Updates") {
             @Override
             public int getValue() {
                 return 1;
