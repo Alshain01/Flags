@@ -118,7 +118,7 @@ public class Flags extends JavaPlugin {
         // Load Sectors
         if(CuboidType.getActive() == CuboidType.FLAGS) {
             sectors = new SectorManager(this, pluginConfig.getConfigurationSection("Sector"),
-                    new CustomYML(this, "sectors.yml").getConfig().getConfigurationSection("Sectors"));
+                    new CustomYML(this, "sector.yml").getConfig().getConfigurationSection("Sectors"));
         }
 
         // Set Command Executors

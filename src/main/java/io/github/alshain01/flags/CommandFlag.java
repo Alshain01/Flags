@@ -77,7 +77,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
             if(tool != null && e.getPlayer().getItemInHand().getType() == tool) {
                 if (e.getPlayer().hasPermission("flags.command.flag")) {
                     CommandLocation loc = CommandLocation.WORLD;
-                    if(CuboidType.getActive().hasArea(e.getPlayer().getLocation())) {
+                    if(CuboidType.getActive().hasArea(e.getClickedBlock().getLocation())) {
                         loc = CommandLocation.AREA;
                     }
                     get(e.getPlayer(), e.getClickedBlock().getLocation(), loc, null);
@@ -152,7 +152,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         // Process the command
         switch(command) {
             case HELP:
-                help(sender, getPage(args), getGroup(args));
+                help(sender, getPage(args), getGroup(args), getFlag(args));
                 success = true;
                 break;
             case INHERIT:
@@ -260,6 +260,14 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
             return args[1];
         }
         // It was an integer
+        return null;
+    }
+
+    private static Flag getFlag(String[] args) {
+        Registrar registrar = Flags.getRegistrar();
+        if(args.length == 2 && registrar.isFlag(args[1]))  {
+            return registrar.getFlag(args[1]);
+        }
         return null;
     }
 
@@ -524,7 +532,12 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
     /*
      * Help Command Handlers
      */
-    private static void help (CommandSender sender, int page, String group) {
+    private static void help (CommandSender sender, int page, String group, Flag flag) {
+        if(flag != null) {
+            sendFlagHelp(sender, flag);
+            return;
+        }
+
         Registrar registrar = Flags.getRegistrar();
 
         //Build the list of help topics
@@ -598,20 +611,34 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
 
         // Output the results
         while (position < topics.size()) {
+            String message;
             if(groupNames.contains(topics.get(position))) {
-                sender.sendMessage(Message.HelpTopic.get()
+                message = Message.HelpTopic.get()
                         .replace("{Topic}", topics.get(position))
-                        .replace("{Description}", Message.GroupHelpDescription.get().replace("{Group}", topics.get(position))));
+                        .replace("{Description}", Message.GroupHelpDescription.get().replace("{Group}", topics.get(position)));
+
             } else {
-                sender.sendMessage(Message.HelpTopic.get()
+                message = Message.HelpTopic.get()
                         .replace("{Topic}", topics.get(position))
-                        .replace("{Description}", registrar.getFlag(topics.get(position)).getDescription()));
+                        .replace("{Description}", registrar.getFlag(topics.get(position)).getDescription());
             }
+
+            if(message.length() > 51) {
+                message = message.substring(0, 47) + "...";
+            }
+            sender.sendMessage(message);
 
             if(++lineCount == 9) {
                 return;
             }
             position++;
         }
+    }
+
+    private static void sendFlagHelp(CommandSender sender, Flag flag) {
+        sender.sendMessage(Message.FlagHelpHeader.get()
+                .replace("{Flag}", flag.getName()));
+        sender.sendMessage(Message.FlagDescription.get()
+               .replace("{Description}", flag.getDescription()));
     }
 }

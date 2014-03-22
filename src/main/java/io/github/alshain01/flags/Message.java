@@ -42,8 +42,8 @@ public enum Message {
 	GetAllFlags, RemoveAllFlags, GetBundle, SetBundle, RemoveBundle, UpdateBundle,
 	EraseBundle, SetInherited,
 	// Help
-	HelpHeader, HelpTopic, HelpInfo,
-	GroupHelpDescription, GroupHelpInfo,
+	HelpHeader, FlagHelpHeader, HelpTopic, HelpInfo,
+	GroupHelpDescription, GroupHelpInfo, FlagDescription,
 	// General Translations
 	Flag, Bundle, Message, ValueColorTrue, ValueColorFalse, Index, Error, Command,
 	// Economy

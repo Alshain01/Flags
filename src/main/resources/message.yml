@@ -87,8 +87,10 @@ Message:
   SubsectorCreated: '&bSubsector Created.'
   
   # Help Messages
-  HelpHeader: '&6---------&f {Type}: {Group} ({Page}/{TotalPages})&6--------------------'
+  HelpHeader: '&e---------&f {Type}: {Group} ({Page}/{TotalPages})&e--------------------'
+  FlagHelpHeader: '&e---------&f Help: {Flag}&e----------------------------'
+  FlagDescription: '&6Description: &f{Description}'
   HelpInfo: '&7Use /{Type} help [n] to get page n of {Type}s.'
   GroupHelpInfo: '&7Below is a list of all {Type} commands:'
-  HelpTopic: '&6{Topic}&f: {Description}'
+  HelpTopic: '&6{Topic}: &f{Description}'
   GroupHelpDescription: Lists all flags for {Group}.

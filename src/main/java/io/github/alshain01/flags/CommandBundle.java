@@ -319,6 +319,7 @@ final class CommandBundle extends Command implements CommandExecutor {
     private static void help (CommandSender sender, int page) {
         int startIndex, endIndex, totalPages;
         List<String> bundles = new ArrayList<String>(Bundle.getBundleNames());
+
         if (Validate.isNullOrEmpty(sender, bundles, Message.Bundle)) { return; }
         Collections.sort(bundles);
 
@@ -336,7 +337,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         if(startIndex < 0) { startIndex = 0; }
 
         endIndex = startIndex + page > 1 ? 9 : 8;
-        if(endIndex > bundles.size() - 1) { endIndex = bundles.size() - 1; }
+        if(endIndex > bundles.size()) { endIndex = bundles.size(); }
 
         bundles = bundles.subList(startIndex, endIndex);
 
