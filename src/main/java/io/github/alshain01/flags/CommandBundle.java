@@ -263,11 +263,6 @@ final class CommandBundle extends Command implements CommandExecutor {
         if(Bundle.isBundle(bundleName)) {
             bundle = Bundle.getBundle(bundleName);
         } else {
-            Permission perm = new Permission("flags.bundle." + bundleName,
-                    "Grants ability to use the bundle " + bundleName, PermissionDefault.FALSE);
-            perm.addParent("flags.bundle", true);
-            Bukkit.getServer().getPluginManager().addPermission(perm);
-
             bundle = new HashSet<Flag>();
         }
 

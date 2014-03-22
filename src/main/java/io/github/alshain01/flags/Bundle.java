@@ -100,7 +100,7 @@ public final class Bundle {
         }
 
 		Flags.getDataStore().writeBundle(name, flags);
-        String permName = "flag.bundle." + name.toLowerCase();
+        String permName = "flags.bundle." + name.toLowerCase();
         if(flags == null || flags.size() == 0) {
             if(Bukkit.getPluginManager().getPermission(permName) != null) {
                 Bukkit.getPluginManager().removePermission(permName);
