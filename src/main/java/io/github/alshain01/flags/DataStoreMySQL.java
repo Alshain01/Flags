@@ -256,7 +256,9 @@ final class DataStoreMySQL implements DataStore {
 
         try {
             if(results.next()) {
-                return results.getString("FlagMessage").replaceAll("''", "'");
+                String message = results.getString("FlagMessage");
+                if(message == null) { return null; }
+                return message.replace("''", "'");
             }
             return null;
         } catch (SQLException ex){
