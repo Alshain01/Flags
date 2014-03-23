@@ -195,7 +195,7 @@ final class DataStoreMySQL implements DataStore {
     public Boolean readFlag(Area area, Flag flag) {
         StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Flags WHERE WorldName='%world%'");
         if(!(area instanceof Default || area instanceof Wilderness)) {
-            selectString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
+            selectString.append(" AND AreaID='%area%' AND AreaSubID='%sub%'");
         }
         selectString.append(" AND FlagName='%flag%';");
 
@@ -224,7 +224,7 @@ final class DataStoreMySQL implements DataStore {
                     + " VALUES ('%world%', '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
         } else {
             insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue)"
-                    + " VALUES ('%world%', '%area%', %sub%, '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
+                    + " VALUES ('%world%', '%area%', '%sub%', '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
         }
 
 
@@ -236,7 +236,7 @@ final class DataStoreMySQL implements DataStore {
     //For SQL Importer
     void writeAreaFlag(Boolean value, String flagName, String areaType, String worldName, String systemID, String systemSubID) {
         String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue)"
-                + " VALUES ('%world%', '%area%', %sub%, '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
+                + " VALUES ('%world%', '%area%', '%sub%', '%flag%', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
 
         executeStatement(areaBuilder(insertString, areaType, worldName, systemID, systemSubID)
                 .replaceAll("%flag%", flagName)
@@ -247,7 +247,7 @@ final class DataStoreMySQL implements DataStore {
     public String readMessage(Area area, Flag flag) {
         StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Flags WHERE WorldName='%world%'");
         if(!(area instanceof Default || area instanceof Wilderness)) {
-            selectString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
+            selectString.append(" AND AreaID='%area%' AND AreaSubID='%sub%'");
         }
         selectString.append(" AND FlagName='%flag%';");
 
@@ -277,7 +277,7 @@ final class DataStoreMySQL implements DataStore {
         if(area instanceof Default || area instanceof Wilderness) {
             insertString = "INSERT INTO %table%Flags (WorldName, FlagName, FlagMessage) VALUES ('%world%', '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
         } else {
-            insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagMessage) VALUES ('%world%', '%area%', %sub%, '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
+            insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagMessage) VALUES ('%world%', '%area%', '%sub%', '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
         }
         executeStatement(areaBuilder(insertString, area)
                 .replaceAll("%flag%", flag.getName())
@@ -286,7 +286,7 @@ final class DataStoreMySQL implements DataStore {
 
     // For SQL Importer
     private void writeAreaMessage(String message, String flagName, String areaType, String worldName, String systemID, String systemSubID) {
-       String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagMessage) VALUES ('%world%', '%area%', %sub%, '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
+       String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagMessage) VALUES ('%world%', '%area%', '%sub%', '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
 
        executeStatement(areaBuilder(insertString, areaType, worldName, systemID, systemSubID)
                 .replaceAll("%flag%", flagName)
@@ -324,7 +324,7 @@ final class DataStoreMySQL implements DataStore {
     public Set<String> readTrust(Area area, Flag flag) {
         StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Trust WHERE WorldName='%world%'");
         if(!(area instanceof Default || area instanceof Wilderness)) {
-            selectString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
+            selectString.append(" AND AreaID='%area%' AND AreaSubID='%sub%'");
         }
         selectString.append(" AND FlagName='%flag%';");
 
@@ -347,7 +347,7 @@ final class DataStoreMySQL implements DataStore {
     public Set<String> readPlayerTrust(Area area, Flag flag) {
         StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Trust WHERE WorldName='%world%'");
         if(!(area instanceof Default || area instanceof Wilderness)) {
-            selectString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
+            selectString.append(" AND AreaID='%area%' AND AreaSubID='%sub%'");
         }
         selectString.append(" AND FlagName='%flag%';");
 
@@ -372,7 +372,7 @@ final class DataStoreMySQL implements DataStore {
     public Set<String> readPermissionTrust(Area area, Flag flag) {
         StringBuilder selectString = new StringBuilder("SELECT * FROM %table%Trust WHERE WorldName='%world%'");
         if(!(area instanceof Default || area instanceof Wilderness)) {
-            selectString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
+            selectString.append(" AND AreaID='%area%' AND AreaSubID='%sub%'");
         }
         selectString.append(" AND FlagName='%flag%';");
 
@@ -398,7 +398,7 @@ final class DataStoreMySQL implements DataStore {
         // Delete the old list to be replaced
         StringBuilder deleteString = new StringBuilder("DELETE FROM %table%Trust WHERE WorldName='%world%'");
         if(!(area instanceof Default || area instanceof Wilderness)) {
-            deleteString.append(" AND AreaID='%area%' AND AreaSubID=%sub%");
+            deleteString.append(" AND AreaID='%area%' AND AreaSubID='%sub%'");
         }
         deleteString.append(" AND FlagName='%flag%';");
 
@@ -408,7 +408,7 @@ final class DataStoreMySQL implements DataStore {
         if(area instanceof Default || area instanceof Wilderness) {
             insertString = "INSERT INTO %table%Trust (WorldName, FlagName, Trustee) VALUES('%world%', '%flag%', '%player%');";
         } else {
-            insertString = "INSERT INTO %table%Trust (WorldName, AreaID, AreaSubID, FlagName, Trustee) VALUES('%world%', '%area%', %sub%, '%flag%', '%player%');";
+            insertString = "INSERT INTO %table%Trust (WorldName, AreaID, AreaSubID, FlagName, Trustee) VALUES('%world%', '%area%', '%sub%', '%flag%', '%player%');";
         }
 
         for(String p : players) {
@@ -420,7 +420,7 @@ final class DataStoreMySQL implements DataStore {
 
     // For SQL Importer
     private void writeAreaTrust(Set<String> players, String flagName, String areaType, String worldName, String systemID, String systemSubID) {
-        String insertString = "INSERT INTO %table%Trust (WorldName, AreaID, AreaSubID, FlagName, Trustee) VALUES('%world%', '%area%', %sub%, '%flag%', '%player%');";
+        String insertString = "INSERT INTO %table%Trust (WorldName, AreaID, AreaSubID, FlagName, Trustee) VALUES('%world%', '%area%', '%sub%', '%flag%', '%player%');";
         for(String p : players) {
             executeStatement(areaBuilder(insertString, areaType, worldName, systemID, systemSubID)
                     .replaceAll("%flag%", flagName)
@@ -434,7 +434,7 @@ final class DataStoreMySQL implements DataStore {
             return false;
         }
 
-        String selectString = "SELECT * FROM %table%Flags WHERE WorldName='%world%' AND AreaID='%area%' AND AreaSubID=%sub% AND FlagName='InheritParent';";
+        String selectString = "SELECT * FROM %table%Flags WHERE WorldName='%world%' AND AreaID='%area%' AND AreaSubID='%sub%' AND FlagName='InheritParent';";
 
         ResultSet results = executeQuery(areaBuilder(selectString, area));
 
@@ -458,7 +458,7 @@ final class DataStoreMySQL implements DataStore {
 
     void writeInheritance(boolean value, String areaType, String worldName, String systemID, String systemSubID) {
         String insertString = "INSERT INTO %table%Flags (WorldName, AreaID, AreaSubID, FlagName, FlagValue) "
-                + "VALUES ('%world%', '%area%', %sub%, 'InheritParent', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
+                + "VALUES ('%world%', '%area%', '%sub%', 'InheritParent', %value%) ON DUPLICATE KEY UPDATE FlagValue=%value%;";
 
         executeStatement(areaBuilder(insertString, areaType, worldName, systemID, systemSubID)
                 .replaceAll("%value%", String.valueOf(value)));
@@ -466,7 +466,7 @@ final class DataStoreMySQL implements DataStore {
 
     @Override
     public void remove(Area area) {
-        String deleteString = "DELETE FROM %table%%type% WHERE WorldName='%world%' AND AreaID='%area%' AND SubID=%sub%;";
+        String deleteString = "DELETE FROM %table%%type% WHERE WorldName='%world%' AND AreaID='%area%' AND SubID='%sub%';";
         executeStatement(areaBuilder(deleteString, area)
                 .replaceAll("%type%", "Flags"));
 
@@ -487,13 +487,14 @@ final class DataStoreMySQL implements DataStore {
         Set<String> keys = ((DataStoreYaml)yaml).readKeys();
         for(String key : keys) {
             String[] keyNodes = key.split("\\.");
+            if(!keyNodes[0].equalsIgnoreCase(CuboidType.getActive().toString())) { continue; }
 
             // Parent id's & 'InheritParent' are 5, Subdivisions are 6, all others are incomplete.
             if(keyNodes.length < 5 || keyNodes.length > 6) { continue; }
 
             String world = keyNodes[1];
             String id = keyNodes[2];
-            String subID = "'null'";
+            String subID = "null";
             String flag = keyNodes[3];
 
             if(keyNodes.length == 6 || key.contains("InheritParent")) { // Subdivision or InheritParent
@@ -575,6 +576,7 @@ final class DataStoreMySQL implements DataStore {
     void executeStatement(String statement) {
         try {
             Statement SQL = connection.createStatement();
+            Flags.debug(statement);
             SQL.execute(statement);
         } catch (SQLException e) {
             SqlError(e.getMessage());
@@ -584,6 +586,7 @@ final class DataStoreMySQL implements DataStore {
     ResultSet executeQuery(String query) {
         try {
             Statement SQL = connection.createStatement();
+            Flags.debug(query);
             return SQL.executeQuery(query);
         } catch (SQLException e) {
             SqlError(e.getMessage());
@@ -633,7 +636,7 @@ final class DataStoreMySQL implements DataStore {
      * Private
      */
     private String getSubID(Area area) {
-        return (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? "'" + ((Subdivision)area).getSystemSubID() + "'" : "'null'";
+        return (area instanceof Subdivision && ((Subdivision)area).isSubdivision()) ? ((Subdivision)area).getSystemSubID() : "null";
     }
 
     @SuppressWarnings("unused") // Future enhancement

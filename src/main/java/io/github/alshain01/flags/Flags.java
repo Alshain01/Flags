@@ -154,23 +154,9 @@ public class Flags extends JavaPlugin {
         this.getLogger().info("Flags Has Been Disabled.");
     }
 
-	/**
-	 * Executes the given command, returning its success
-	 * 
-	 * @param sender
-	 *            Source of the command
-	 * @param cmd
-	 *            Command which was executed
-	 * @param label
-	 *            Alias of the command which was used
-	 * @param args
-	 *            Passed command arguments
-	 * @return true if a valid command, otherwise false
-	 * 
-	 */
 	@Override
 	public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args) {
-        if(!cmd.toString().equalsIgnoreCase("flags")) { return false; }
+        if(!label.equalsIgnoreCase("flags")) { return false; }
         // Handle administration command
 
         if(args.length < 1) {
