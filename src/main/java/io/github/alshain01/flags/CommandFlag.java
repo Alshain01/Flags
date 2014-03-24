@@ -76,7 +76,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         if(e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if(tool != null && e.getPlayer().getItemInHand().getType() == tool) {
                 if (e.getPlayer().hasPermission("flags.command.flag")) {
-                    CommandLocation loc = CommandLocation.WORLD;
+                    CommandLocation loc = CommandLocation.WILD;
                     if(CuboidType.getActive().hasArea(e.getClickedBlock().getLocation())) {
                         loc = CommandLocation.AREA;
                     }
