@@ -39,7 +39,7 @@ public enum System {
     @Deprecated
 	DEFAULT("Default", "Default", false),
     @Deprecated
-	WORLD("World", "World", false),
+	WORLD("Wilderness", "Wilderness", false),
     @Deprecated
     FLAGS("Flags", "Flags", true),
     @Deprecated
