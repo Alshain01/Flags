@@ -16,7 +16,7 @@ import java.util.Set;
 
 abstract class Command {
     protected enum CommandLocation {
-        AREA('a'), WILD('w'), DEFAULT('d');
+        AREA('a'), WILDERNESS('w'), DEFAULT('d');
 
         private final char alias;
 
@@ -246,7 +246,7 @@ abstract class Command {
     static Area getArea(Location loc, CommandLocation location) {
         if (location == CommandLocation.DEFAULT) {
             return new Default(loc.getWorld());
-        } else if (location == CommandLocation.WILD) {
+        } else if (location == CommandLocation.WILDERNESS) {
             return new Wilderness(loc.getWorld());
         } else if (location == CommandLocation.AREA) {
             Area area = CuboidType.getActive().getAreaAt(loc);

@@ -27,15 +27,15 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
     }
 
     private enum FlagCommandType {
-        SET('s', 3, 1, true, true, "Set <area|wild|default> <flag> [true|false]"),
-        GET('g', 2, 1, true, false, "Get <area|wild|default> [flag]"),
-        REMOVE ('r', 2, 1, true, false, "Remove <area|wild|default> [flag]"),
-        TRUST('t', 4, -1, true, true, "Trust <area|wild|default> <flag> <player> [player]..."),
-        DISTRUST('d', 3, -1, true, true, "Distrust <area|wild|default> <flag> [player] [player]..."),
-        VIEWTRUST('v', 3, 0, true, true, "ViewTrust <area|wild|default> <flag>"),
-        MESSAGE('m', 4, -1, true, true, "Message <area|wild|default> <flag> <message>"),
-        PRESENTMESSAGE('p', 3, 0, true, true, "PresentMessage <area|wild|default> <flag>"),
-        ERASEMESSAGE('e', 3, 0, true, true, "EraseMessage <area|wild|default> <flag>"),
+        SET('s', 3, 1, true, true, "Set <area|wilderness|default> <flag> [true|false]"),
+        GET('g', 2, 1, true, false, "Get <area|wilderness|default> [flag]"),
+        REMOVE ('r', 2, 1, true, false, "Remove <area|wilderness|default> [flag]"),
+        TRUST('t', 4, -1, true, true, "Trust <area|wilderness|default> <flag> <player> [player]..."),
+        DISTRUST('d', 3, -1, true, true, "Distrust <area|wilderness|default> <flag> [player] [player]..."),
+        VIEWTRUST('v', 3, 0, true, true, "ViewTrust <area|wilderness|default> <flag>"),
+        MESSAGE('m', 4, -1, true, true, "Message <area|wilderness|default> <flag> <message>"),
+        PRESENTMESSAGE('p', 3, 0, true, true, "PresentMessage <area|wilderness|default> <flag>"),
+        ERASEMESSAGE('e', 3, 0, true, true, "EraseMessage <area|wilderness|default> <flag>"),
         CHARGE('c', 3, 1, false, true, "Charge <flag|message> <flag> [price]"),
         HELP ('h', 1, 2, false, null, "Help [group] [page]"),
         INHERIT('i', 1, 1, false, null, "Inherit [true|false]");
@@ -76,7 +76,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         if(e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if(tool != null && e.getPlayer().getItemInHand().getType() == tool) {
                 if (e.getPlayer().hasPermission("flags.command.flag")) {
-                    CommandLocation loc = CommandLocation.WILD;
+                    CommandLocation loc = CommandLocation.WILDERNESS;
                     if(CuboidType.getActive().hasArea(e.getClickedBlock().getLocation())) {
                         loc = CommandLocation.AREA;
                     }
