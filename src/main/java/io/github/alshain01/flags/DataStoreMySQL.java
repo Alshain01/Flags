@@ -80,13 +80,14 @@ final class DataStoreMySQL implements DataStore {
     public void create(JavaPlugin plugin) {
         // STANDARD BOOLEAN
         // OVERRIDE for Implementation Specific
+        preUpdate();
         if(notExists()) {
             executeStatement("CREATE TABLE IF NOT EXISTS Version (Major INT, Minor INT, Build INT);");
             executeStatement("INSERT INTO Version (Major, Minor, Build) VALUES (1,3,0);");
             executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(25), FlagName VARCHAR(25), CONSTRAINT pk_BundleEntry PRIMARY KEY (BundleName, FlagName));");
             executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(25), ProductType VARCHAR(25), Cost DOUBLE, CONSTRAINT pk_FlagType PRIMARY KEY (FlagName, ProductType));");
-            executeStatement("CREATE TABLE IF NOT EXISTS WorldFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
-            executeStatement("CREATE TABLE IF NOT EXISTS WorldTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName, Trustee));");
+            executeStatement("CREATE TABLE IF NOT EXISTS WildernessFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName));");
+            executeStatement("CREATE TABLE IF NOT EXISTS WildernessTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName, Trustee));");
             executeStatement("CREATE TABLE IF NOT EXISTS DefaultFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), CONSTRAINT pk_DefaultFlag PRIMARY KEY (WorldName, FlagName));");
             executeStatement("CREATE TABLE IF NOT EXISTS DefaultTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_DefaultTrust PRIMARY KEY (WorldName, FlagName, Trustee));");
         }
@@ -122,6 +123,21 @@ final class DataStoreMySQL implements DataStore {
     @Override
     public DataStoreType getType() {
         return DataStoreType.MYSQL;
+    }
+
+    private void preUpdate() {
+        try {
+            ResultSet rs = executeQuery("SHOW TABLES LIKE 'WorldFlags';");
+            if (rs.next()) {
+                executeStatement("RENAME TABLE 'WorldFlags' TO 'WildernessFlags';");
+            }
+            rs = executeQuery("SHOW TABLES LIKE 'WorldTrust';");
+            if (rs.next()) {
+                executeStatement("RENAME TABLE 'WorldTrust' TO 'WildernessTrust'");
+            }
+        } catch (SQLException ex) {
+            SqlError(ex.getMessage());
+        }
     }
 
     @Override
