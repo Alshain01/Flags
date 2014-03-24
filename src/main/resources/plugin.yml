@@ -4,7 +4,7 @@ description: ${project.description}
 author: ${project.author}
 website: ${project.url}
 main: ${project.groupId}.${project.artifactId}
-softdepend: [Factions, GriefPrevention, InfinitePlots, PlotMe, PreciousStones, Regios, Residence, WorldGuard, Vault, GriefPreventionFlags, Factoid]
+softdepend: [Factions, Factoid, GriefPrevention, InfinitePlots, PlotMe, PreciousStones, Regios, Residence, WorldGuard, Vault]
 commands:
   flag:
     description: Allows you to perform actions on flags.
