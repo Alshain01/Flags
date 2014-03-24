@@ -96,7 +96,7 @@ public class World extends Area {
     @Override
     public Set<String> getOwners() {
         if(!isArea()) { throw new InvalidAreaException(); }
-        return new HashSet<String>(Arrays.asList("world"));
+        return new HashSet<String>(Arrays.asList("wilderness"));
     }
 
     @Override
@@ -112,14 +112,14 @@ public class World extends Area {
     public boolean hasPermission(Permissible p) {
         if(!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(p);
-        return p.hasPermission("flags.area.flag.world");
+        return p.hasPermission("flags.area.flag.wilderness");
     }
 
     @Override
     public boolean hasBundlePermission(Permissible p) {
         if(!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(p);
-        return p.hasPermission("flags.area.bundle.world");
+        return p.hasPermission("flags.area.bundle.wilderness");
     }
 
     @Override

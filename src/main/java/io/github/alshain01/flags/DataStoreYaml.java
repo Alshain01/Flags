@@ -48,7 +48,7 @@ import com.bekvon.bukkit.residence.Residence;
 final class DataStoreYaml implements DataStore {
 	private static CustomYML data;
 	private static CustomYML def;
-	private static CustomYML world;
+	private static CustomYML wilderness;
 	private static CustomYML bundle;
 	private static CustomYML price;
 
@@ -56,8 +56,12 @@ final class DataStoreYaml implements DataStore {
      * Constructor
      */
 	DataStoreYaml(JavaPlugin plugin) {
+        File worldFile = new File(plugin.getDataFolder(), "world.yml");
+        File wildFile = new File(plugin.getDataFolder(), "wilderness.yml");
+        if(worldFile.exists() && !wildFile.exists()) { worldFile.renameTo(wildFile); }
+
 		def = new CustomYML(plugin, "default.yml");
-		world = new CustomYML(plugin, "world.yml");
+		wilderness = new CustomYML(plugin, "wilderness.yml");
 		data = new CustomYML(plugin, "data.yml");
 		bundle = new CustomYML(plugin, "bundle.yml");
 		price = new CustomYML(plugin, "price.yml");
@@ -80,7 +84,7 @@ final class DataStoreYaml implements DataStore {
     public void reload() {
         data.reload();
         def.reload();
-        world.reload();
+        wilderness.reload();
         bundle.reload();
         price.reload();
     }
@@ -106,79 +110,89 @@ final class DataStoreYaml implements DataStore {
     @Override
     public void update(JavaPlugin plugin) {
         final DataStoreVersion ver = readVersion();
-        if (ver.getMajor() <= 1 && ver.getMinor() <= 2 && ver.getBuild() < 2) {
-            CustomYML cYml = getYml("data");
-            ConfigurationSection cSec;
-            CuboidType system = CuboidType.getActive();
-            if(cYml.getConfig().isConfigurationSection(CuboidType.getActive().toString() + "Data")) {
-                if (system == CuboidType.GRIEF_PREVENTION || CuboidType.getActive() == CuboidType.RESIDENCE) {
-                    cSec = cYml.getConfig().getConfigurationSection(CuboidType.getActive().toString() + "Data");
+        if (ver.getMajor() <= 1 && ver.getMinor() <= 4 && ver.getBuild() < 2) {
+            if (ver.getMajor() <= 1 && ver.getMinor() <= 2 && ver.getBuild() < 2) {
+                CustomYML cYml = getYml("data");
+                ConfigurationSection cSec;
+                CuboidType system = CuboidType.getActive();
+                if (cYml.getConfig().isConfigurationSection(CuboidType.getActive().toString() + "Data")) {
+                    if (system == CuboidType.GRIEF_PREVENTION || CuboidType.getActive() == CuboidType.RESIDENCE) {
+                        cSec = cYml.getConfig().getConfigurationSection(CuboidType.getActive().toString() + "Data");
 
-                    final Set<String> keys = cSec.getKeys(true);
+                        final Set<String> keys = cSec.getKeys(true);
+                        for (final String k : keys) {
+
+                            if (k.contains("Value") || k.contains("Message")
+                                    || k.contains("Trust") || k.contains("InheritParent")) {
+
+                                final String id = k.split("\\.")[0];
+                                String world;
+
+                                if (CuboidType.getActive() == CuboidType.GRIEF_PREVENTION) {
+                                    world = GriefPrevention.instance.dataStore
+                                            .getClaim(Long.valueOf(id))
+                                            .getGreaterBoundaryCorner().getWorld()
+                                            .getName();
+                                } else {
+                                    world = Residence.getResidenceManager()
+                                            .getByName(id).getWorld();
+                                }
+
+                                cSec.set(world + "." + k, cSec.get(k));
+                            }
+                            cYml.saveConfig();
+                        }
+                        // Remove the old
+                        for (final String k : keys) {
+                            if (k.split("\\.").length == 1
+                                    && Bukkit.getWorld(k.split("\\.")[0]) == null) {
+                                cSec.set(k, null);
+                                cYml.saveConfig();
+                            }
+                        }
+
+                    }
+
+                    //Convert values to boolean instead of string
+                    final String[] fileArray = {"data", "default", "world"};
+                    for (final String s : fileArray) {
+                        cYml = getYml(s);
+                        Set<String> keys = cYml.getConfig().getKeys(true);
+                        for (final String k : keys) {
+                            if (k.contains("Value") || k.contains("InheritParent")) {
+                                cYml.getConfig().set(k, Boolean.valueOf(cYml.getConfig().getString(k)));
+                                cYml.saveConfig();
+                            }
+                        }
+                    }
+
+                    //Remove "Data" from the root heading.
+                    cYml = getYml("data");
+                    cSec = getYml("data").getConfig().getConfigurationSection(CuboidType.getActive().toString() + "Data");
+                    getYml("data").getConfig().createSection(CuboidType.getActive().toString());
+                    ConfigurationSection newCSec = getYml("data").getConfig().getConfigurationSection(CuboidType.getActive().toString());
+                    Set<String> keys = cSec.getKeys(true);
                     for (final String k : keys) {
-
                         if (k.contains("Value") || k.contains("Message")
                                 || k.contains("Trust") || k.contains("InheritParent")) {
-
-                            final String id = k.split("\\.")[0];
-                            String world;
-
-                            if (CuboidType.getActive() == CuboidType.GRIEF_PREVENTION) {
-                                world = GriefPrevention.instance.dataStore
-                                        .getClaim(Long.valueOf(id))
-                                        .getGreaterBoundaryCorner().getWorld()
-                                        .getName();
-                            } else {
-                                world = Residence.getResidenceManager()
-                                        .getByName(id).getWorld();
-                            }
-
-                            cSec.set(world + "." + k, cSec.get(k));
-                        }
-                        cYml.saveConfig();
-                    }
-                    // Remove the old
-                    for (final String k : keys) {
-                        if (k.split("\\.").length == 1
-                                && Bukkit.getWorld(k.split("\\.")[0]) == null) {
+                            newCSec.set(k, cSec.get(k));
                             cSec.set(k, null);
                             cYml.saveConfig();
                         }
                     }
-
+                    cYml.getConfig().set(CuboidType.getActive().toString() + "Data", null);
+                    cYml.saveConfig();
                 }
-
-                //Convert values to boolean instead of string
-                final String[] fileArray = {"data", "default", "world"};
-                for(final String s : fileArray) {
-                    cYml = getYml(s);
-                    Set<String> keys = cYml.getConfig().getKeys(true);
-                    for (final String k : keys) {
-                        if (k.contains("Value") || k.contains("InheritParent")) {
-                            cYml.getConfig().set(k,	Boolean.valueOf(cYml.getConfig().getString(k)));
-                            cYml.saveConfig();
-                        }
-                    }
-                }
-
-                //Remove "Data" from the root heading.
-                cYml = getYml("data");
-                cSec = getYml("data").getConfig().getConfigurationSection(CuboidType.getActive().toString() + "Data");
-                getYml("data").getConfig().createSection(CuboidType.getActive().toString());
-                ConfigurationSection newCSec = getYml("data").getConfig().getConfigurationSection(CuboidType.getActive().toString());
-                Set<String> keys = cSec.getKeys(true);
-                for (final String k : keys) {
-                    if (k.contains("Value") || k.contains("Message")
-                            || k.contains("Trust") || k.contains("InheritParent")) {
-                        newCSec.set(k , cSec.get(k));
-                        cSec.set(k, null);
-                        cYml.saveConfig();
-                    }
-                }
-                cYml.getConfig().set(CuboidType.getActive().toString() + "Data", null);
-                cYml.saveConfig();
+                writeVersion(new DataStoreVersion(1, 2, 2));
             }
-            writeVersion(new DataStoreVersion(1, 2, 2));
+            // Upgrade to 1.5
+            CustomYML cYml = getYml("wilderness");
+            if(cYml.getConfig().isConfigurationSection("WorldData"))
+            for(String k : cYml.getConfig().getConfigurationSection("WorldData").getKeys(true)) {
+                cYml.getConfig().set("WildernessData." + k, cYml.getConfig().get(k));
+            }
+            cYml.saveConfig();
+            writeVersion(new DataStoreVersion(1, 4, 2));
         }
     }
 
@@ -448,8 +462,8 @@ final class DataStoreYaml implements DataStore {
     private CustomYML getYml(String path) {
         final String[] pathList = path.split("\\.");
 
-        if (pathList[0].equalsIgnoreCase("world")) {
-            return world;
+        if (pathList[0].equalsIgnoreCase("wilderness")) {
+            return wilderness;
         } else if (pathList[0].equalsIgnoreCase("default")) {
             return def;
         } else if (pathList[0].equalsIgnoreCase("bundle")) {

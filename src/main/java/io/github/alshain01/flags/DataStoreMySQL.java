@@ -142,7 +142,10 @@ final class DataStoreMySQL implements DataStore {
 
     @Override
     public void update(JavaPlugin plugin) {
-        // Nothing to update at this time
+        final DataStoreVersion ver = readVersion();
+        if (ver.getMajor() <= 1 && ver.getMinor() <= 4 && ver.getBuild() < 2) {
+            writeVersion(new DataStoreVersion(1,4,2)); // Update world table to wilderness
+        }
     }
 
     @Override
