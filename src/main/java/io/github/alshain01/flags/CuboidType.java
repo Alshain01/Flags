@@ -49,7 +49,7 @@ public enum CuboidType {
         public boolean hasArea(Location location) { return true; }
     },
 
-    WILDERNESS("World", "World", false) {
+    WILDERNESS("World", "Wilderness", false) {
         Area getCuboidAt(Location location) { return new Wilderness(location); }
         public Area getArea(String name) { return new Wilderness(name); }
         public boolean hasArea(Location location) { return true; }
