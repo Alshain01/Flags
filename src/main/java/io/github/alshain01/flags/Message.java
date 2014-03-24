@@ -34,7 +34,7 @@ public enum Message {
 	// Errors
 	NoConsoleError, InvalidFlagError, InvalidTrustError, NoFlagFound,
 	SetTrustError, RemoveTrustError, RemoveAllFlagsError, SetMultipleFlagsError,
-	AddBundleError, FlagPermError, AreaPermError, WorldPermError, NoAreaError,
+	AddBundleError, FlagPermError, AreaPermError, WildernessPermError, NoAreaError,
 	EraseBundleError, BundlePermError, PricePermError, SubdivisionError, NoSystemError,
 	PlayerFlagError, EconomyError, SQLDatabaseError, SubdivisionSupportError,
 	// Commands

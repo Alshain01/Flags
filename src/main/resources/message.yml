@@ -13,7 +13,7 @@ Message:
   
   # System specific area types {AreaType}
   Default: 'Default'
-  World: 'World'
+  World: 'Wilderness'
   Factions: 'Territory'
   Factoid: 'Land'
   Flags: 'Sector'
@@ -48,7 +48,7 @@ Message:
   InvalidTrustError: '&e{Flag} &chas no entries with {AreaType} trust.'
   FlagPermError: '&cYou do not have permission to use that {Type}.'
   AreaPermError: '&cYou do not have permission to set a {Type} in &6{OwnerName}&c''s {AreaType}.'
-  WorldPermError: '&cYou do not have permission to set a {Type} in the {AreaType}.'
+  WildernessPermError: '&cYou do not have permission to set a {Type} in the {AreaType}.'
   EconomyError: '&cThere is no economy installed on this server.'
   SQLDatabaseError: '&cThis action can only be performed on a SQL database.'
   SubdivisionSupportError: '&c{System} does not support subdivisions.'

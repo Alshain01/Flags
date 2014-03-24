@@ -454,7 +454,7 @@ final class DataStoreMySQL implements DataStore {
             return;
         }
 
-        writeInheritance(value, area.getCuboidType().getCuboidName(), area.getWorld().getName(),
+        writeInheritance(value, area.getCuboidType().toString(), area.getWorld().getName(),
                 area.getSystemID(), ((Subdivision) area).getSystemSubID());
     }
 

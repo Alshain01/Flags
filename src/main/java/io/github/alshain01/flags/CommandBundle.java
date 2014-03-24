@@ -1,12 +1,9 @@
 package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.area.Area;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 
 import java.util.*;
 

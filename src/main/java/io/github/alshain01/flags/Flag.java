@@ -46,7 +46,7 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
 
 	private final boolean player;
 	private final String area;
-	private final String world;
+	private final String wilderness;
 	private final String plugin;
 
 	/**
@@ -64,16 +64,16 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
 	 *            True if the flag is a player flag
 	 * @param area
 	 *            The default area message for the flag.
-	 * @param world
-	 *            The default world message for the flag.
+	 * @param wilderness
+	 *            The default wilderness message for the flag.
 	 */
-	Flag(String name, String description, boolean def, String plugin, boolean player, String area, String world) {
+	Flag(String name, String description, boolean def, String plugin, boolean player, String area, String wilderness) {
 		this.name = name;
 		this.description = description;
 		this.def = def;
 		this.plugin = plugin;
 		this.area = area;
-		this.world = world;
+		this.wilderness = wilderness;
 		this.player = player;
 	}
 
@@ -82,7 +82,7 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
         this.name = name;
         description = (String)flag.get("Description");
         plugin = (String)flag.get("Group");
-        world = (String)flag.get("WorldMessage");
+        wilderness = (String)flag.get("WildernessMessage");
         area = (String)flag.get("AreaMessage");
         def = (Boolean)flag.get("Default");
         player = (Boolean)flag.get("Player");
@@ -95,7 +95,7 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
         // String
         flag.put("Description", description);
         flag.put("Group", plugin);
-        flag.put("WorldMessage", world);
+        flag.put("WildernessMessage", wilderness);
         flag.put("AreaMessage", area);
 
         // Boolean
@@ -108,7 +108,7 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
     @SuppressWarnings("CloneDoesntCallSuperClone") // Constructor clone
     @Override
     public Flag clone() {
-        return new Flag(name, description, def, plugin, player, area, world);
+        return new Flag(name, description, def, plugin, player, area, wilderness);
     }
 
 	/**
@@ -142,13 +142,25 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
 	}
 
 	/**
-	 * Gets the default world message of the flag
+	 * Gets the default wilderness message of the flag
 	 * 
-	 * @return The default world message.
+	 * @return The default wilderness message.
+     * @deprecated Use getDefaultWildernessMessage
 	 */
+    @Deprecated
+    @SuppressWarnings("unused") // Deprecated
 	public String getDefaultWorldMessage() {
-		return world;
+		return wilderness;
 	}
+
+    /**
+     * Gets the default wilderness message of the flag
+     *
+     * @return The default wilderness message.
+     */
+    public String getDefaultWildernessMessage() {
+        return wilderness;
+    }
 
 	/**
 	 * Gets the flag's description
@@ -231,7 +243,7 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
 	@Override
 	public String toString() {
 		return "N=" + name + ",V=" + def + ",P=" + player + ",G=" + plugin
-				+ ",D=" + description + ",A=" + area + ",W=" + world;
+				+ ",D=" + description + ",A=" + area + ",W=" + wilderness;
 	}
 
     @Override

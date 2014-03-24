@@ -16,7 +16,7 @@ import java.util.Set;
 
 abstract class Command {
     protected enum CommandLocation {
-        AREA('a'), WORLD('w'), DEFAULT('d');
+        AREA('a'), WILD('w'), DEFAULT('d');
 
         private final char alias;
 
@@ -56,7 +56,7 @@ abstract class Command {
             if (a.hasPermission(p)) { return false; }
             if(p instanceof CommandSender) {
                 ((CommandSender)p).sendMessage(((a instanceof Wilderness || a instanceof Default)
-                        ? Message.WorldPermError.get() : Message.AreaPermError.get())
+                        ? Message.WildernessPermError.get() : Message.AreaPermError.get())
                         .replace("{AreaType}", a.getCuboidType().getCuboidName())
                         .replace("{OwnerName}", a.getOwners().toArray()[0].toString())
                         .replace("{Type}", Message.Flag.get().toLowerCase()));
@@ -100,7 +100,7 @@ abstract class Command {
             if (area.hasBundlePermission(p)) { return false; }
             if(p instanceof CommandSender) {
                 ((CommandSender)p).sendMessage(((area instanceof Wilderness || area instanceof Default)
-                        ? Message.WorldPermError.get() : Message.AreaPermError.get())
+                        ? Message.WildernessPermError.get() : Message.AreaPermError.get())
                         .replace("{AreaType}", area.getCuboidType().getCuboidName())
                         .replace("{OwnerName}", area.getOwners().toArray()[0].toString())
                         .replace("{Type}", Message.Bundle.get().toLowerCase()));
@@ -246,7 +246,7 @@ abstract class Command {
     static Area getArea(Location loc, CommandLocation location) {
         if (location == CommandLocation.DEFAULT) {
             return new Default(loc.getWorld());
-        } else if (location == CommandLocation.WORLD) {
+        } else if (location == CommandLocation.WILD) {
             return new Wilderness(loc.getWorld());
         } else if (location == CommandLocation.AREA) {
             Area area = CuboidType.getActive().getAreaAt(loc);

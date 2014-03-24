@@ -318,22 +318,22 @@ public final class Registrar {
 	 *            The group the flag belongs in.
 	 * @param areaMessage
 	 *            The default message for areas.
-	 * @param worldMessage
-	 *            The default message for worlds.
+	 * @param wildernessMessage
+	 *            The default message for wilderness areas.
 	 * @return The flag if the flag was successfully registered. Null otherwise.
 	 */
 	public Flag register(String name, String description, boolean def,
-			String group, String areaMessage, String worldMessage) {
+			String group, String areaMessage, String wildernessMessage) {
         Validate.notNull(name);
         Validate.notNull(description);
         Validate.notNull(group);
         Validate.notNull(areaMessage);
-        Validate.notNull(worldMessage);
+        Validate.notNull(wildernessMessage);
 
 		if (flagStore.containsKey(name)) {
 			return null;
 		}
-		final Flag flag = new Flag(name, description, def, group, true,	areaMessage, worldMessage);
+		final Flag flag = new Flag(name, description, def, group, true,	areaMessage, wildernessMessage);
 
 		Bukkit.getServer().getPluginManager().addPermission(flag.getPermission());
 		Bukkit.getServer().getPluginManager().addPermission(flag.getBypassPermission());
@@ -378,10 +378,14 @@ public final class Registrar {
 			// The default message players getType while in the area.
 			final String area = data.getString("AreaMessage");
 	
-			// The default message players getType while in an world.
-			final String world = data.getString("WorldMessage");
+			// The default message players getType while in the wilderness.
+			String wilderness = data.getString("WildernessMessage");
+            if(wilderness == null) {
+                // Backward compatibility
+                wilderness = data.getString("WorldMessage");
+            }
 			
-			if(isPlayer && (area == null || world == null)) {
+			if(isPlayer && (area == null || wilderness == null)) {
 				continue;
 			}
 			
@@ -389,7 +393,7 @@ public final class Registrar {
 			// Be sure to send a plug-in name or group description for the help command!
 			// It can be this.getName() or another string.
 			if (isPlayer) {
-				flags.add(register(f, desc, def, group, area, world));
+				flags.add(register(f, desc, def, group, area, wilderness));
 			} else {
 				flags.add(register(f, desc, def, group));
 			}

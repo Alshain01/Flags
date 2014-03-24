@@ -142,7 +142,7 @@ public class World extends Area {
 		String message = Flags.getDataStore().readMessage(this, flag);
 
 		if (message == null) {
-			message = flag.getDefaultWorldMessage();
+			message = flag.getDefaultWildernessMessage();
 		}
 
 		if (parse) {

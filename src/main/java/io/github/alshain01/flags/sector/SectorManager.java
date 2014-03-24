@@ -1,6 +1,5 @@
 package io.github.alshain01.flags.sector;
 
-import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.events.SectorDeleteEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
