@@ -9,11 +9,11 @@ import java.util.*;
 
 final class CommandBundle extends Command implements CommandExecutor {
     private enum BundleCommandType {
-        SET('S', 4, 0, true, true, "Set <area|world|default> <bundle> <true|false>"),
-        GET('G', 3, 0, true, true, "Get <area|world|default> <bundle>"),
-        REMOVE('R', 3, 0, true, true, "Remove <area|world|default> <bundle>"),
-        TRUST('T', 4, -1, true, true, "Trust <area|world|default> <bundle> <player> [player]..."),
-        DISTRUST('D', 3, -1, true, true, "Distrust <area|world|default> <bundle> [player] [player]..."),
+        SET('S', 4, 0, true, true, "Set <area|wild|default> <bundle> <true|false>"),
+        GET('G', 3, 0, true, true, "Get <area|wild|default> <bundle>"),
+        REMOVE('R', 3, 0, true, true, "Remove <area|wild|default> <bundle>"),
+        TRUST('T', 4, -1, true, true, "Trust <area|wild|default> <bundle> <player> [player]..."),
+        DISTRUST('D', 3, -1, true, true, "Distrust <area|wild|default> <bundle> [player] [player]..."),
         HELP('H', 1, 1, false, null, "Help [page]"),
         ADD('A', 3, -1, false, true, "Add <bundle> <flag> [flag]..."),
         CUT ('C', 3, -1, false, true, "Cut <bundle> <flag> [flag]..."),
