@@ -107,7 +107,7 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
 
     @Override
     public CuboidType getCuboidType() {
-        return CuboidType.FACTIONS;
+        return CuboidType.FACTOID;
     }
 
 
