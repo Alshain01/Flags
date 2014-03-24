@@ -13,7 +13,7 @@ Message:
   
   # System specific area types {AreaType}
   Default: 'Default'
-  World: 'Wilderness'
+  Wilderness: 'Wilderness'
   Factions: 'Territory'
   Factoid: 'Land'
   Flags: 'Sector'

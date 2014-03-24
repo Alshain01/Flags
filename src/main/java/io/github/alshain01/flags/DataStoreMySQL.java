@@ -127,13 +127,13 @@ final class DataStoreMySQL implements DataStore {
 
     private void preUpdate() {
         try {
-            ResultSet rs = executeQuery("SHOW TABLES LIKE 'WorldFlags';");
+            ResultSet rs = executeQuery("SHOW TABLES LIKE 'worldflags';");
             if (rs.next()) {
-                executeStatement("RENAME TABLE 'WorldFlags' TO 'WildernessFlags';");
+                executeStatement("RENAME TABLE worldflags TO wildernessflags;");
             }
-            rs = executeQuery("SHOW TABLES LIKE 'WorldTrust';");
+            rs = executeQuery("SHOW TABLES LIKE 'worldtrust';");
             if (rs.next()) {
-                executeStatement("RENAME TABLE 'WorldTrust' TO 'WildernessTrust'");
+                executeStatement("RENAME TABLE worldtrust TO wildernesstrust;");
             }
         } catch (SQLException ex) {
             SqlError(ex.getMessage());

@@ -110,7 +110,8 @@ final class DataStoreYaml implements DataStore {
     @Override
     public void update(JavaPlugin plugin) {
         final DataStoreVersion ver = readVersion();
-        if (ver.getMajor() <= 1 && ver.getMinor() <= 4 && ver.getBuild() < 2) {
+        if (ver.getMajor() == 1 && ver.getMinor() == 4 && ver.getBuild() == 2) { return; }
+        if (ver.getMajor() <= 1 && ver.getMinor() <= 4 && ver.getBuild() <= 2) {
             if (ver.getMajor() <= 1 && ver.getMinor() <= 2 && ver.getBuild() < 2) {
                 CustomYML cYml = getYml("data");
                 ConfigurationSection cSec;
@@ -169,8 +170,7 @@ final class DataStoreYaml implements DataStore {
                     //Remove "Data" from the root heading.
                     cYml = getYml("data");
                     cSec = getYml("data").getConfig().getConfigurationSection(CuboidType.getActive().toString() + "Data");
-                    getYml("data").getConfig().createSection(CuboidType.getActive().toString());
-                    ConfigurationSection newCSec = getYml("data").getConfig().getConfigurationSection(CuboidType.getActive().toString());
+                    ConfigurationSection newCSec = getYml("data").getConfig().createSection(CuboidType.getActive().toString());
                     Set<String> keys = cSec.getKeys(true);
                     for (final String k : keys) {
                         if (k.contains("Value") || k.contains("Message")
@@ -185,12 +185,20 @@ final class DataStoreYaml implements DataStore {
                 }
                 writeVersion(new DataStoreVersion(1, 2, 2));
             }
-            // Upgrade to 1.5
+            // Upgrade to 1.4.2
             CustomYML cYml = getYml("wilderness");
-            if(cYml.getConfig().isConfigurationSection("WorldData"))
-            for(String k : cYml.getConfig().getConfigurationSection("WorldData").getKeys(true)) {
-                cYml.getConfig().set("WildernessData." + k, cYml.getConfig().get(k));
+            if(cYml.getConfig().isConfigurationSection("World")) {
+                ConfigurationSection cSec = cYml.getConfig().getConfigurationSection("World");
+                ConfigurationSection newCSec = cYml.getConfig().createSection("Wilderness");
+                for (final String k : cSec.getKeys(true)) {
+                    if (k.contains("Value") || k.contains("Message")
+                            || k.contains("Trust") || k.contains("InheritParent")) {
+                        newCSec.set(k, cSec.get(k));
+                    }
+                }
+
             }
+            cYml.getConfig().set("World", null);
             cYml.saveConfig();
             writeVersion(new DataStoreVersion(1, 4, 2));
         }
