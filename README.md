@@ -6,8 +6,8 @@ A Bukkit Plugin that allows developers to add flags to various cuboid systems.
 Website: <http://dev.bukkit.org/bukkit-plugins/flags/>  
 Bugs/Suggestions/Discussion: <http://dev.bukkit.org/bukkit-plugins/flags/forum/>  
 
-Compiliation
-------------
+Compilation
+-----------
 
 Flags uses Maven to handle dependencies.  However not all of Flag's dependencies are available from a Maven repository. Which means to compile you will need to manually download those dependancies.
 * Install [Maven 3](http://maven.apache.org/download.html)
