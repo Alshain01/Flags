@@ -225,7 +225,7 @@
 	</distributionManagement>
 
 	<build>
-		<defaultGoal>validate clean package verify install deploy</defaultGoal>
+		<defaultGoal>validate clean package verify install</defaultGoal>
 		<finalName>${project.name}</finalName>
 		<sourceDirectory>src/main/java</sourceDirectory>
 
