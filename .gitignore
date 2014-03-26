@@ -6,6 +6,6 @@
 *.ear
 
 # IntelliJ #
+target\
 .idea
 *.iml
-workspace.xml
