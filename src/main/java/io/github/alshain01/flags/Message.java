@@ -71,7 +71,7 @@ public enum Message {
         for(Message m : io.github.alshain01.flags.Message.values()) {
             final String message = messages.getString(m.toString());
             if (message == null) {
-                Flags.warn("ERROR: Invalid message.yml Message for " + m.toString());
+                Logger.warning("ERROR: Invalid message.yml Message for " + m.toString());
                 m.set("ERROR: Invalid message.yml Message. Please contact your server administrator.");
             } else {
                 m.set(ChatColor.translateAlternateColorCodes('&', message));

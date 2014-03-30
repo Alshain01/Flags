@@ -34,7 +34,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * Class for handling SQL Database Storage
@@ -42,7 +41,6 @@ import java.util.logging.Logger;
 final class DataStoreMySQL implements DataStore {
     private Connection connection = null;
     private final String url, user, password;
-    private final Logger logger = Bukkit.getPluginManager().getPlugin("Flags").getLogger();
 
     DataStoreMySQL(String url, String user, String pw) {
         this.url = url;
@@ -499,7 +497,7 @@ final class DataStoreMySQL implements DataStore {
      * Database Import/Export
      */
     public void importDB() {
-        logger.info("Importing YAML Database to " + getType().getName());
+        Logger.info("Importing YAML Database to " + getType().getName());
         DataStore yaml = new DataStoreYaml((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
 
         convertGenericData(yaml, this);
@@ -549,19 +547,19 @@ final class DataStoreMySQL implements DataStore {
             }
         }
 
-        logger.info("Import Complete");
+        Logger.info("Import Complete");
     }
 
     @SuppressWarnings("unused") // Future enhancement
     public void exportDB() {
-        logger.info("Exporting " + getType().getName() + " Database to YAML");
+        Logger.info("Exporting " + getType().getName() + " Database to YAML");
         DataStore yaml = new DataStoreYaml((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
 
         convertGenericData(this, yaml);
 
 
 
-        logger.info("Export Complete");
+        Logger.info("Export Complete");
     }
 
     /*
@@ -591,13 +589,13 @@ final class DataStoreMySQL implements DataStore {
     }
 
     void SqlError(String error) {
-        logger.severe("[SQL DataStore Error] " + error);
+        Logger.error("[SQL DataStore Error] " + error);
     }
 
     void executeStatement(String statement) {
         try {
             Statement SQL = connection.createStatement();
-            Flags.debug(statement);
+            Logger.debug(statement);
             SQL.execute(statement);
         } catch (SQLException e) {
             SqlError(e.getMessage());
@@ -607,7 +605,7 @@ final class DataStoreMySQL implements DataStore {
     ResultSet executeQuery(String query) {
         try {
             Statement SQL = connection.createStatement();
-            Flags.debug(query);
+            Logger.debug(query);
             return SQL.executeQuery(query);
         } catch (SQLException e) {
             SqlError(e.getMessage());

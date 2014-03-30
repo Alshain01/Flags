@@ -10,7 +10,6 @@ import java.lang.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -28,7 +27,6 @@ final class Updater {
     private static final String PLUGIN_NAME = "Flags";
     private static final String[] NO_UPDATE_TAG = { "-ALPHA", "-BETA", "-SNAPSHOT" }; // If the version number contains one of these, don't update.
 
-    private final Logger log;
     private final String version;
 
     private URL url; // Connecting to RSS
@@ -85,13 +83,12 @@ final class Updater {
                 notifyUpdate(p);
             }
 
-            Flags.log(UPDATE_MESSAGE);
+            Logger.info(UPDATE_MESSAGE);
         }
     }
 
     public Updater(Plugin plugin) {
         this.version = plugin.getDescription().getVersion();
-        this.log = plugin.getLogger();
         long interval = plugin.getConfig().getLong("Flags.Update.Interval");
         String key = plugin.getConfig().getString("Flags.Update.ServerModsAPIKey");
 
@@ -101,7 +98,7 @@ final class Updater {
         try {
             this.url = new URL("https://api.curseforge.com/servermods/files?projectIds=65024");
         } catch (final MalformedURLException e) {
-            log.severe("An error occured generating the update URL.");
+            Logger.error("An error occured generating the update URL.");
         }
 
         plugin.getServer().getPluginManager().registerEvents(new UpdateListener(), plugin);
@@ -139,7 +136,7 @@ final class Updater {
             }
         } else {
             // The file's name did not contain the string 'vVersion'
-            this.log.warning("The updater found a malformed file version. Please notify the author of this error.");
+            Logger.warning("The updater found a malformed file version. Please notify the author of this error.");
             this.result = Updater.UpdateResult.FAIL_NOVERSION;
             return false;
         }
@@ -192,7 +189,7 @@ final class Updater {
             final JSONArray array = (JSONArray) JSONValue.parse(response);
 
             if (array.size() == 0) {
-                log.warning("The updater could not find any files for the project Flags.");
+                Logger.warning("The updater could not find any files for the project Flags.");
                 this.result = UpdateResult.FAIL_BADID;
                 return null;
             }
@@ -200,12 +197,12 @@ final class Updater {
             return (String) ((JSONObject) array.get(array.size() - 1)).get("name");
         } catch (final IOException e) {
             if (e.getMessage().contains("HTTP response code: 403")) {
-                this.log.warning("dev.bukkit.org rejected the API key provided in plugins/" + PLUGIN_NAME + "/config.yml");
-                this.log.warning("Please double-check your configuration to ensure it is correct.");
+                Logger.warning("dev.bukkit.org rejected the API key provided in plugins/" + PLUGIN_NAME + "/config.yml");
+                Logger.warning("Please double-check your configuration to ensure it is correct.");
                 this.result = UpdateResult.FAIL_APIKEY;
             } else {
-                this.log.warning("The updater could not contact dev.bukkit.org for updating.");
-                this.log.warning("If you have not recently modified your configuration and this is the first time you are seeing this message, the site may be experiencing temporary downtime.");
+                Logger.warning("The updater could not contact dev.bukkit.org for updating.");
+                Logger.warning("If you have not recently modified your configuration and this is the first time you are seeing this message, the site may be experiencing temporary downtime.");
                 this.result = UpdateResult.FAIL_DBO;
             }
             return null;

@@ -29,8 +29,6 @@ import io.github.alshain01.flags.sector.SectorManager;
 import io.github.alshain01.flags.DataStore.DataStoreType;
 import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
 
-import java.util.logging.Logger;
-
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -56,7 +54,7 @@ public class Flags extends JavaPlugin {
     // Made static to access from enumerations and lower hefty method calls
     private static DataStore dataStore;
     private static Economy economy = null;
-    private static Logger logger;
+    private static java.util.logging.Logger logger;
     private static boolean debugOn = false;
 
     // Made static for use by API
@@ -226,47 +224,10 @@ public class Flags extends JavaPlugin {
             return (apiVersion > CompareVersion
                     || apiVersion == CompareVersion	&& apiBuild >= CompareBuild);
         } catch (NumberFormatException ex) {
-            warn("The API version could not be determined. Some compatible flags may be disabled.");
+            Logger.warning("The API version could not be determined. Some compatible flags may be disabled.");
             return false;
         }
     }
-
-    /**
-     * Sends a debug message through the Flags logger.
-     *
-     * @param message
-     *            The message
-     */
-    public static void debug(String message) {
-        if(debugOn) {
-            logger.info("[DEBUG] " + message);
-        }
-    }
-
-    /**
-     * Sends a warning message through the Flags logger.
-     *
-     * @param message
-     *            The message
-     */
-    public static void warn(String message) { logger.warning(message); }
-
-    /**
-     * Sends a info message through the Flags logger.
-     *
-     * @param message
-     *            The message
-     */
-    public static void log(String message) { logger.info(message); }
-
-    /**
-     * Sends a severe message through the Flags logger.
-     *
-     * @param message
-     *            The message
-     */
-    @SuppressWarnings("unused") // Debug
-    public static void severe(String message) { logger.severe(message); }
 
     /**
      * Gets the status of the border patrol event listener. (i.e

@@ -88,4 +88,7 @@ Flags:
   #
   # Puts the plugin in debug mode.
   #
-  Debug: false
+  Debug:
+    SQL: false
+    Area: false
+    Flag: false

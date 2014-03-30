@@ -105,10 +105,14 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
         return flag;
     }
 
-    @SuppressWarnings("CloneDoesntCallSuperClone") // Constructor clone
     @Override
     public Flag clone() {
-        return new Flag(name, description, def, plugin, player, area, wilderness);
+        try {
+            return (Flag) super.clone();
+        } catch (CloneNotSupportedException ex) {
+
+        }
+        return null;
     }
 
 	/**

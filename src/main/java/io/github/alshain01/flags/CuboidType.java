@@ -345,13 +345,13 @@ public enum CuboidType {
         if(plugins != null && plugins.size() > 0) {
             for(Object o : plugins) {
                 if (pm.isPluginEnabled((String) o)) {
-                    Flags.log(o + " detected. Enabling integrated support.");
+                    Logger.info(o + " detected. Enabling integrated support.");
                     currentCuboidSystem = getByName((String) o);
                     return;
                 }
             }
         }
-        Flags.log("No cuboid system detected. Flags Sectors Enabled.");
+        Logger.info("No cuboid system detected. Flags Sectors Enabled.");
         currentCuboidSystem = CuboidType.FLAGS;
     }
 }
