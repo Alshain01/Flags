@@ -169,10 +169,10 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
     @Override
     public boolean isInherited() {
         if(isArea()) {
-            if(!isSubdivision()) { return Flags.getDataStore().readInheritance(this); }
-            throw new InvalidAreaException();
+            if(isSubdivision()) { return Flags.getDataStore().readInheritance(this); }
+            throw new InvalidSubdivisionException();
         }
-        throw new InvalidSubdivisionException();
+        throw new InvalidAreaException();
     }
 
     @Override
