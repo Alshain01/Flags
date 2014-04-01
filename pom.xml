@@ -62,7 +62,7 @@
 		</dependency>
 	
 		<dependency>
-			<groupId>com.worldcretornica</groupId>
+			<groupId>com.worldcretornica.plotme</groupId>
 			<artifactId>PlotMe</artifactId>
 			<version>0.13b</version>
 			<optional>true</optional>
