@@ -81,7 +81,7 @@ permissions:
     children:
       flags.area.flag.others: true
       flags.area.flag.admin: true
-      flags.area.flag.world: true
+      flags.area.flag.wilderness: true
       flags.area.flag.default: true
       
   flags.area.flag.others:
@@ -96,8 +96,8 @@ permissions:
     children:
       flags.command.flag.set: true
       
-  flags.area.flag.world:
-    description: Grants access to use flag write actions in the world.
+  flags.area.flag.wilderness:
+    description: Grants access to use flag write actions in the wilderness.
     default: op
     children:
       flags.command.flag.set: true
@@ -114,7 +114,7 @@ permissions:
     children:
       flags.area.bundle.others: true
       flags.area.bundle.admin: true
-      flags.area.bundle.world: true
+      flags.area.bundle.wilderness: true
       flags.area.bundle.default: true
       flags.area.bundle.edit: true
       
@@ -130,8 +130,8 @@ permissions:
     children:
       flags.command.bundle.set: true
       
-  flags.area.bundle.world:
-    description: Grants access to use bundle write actions in the world.
+  flags.area.bundle.wilderness:
+    description: Grants access to use bundle write actions in the wilderness.
     default: op
     children:
       flags.command.bundle.set: true
