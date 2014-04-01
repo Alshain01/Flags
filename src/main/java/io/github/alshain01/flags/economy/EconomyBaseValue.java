@@ -40,12 +40,10 @@ public enum EconomyBaseValue {
 	}
 
     public void set() {
-        this.set = true;
         for(EconomyBaseValue v : EconomyBaseValue.values()) {
-            if (v != this) {
-                v.set = false;
-            }
+            v.set = false;
         }
+        this.set = true;
     }
 
     /**

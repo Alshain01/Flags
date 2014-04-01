@@ -32,10 +32,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
+import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
@@ -298,14 +300,22 @@ public enum CuboidType {
         return cuboidName;
     }
 
-    static void loadNames(ConfigurationSection messages) {
+    static void loadNames(Plugin plugin) {
+        File messageFile = new File(plugin.getDataFolder(), "message.yml");
+        if (!messageFile.exists()) {
+            plugin.saveResource("message.yml", false);
+        }
+
+        YamlConfiguration defaults = YamlConfiguration.loadConfiguration(plugin.getResource("message.yml"));
+        YamlConfiguration messages = YamlConfiguration.loadConfiguration(messageFile);
+        messages.addDefaults(defaults);
+
+        for(Message m : io.github.alshain01.flags.Message.values()) {
+            m.set(ChatColor.translateAlternateColorCodes('&', messages.getString(m.toString())));
+        }
+
         for (CuboidType t : CuboidType.values()) {
-            t.cuboidName = messages.getString(t.toString());
-            if(t.cuboidName == null) {
-                t.cuboidName = "ERROR: Invalid message.yml Message. Please contact your server administrator.";
-            } else {
-                t.cuboidName = ChatColor.translateAlternateColorCodes('&', t.cuboidName);
-            }
+            t.cuboidName = ChatColor.translateAlternateColorCodes('&', messages.getString(t.toString()));
         }
     }
 

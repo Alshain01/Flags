@@ -1,10 +1,13 @@
 Flags:
   # Sets the database type, valid types are YAML and MYSQL
   # Url, user, and password must be set for SQL Connections.
+  # AutoSave interval dictates how often (in minutes) a Yaml Database
+  # will be saved to disk. Set to 0 to only save on server reload/stop.
   Database:
     Url: yaml
     User: none
     Password: none
+    AutoSaveInterval: 60
   # This sets the search order for land allocation systems  
   # If you have only one system installed, you do not need to change this.
   #
@@ -89,6 +92,4 @@ Flags:
   # Puts the plugin in debug mode.
   #
   Debug:
-    SQL: false
-    Area: false
-    Flag: false
+    Enabled: false

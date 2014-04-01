@@ -26,6 +26,10 @@ package io.github.alshain01.flags;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
+
+import java.io.File;
 
 /**
  * Class for retrieving localized messages.
@@ -67,15 +71,18 @@ public enum Message {
         this.message = message;
     }
 
-    static void load(ConfigurationSection messages) {
+    static void load(Plugin plugin) {
+        File messageFile = new File(plugin.getDataFolder(), "message.yml");
+        if (!messageFile.exists()) {
+            plugin.saveResource("message.yml", false);
+        }
+
+        YamlConfiguration defaults = YamlConfiguration.loadConfiguration(plugin.getResource("message.yml"));
+        YamlConfiguration messages = YamlConfiguration.loadConfiguration(messageFile);
+        messages.addDefaults(defaults);
+
         for(Message m : io.github.alshain01.flags.Message.values()) {
-            final String message = messages.getString(m.toString());
-            if (message == null) {
-                Logger.warning("ERROR: Invalid message.yml Message for " + m.toString());
-                m.set("ERROR: Invalid message.yml Message. Please contact your server administrator.");
-            } else {
-                m.set(ChatColor.translateAlternateColorCodes('&', message));
-            }
+            m.set(ChatColor.translateAlternateColorCodes('&', messages.getString(m.toString())));
         }
     }
 }

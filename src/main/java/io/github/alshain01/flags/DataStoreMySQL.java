@@ -63,6 +63,7 @@ final class DataStoreMySQL implements DataStore {
         }
     }
 
+    @Override
     public void close() {
         try {
             connection.close();
@@ -498,7 +499,7 @@ final class DataStoreMySQL implements DataStore {
      */
     public void importDB() {
         Logger.info("Importing YAML Database to " + getType().getName());
-        DataStore yaml = new DataStoreYaml((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
+        DataStore yaml = new DataStoreYaml(Bukkit.getPluginManager().getPlugin("Flags"), 0);
 
         convertGenericData(yaml, this);
 
@@ -553,7 +554,7 @@ final class DataStoreMySQL implements DataStore {
     @SuppressWarnings("unused") // Future enhancement
     public void exportDB() {
         Logger.info("Exporting " + getType().getName() + " Database to YAML");
-        DataStore yaml = new DataStoreYaml((Flags)Bukkit.getPluginManager().getPlugin("Flags"));
+        DataStore yaml = new DataStoreYaml(Bukkit.getPluginManager().getPlugin("Flags"), 0);
 
         convertGenericData(this, yaml);
 

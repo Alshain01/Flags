@@ -51,7 +51,8 @@ public interface DataStore {
     enum DataStoreType {
         YAML("yaml", "YAML") {
             public DataStore getDataStore(JavaPlugin plugin) {
-                return new DataStoreYaml(plugin);
+                final int interval =  plugin.getConfig().getInt("Flags.Database.AutoSaveInterval");
+                return new DataStoreYaml(plugin, interval);
             }
         },
         MYSQL("mysql", "MySQL") {
@@ -99,6 +100,8 @@ public interface DataStore {
     public void create(JavaPlugin plugin);
 
     public void reload();
+
+    public void close();
 
     @SuppressWarnings("unused") // Future use
     public DataStoreVersion readVersion();

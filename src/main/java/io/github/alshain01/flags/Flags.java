@@ -80,11 +80,8 @@ public class Flags extends JavaPlugin {
         logger  = this.getLogger();
 
         // Acquire the messages from configuration
-        CustomYML messages = new CustomYML(this, "message.yml");
-        messages.saveDefaultConfig();
-        ConfigurationSection messageConfig = messages.getConfig().getConfigurationSection("Message");
-        Message.load(messageConfig);
-        CuboidType.loadNames(messageConfig);
+        Message.load(this);
+        CuboidType.loadNames(this);
 
         economy = setupEconomy();
         EconomyBaseValue.valueOf(pluginConfig.getString("Economy.BaseValue")).set();
@@ -141,7 +138,7 @@ public class Flags extends JavaPlugin {
             sectorConfig.saveConfig();
         }
 
-        if(sqlData) { ((DataStoreMySQL)dataStore).close(); }
+        dataStore.close();
 
         // Static cleanup
         dataStore = null;
@@ -194,9 +191,7 @@ public class Flags extends JavaPlugin {
         this.reloadConfig();
 
         // Acquire the messages from configuration
-        CustomYML messages = new CustomYML(this, "message.yml");
-        messages.saveDefaultConfig();
-        Message.load(messages.getConfig().getConfigurationSection("Messages"));
+        Message.load(this);
 
         EconomyBaseValue.valueOf(this.getConfig().getString("Flags.Economy.BaseValue")).set();
 
