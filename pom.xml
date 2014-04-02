@@ -10,7 +10,7 @@
     <properties>
         <dependencydir>C:\build_libraries</dependencydir>
         <project.author>Alshain01</project.author>
-        <project.main>io.github.alshain01.flags.Flags</project.main>
+        <project.main>${project.groupId}.${project.name}</project.main>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

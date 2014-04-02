@@ -46,7 +46,7 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
         lesser = getLesserCorner(corner1, corner2);
     }
 
-    Sector(UUID id, Map<String, Object> sector) {
+    public Sector(UUID id, Map<String, Object> sector) {
         this.id = id;
         greater = new SectorLocation((String)sector.get("GreaterCorner"));
         lesser = new SectorLocation((String)sector.get("LesserCorner"));

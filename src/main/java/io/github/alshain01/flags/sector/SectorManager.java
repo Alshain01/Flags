@@ -1,5 +1,6 @@
 package io.github.alshain01.flags.sector;
 
+import io.github.alshain01.flags.DataStore;
 import io.github.alshain01.flags.events.SectorDeleteEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,11 +12,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.*;
 
 final public class SectorManager {
-    private final Map<UUID, Sector> sectors = new HashMap<UUID, Sector>();
+    private final Map<UUID, Sector> sectors;
     private final int defaultDepth;
 
-    public SectorManager(JavaPlugin plugin, ConfigurationSection config, ConfigurationSection sectors) {
+    SectorManager(JavaPlugin plugin, ConfigurationSection config, ConfigurationSection sectors) {
         this.defaultDepth = config.getInt("DefaultDepth");
+        this.sectors = new HashMap<UUID, Sector>();
         ConfigurationSerialization.registerClass(Sector.class);
 
         if(sectors != null) {
@@ -29,11 +31,21 @@ final public class SectorManager {
         plugin.getCommand("sector").setExecutor(new SectorCommand());
     }
 
-    public void write(ConfigurationSection sectorConfig) {
+    public SectorManager(DataStore data, int defaultDepth) {
+        this.defaultDepth = defaultDepth;
+        this.sectors = data.readSectors();
+    }
+
+
+    void write(ConfigurationSection sectorConfig) {
         sectorConfig.set("Sectors", null);
         for(UUID u : sectors.keySet()) {
             sectorConfig.set("Sectors." + u.toString(), sectors.get(u).serialize());
         }
+    }
+
+    public void write(DataStore data) {
+        data.writeSectors(sectors.values());
     }
 
     public void clear() {

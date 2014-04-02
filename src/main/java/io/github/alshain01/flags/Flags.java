@@ -112,8 +112,7 @@ public class Flags extends JavaPlugin {
 
         // Load Sectors
         if(CuboidType.getActive() == CuboidType.FLAGS) {
-            sectors = new SectorManager(this, pluginConfig.getConfigurationSection("Sector"),
-                    new CustomYML(this, "sector.yml").getConfig().getConfigurationSection("Sectors"));
+            sectors = new SectorManager(dataStore, pluginConfig.getConfigurationSection("Sector").getInt("DefaultDepth"));
         }
 
         // Set Command Executors
@@ -134,7 +133,7 @@ public class Flags extends JavaPlugin {
     public void onDisable() {
         if(CuboidType.getActive() == CuboidType.FLAGS) {
             CustomYML sectorConfig = new CustomYML(this, "sector.yml");
-            sectors.write(sectorConfig.getConfig());
+            sectors.write(dataStore);
             sectorConfig.saveConfig();
         }
 

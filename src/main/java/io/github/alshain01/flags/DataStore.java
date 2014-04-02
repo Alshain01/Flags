@@ -27,8 +27,12 @@ package io.github.alshain01.flags;
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.economy.EconomyPurchaseType;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
+import io.github.alshain01.flags.sector.Sector;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public interface DataStore {
@@ -140,6 +144,10 @@ public interface DataStore {
     public boolean readInheritance(Area area);
 
 	public void writeInheritance(Area area, boolean value);
+
+    public Map<UUID, Sector> readSectors();
+
+    public void writeSectors(Collection<Sector> sectors);
 
     public void remove(Area area);
 }

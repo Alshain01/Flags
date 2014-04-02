@@ -29,11 +29,9 @@ import io.github.alshain01.flags.economy.EconomyPurchaseType;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import io.github.alshain01.flags.sector.Sector;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
 import org.bukkit.Bukkit;
@@ -45,6 +43,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.bekvon.bukkit.residence.Residence;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.yaml.snakeyaml.Yaml;
 
 /**
  * Class for managing YAML Database Storage
@@ -55,6 +54,7 @@ final class DataStoreYaml implements DataStore {
     private final static String DEFAULT_FILE = "default.yml";
     private final static String BUNDLE_FILE = "bundle.yml";
     private final static String PRICE_FILE = "price.yml";
+    private final static String SECTOR_FILE = "sector.yml";
 
     private final static String DATABASE_VERSION_PATH = "Default.Database.Version";
     private final static String BUNDLE_PATH = "Bundle";
@@ -63,6 +63,7 @@ final class DataStoreYaml implements DataStore {
     private final static String MESSAGE_PATH = "Message";
     private final static String INHERIT_PATH = "InheritParent";
     private final static String PRICE_PATH = "Price";
+    private final static String SECTOR_PATH = "Sectors";
 
     private final static String DATA_FOOTER = "Data";
 
@@ -435,6 +436,32 @@ final class DataStoreYaml implements DataStore {
         final String path = getAreaPath(area);
         ConfigurationSection inheritConfig = getCreatedSection(getYml(path), path);
         inheritConfig.set(path, value);
+    }
+
+    @Override
+    public Map<UUID, Sector> readSectors() {
+        Map<UUID, Sector> sectors = new HashMap<UUID, Sector>();
+        File file = new File(plugin.getDataFolder(), SECTOR_FILE);
+        if(!file.exists()) { return sectors; }
+        YamlConfiguration sector = YamlConfiguration.loadConfiguration(file);
+        if(!sector.isConfigurationSection(SECTOR_PATH)) { return sectors; }
+        ConfigurationSection sectorConfig = sector.getConfigurationSection(SECTOR_PATH);
+
+        for(String s : sectorConfig.getKeys(false)) {
+            UUID sID = UUID.fromString(s);
+            sectors.put(sID, new Sector(sID, sectorConfig.getConfigurationSection(s).getValues(false)));
+        }
+
+        return sectors;
+    }
+
+    @Override
+    public void writeSectors(Collection<Sector> sectors) {
+        YamlConfiguration sector = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), SECTOR_FILE));
+        ConfigurationSection sectorConfig = getCreatedSection(sector, SECTOR_PATH);
+        for(Sector s : sectors) {
+            sectorConfig.set(s.getID().toString(), s.serialize());
+        }
     }
 
 	@Override
