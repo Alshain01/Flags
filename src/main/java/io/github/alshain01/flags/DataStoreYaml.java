@@ -43,7 +43,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.bekvon.bukkit.residence.Residence;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import org.yaml.snakeyaml.Yaml;
 
 /**
  * Class for managing YAML Database Storage
@@ -79,6 +78,9 @@ final class DataStoreYaml implements DataStore {
 	private YamlConfiguration wilderness;
 	private YamlConfiguration bundle;
 	private YamlConfiguration price;
+    private YamlConfiguration sectors;
+
+    private boolean saveData = false;
 
     /*
      * Constructor
@@ -138,6 +140,10 @@ final class DataStoreYaml implements DataStore {
         }
         price = YamlConfiguration.loadConfiguration(priceFile);
 
+        if(CuboidType.getActive() == CuboidType.FLAGS) {
+            sectors = YamlConfiguration.loadConfiguration(new File(dataFolder, SECTOR_FILE));
+        }
+
         // Remove old auto-saves
         if(as != null ) {
             as.cancel();
@@ -151,12 +157,17 @@ final class DataStoreYaml implements DataStore {
     }
 
     public void save() {
+        if(!saveData) { return; }
         try {
             wilderness.save(new File(dataFolder, WILDERNESS_FILE));
             def.save(new File(dataFolder, DEFAULT_FILE));
             data.save(new File(dataFolder, DATA_FILE));
             bundle.save(new File(dataFolder, BUNDLE_FILE));
             price.save(new File(dataFolder, PRICE_FILE));
+            if(CuboidType.getActive() == CuboidType.FLAGS) {
+                sectors.save(new File(dataFolder, SECTOR_FILE));
+            }
+            saveData = false;
         } catch (IOException ex) {
             Logger.error("Faled to write to data files. " + ex.getMessage());
         }
@@ -273,6 +284,7 @@ final class DataStoreYaml implements DataStore {
             }
             cYml.set("World", null);
             writeVersion(new DataStoreVersion(1, 4, 2));
+            saveData = true;
         }
     }
 
@@ -314,6 +326,7 @@ final class DataStoreYaml implements DataStore {
         }
 
         bundleConfig.set(name, list);
+        saveData = true;
     }
 
 	@Override
@@ -329,6 +342,7 @@ final class DataStoreYaml implements DataStore {
         final String path = getAreaPath(area) + "." + flag.getName();
         final ConfigurationSection flagConfig = getCreatedSection(getYml(path), path);
         flagConfig.set(VALUE_PATH, value);
+        saveData = true;
     }
 
 	@Override
@@ -343,6 +357,7 @@ final class DataStoreYaml implements DataStore {
         final String path = getAreaPath(area) + "." + flag.getName();
         final ConfigurationSection dataConfig = getCreatedSection(getYml(path), path);
         dataConfig.set(MESSAGE_PATH, message);
+        saveData = true;
     }
 
 	@Override
@@ -358,6 +373,7 @@ final class DataStoreYaml implements DataStore {
         final String path = PRICE_PATH + "." + type.toString();
         final ConfigurationSection priceConfig = getCreatedSection(price, path);
         priceConfig.set(flag.getName(), newPrice);
+        saveData = true;
     }
 
 	@Override
@@ -414,6 +430,7 @@ final class DataStoreYaml implements DataStore {
         }
 
         trustConfig.set(path, list);
+        saveData = true;
     }
 
     @Override
@@ -436,6 +453,7 @@ final class DataStoreYaml implements DataStore {
         final String path = getAreaPath(area);
         ConfigurationSection inheritConfig = getCreatedSection(getYml(path), path);
         inheritConfig.set(path, value);
+        saveData = true;
     }
 
     @Override
@@ -456,12 +474,17 @@ final class DataStoreYaml implements DataStore {
     }
 
     @Override
-    public void writeSectors(Collection<Sector> sectors) {
-        YamlConfiguration sector = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), SECTOR_FILE));
-        ConfigurationSection sectorConfig = getCreatedSection(sector, SECTOR_PATH);
-        for(Sector s : sectors) {
-            sectorConfig.set(s.getID().toString(), s.serialize());
-        }
+    public void writeSector(Sector sector) {
+        ConfigurationSection sectorConfig = getCreatedSection(sectors, SECTOR_PATH);
+        sectorConfig.set(sector.getID().toString(), sector.serialize());
+        saveData = true;
+    }
+
+    @Override
+    public void deleteSector(UUID sID) {
+        ConfigurationSection sectorConfig = getCreatedSection(sectors, SECTOR_PATH);
+        sectorConfig.set(sID.toString(), null);
+        saveData = true;
     }
 
 	@Override

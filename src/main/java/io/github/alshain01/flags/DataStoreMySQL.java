@@ -26,14 +26,13 @@ package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.area.*;
 import io.github.alshain01.flags.economy.EconomyPurchaseType;
+import io.github.alshain01.flags.sector.Sector;
+import io.github.alshain01.flags.sector.SectorLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.*;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class for handling SQL Database Storage
@@ -89,7 +88,7 @@ final class DataStoreMySQL implements DataStore {
             executeStatement("CREATE TABLE IF NOT EXISTS WildernessTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_WorldFlag PRIMARY KEY (WorldName, FlagName, Trustee));");
             executeStatement("CREATE TABLE IF NOT EXISTS DefaultFlags (WorldName VARCHAR(50), FlagName VARCHAR(25), FlagValue BOOLEAN, FlagMessage VARCHAR(255), CONSTRAINT pk_DefaultFlag PRIMARY KEY (WorldName, FlagName));");
             executeStatement("CREATE TABLE IF NOT EXISTS DefaultTrust (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_DefaultTrust PRIMARY KEY (WorldName, FlagName, Trustee));");
-            executeStatement("CREATE TABLE IF NOT EXISTS Sector (WorldName VARCHAR(50), FlagName VARCHAR(25), Trustee VARCHAR(50), CONSTRAINT pk_DefaultTrust PRIMARY KEY (WorldName, FlagName, Trustee));");
+            executeStatement("CREATE TABLE IF NOT EXISTS Sectors (Id CHAR(36), ParentId CHAR(36), GreaterCorner VARCHAR(50), LesserCorner VARCHAR(50), INTEGER Depth, PRIMARY KEY (Id));");
         }
     }
 
@@ -143,8 +142,13 @@ final class DataStoreMySQL implements DataStore {
     @Override
     public void update(JavaPlugin plugin) {
         final DataStoreVersion ver = readVersion();
-        if (ver.getMajor() <= 1 && ver.getMinor() <= 4 && ver.getBuild() < 2) {
-            writeVersion(new DataStoreVersion(1,4,2)); // Update world table to wilderness
+        if(ver.getMajor() <= 1 && ver.getMinor() <= 4 && ver.getBuild() < 3) {
+            if (ver.getMajor() <= 1 && ver.getMinor() <= 4 && ver.getBuild() < 2) {
+                writeVersion(new DataStoreVersion(1, 4, 2)); // Update world table to wilderness
+            }
+            executeStatement("CREATE TABLE IF NOT EXISTS Sectors (Id CHAR(36), ParentId CHAR(36), " +
+                    "GreaterCorner VARCHAR(50), LesserCorner VARCHAR(50), INTEGER Depth, PRIMARY KEY (Id));");
+            writeVersion(new DataStoreVersion(1, 4, 3));
         }
     }
 
@@ -483,6 +487,52 @@ final class DataStoreMySQL implements DataStore {
 
         executeStatement(areaBuilder(insertString, areaType, worldName, systemID, systemSubID)
                 .replaceAll("%value%", String.valueOf(value)));
+    }
+
+    public Map<UUID, Sector> readSectors() {
+        ResultSet results = executeQuery("SELECT * FROM Sectors;");
+        Map<UUID, Sector> sectors = new HashMap<UUID, Sector>();
+        try {
+            while(results.next()) {
+               UUID id = UUID.fromString(results.getString("Id"));
+               UUID parent = null;
+               if(!results.getString("ParentId").equals("null")) {
+                   parent= UUID.fromString(results.getString("ParentId"));
+               }
+
+                SectorLocation greater = new SectorLocation(results.getString("GreaterCorner"));
+                SectorLocation lesser = new SectorLocation(results.getString("LesserCorner"));
+                int depth = results.getInt("Depth");
+
+               sectors.put(id, new Sector(id, greater, lesser, depth, parent));
+            }
+        } catch (SQLException ex) {
+            Logger.error("Failed to read sectors from MySQL.");
+        }
+        return sectors;
+    }
+
+    @Override
+    public void writeSector(Sector sector) {
+        String insertString = "INSERT INTO Sectors (Id, ParentId, GreaterCorner, LesserCorner, Depth) "
+                + "VALUES ('%id%', '%parent%', '%greater%', '%lesser%', %depth%) " +
+                "ON DUPLICATE KEY UPDATE GreaterCorner=%greater%, LesserCorner=%lesser%, Depth=%depth%;";
+
+        insertString = insertString.replace("%id%", sector.getID().toString()).replace("%depth%", String.valueOf(sector.getDepth()));
+        insertString = insertString.replace("%greater%", sector.getGreaterCorner().toString()).replace("%lesser%", sector.getLesserCorner().toString());
+        if(sector.getParentID() != null) {
+            insertString = insertString.replace("%parent%", sector.getParentID().toString());
+        } else {
+            insertString = insertString.replace("%parent%", "null");
+        }
+
+        executeStatement(insertString);
+    }
+
+    @Override
+    public void deleteSector(UUID sID) {
+        String deleteString = "DELETE FROM Sectors WHERE Id='%id%';";
+        executeStatement(deleteString.replace("%id%", sID.toString()));
     }
 
     @Override

@@ -4,48 +4,18 @@ import io.github.alshain01.flags.DataStore;
 import io.github.alshain01.flags.events.SectorDeleteEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
 final public class SectorManager {
     private final Map<UUID, Sector> sectors;
     private final int defaultDepth;
-
-    SectorManager(JavaPlugin plugin, ConfigurationSection config, ConfigurationSection sectors) {
-        this.defaultDepth = config.getInt("DefaultDepth");
-        this.sectors = new HashMap<UUID, Sector>();
-        ConfigurationSerialization.registerClass(Sector.class);
-
-        if(sectors != null) {
-            for (String s : sectors.getKeys(false)) {
-                UUID id = UUID.fromString(s);
-                this.sectors.put(id, new Sector(id, sectors.getConfigurationSection(s).getValues(false)));
-            }
-        }
-
-        plugin.getServer().getPluginManager().registerEvents(new SectorListener(Material.getMaterial(config.getString("Tool"))), plugin);
-        plugin.getCommand("sector").setExecutor(new SectorCommand());
-    }
+    private final DataStore dataStore;
 
     public SectorManager(DataStore data, int defaultDepth) {
         this.defaultDepth = defaultDepth;
         this.sectors = data.readSectors();
-    }
-
-
-    void write(ConfigurationSection sectorConfig) {
-        sectorConfig.set("Sectors", null);
-        for(UUID u : sectors.keySet()) {
-            sectorConfig.set("Sectors." + u.toString(), sectors.get(u).serialize());
-        }
-    }
-
-    public void write(DataStore data) {
-        data.writeSectors(sectors.values());
+        this.dataStore = data;
     }
 
     public void clear() {
@@ -63,6 +33,7 @@ final public class SectorManager {
 
         Sector s = new Sector(newID, corner1, corner2, defaultDepth);
         sectors.put(s.getID(), s);
+        dataStore.writeSector(s);
         return s;
     }
 
@@ -73,22 +44,10 @@ final public class SectorManager {
         } while (sectors.containsKey(newID));
         Sector s = new Sector(newID, corner1, corner2, defaultDepth, parent);
         sectors.put(s.getID(), s);
+        dataStore.writeSector(s);
         return s;
     }
 
-/*
-    Sector add(Location corner1, Location corner2, int depth) {
-        Sector s = new Sector(corner1, corner2, depth);
-        sectors.put(s.getID(), s);
-        return s;
-    }
-
-    Sector add(Location corner1, Location corner2, int depth, UUID parent) {
-        Sector s = new Sector(corner1, corner2, depth, parent);
-        sectors.put(s.getID(), s);
-        return s;
-    }
-*/
     @SuppressWarnings("WeakerAccess") // API
     public void delete(UUID id) {
         Sector sector = get(id);
@@ -102,6 +61,7 @@ final public class SectorManager {
             }
         }
         Bukkit.getPluginManager().callEvent(new SectorDeleteEvent(sector));
+        dataStore.deleteSector(id);
         sectors.remove(id);
     }
 

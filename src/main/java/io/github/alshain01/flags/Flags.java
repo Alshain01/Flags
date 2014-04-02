@@ -131,12 +131,6 @@ public class Flags extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        if(CuboidType.getActive() == CuboidType.FLAGS) {
-            CustomYML sectorConfig = new CustomYML(this, "sector.yml");
-            sectors.write(dataStore);
-            sectorConfig.saveConfig();
-        }
-
         dataStore.close();
 
         // Static cleanup

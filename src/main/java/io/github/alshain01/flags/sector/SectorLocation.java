@@ -17,7 +17,7 @@ final public class SectorLocation {
         this.world = world;
     }
 
-    SectorLocation(String location) {
+    public SectorLocation(String location) {
         String[] arg = location.split(",");
 
         world = UUID.fromString(arg[0]);

@@ -58,7 +58,7 @@ abstract class Command {
                 ((CommandSender)p).sendMessage(((a instanceof Wilderness || a instanceof Default)
                         ? Message.WildernessPermError.get() : Message.AreaPermError.get())
                         .replace("{AreaType}", a.getCuboidType().getCuboidName())
-                        .replace("{OwnerName}", a.getOwners().toArray()[0].toString())
+                        .replace("{OwnerName}", a.getOwnerNames().toArray()[0].toString())
                         .replace("{Type}", Message.Flag.get().toLowerCase()));
             }
             return true;
@@ -102,7 +102,7 @@ abstract class Command {
                 ((CommandSender)p).sendMessage(((area instanceof Wilderness || area instanceof Default)
                         ? Message.WildernessPermError.get() : Message.AreaPermError.get())
                         .replace("{AreaType}", area.getCuboidType().getCuboidName())
-                        .replace("{OwnerName}", area.getOwners().toArray()[0].toString())
+                        .replace("{OwnerName}", area.getOwnerNames().toArray()[0].toString())
                         .replace("{Type}", Message.Bundle.get().toLowerCase()));
             }
             return true;

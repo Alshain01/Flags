@@ -27,7 +27,6 @@ package io.github.alshain01.flags;
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.economy.EconomyPurchaseType;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -147,7 +146,9 @@ public interface DataStore {
 
     public Map<UUID, Sector> readSectors();
 
-    public void writeSectors(Collection<Sector> sectors);
+    public void writeSector(Sector sector);
+
+    public void deleteSector(UUID sID);
 
     public void remove(Area area);
 }
