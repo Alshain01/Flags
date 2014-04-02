@@ -52,6 +52,7 @@ Message:
   EconomyError: '&cThere is no economy installed on this server.'
   SQLDatabaseError: '&cThis action can only be performed on a SQL database.'
   SubdivisionSupportError: '&c{System} does not support subdivisions.'
+  PlayerNotFoundError: '&cUnable to find online player(s): {Player}.'
   
   # Command Messages
   GetFlag: '&bThe {AreaType} flag &e{Flag} &bis {Value}.'

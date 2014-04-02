@@ -39,7 +39,7 @@ public enum Message {
 	SetTrustError, RemoveTrustError, RemoveAllFlagsError, SetMultipleFlagsError,
 	AddBundleError, FlagPermError, AreaPermError, WildernessPermError, NoAreaError,
 	EraseBundleError, BundlePermError, PricePermError, SubdivisionError, NoSystemError,
-	PlayerFlagError, EconomyError, SQLDatabaseError, SubdivisionSupportError,
+	PlayerFlagError, EconomyError, SQLDatabaseError, SubdivisionSupportError, PlayerNotFoundError,
 	// Commands
 	SetFlag, GetFlag, RemoveFlag, SetTrust, GetTrust, RemoveTrust,
 	GetAllFlags, RemoveAllFlags, GetBundle, SetBundle, RemoveBundle, UpdateBundle,

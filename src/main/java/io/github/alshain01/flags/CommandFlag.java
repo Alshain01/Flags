@@ -5,6 +5,7 @@ import io.github.alshain01.flags.area.Default;
 import io.github.alshain01.flags.area.Subdivision;
 import io.github.alshain01.flags.economy.EconomyPurchaseType;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandExecutor;
@@ -399,16 +400,19 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         player.sendMessage(message.toString());
     }
 
-    private static boolean trust(Player player, CommandLocation location, Flag flag, Set<String> playerList) {
-        if(playerList.size() == 0) { return false; }
+    private static boolean trust(Player player, CommandLocation location, Flag flag, Set<String> playerNames) {
+        if(playerNames.size() == 0) { return false; }
 
         Area area = getArea(player, location);
         if(Validate.notPlayerFlag(player, flag)
                 || Validate.notPermittedFlag(player, area, flag, flag.getName())) { return true; }
 
+        Set<Player> players = getPlayerList(player, playerNames);
+        if(players.size() == 0) { return true; }
+
         boolean success = true;
-        for(String p : playerList) {
-            if(!area.setTrust(flag, p, true, player)) {	success = false; }
+        for(Player p : players) {
+            if(!area.setTrust(flag, p.getName(), true, player)) {	success = false; }
         }
 
         player.sendMessage((success ? Message.SetTrust.get() : Message.SetTrustError.get())
@@ -437,6 +441,37 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         player.sendMessage((success ? Message.RemoveTrust.get() : Message.RemoveTrustError.get())
                 .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
                 .replace("{Flag}", flag.getName()));
+    }
+
+    private static Set<Player> getPlayerList(Player player, Set<String> playerNames) {
+        // Convert the strings to players
+        Set<String> failedPlayers = new HashSet<String>();
+        Set<Player> players = new HashSet<Player>();
+        for(String name : playerNames) {
+            Player p = Bukkit.getPlayer(name);
+            if(p != null) {
+                players.add(p);
+            } else {
+                failedPlayers.add(name);
+            }
+        }
+
+        // Send a message letting them know there was an issue
+        if(failedPlayers.size() > 0) {
+            boolean first = true;
+            StringBuilder failedList = new StringBuilder();
+            for(String name : failedPlayers) {
+                if(!first) {
+                    failedList.append(", ");
+                } else {
+                    first = false;
+                }
+                failedList.append(name);
+            }
+
+            player.sendMessage(Message.PlayerNotFoundError.get().replace("{Player}", failedList.toString()));
+        }
+        return players;
     }
 
     /*
