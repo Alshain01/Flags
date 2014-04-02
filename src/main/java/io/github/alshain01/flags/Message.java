@@ -29,31 +29,34 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
+import java.util.logging.*;
 
 /**
  * Class for retrieving localized messages.
  */
 public enum Message {
+    // General Translations
+    ValueColorTrue, ValueColorFalse, Flag, Bundle, Command, Index, Error,
+
 	// Errors
-	NoConsoleError, InvalidFlagError, InvalidTrustError, NoFlagFound,
-	SetTrustError, RemoveTrustError, RemoveAllFlagsError, SetMultipleFlagsError,
-	AddBundleError, FlagPermError, AreaPermError, WildernessPermError, NoAreaError,
-	EraseBundleError, BundlePermError, PricePermError, SubdivisionError, NoSystemError,
-	PlayerFlagError, EconomyError, SQLDatabaseError, SubdivisionSupportError, PlayerNotFoundError,
+	NoConsoleError, SetTrustError, RemoveTrustError, SetMultipleFlagsError, RemoveAllFlagsError, EraseBundleError,
+    AddBundleError, BundlePermError, PricePermError, SubdivisionError, NoFlagFound, NoAreaError,
+    InvalidFlagError, PlayerFlagError, InvalidTrustError, FlagPermError, AreaPermError, WildernessPermError,
+	EconomyError, SQLDatabaseError, SubdivisionSupportError, PlayerNotFoundError,
+
 	// Commands
-	SetFlag, GetFlag, RemoveFlag, SetTrust, GetTrust, RemoveTrust,
-	GetAllFlags, RemoveAllFlags, GetBundle, SetBundle, RemoveBundle, UpdateBundle,
-	EraseBundle, SetInherited,
-	// Help
-	HelpHeader, FlagHelpHeader, HelpTopic, HelpInfo,
-	GroupHelpDescription, GroupHelpInfo, FlagDescription,
-	// General Translations
-	Flag, Bundle, Message, ValueColorTrue, ValueColorFalse, Index, Error, Command,
-	// Economy
-	SetPrice, GetPrice, LowFunds, Withdraw, Deposit,
+    GetFlag, GetAllFlags, SetFlag, RemoveFlag, RemoveAllFlags, GetTrust, SetTrust, RemoveTrust,
+    SetInherited, GetBundle, SetBundle, RemoveBundle, UpdateBundle, EraseBundle,
+
+    // Economy
+    SetPrice, GetPrice, LowFunds, Withdraw, Deposit,
+
     // Sector
-    DeleteSector, NoSectorError, DeleteAllSectors, SectorOverlapError,
-    CancelCreateSector, SectorCreated, SectorStarted, SubsectorCreated;
+    DeleteSector, DeleteAllSectors, SectorOverlapError, CancelCreateSector,
+    SectorCreated, SectorStarted, NoSectorError, SubsectorCreated,
+
+    // Help
+    HelpHeader, FlagHelpHeader, FlagDescription, HelpInfo, GroupHelpInfo, HelpTopic, GroupHelpDescription;
 
     String message;
 
@@ -78,10 +81,14 @@ public enum Message {
 
         YamlConfiguration defaults = YamlConfiguration.loadConfiguration(plugin.getResource("message.yml"));
         YamlConfiguration messages = YamlConfiguration.loadConfiguration(messageFile);
-        messages.addDefaults(defaults);
+        messages.setDefaults(defaults);
 
         for(Message m : io.github.alshain01.flags.Message.values()) {
-            m.set(ChatColor.translateAlternateColorCodes('&', messages.getString(m.toString())));
+            try {
+                m.set(ChatColor.translateAlternateColorCodes('&', messages.getString(m.toString())));
+            } catch (NullPointerException ex) {
+                Logger.error("Failed to load message " + m.toString());
+            }
         }
     }
 }

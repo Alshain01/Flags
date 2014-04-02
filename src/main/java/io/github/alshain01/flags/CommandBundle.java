@@ -94,12 +94,6 @@ final class CommandBundle extends Command implements CommandExecutor {
                 sender.sendMessage(Message.NoConsoleError.get());
                 return true;
             }
-
-            // Make sure we can set flags at that location
-            if (CuboidType.getActive() == CuboidType.WILDERNESS && (location == CommandLocation.AREA || location == CommandLocation.DEFAULT)) {
-                sender.sendMessage(Message.NoSystemError.get());
-                return true;
-            }
         }
 
         if(command.requiresBundle != null) {

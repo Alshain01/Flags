@@ -439,7 +439,9 @@ final class DataStoreYaml implements DataStore {
             return true;
         }
 
-        final String path = getAreaPath(area);
+        String path = area.getCuboidType().toString() + "."
+                + area.getWorld().getName()  +"." + ((Subdivision) area).getSystemSubID();
+
         if(!getYml(path).isConfigurationSection(path)) { return true; }
         ConfigurationSection inheritConfig = getYml(path).getConfigurationSection(path);
         return !inheritConfig.isSet(INHERIT_PATH) || inheritConfig.getBoolean(INHERIT_PATH);
@@ -450,7 +452,10 @@ final class DataStoreYaml implements DataStore {
         if (!(area instanceof Subdivision) || !((Subdivision) area).isSubdivision()) {
             return;
         }
-        final String path = getAreaPath(area);
+
+        String path = area.getCuboidType().toString() + "."
+                + area.getWorld().getName()  +"." + ((Subdivision) area).getSystemSubID();
+
         ConfigurationSection inheritConfig = getCreatedSection(getYml(path), path);
         inheritConfig.set(path, value);
         saveData = true;

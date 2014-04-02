@@ -307,14 +307,18 @@ public enum CuboidType {
 
         YamlConfiguration defaults = YamlConfiguration.loadConfiguration(plugin.getResource("message.yml"));
         YamlConfiguration messages = YamlConfiguration.loadConfiguration(messageFile);
-        messages.addDefaults(defaults);
+        messages.setDefaults(defaults);
 
         for(Message m : io.github.alshain01.flags.Message.values()) {
             m.set(ChatColor.translateAlternateColorCodes('&', messages.getString(m.toString())));
         }
 
         for (CuboidType t : CuboidType.values()) {
-            t.cuboidName = ChatColor.translateAlternateColorCodes('&', messages.getString(t.toString()));
+            try {
+                t.cuboidName = ChatColor.translateAlternateColorCodes('&', messages.getString(t.toString()));
+            } catch (NullPointerException ex) {
+                Logger.error("Failed to load message " + t.toString());
+            }
         }
     }
 

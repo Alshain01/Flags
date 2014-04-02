@@ -127,12 +127,6 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
                 sender.sendMessage(command.getHelp());
                 return true;
             }
-
-            // Make sure we can set flags at that location
-            if (CuboidType.getActive() == CuboidType.WILDERNESS && (location == CommandLocation.AREA || location == CommandLocation.DEFAULT)) {
-                sender.sendMessage(Message.NoSystemError.get());
-                return true;
-            }
         }
 
         // Location based commands require the player to be in the world
