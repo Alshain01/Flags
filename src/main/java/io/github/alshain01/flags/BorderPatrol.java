@@ -31,6 +31,7 @@ import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import io.github.alshain01.flags.events.PlayerChangedUniqueAreaEvent;
 import org.bukkit.Bukkit;
@@ -75,13 +76,13 @@ final class BorderPatrol implements Listener {
 		timeDivisor = tDivisor;
 
         for(Player p : Bukkit.getServer().getOnlinePlayers()) {
-            moveStore.put(p.getName(), new PreviousMove(p));
+            moveStore.put(p.getUniqueId(), new PreviousMove(p));
         }
 	}
 	
 	private final int eventsDivisor;
 	private final int timeDivisor;
-	private final Map<String, PreviousMove> moveStore = new HashMap<String, PreviousMove>();
+	private final Map<UUID, PreviousMove> moveStore = new HashMap<UUID, PreviousMove>();
 	private int eventCalls = 0;
 
 	/*
@@ -89,7 +90,7 @@ final class BorderPatrol implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	private void onPlayerJoin(PlayerJoinEvent event) {
-        moveStore.put(event.getPlayer().getName(), new PreviousMove(event.getPlayer()));
+        moveStore.put(event.getPlayer().getUniqueId(), new PreviousMove(event.getPlayer()));
 	}
 
 	/*
@@ -97,8 +98,8 @@ final class BorderPatrol implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	private void onPlayerQuit(PlayerQuitEvent event) {
-		if (moveStore.containsKey(event.getPlayer().getName())) {
-			moveStore.remove(event.getPlayer().getName());
+		if (moveStore.containsKey(event.getPlayer().getUniqueId())) {
+			moveStore.remove(event.getPlayer().getUniqueId());
         }
 	}
 
@@ -117,7 +118,7 @@ final class BorderPatrol implements Listener {
 		boolean process;
 
         // Use the old player data
-        playerPrevMove = moveStore.get(e.getPlayer().getName());
+        playerPrevMove = moveStore.get(e.getPlayer().getUniqueId());
 
         // Check to see if we have processed this player recently.
         process = new Date().getTime() - playerPrevMove.time > timeDivisor;
