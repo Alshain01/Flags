@@ -150,12 +150,12 @@ final public class PreciousStonesField extends Area implements Subdivision, Remo
     public CuboidType getCuboidType() { return CuboidType.PRECIOUSSTONES; }
 
     @Override
-    public Set<String> getOwners() {
+    public Set<String> getOwnerNames() {
         if (!isArea()) { throw new InvalidAreaException(); }
         return new HashSet<String>(Arrays.asList(field.getOwner()));
     }
 
-	@Override
+    @Override
 	public World getWorld() {
         if (!isArea()) { throw new InvalidAreaException(); }
         return Bukkit.getWorld(field.getWorld());

@@ -110,9 +110,8 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
         return CuboidType.FACTOID;
     }
 
-
     @Override
-    public Set<String> getOwners() {
+    public Set<String> getOwnerNames() {
         if(isArea()) {
             String owner = null;
             if(land.getOwner().getContainerType() == PlayerContainerType.PLAYER) {

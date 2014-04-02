@@ -122,7 +122,7 @@ final public class WorldGuardRegion extends Area implements Removable {
     }
 
     @Override
-    public Set<String> getOwners() {
+    public Set<String> getOwnerNames() {
         if(!isArea()) { throw new InvalidAreaException(); }
         return region.getOwners().getPlayers();
     }

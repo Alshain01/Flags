@@ -114,7 +114,7 @@ final public class FactionsTerritory extends Area implements Removable {
     }
 
 	@Override
-	public Set<String> getOwners() {
+	public Set<String> getOwnerNames() {
         if(!isArea()) { throw new InvalidAreaException(); }
         return new HashSet<String>(Arrays.asList(getFaction().getLeader().getName()));
     }

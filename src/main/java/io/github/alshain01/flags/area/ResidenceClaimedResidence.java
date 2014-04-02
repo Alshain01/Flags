@@ -106,7 +106,7 @@ final public class ResidenceClaimedResidence extends Area implements Removable, 
     }
 
 	@Override
-	public Set<String> getOwners() {
+	public Set<String> getOwnerNames() {
         if (!isArea()) { throw new InvalidAreaException(); }
         return new HashSet<String>(Arrays.asList(residence.getOwner()));
     }

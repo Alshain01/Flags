@@ -98,7 +98,7 @@ final public class RegiosRegion extends Area implements Removable{
     public Region getRegion() { return region; }
 
 	@Override
-	public Set<String> getOwners() {
+	public Set<String> getOwnerNames() {
         if (!isArea()) { throw new InvalidAreaException(); }
         return new HashSet<String>(Arrays.asList(region.getOwner()));
     }

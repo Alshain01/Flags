@@ -107,8 +107,8 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
         return CuboidType.GRIEF_PREVENTION;
     }
 
-	@Override
-	public Set<String> getOwners() {
+    @Override
+    public Set<String> getOwnerNames() {
         if(!isArea()) { throw new InvalidAreaException(); }
         return new HashSet<String>(Arrays.asList(claim.getOwnerName()));
     }

@@ -96,7 +96,7 @@ public class Wilderness extends Area {
     public CuboidType getCuboidType() { return CuboidType.WILDERNESS; }
 
     @Override
-    public Set<String> getOwners() {
+    public Set<String> getOwnerNames() {
         if(!isArea()) { throw new InvalidAreaException(); }
         return new HashSet<String>(Arrays.asList("wilderness"));
     }

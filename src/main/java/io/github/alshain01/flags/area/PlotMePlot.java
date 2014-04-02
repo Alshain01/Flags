@@ -102,8 +102,8 @@ final public class PlotMePlot extends Area implements Removable {
     @Override
     public CuboidType getCuboidType() { return CuboidType.PLOTME; }
 
-	@Override
-	public Set<String> getOwners() {
+    @Override
+    public Set<String> getOwnerNames() {
         if (!isArea()) { throw new InvalidAreaException(); }
         return new HashSet<String>(Arrays.asList(plot.owner));
     }

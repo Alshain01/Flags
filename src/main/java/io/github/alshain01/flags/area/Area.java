@@ -85,8 +85,21 @@ public abstract class Area implements Comparable<Area> {
      *
      * @return the player name of the area owner.
      * @throws InvalidAreaException
+     * @deprecated Use getOwnerNames() instead.  Future UUID support
      */
-    public abstract Set<String> getOwners();
+    @Deprecated
+    public Set<String> getOwners() {
+        return getOwnerNames();
+    }
+
+    /**
+     * Gets a set of owner names for the area. On many systems, there will only be
+     * one.
+     *
+     * @return the player name of the area owner.
+     * @throws InvalidAreaException
+     */
+    public abstract Set<String> getOwnerNames();
 
     /**
      * Gets the world for the area.
@@ -251,7 +264,7 @@ public abstract class Area implements Comparable<Area> {
 		if (parse) {
 			message = message.replaceAll("\\{AreaType\\}",
 				    getCuboidType().getCuboidName().toLowerCase()).replaceAll("\\{Owner\\}",
-					getOwners().toArray()[0].toString());
+					getOwnerNames().toArray()[0].toString());
 			message = ChatColor.translateAlternateColorCodes('&', message);
 		}
 		return message;
@@ -434,7 +447,7 @@ public abstract class Area implements Comparable<Area> {
         Validate.notNull(flag);
         Validate.notNull(player);
 
-        if (getOwners().contains(player.getName().toLowerCase())) { return true; }
+        if (getOwnerNames().contains(player.getName().toLowerCase())) { return true; }
 
         Set<String> tl = getTrustList(flag);
         if(tl.contains(player.getName().toLowerCase())) {
@@ -463,7 +476,7 @@ public abstract class Area implements Comparable<Area> {
         Validate.notNull(p);
 
         if (p instanceof HumanEntity
-                && getOwners().contains(((HumanEntity) p).getName())) {
+                && getOwnerNames().contains(((HumanEntity) p).getName())) {
             return p.hasPermission("flags.command.flag.set");
         }
 
@@ -486,7 +499,7 @@ public abstract class Area implements Comparable<Area> {
         Validate.notNull(p);
 
 		if (p instanceof HumanEntity
-				&& getOwners().contains(((HumanEntity) p).getName())) {
+				&& getOwnerNames().contains(((HumanEntity) p).getName())) {
 			return p.hasPermission("flags.command.bundle.set");
 		}
 
