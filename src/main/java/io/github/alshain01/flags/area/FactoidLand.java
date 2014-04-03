@@ -104,34 +104,32 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
     }
 
     @Override
+    public CuboidType getCuboidType() {
+        return CuboidType.FACTOID;
+    }
+
+    @Override
     public UUID getUniqueId() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return land.getUUID();
+        if(isArea()) {
+            return land.getUUID();
+        }
+        throw new InvalidAreaException();
     }
 
     @Override
     public String getId() {
-        if(isArea()) { land.getUUID().toString(); }
+        if(isArea()) {
+            return land.getUUID().toString();
+        }
         throw new InvalidAreaException();
     }
 
     @Override
-    @Deprecated
-    public String getSystemID() {
-        if(isArea()) { return land.getAncestor(land.getGenealogy()).getUUID().toString(); }
+    public String getName() {
+        if(isArea()) {
+            return land.getName();
+        }
         throw new InvalidAreaException();
-    }
-
-    @SuppressWarnings("deprecation")
-    @Deprecated
-    @Override
-    public System getSystemType() {
-        return System.FACTOID;
-    }
-
-    @Override
-    public CuboidType getCuboidType() {
-        return CuboidType.FACTOID;
     }
 
     @Override
@@ -147,33 +145,23 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
     }
 
     @Override
-    public String getName() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return land.getName();
-    }
-
-    @Override
     public org.bukkit.World getWorld() {
-        if(isArea()) { return land.getWorld(); }
-        throw new InvalidAreaException();
-    }
-
-    @Override
-    public boolean isArea() { return land != null; }
-
-    @Override
-    @Deprecated
-    public String getSystemSubID() {
         if(isArea()) {
-            if(isSubdivision()) { return land.getUUID().toString(); }
-            throw new InvalidSubdivisionException();
+            return land.getWorld();
         }
         throw new InvalidAreaException();
     }
 
     @Override
+    public boolean isArea() {
+        return land != null;
+    }
+
+    @Override
     public boolean isSubdivision() {
-        if(isArea()) { return land.getParent() != null; }
+        if(isArea()) {
+            return land.getParent() != null;
+        }
         throw new InvalidAreaException();
     }
 
@@ -181,7 +169,9 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
     public boolean isParent(Area area) {
         Validate.notNull(area);
         if(isArea()) {
-            if(isSubdivision()) { return area instanceof FactoidLand && land.getParent() == ((FactoidLand)area).getLand(); }
+            if(isSubdivision()) {
+                return area instanceof FactoidLand && land.getParent() == ((FactoidLand)area).getLand();
+            }
             throw new InvalidSubdivisionException();
         }
         throw new InvalidAreaException();
@@ -201,7 +191,9 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
     @Override
     public boolean isInherited() {
         if(isArea()) {
-            if(isSubdivision()) { return Flags.getDataStore().readInheritance(this); }
+            if(isSubdivision()) {
+                return Flags.getDataStore().readInheritance(this);
+            }
             throw new InvalidSubdivisionException();
         }
         throw new InvalidAreaException();
@@ -210,7 +202,9 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
     @Override
     public void setInherited(boolean value) {
         if(isArea()) {
-            if(isSubdivision()) { Flags.getDataStore().writeInheritance(this, value); }
+            if(isSubdivision()) {
+                Flags.getDataStore().writeInheritance(this, value);
+            }
             throw new InvalidSubdivisionException();
         }
         throw new InvalidAreaException();
@@ -221,7 +215,9 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
      */
     @Override
     public void remove() {
-        if(isArea()) { Flags.getDataStore().remove(this); }
+        if(isArea()) {
+            Flags.getDataStore().remove(this);
+        }
         throw new InvalidAreaException();
     }
 
@@ -251,5 +247,29 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
             return 2;
         }
         return 3;
+    }
+
+    @Override
+    @Deprecated
+    public String getSystemID() {
+        if(isArea()) { return land.getAncestor(land.getGenealogy()).getUUID().toString(); }
+        throw new InvalidAreaException();
+    }
+
+    @SuppressWarnings("deprecation")
+    @Deprecated
+    @Override
+    public System getSystemType() {
+        return System.FACTOID;
+    }
+
+    @Override
+    @Deprecated
+    public String getSystemSubID() {
+        if(isArea()) {
+            if(isSubdivision()) { return land.getUUID().toString(); }
+            throw new InvalidSubdivisionException();
+        }
+        throw new InvalidAreaException();
     }
 }
