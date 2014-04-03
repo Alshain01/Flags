@@ -94,6 +94,13 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
     }
 
     @Override
+    public String getId() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return String.valueOf(claim.getID());
+    }
+
+    @Override
+    @Deprecated
     public String getSystemID() {
         if(!isArea()) { throw new InvalidAreaException(); }
         if (claim.parent != null) {

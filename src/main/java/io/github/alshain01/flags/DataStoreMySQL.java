@@ -37,7 +37,7 @@ import java.util.*;
 /**
  * Class for handling SQL Database Storage
  */
-final class DataStoreMySQL implements DataStore {
+final class DataStoreMySQL extends DataStore {
     private Connection connection = null;
     private final String url, user, password;
 
@@ -548,14 +548,13 @@ final class DataStoreMySQL implements DataStore {
     /*
      * Database Import/Export
      */
-    public void importDB() {
+    @Override
+    protected void importDataStore(DataStore source) {
         Logger.info("Importing YAML Database to " + getType().getName());
-        DataStore yaml = new DataStoreYaml(Bukkit.getPluginManager().getPlugin("Flags"), 0);
-
-        convertGenericData(yaml, this);
+        super.importDataStore(source);
 
         // Import the system data
-        Set<String> keys = ((DataStoreYaml)yaml).readKeys();
+        Set<String> keys = ((DataStoreYaml)source).readKeys();
         for(String key : keys) {
             String[] keyNodes = key.split("\\.");
             if(!keyNodes[0].equalsIgnoreCase(CuboidType.getActive().toString())) { continue; }
@@ -574,22 +573,22 @@ final class DataStoreMySQL implements DataStore {
             }
 
             if(key.contains("InheritParent")) {
-                writeInheritance(((DataStoreYaml) yaml).getBoolean(key), CuboidType.getActive().toString(), world, id, subID);
+                writeInheritance(((DataStoreYaml) source).getBoolean(key), CuboidType.getActive().toString(), world, id, subID);
                 continue;
             }
 
             if(key.contains("Value")) {
-                writeAreaFlag(((DataStoreYaml) yaml).getBoolean(key), flag, CuboidType.getActive().toString(), world, id, subID);
+                writeAreaFlag(((DataStoreYaml) source).getBoolean(key), flag, CuboidType.getActive().toString(), world, id, subID);
                 continue;
             }
 
             if(key.contains("Message")) {
-                writeAreaMessage("'" + ((DataStoreYaml) yaml).getString(key) + "'", flag, CuboidType.getActive().toString(), world, id, subID);
+                writeAreaMessage("'" + ((DataStoreYaml) source).getString(key) + "'", flag, CuboidType.getActive().toString(), world, id, subID);
                 continue;
             }
 
             if(key.contains("Trust")) {
-                List<?> rawPlayers = ((DataStoreYaml) yaml).getList(key);
+                List<?> rawPlayers = ((DataStoreYaml) source).getList(key);
                 Set<String> players = new HashSet<String>();
                 for(Object o : rawPlayers) {
                     players.add((String)o);

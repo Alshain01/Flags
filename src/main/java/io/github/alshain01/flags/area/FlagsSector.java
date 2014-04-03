@@ -55,80 +55,86 @@ final public class FlagsSector extends Area implements Subdivision, Removable {
      * @return The claim object
      */
     @SuppressWarnings("WeakerAccess") // API
-    public Sector getSector() { return sector; }
+    public Sector getSector() {
+        return sector;
+    }
+
+    @Override
+    public CuboidType getCuboidType() {
+        return CuboidType.FLAGS;
+    }
 
     @Override
     public UUID getUniqueId() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return sector.getID();
-    }
-
-    @Override
-    public String getSystemID() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        if(sector.getParentID() != null) {
-            return String.valueOf(sector.getParentID());
-        } else {
-            return String.valueOf(sector.getID());
+        if (isArea()) {
+            return sector.getID();
         }
+        throw new InvalidAreaException();
     }
 
-    @SuppressWarnings("deprecation")
-    @Deprecated
     @Override
-    public System getSystemType() { return System.FLAGS; }
-
-    @Override
-    public CuboidType getCuboidType() { return CuboidType.FLAGS; }
+    public String getId() {
+        if(isArea()) {
+            return sector.getID().toString();
+        }
+        throw new InvalidAreaException();
+    }
 
     @Override
     public String getName() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return sector.getName();
+        if (isArea()) {
+            return sector.getName();
+        }
+        throw new InvalidAreaException();
     }
 
     @Override
     public Set<String> getOwnerNames() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return new HashSet<String>(Arrays.asList("Administrator"));
+        if(isArea()) {
+            return new HashSet<String>(Arrays.asList("Administrator"));
+        }
+        throw new InvalidAreaException();
     }
 
     @Override
     public World getWorld() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return sector.getWorld();
+        if(isArea()) {
+            return sector.getWorld();
+        }
+        throw new InvalidAreaException();
     }
 
     @Override
-    public boolean isArea() { return sector != null; }
+    public boolean isArea() {
+        return sector != null;
+    }
 
     @Override
     public void remove() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        Flags.getDataStore().remove(this);
-    }
-
-    @Override
-    public String getSystemSubID() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        return String.valueOf(sector.getID());
+        if (isArea()) {
+            Flags.getDataStore().remove(this);
+        }
+        throw new InvalidAreaException();
     }
 
     @Override
     public boolean isSubdivision() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return sector.getParentID() != null;
+        if (isArea()) {
+            return sector.getParentID() != null;
+        }
+        throw new InvalidAreaException();
     }
 
     @Override
     public boolean isParent(Area area) {
         Validate.notNull(area);
-        if (!area.isArea()) { throw new InvalidAreaException(); }
-        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-
-        return area instanceof FlagsSector
-                && getSystemSubID().equals(String.valueOf(area.getSystemID()));
+        if (isArea() && area.isArea()) {
+            if (isSubdivision()) {
+                return area instanceof FlagsSector && getParent().getId().equals(String.valueOf(area.getId()));
+            }
+            throw new InvalidSubdivisionException();
+        }
+        throw new InvalidAreaException();
     }
 
     @Override
@@ -166,5 +172,29 @@ final public class FlagsSector extends Area implements Subdivision, Removable {
         if (!(a instanceof FlagsSector)) { return 3; }
         Sector testSector = ((FlagsSector)a).getSector();
         return sector.compareTo(testSector);
+    }
+
+    @Override
+    @Deprecated
+    public String getSystemID() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        if(sector.getParentID() != null) {
+            return String.valueOf(sector.getParentID());
+        } else {
+            return String.valueOf(sector.getID());
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    @Deprecated
+    @Override
+    public System getSystemType() { return System.FLAGS; }
+
+    @Override
+    @Deprecated
+    public String getSystemSubID() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
+        return String.valueOf(sector.getID());
     }
 }

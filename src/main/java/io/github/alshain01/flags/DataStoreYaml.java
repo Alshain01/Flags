@@ -47,7 +47,7 @@ import org.bukkit.scheduler.BukkitTask;
 /**
  * Class for managing YAML Database Storage
  */
-final class DataStoreYaml implements DataStore {
+final class DataStoreYaml extends DataStore {
     private final static String DATA_FILE = "data.yml";
     private final static String WILDERNESS_FILE = "wilderness.yml";
     private final static String DEFAULT_FILE = "default.yml";

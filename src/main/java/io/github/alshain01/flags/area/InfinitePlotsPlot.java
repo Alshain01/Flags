@@ -103,6 +103,13 @@ final public class InfinitePlotsPlot extends Area implements Removable {
     }
 
     @Override
+    public String getId() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return plot.getLocation().getX() + ";" + plot.getLocation().getZ();
+    }
+
+    @Override
+    @Deprecated
     public String getSystemID() {
         if (!isArea()) { throw new InvalidAreaException(); }
         return plot.getLocation().getX() + ";" + plot.getLocation().getZ();

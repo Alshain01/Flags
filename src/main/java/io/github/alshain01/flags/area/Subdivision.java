@@ -36,10 +36,12 @@ public interface Subdivision {
 	/**
 	 * Gets the id of the subdivision.
 	 * 
-	 * @return The subdivision ID, null if not a subdivision
+	 * @return The subdivision ID
      * @throws InvalidAreaException
      * @throws InvalidSubdivisionException
+     * @deprecated Use getId() and getParent().getId() instead
 	 */
+    @Deprecated
 	public String getSystemSubID();
 
     /**

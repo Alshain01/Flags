@@ -102,7 +102,13 @@ final public class FactionsTerritory extends Area implements Removable {
         return null;
     }
 
+    public String getId() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return getFaction().getId();
+    }
+
     @Override
+    @Deprecated
     public String getSystemID() {
         if(!isArea()) { throw new InvalidAreaException(); }
         return getFaction().getId();

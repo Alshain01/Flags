@@ -97,6 +97,13 @@ final public class ResidenceClaimedResidence extends Area implements Removable, 
     }
 
     @Override
+    public String getId() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return residence.getName();
+    }
+
+    @Override
+    @Deprecated
     public String getSystemID() {
         if (!isArea()) { throw new InvalidAreaException(); }
         return residence.getParent() != null ? residence.getParent().getName() : residence.getName();

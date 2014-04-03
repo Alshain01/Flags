@@ -25,16 +25,21 @@
 package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.area.Area;
+import io.github.alshain01.flags.area.Default;
+import io.github.alshain01.flags.area.Wilderness;
 import io.github.alshain01.flags.economy.EconomyPurchaseType;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import io.github.alshain01.flags.sector.Sector;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public interface DataStore {
+public abstract class DataStore {
     final class DataStoreVersion {
         private final int major;
         private final int minor;
@@ -100,55 +105,116 @@ public interface DataStore {
         }
     }
 
-    public void create(JavaPlugin plugin);
+    public abstract void create(JavaPlugin plugin);
 
-    public void reload();
+    public abstract void reload();
 
-    public void close();
+    public abstract void close();
 
     @SuppressWarnings("unused") // Future use
-    public DataStoreVersion readVersion();
+    public abstract DataStoreVersion readVersion();
 
-    public DataStoreType getType();
+    public abstract DataStoreType getType();
 
     @SuppressWarnings("UnusedParameters") // Future use
-    public void update(JavaPlugin plugin);
+    public abstract void update(JavaPlugin plugin);
 
-    public Set<String> readBundles();
+    public abstract Set<String> readBundles();
 
-	public Set<Flag> readBundle(String bundleName);
+	public abstract Set<Flag> readBundle(String bundleName);
 
-    public void writeBundle(String bundleName, Set<Flag> flags);
+    public abstract void writeBundle(String bundleName, Set<Flag> flags);
 
-	public Boolean readFlag(Area area, Flag flag);
+	public abstract Boolean readFlag(Area area, Flag flag);
 
-    public void writeFlag(Area area, Flag flag, Boolean value);
+    public abstract void writeFlag(Area area, Flag flag, Boolean value);
 
-	public String readMessage(Area area, Flag flag);
+	public abstract String readMessage(Area area, Flag flag);
 
-    public void writeMessage(Area area, Flag flag, String message);
+    public abstract void writeMessage(Area area, Flag flag, String message);
 
-	public double readPrice(Flag flag, EconomyPurchaseType type);
+	public abstract double readPrice(Flag flag, EconomyPurchaseType type);
 
-    public void writePrice(Flag flag, EconomyPurchaseType type, double price);
+    public abstract void writePrice(Flag flag, EconomyPurchaseType type, double price);
 
-	public Set<String> readTrust(Area area, Flag flag);
+	public abstract Set<String> readTrust(Area area, Flag flag);
 
-    public Set<String> readPlayerTrust(Area area, Flag flag);
+    public abstract Set<String> readPlayerTrust(Area area, Flag flag);
 
-    public Set<String> readPermissionTrust(Area area, Flag flag);
+    public abstract Set<String> readPermissionTrust(Area area, Flag flag);
 
-    public void writeTrust(Area area, Flag flag, Set<String> players);
+    public abstract void writeTrust(Area area, Flag flag, Set<String> players);
 
-    public boolean readInheritance(Area area);
+    public abstract boolean readInheritance(Area area);
 
-	public void writeInheritance(Area area, boolean value);
+	public abstract void writeInheritance(Area area, boolean value);
 
-    public Map<UUID, Sector> readSectors();
+    public abstract Map<UUID, Sector> readSectors();
 
-    public void writeSector(Sector sector);
+    public abstract void writeSector(Sector sector);
 
-    public void deleteSector(UUID sID);
+    public abstract void deleteSector(UUID sID);
 
-    public void remove(Area area);
+    public abstract void remove(Area area);
+
+    protected void importDataStore(DataStore source) {
+        migrate(source, this);
+    }
+
+    protected void exportDataStore(DataStore target) {
+        migrate(this, target);
+    }
+
+    private static void migrate(DataStore source, DataStore target) {
+        //Convert the bundles
+        for(String b : source.readBundles()) {
+            target.writeBundle(b, source.readBundle(b));
+        }
+
+        //Convert the prices
+        for(Flag f : Flags.getRegistrar().getFlags()) {
+            for(EconomyPurchaseType t : EconomyPurchaseType.values()) {
+                double price = source.readPrice(f, t);
+                if (price > (double) 0) {
+                    target.writePrice(f, t, price);
+                }
+            }
+        }
+
+        //Convert the sectors
+        if(CuboidType.getActive() == CuboidType.FLAGS) {
+            for(Sector s : source.readSectors().values()) {
+                target.writeSector(s);
+            }
+        }
+
+        //Convert world & default data
+        Set<Area> areas = new HashSet<Area>();
+        for(World w : Bukkit.getWorlds()) {
+            areas.add(new Wilderness(w));
+            areas.add(new Default(w));
+        }
+
+        for(Flag f : Flags.getRegistrar().getFlags()) {
+            for(Area a : areas) {
+                //Flags
+                Boolean value = source.readFlag(a, f);
+                if (value != null) {
+                    target.writeFlag(a, f, value);
+                }
+
+                //Messages
+                String message = source.readMessage(a, f);
+                if(message != null) {
+                    target.writeMessage(a, f, message);
+                }
+
+                //Trust Lists
+                Set<String> trust = source.readTrust(a, f);
+                if(!trust.isEmpty()) {
+                    target.writeTrust(a, f, trust);
+                }
+            }
+        }
+    }
 }

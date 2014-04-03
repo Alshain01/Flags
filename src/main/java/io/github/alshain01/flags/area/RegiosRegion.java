@@ -128,7 +128,14 @@ final public class RegiosRegion extends Area implements Removable{
         return region.getName();
     }
 
+    @Override
+    public String getId() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return region.getName();
+    }
+
 	@Override
+    @Deprecated
 	public String getSystemID() {
         if (!isArea()) { throw new InvalidAreaException(); }
         return region.getName();

@@ -38,7 +38,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a Grief Prevention Claim.
  */
-final public class GriefPreventionClaim78 extends GriefPreventionClaim implements	Subdivision {
+final public class GriefPreventionClaim78 extends GriefPreventionClaim implements Subdivision {
 
 	/**
 	 * Creates an instance of GriefPreventionClaim78 based on a Bukkit Location
@@ -66,6 +66,7 @@ final public class GriefPreventionClaim78 extends GriefPreventionClaim implement
         return Bukkit.getServer().getWorld(claim.getClaimWorldName()); }
 
     @Override
+    @Deprecated
     public String getSystemSubID() {
         if(isArea()) {
             if(isSubdivision()) {
@@ -78,16 +79,22 @@ final public class GriefPreventionClaim78 extends GriefPreventionClaim implement
 
     @Override
     public boolean isSubdivision() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return claim.parent != null;
+        if(isArea()) {
+            return claim.parent != null;
+        }
+        throw new InvalidAreaException();
     }
 
     @Override
     public boolean isParent(Area area) {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        if(!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        Validate.notNull(area);
-        return area instanceof GriefPreventionClaim78 && claim.parent.equals(((GriefPreventionClaim78)area).getClaim());
+        if(isArea()) {
+            if (isSubdivision()) {
+                Validate.notNull(area);
+                return area instanceof GriefPreventionClaim78 && claim.parent.equals(((GriefPreventionClaim78) area).getClaim());
+            }
+            throw new InvalidSubdivisionException();
+        }
+        throw new InvalidAreaException();
     }
 
     @Override

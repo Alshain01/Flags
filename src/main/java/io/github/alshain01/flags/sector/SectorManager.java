@@ -98,6 +98,10 @@ final public class SectorManager {
         return foundParent;
     }
 
+    public Collection<Sector> getAll() {
+        return sectors.values();
+    }
+
     public boolean isOverlap(Location corner1, Location corner2) {
         for(Sector s : sectors.values()) {
             if(s.overlaps(corner1, corner2)) {

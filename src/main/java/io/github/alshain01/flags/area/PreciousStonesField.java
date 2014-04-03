@@ -134,7 +134,14 @@ final public class PreciousStonesField extends Area implements Subdivision, Remo
         return null;
     }
 
+    @Override
+    public String getId() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return String.valueOf(field.getId());
+    }
+
 	@Override
+    @Deprecated
 	public String getSystemID() {
         if (!isArea()) { throw new InvalidAreaException(); }
 		if (field.isChild()) {
@@ -208,7 +215,6 @@ final public class PreciousStonesField extends Area implements Subdivision, Remo
         if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
 		return field.isChild() && Flags.getDataStore().readInheritance(this);
 	}
-
 
 	@Override
 	public void setInherited(boolean value) {

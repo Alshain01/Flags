@@ -74,6 +74,17 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
     }
 
     /**
+     * Creates an instance of FactoidLand based on a Land Object
+     *
+     * @param land
+     *            The Land Object
+     */
+    public FactoidLand(Land land) {
+        this.land = land;
+    }
+
+
+    /**
      * Gets if there is a land at the location.
      *
      * @return True if a land exists at the location.
@@ -99,6 +110,13 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
     }
 
     @Override
+    public String getId() {
+        if(isArea()) { land.getUUID().toString(); }
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    @Deprecated
     public String getSystemID() {
         if(isArea()) { return land.getAncestor(land.getGenealogy()).getUUID().toString(); }
         throw new InvalidAreaException();
@@ -144,6 +162,7 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
     public boolean isArea() { return land != null; }
 
     @Override
+    @Deprecated
     public String getSystemSubID() {
         if(isArea()) {
             if(isSubdivision()) { return land.getUUID().toString(); }
@@ -171,7 +190,9 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
     @Override
     public Area getParent() {
         if(isArea()) {
-            if(isSubdivision()) { return new FactoidLand(land.getParent().getUUID()); }
+            if(isSubdivision()) {
+                return new FactoidLand(land.getParent());
+            }
             throw new InvalidSubdivisionException();
         }
         throw new InvalidAreaException();

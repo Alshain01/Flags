@@ -97,9 +97,17 @@ final public class PlotMePlot extends Area implements Removable {
     }
 
     @Override
+    public String getId() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return plot.id;
+    }
+
+    @Override
+    @Deprecated
     public String getSystemID() {
         if (!isArea()) { throw new InvalidAreaException(); }
-        return plot.id; }
+        return plot.id;
+    }
 
     @SuppressWarnings("deprecation")
     @Override

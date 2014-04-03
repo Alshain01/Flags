@@ -84,6 +84,13 @@ final public class Default extends Area {
     }
 
     @Override
+    public String getId() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return world.getName();
+    }
+
+    @Override
+    @Deprecated
     public String getSystemID() {
         if(!isArea()) { throw new InvalidAreaException(); }
         return world.getName();

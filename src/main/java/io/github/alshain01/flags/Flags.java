@@ -157,7 +157,7 @@ public class Flags extends JavaPlugin {
 
         if(args[0].equalsIgnoreCase("import")) {
             if(sqlData) {
-                ((DataStoreMySQL)dataStore).importDB();
+                dataStore.importDataStore(new DataStoreYaml(this, 0));
                 return true;
             }
             sender.sendMessage(Message.SQLDatabaseError.get());

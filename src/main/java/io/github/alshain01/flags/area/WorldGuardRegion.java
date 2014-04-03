@@ -110,7 +110,14 @@ final public class WorldGuardRegion extends Area implements Removable {
         return null;
     }
 
+    @Override
+    public String getId() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return region.getId();
+    }
+
 	@Override
+    @Deprecated
 	public String getSystemID() {
         if(!isArea()) { throw new InvalidAreaException(); }
         return region.getId();

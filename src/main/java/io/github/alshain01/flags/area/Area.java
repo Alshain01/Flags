@@ -69,8 +69,19 @@ public abstract class Area implements Comparable<Area> {
      * @return the area's ID in the format provided by the land management
      *         system.
      * @throws InvalidAreaException
+     * @deprecated Use getId() and getParent().getId() instead
      */
+    @Deprecated
     public abstract String getSystemID();
+
+    /**
+     * Gets the land system's ID for this area.
+     *
+     * @return the area's ID in the format provided by the land management
+     *         system.
+     * @throws InvalidAreaException
+     */
+    public abstract String getId();
 
     /**
      * Returns the system type that this object belongs to.
