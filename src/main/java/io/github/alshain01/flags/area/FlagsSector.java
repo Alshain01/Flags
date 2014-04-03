@@ -34,10 +34,20 @@ final public class FlagsSector extends Area implements Subdivision, Removable {
      * Creates an instance of FlagsSector based on a sector ID
      *
      * @param id
-     *            The claim ID
+     *            The sector ID
      */
     public FlagsSector(UUID id) {
         sector = Flags.getSectorManager().get(id);
+    }
+
+    /**
+     * Creates an instance of FlagsSector based on a sector object
+     *
+     * @param sector
+     *            The sector
+     */
+    public FlagsSector(Sector sector) {
+        this.sector = sector;
     }
 
     /**

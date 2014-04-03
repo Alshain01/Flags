@@ -59,14 +59,24 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 	}
 
 	/**
-	 * Creates an instance of GriefPreventionClaim based on a claim ID
-	 * 
-	 * @param ID
-	 *            The claim ID
+	 * Creates an instance of GriefPreventionClaim based on a claim object
+	 *
+	 * @param claim
+	 *            The claim object
 	 */
-	public GriefPreventionClaim(long ID) {
-		claim = GriefPrevention.instance.dataStore.getClaim(ID);
+	public GriefPreventionClaim(Claim claim) {
+		this.claim = claim;
 	}
+
+    /**
+     * Creates an instance of GriefPreventionClaim based on a claim ID
+     *
+     * @param ID
+     *            The claim ID
+     */
+    public GriefPreventionClaim(long ID) {
+        claim = GriefPrevention.instance.dataStore.getClaim(ID);
+    }
 
 	/**
 	 * Gets if there is a claim at the location.

@@ -53,12 +53,22 @@ final public class GriefPreventionClaim78 extends GriefPreventionClaim implement
 	/**
 	 * Creates an instance of GriefPreventionClaim78 based on a claim ID
 	 * 
-	 * @param ID
-	 *            The claim ID
+	 * @param id
+	 *            The claim id
 	 */
-	public GriefPreventionClaim78(long ID) {
-		super(ID);
+	public GriefPreventionClaim78(long id) {
+		super(id);
 	}
+
+    /**
+     * Creates an instance of GriefPreventionClaim based on a claim object
+     *
+     * @param claim
+     *            The claim object
+     */
+    public GriefPreventionClaim78(Claim claim) {
+        super(claim);
+    }
 
     @Override
     public org.bukkit.World getWorld() {
@@ -101,7 +111,7 @@ final public class GriefPreventionClaim78 extends GriefPreventionClaim implement
     public Area getParent() {
         if(!isArea()) { throw new InvalidAreaException(); }
         if(!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        return new GriefPreventionClaim78(claim.getID());
+        return new GriefPreventionClaim78(claim);
     }
 
     @Override
