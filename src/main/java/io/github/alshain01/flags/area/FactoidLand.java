@@ -93,6 +93,12 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
     }
 
     @Override
+    public UUID getUniqueId() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return land.getUUID();
+    }
+
+    @Override
     public String getSystemID() {
         if(isArea()) { return land.getAncestor(land.getGenealogy()).getUUID().toString(); }
         throw new InvalidAreaException();
@@ -120,6 +126,12 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
             return new HashSet<String>(Arrays.asList(owner));
         }
         throw new InvalidAreaException();
+    }
+
+    @Override
+    public String getName() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return land.getName();
     }
 
     @Override

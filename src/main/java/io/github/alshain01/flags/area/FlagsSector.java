@@ -58,6 +58,12 @@ final public class FlagsSector extends Area implements Subdivision, Removable {
     public Sector getSector() { return sector; }
 
     @Override
+    public UUID getUniqueId() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return sector.getID();
+    }
+
+    @Override
     public String getSystemID() {
         if(!isArea()) { throw new InvalidAreaException(); }
         if(sector.getParentID() != null) {
@@ -75,6 +81,11 @@ final public class FlagsSector extends Area implements Subdivision, Removable {
     @Override
     public CuboidType getCuboidType() { return CuboidType.FLAGS; }
 
+    @Override
+    public String getName() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return sector.getName();
+    }
 
     @Override
     public Set<String> getOwnerNames() {

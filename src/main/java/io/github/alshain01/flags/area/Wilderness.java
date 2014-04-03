@@ -33,6 +33,7 @@ import io.github.alshain01.flags.System;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import io.github.alshain01.flags.exception.InvalidAreaException;
 import org.apache.commons.lang.Validate;
@@ -82,6 +83,12 @@ public class Wilderness extends Area {
     public Wilderness(String worldName) { this(Bukkit.getWorld(worldName)); }
 
     @Override
+    public UUID getUniqueId() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return world.getUID();
+    }
+
+    @Override
     public String getSystemID() {
         if(!isArea()) { throw new InvalidAreaException(); }
         return world.getName();
@@ -94,6 +101,12 @@ public class Wilderness extends Area {
 
     @Override
     public CuboidType getCuboidType() { return CuboidType.WILDERNESS; }
+
+    @Override
+    public String getName() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return world.getName() + " Wilderness";
+    }
 
     @Override
     public Set<String> getOwnerNames() {

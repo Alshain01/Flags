@@ -35,6 +35,7 @@ import io.github.alshain01.flags.events.TrustChangedEvent;
 import io.github.alshain01.flags.exception.InvalidAreaException;
 
 import java.util.Set;
+import java.util.UUID;
 
 import net.milkbowl.vault.economy.EconomyResponse;
 
@@ -52,6 +53,15 @@ import org.bukkit.permissions.Permissible;
  */
 public abstract class Area implements Comparable<Area> {
     Area() { }
+
+    /**
+     * Returns a unique id of the cuboid area,
+     * if supported by the land system.
+     * Otherwise null.
+     *
+     * @return The UUID for the area or null.
+     */
+    public abstract UUID getUniqueId();
 
     /**
      * Gets the land system's ID for this area.
@@ -78,6 +88,14 @@ public abstract class Area implements Comparable<Area> {
      * @return The LandSystem that created this object
      */
     public abstract CuboidType getCuboidType();
+
+    /**
+     * Returns the name of the cuboid defined int he system.
+     * If the system does not support naming, the ID will be returned.
+     *
+     * @return The LandSystem that created this object
+     */
+    public abstract String getName();
 
     /**
      * Gets a set of owners for the area. On many systems, there will only be
@@ -238,7 +256,7 @@ public abstract class Area implements Comparable<Area> {
     public final String getMessage(Flag flag, String playerName) {
         Validate.notNull(playerName);
 
-        return getMessage(flag, true).replaceAll("\\{Player\\}", playerName);
+        return getMessage(flag, true).replace("{Player}", playerName);
     }
 
 	/**
@@ -262,9 +280,10 @@ public abstract class Area implements Comparable<Area> {
 		}
 
 		if (parse) {
-			message = message.replaceAll("\\{AreaType\\}",
-				    getCuboidType().getCuboidName().toLowerCase()).replaceAll("\\{Owner\\}",
-					getOwnerNames().toArray()[0].toString());
+			message = message
+                    .replace("{AreaName}", getName())
+                    .replace("{AreaType}", getCuboidType().getCuboidName().toLowerCase())
+                    .replace("{Owner}", getOwnerNames().toArray()[0].toString());
 			message = ChatColor.translateAlternateColorCodes('&', message);
 		}
 		return message;

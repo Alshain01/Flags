@@ -30,6 +30,7 @@ import io.github.alshain01.flags.System;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import io.github.alshain01.flags.exception.InvalidAreaException;
 import org.apache.commons.lang.Validate;
@@ -77,6 +78,12 @@ final public class Default extends Area {
 	}
 
     @Override
+    public UUID getUniqueId() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return world.getUID();
+    }
+
+    @Override
     public String getSystemID() {
         if(!isArea()) { throw new InvalidAreaException(); }
         return world.getName();
@@ -95,11 +102,16 @@ final public class Default extends Area {
     }
 
     @Override
+    public String getName() {
+        if(!isArea()) { throw new InvalidAreaException(); }
+        return world.getName() + " Default";
+    }
+
+    @Override
     public Set<String> getOwnerNames() {
         if(!isArea()) { throw new InvalidAreaException(); }
         return new HashSet<String>(Arrays.asList("default"));
     }
-
 
     @Override
     public World getWorld() {

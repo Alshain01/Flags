@@ -27,11 +27,7 @@ package io.github.alshain01.flags.area;
 import io.github.alshain01.flags.*;
 import io.github.alshain01.flags.System;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import io.github.alshain01.flags.exception.InvalidAreaException;
 import io.github.alshain01.flags.exception.InvalidSubdivisionException;
@@ -131,7 +127,13 @@ final public class PreciousStonesField extends Area implements Subdivision, Remo
      */
     @SuppressWarnings("WeakerAccess") // API
 	public Field getField() { return field; }
-	
+
+    @Override
+    public UUID getUniqueId() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return null;
+    }
+
 	@Override
 	public String getSystemID() {
         if (!isArea()) { throw new InvalidAreaException(); }
@@ -148,6 +150,12 @@ final public class PreciousStonesField extends Area implements Subdivision, Remo
 
     @Override
     public CuboidType getCuboidType() { return CuboidType.PRECIOUSSTONES; }
+
+    @Override
+    public String getName() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return field.getName();
+    }
 
     @Override
     public Set<String> getOwnerNames() {

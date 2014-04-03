@@ -30,6 +30,7 @@ import io.github.alshain01.flags.System;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import io.github.alshain01.flags.exception.InvalidAreaException;
 import net.jzx7.regiosapi.RegiosAPI;
@@ -97,6 +98,12 @@ final public class RegiosRegion extends Area implements Removable{
     @SuppressWarnings("unused") // API
     public Region getRegion() { return region; }
 
+    @Override
+    public UUID getUniqueId() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return null;
+    }
+
 	@Override
 	public Set<String> getOwnerNames() {
         if (!isArea()) { throw new InvalidAreaException(); }
@@ -113,6 +120,12 @@ final public class RegiosRegion extends Area implements Removable{
     @Override
     public CuboidType getCuboidType() {
         return CuboidType.REGIOS;
+    }
+
+    @Override
+    public String getName() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return region.getName();
     }
 
 	@Override

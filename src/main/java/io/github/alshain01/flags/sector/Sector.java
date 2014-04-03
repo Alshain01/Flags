@@ -82,6 +82,10 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
         return id;
     }
 
+    public String getName() {
+        return id.toString();
+    }
+
     /**
      * Gets the corner where X and Z are greater.
      *

@@ -30,6 +30,7 @@ import io.github.alshain01.flags.System;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import io.github.alshain01.flags.exception.InvalidAreaException;
 import io.github.alshain01.flags.exception.InvalidSubdivisionException;
@@ -90,6 +91,12 @@ final public class ResidenceClaimedResidence extends Area implements Removable, 
     }
 
     @Override
+    public UUID getUniqueId() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return null;
+    }
+
+    @Override
     public String getSystemID() {
         if (!isArea()) { throw new InvalidAreaException(); }
         return residence.getParent() != null ? residence.getParent().getName() : residence.getName();
@@ -103,6 +110,12 @@ final public class ResidenceClaimedResidence extends Area implements Removable, 
     @Override
     public CuboidType getCuboidType() {
         return CuboidType.RESIDENCE;
+    }
+
+    @Override
+    public String getName() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return residence.getName();
     }
 
 	@Override

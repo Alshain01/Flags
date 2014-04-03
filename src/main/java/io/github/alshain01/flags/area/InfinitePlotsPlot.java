@@ -31,6 +31,7 @@ import io.github.alshain01.flags.System;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import io.github.alshain01.flags.exception.InvalidAreaException;
 import org.apache.commons.lang.Validate;
@@ -96,6 +97,12 @@ final public class InfinitePlotsPlot extends Area implements Removable {
     }
 
     @Override
+    public UUID getUniqueId() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return null;
+    }
+
+    @Override
     public String getSystemID() {
         if (!isArea()) { throw new InvalidAreaException(); }
         return plot.getLocation().getX() + ";" + plot.getLocation().getZ();
@@ -111,6 +118,12 @@ final public class InfinitePlotsPlot extends Area implements Removable {
     @Override
     public CuboidType getCuboidType() {
         return CuboidType.INFINITEPLOTS;
+    }
+
+    @Override
+    public String getName() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return plot.getName();
     }
 
 	@Override

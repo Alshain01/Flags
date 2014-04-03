@@ -28,6 +28,7 @@ import io.github.alshain01.flags.*;
 import io.github.alshain01.flags.System;
 
 import java.util.Set;
+import java.util.UUID;
 
 import io.github.alshain01.flags.exception.InvalidAreaException;
 import org.apache.commons.lang.Validate;
@@ -103,6 +104,12 @@ final public class WorldGuardRegion extends Area implements Removable {
         return region;
     }
 
+    @Override
+    public UUID getUniqueId() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return null;
+    }
+
 	@Override
 	public String getSystemID() {
         if(!isArea()) { throw new InvalidAreaException(); }
@@ -119,6 +126,12 @@ final public class WorldGuardRegion extends Area implements Removable {
     @Override
     public CuboidType getCuboidType() {
         return CuboidType.WORLDGUARD;
+    }
+
+    @Override
+    public String getName() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return region.getId();
     }
 
     @Override
