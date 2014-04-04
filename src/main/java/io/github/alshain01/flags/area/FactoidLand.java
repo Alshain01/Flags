@@ -168,46 +168,34 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
     @Override
     public boolean isParent(Area area) {
         Validate.notNull(area);
-        if(isArea()) {
-            if(isSubdivision()) {
-                return area instanceof FactoidLand && land.getParent() == ((FactoidLand)area).getLand();
-            }
-            throw new InvalidSubdivisionException();
+        if(isSubdivision()) {
+            return area instanceof FactoidLand && land.getParent() == ((FactoidLand)area).getLand();
         }
-        throw new InvalidAreaException();
+        throw new InvalidSubdivisionException();
     }
 
     @Override
     public Area getParent() {
-        if(isArea()) {
-            if(isSubdivision()) {
-                return new FactoidLand(land.getParent());
-            }
-            throw new InvalidSubdivisionException();
+        if(isSubdivision()) {
+            return new FactoidLand(land.getParent());
         }
-        throw new InvalidAreaException();
+        throw new InvalidSubdivisionException();
     }
 
     @Override
     public boolean isInherited() {
-        if(isArea()) {
-            if(isSubdivision()) {
-                return Flags.getDataStore().readInheritance(this);
-            }
-            throw new InvalidSubdivisionException();
+        if(isSubdivision()) {
+            return Flags.getDataStore().readInheritance(this);
         }
-        throw new InvalidAreaException();
+        throw new InvalidSubdivisionException();
     }
 
     @Override
     public void setInherited(boolean value) {
-        if(isArea()) {
-            if(isSubdivision()) {
-                Flags.getDataStore().writeInheritance(this, value);
-            }
-            throw new InvalidSubdivisionException();
+        if(isSubdivision()) {
+            Flags.getDataStore().writeInheritance(this, value);
         }
-        throw new InvalidAreaException();
+        throw new InvalidSubdivisionException();
     }
 
     /**
