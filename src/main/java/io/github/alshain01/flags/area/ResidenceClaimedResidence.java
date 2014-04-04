@@ -60,6 +60,7 @@ final public class ResidenceClaimedResidence extends Area implements Removable, 
 		residence = Residence.getResidenceManager().getByLoc(location);
 	}
 
+
 	/**
 	 * Creates an instance of ResidenceClaimedResidence based on a residence
 	 * name
@@ -70,6 +71,16 @@ final public class ResidenceClaimedResidence extends Area implements Removable, 
 	public ResidenceClaimedResidence(String name) {
 		residence = Residence.getResidenceManager().getByName(name);
 	}
+
+    /**
+     * Creates an instance of ResidenceClaimedResidence based on a ClaimedResidence object
+     *
+     * @param residence
+     *            The residence object
+     */
+    public ResidenceClaimedResidence(ClaimedResidence residence) {
+        this.residence = residence;
+    }
 
 	/**
 	 * Gets if there is a residence at the location.
@@ -92,27 +103,19 @@ final public class ResidenceClaimedResidence extends Area implements Removable, 
 
     @Override
     public UUID getUniqueId() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return null;
+        if (isArea()) {
+            return null;
+        }
+        throw new InvalidAreaException();
     }
 
     @Override
     public String getId() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return residence.getName();
+        if (isArea()) {
+            return residence.getName();
+        }
+        throw new InvalidAreaException();
     }
-
-    @Override
-    @Deprecated
-    public String getSystemID() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return residence.getParent() != null ? residence.getParent().getName() : residence.getName();
-    }
-
-    @Override
-    @Deprecated
-    @SuppressWarnings("deprecation")
-    public System getSystemType() { return System.RESIDENCE; }
 
     @Override
     public CuboidType getCuboidType() {
@@ -121,64 +124,72 @@ final public class ResidenceClaimedResidence extends Area implements Removable, 
 
     @Override
     public String getName() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return residence.getName();
+        if (isArea()) {
+            return residence.getName();
+        }
+        throw new InvalidAreaException();
     }
 
 	@Override
 	public Set<String> getOwnerNames() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return new HashSet<String>(Arrays.asList(residence.getOwner()));
+        if (isArea()) {
+            return new HashSet<String>(Arrays.asList(residence.getOwner()));
+        }
+        throw new InvalidAreaException();
     }
 
     @Override
     public org.bukkit.World getWorld() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return Bukkit.getServer().getWorld(residence.getWorld()); }
+        if (isArea()) {
+            return Bukkit.getServer().getWorld(residence.getWorld());
+        }
+        throw new InvalidAreaException();
+    }
 
     @Override
-    public boolean isArea() { return residence != null; }
-
-	@Override
-	public String getSystemSubID() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-		return residence.getName().split("\\.")[1];
-	}
+    public boolean isArea() {
+        return residence != null;
+    }
 
     @Override
     public boolean isSubdivision() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return residence.getParent() != null;
+        if (isArea()) {
+            return residence.getParent() != null;
+        }
+        throw new InvalidAreaException();
     }
 
     @Override
     public boolean isParent(Area area) {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        return area instanceof ResidenceClaimedResidence &&
-                residence.getParent().equals(((ResidenceClaimedResidence)area).getResidence());
+        if (isSubdivision()) {
+            return area instanceof ResidenceClaimedResidence &&
+                    residence.getParent().equals(((ResidenceClaimedResidence) area).getResidence());
+        }
+        throw new InvalidSubdivisionException();
     }
 
     @Override
     public Area getParent() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        return new ResidenceClaimedResidence(residence.getParent().getName());
+        if (isSubdivision()) {
+            return new ResidenceClaimedResidence(residence.getParent());
+        }
+        throw new InvalidSubdivisionException();
     }
 
     @Override
 	public boolean isInherited() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-		return Flags.getDataStore().readInheritance(this);
+        if (isSubdivision()) {
+            return Flags.getDataStore().readInheritance(this);
+        }
+        throw new InvalidSubdivisionException();
 	}
 
     @Override
     public void setInherited(boolean value) {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        Flags.getDataStore().writeInheritance(this, value);
+        if (isSubdivision()) {
+            Flags.getDataStore().writeInheritance(this, value);
+        }
+        throw new InvalidSubdivisionException();
     }
 
 	/**
@@ -186,8 +197,10 @@ final public class ResidenceClaimedResidence extends Area implements Removable, 
 	 */
 	@Override
 	public void remove() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        Flags.getDataStore().remove(this);
+        if (isArea()) {
+            Flags.getDataStore().remove(this);
+        }
+        throw new InvalidAreaException();
     }
 
     /**
@@ -216,5 +229,24 @@ final public class ResidenceClaimedResidence extends Area implements Removable, 
             return 2;
         }
         return 3;
+    }
+
+    @Override
+    @Deprecated
+    public String getSystemID() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return residence.getParent() != null ? residence.getParent().getName() : residence.getName();
+    }
+
+    @Override
+    @Deprecated
+    @SuppressWarnings("deprecation")
+    public System getSystemType() { return System.RESIDENCE; }
+
+    @Override
+    @Deprecated
+    public String getSystemSubID() {
+        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
+        return residence.getName().split("\\.")[1];
     }
 }
