@@ -439,8 +439,8 @@ final class DataStoreYaml extends DataStore {
             return true;
         }
 
-        String path = area.getCuboidType().toString() + "."
-                + area.getWorld().getName()  +"." + ((Subdivision) area).getSystemSubID();
+        String path = area.getCuboidType().toString() + "." + area.getWorld().getName() + "."
+                + area.getSystemID() + "." + ((Subdivision) area).getSystemSubID();
 
         if(!getYml(path).isConfigurationSection(path)) { return true; }
         ConfigurationSection inheritConfig = getYml(path).getConfigurationSection(path);
@@ -453,8 +453,8 @@ final class DataStoreYaml extends DataStore {
             return;
         }
 
-        String path = area.getCuboidType().toString() + "."
-                + area.getWorld().getName()  +"." + ((Subdivision) area).getSystemSubID();
+        String path = area.getCuboidType().toString() + "." + area.getWorld().getName() + "."
+                + area.getSystemID() + "." + ((Subdivision) area).getSystemSubID();
 
         ConfigurationSection inheritConfig = getCreatedSection(getYml(path), path);
         inheritConfig.set(path, value);
