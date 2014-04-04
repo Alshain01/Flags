@@ -72,60 +72,44 @@ final public class GriefPreventionClaim78 extends GriefPreventionClaim implement
 
     @Override
     public org.bukkit.World getWorld() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return Bukkit.getServer().getWorld(claim.getClaimWorldName()); }
-
-    @Override
-    @Deprecated
-    public String getSystemSubID() {
-        if(isArea()) {
-            if(isSubdivision()) {
-                return String.valueOf(claim.getID());
-            }
-            throw new InvalidSubdivisionException();
-        }
+        if (isArea()) return Bukkit.getServer().getWorld(claim.getClaimWorldName());
         throw new InvalidAreaException();
     }
 
+
     @Override
     public boolean isSubdivision() {
-        if(isArea()) {
-            return claim.parent != null;
-        }
+        if (isArea()) return claim.parent != null;
         throw new InvalidAreaException();
     }
 
     @Override
     public boolean isParent(Area area) {
-        if(isArea()) {
-            if (isSubdivision()) {
-                Validate.notNull(area);
-                return area instanceof GriefPreventionClaim78 && claim.parent.equals(((GriefPreventionClaim78) area).getClaim());
-            }
-            throw new InvalidSubdivisionException();
+        if (isSubdivision()) {
+            Validate.notNull(area);
+            return area instanceof GriefPreventionClaim78 && claim.parent.equals(((GriefPreventionClaim78) area).getClaim());
         }
-        throw new InvalidAreaException();
+        throw new InvalidSubdivisionException();
     }
 
     @Override
     public Area getParent() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        if(!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        return new GriefPreventionClaim78(claim);
+        if (isSubdivision()) return new GriefPreventionClaim78(claim);
+        throw new InvalidSubdivisionException();
     }
 
     @Override
     public boolean isInherited() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        if(!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        return Flags.getDataStore().readInheritance(this);
+        if (isSubdivision()) return Flags.getDataStore().readInheritance(this);
+        throw new InvalidSubdivisionException();
     }
 
     @Override
     public void setInherited(boolean value) {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        if(!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        Flags.getDataStore().writeInheritance(this, value);
+        if (isSubdivision()) {
+            Flags.getDataStore().writeInheritance(this, value);
+        }
+        throw new InvalidSubdivisionException();
     }
 
 	/**
@@ -155,4 +139,13 @@ final public class GriefPreventionClaim78 extends GriefPreventionClaim implement
 		}
 		return 3;
 	}
+
+    @Override
+    @Deprecated
+    public String getSystemSubID() {
+        if(isSubdivision()) return String.valueOf(claim.getID());
+
+        throw new InvalidSubdivisionException();
+    }
+
 }

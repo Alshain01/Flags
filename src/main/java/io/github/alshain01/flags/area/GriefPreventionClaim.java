@@ -45,7 +45,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a Grief Prevention Claim.
  */
-public class GriefPreventionClaim extends Area implements Removable, Siege, Administrator {
+public class GriefPreventionClaim extends RemovableArea implements Siege, Administrator {
 	final Claim claim;
 
 	/**
@@ -99,14 +99,69 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
 
     @Override
     public UUID getUniqueId() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return null;
+        if (isArea()) return null;
+        throw new InvalidAreaException();
     }
 
     @Override
     public String getId() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return String.valueOf(claim.getID());
+        if (isArea()) return String.valueOf(claim.getID());
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public CuboidType getCuboidType() {
+        return CuboidType.GRIEF_PREVENTION;
+    }
+
+    @Override
+    public String getName() {
+        if (isArea()) return String.valueOf(claim.getID());
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public Set<String> getOwnerNames() {
+        if (isArea()) return new HashSet<String>(Arrays.asList(claim.getOwnerName()));
+        throw new InvalidAreaException();
+    }
+
+	@Override
+	public World getWorld() {
+        if (isArea()) return claim.getGreaterBoundaryCorner().getWorld();
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public boolean isArea() {
+        return claim != null;
+    }
+
+	@Override
+	public boolean isAdminArea() {
+        if (isArea()) return claim.isAdminClaim();
+        throw new InvalidAreaException();
+    }
+
+	@Override
+	public boolean isUnderSiege() {
+        if (isArea()) return claim.siegeData != null;
+        throw new InvalidAreaException();
+    }
+
+    /**
+     * 0 if the the worlds are the same, 3 if they are not.
+     *
+     * @return The value of the comparison.
+     */
+    @Override
+    public int compareTo(@Nonnull Area a) {
+        Validate.notNull(a);
+        if(!(a instanceof GriefPreventionClaim)) {
+            return 3;
+        }
+
+        return (claim.equals(((GriefPreventionClaim)a).getClaim())) ? 0 : 3;
     }
 
     @Override
@@ -124,63 +179,5 @@ public class GriefPreventionClaim extends Area implements Removable, Siege, Admi
     @Deprecated
     public System getSystemType() {
         return System.GRIEF_PREVENTION;
-    }
-
-    @Override
-    public CuboidType getCuboidType() {
-        return CuboidType.GRIEF_PREVENTION;
-    }
-
-    @Override
-    public String getName() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return String.valueOf(claim.getID());
-    }
-
-    @Override
-    public Set<String> getOwnerNames() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return new HashSet<String>(Arrays.asList(claim.getOwnerName()));
-    }
-
-	@Override
-	public World getWorld() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return claim.getGreaterBoundaryCorner().getWorld();
-    }
-
-    @Override
-    public boolean isArea() { return claim != null; }
-
-	@Override
-	public boolean isAdminArea() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return claim.isAdminClaim();
-    }
-
-	@Override
-	public boolean isUnderSiege() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return claim.siegeData != null; }
-
-	@Override
-	public void remove() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        Flags.getDataStore().remove(this);
-    }
-
-    /**
-     * 0 if the the worlds are the same, 3 if they are not.
-     *
-     * @return The value of the comparison.
-     */
-    @Override
-    public int compareTo(@Nonnull Area a) {
-        Validate.notNull(a);
-        if(!(a instanceof GriefPreventionClaim)) {
-            return 3;
-        }
-
-        return (claim.equals(((GriefPreventionClaim)a).getClaim())) ? 0 : 3;
     }
 }

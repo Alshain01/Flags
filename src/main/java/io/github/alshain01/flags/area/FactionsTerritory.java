@@ -48,7 +48,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a Factions Territory.
  */
-final public class FactionsTerritory extends Area implements Removable {
+final public class FactionsTerritory extends RemovableArea {
 	private final Faction faction;
 	private final World world;
 
@@ -98,27 +98,13 @@ final public class FactionsTerritory extends Area implements Removable {
 
     @Override
     public UUID getUniqueId() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return null;
+        if (isArea()) return null;
+        throw new InvalidAreaException();
     }
 
     public String getId() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return getFaction().getId();
-    }
-
-    @Override
-    @Deprecated
-    public String getSystemID() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return getFaction().getId();
-    }
-
-    @SuppressWarnings("deprecation")
-    @Deprecated
-    @Override
-    public System getSystemType() {
-        return System.FACTIONS;
+        if (isArea()) return getFaction().getId();
+        throw new InvalidAreaException();
     }
 
     @Override
@@ -128,30 +114,26 @@ final public class FactionsTerritory extends Area implements Removable {
 
     @Override
     public String getName() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return faction.getName();
+        if (isArea()) return faction.getName();
+        throw new InvalidAreaException();
     }
 
 	@Override
 	public Set<String> getOwnerNames() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return new HashSet<String>(Arrays.asList(getFaction().getLeader().getName()));
+        if (isArea()) return new HashSet<String>(Arrays.asList(getFaction().getLeader().getName()));
+        throw new InvalidAreaException();
     }
 
 	@Override
 	public World getWorld() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return world;
-    }
-
-    @Override
-    public void remove() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        Flags.getDataStore().remove(this);
+        if (isArea()) return world;
+        throw new InvalidAreaException();
     }
 
 	@Override
-	public boolean isArea() { return world != null && faction != null; }
+	public boolean isArea() {
+        return world != null && faction != null;
+    }
 
     /**
      * 0 if the the plots are the same, 3 if they are not.
@@ -162,5 +144,19 @@ final public class FactionsTerritory extends Area implements Removable {
     public int compareTo(@Nonnull Area a) {
         Validate.notNull(a);
         return a instanceof FactionsTerritory && getSystemID().equals(a.getSystemID()) ? 0 : 3;
+    }
+
+    @Override
+    @Deprecated
+    public String getSystemID() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return getFaction().getId();
+    }
+
+    @SuppressWarnings("deprecation")
+    @Deprecated
+    @Override
+    public System getSystemType() {
+        return System.FACTIONS;
     }
 }

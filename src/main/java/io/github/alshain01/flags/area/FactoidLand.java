@@ -27,7 +27,6 @@ package io.github.alshain01.flags.area;
 import io.github.alshain01.flags.*;
 import io.github.alshain01.flags.System;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -48,7 +47,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a Factoid Land.
  */
-final public class FactoidLand extends Area implements Removable, Subdivision {
+final public class FactoidLand extends RemovableArea implements Subdivision {
     private final Land land;
 
     /**
@@ -110,45 +109,37 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
 
     @Override
     public UUID getUniqueId() {
-        if(isArea()) {
-            return land.getUUID();
-        }
+        if (isArea()) return land.getUUID();
         throw new InvalidAreaException();
     }
 
     @Override
     public String getId() {
-        if(isArea()) {
-            return land.getUUID().toString();
-        }
+        if (isArea()) return land.getUUID().toString();
         throw new InvalidAreaException();
     }
 
     @Override
     public String getName() {
-        if(isArea()) {
-            return land.getName();
-        }
+        if (isArea()) return land.getName();
         throw new InvalidAreaException();
     }
 
     @Override
     public Set<String> getOwnerNames() {
-        if(isArea()) {
-            String owner = null;
-            if(land.getOwner().getContainerType() == PlayerContainerType.PLAYER) {
-                owner = ((PlayerContainerPlayer)land.getOwner()).getPlayerName();
+        if (isArea()) {
+            Set<String> owners = new HashSet<String>();
+            if (land.getOwner().getContainerType() == PlayerContainerType.PLAYER) {
+                owners.add(((PlayerContainerPlayer)land.getOwner()).getPlayerName());
             }
-            return new HashSet<String>(Arrays.asList(owner));
+            return owners;
         }
         throw new InvalidAreaException();
     }
 
     @Override
     public org.bukkit.World getWorld() {
-        if(isArea()) {
-            return land.getWorld();
-        }
+        if (isArea()) return land.getWorld();
         throw new InvalidAreaException();
     }
 
@@ -159,54 +150,35 @@ final public class FactoidLand extends Area implements Removable, Subdivision {
 
     @Override
     public boolean isSubdivision() {
-        if(isArea()) {
-            return land.getParent() != null;
-        }
+        if (isArea()) return land.getParent() != null;
         throw new InvalidAreaException();
     }
 
     @Override
     public boolean isParent(Area area) {
         Validate.notNull(area);
-        if(isSubdivision()) {
-            return area instanceof FactoidLand && land.getParent() == ((FactoidLand)area).getLand();
-        }
+        if (isSubdivision()) return area instanceof FactoidLand && land.getParent().getUUID().equals(area.getUniqueId());
         throw new InvalidSubdivisionException();
     }
 
     @Override
     public Area getParent() {
-        if(isSubdivision()) {
-            return new FactoidLand(land.getParent());
-        }
+        if (isSubdivision()) return new FactoidLand(land.getParent());
         throw new InvalidSubdivisionException();
     }
 
     @Override
     public boolean isInherited() {
-        if(isSubdivision()) {
-            return Flags.getDataStore().readInheritance(this);
-        }
+        if (isSubdivision()) return Flags.getDataStore().readInheritance(this);
         throw new InvalidSubdivisionException();
     }
 
     @Override
     public void setInherited(boolean value) {
-        if(isSubdivision()) {
+        if (isSubdivision()) {
             Flags.getDataStore().writeInheritance(this, value);
         }
         throw new InvalidSubdivisionException();
-    }
-
-    /**
-     * Permanently removes the area from the data store USE CAUTION!
-     */
-    @Override
-    public void remove() {
-        if(isArea()) {
-            Flags.getDataStore().remove(this);
-        }
-        throw new InvalidAreaException();
     }
 
     /**

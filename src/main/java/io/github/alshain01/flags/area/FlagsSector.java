@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-final public class FlagsSector extends Area implements Subdivision, Removable {
+final public class FlagsSector extends RemovableArea implements Subdivision  {
     private final Sector sector;
 
     /**
@@ -76,41 +76,31 @@ final public class FlagsSector extends Area implements Subdivision, Removable {
 
     @Override
     public UUID getUniqueId() {
-        if (isArea()) {
-            return sector.getID();
-        }
+        if (isArea()) return sector.getID();
         throw new InvalidAreaException();
     }
 
     @Override
     public String getId() {
-        if(isArea()) {
-            return sector.getID().toString();
-        }
+        if (isArea()) return sector.getID().toString();
         throw new InvalidAreaException();
     }
 
     @Override
     public String getName() {
-        if (isArea()) {
-            return sector.getName();
-        }
+        if (isArea()) return sector.getName();
         throw new InvalidAreaException();
     }
 
     @Override
     public Set<String> getOwnerNames() {
-        if(isArea()) {
-            return new HashSet<String>(Arrays.asList("Administrator"));
-        }
+        if (isArea()) return new HashSet<String>(Arrays.asList("Administrator"));
         throw new InvalidAreaException();
     }
 
     @Override
     public World getWorld() {
-        if(isArea()) {
-            return sector.getWorld();
-        }
+        if (isArea()) return sector.getWorld();
         throw new InvalidAreaException();
     }
 
@@ -120,52 +110,36 @@ final public class FlagsSector extends Area implements Subdivision, Removable {
     }
 
     @Override
-    public void remove() {
-        if (isArea()) {
-            Flags.getDataStore().remove(this);
-        }
-        throw new InvalidAreaException();
-    }
-
-    @Override
     public boolean isSubdivision() {
-        if (isArea()) {
-            return sector.getParentID() != null;
-        }
+        if (isArea()) return sector.getParentID() != null;
         throw new InvalidAreaException();
     }
 
     @Override
     public boolean isParent(Area area) {
         Validate.notNull(area);
-        if (isArea() && area.isArea()) {
-            if (isSubdivision()) {
-                return area instanceof FlagsSector && getParent().getId().equals(String.valueOf(area.getId()));
-            }
-            throw new InvalidSubdivisionException();
-        }
-        throw new InvalidAreaException();
+        if (isSubdivision()) return area instanceof FlagsSector && getParent().getId().equals(String.valueOf(area.getId()));
+        throw new InvalidSubdivisionException();
     }
 
     @Override
     public Area getParent() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        return sector.getParentID() == null ? null : new FlagsSector(sector.getParentID());
+        if (isSubdivision()) return sector.getParentID() == null ? null : new FlagsSector(sector.getParentID());
+        throw new InvalidSubdivisionException();
     }
 
     @Override
     public boolean isInherited() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        return Flags.getDataStore().readInheritance(this);
+        if (isSubdivision()) return Flags.getDataStore().readInheritance(this);
+        throw new InvalidSubdivisionException();
     }
 
     @Override
     public void setInherited(boolean value) {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        Flags.getDataStore().writeInheritance(this, value);
+        if (isSubdivision()) {
+            Flags.getDataStore().writeInheritance(this, value);
+        }
+        throw new InvalidSubdivisionException();
     }
 
     /**
@@ -187,8 +161,8 @@ final public class FlagsSector extends Area implements Subdivision, Removable {
     @Override
     @Deprecated
     public String getSystemID() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        if(sector.getParentID() != null) {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        if (sector.getParentID() != null) {
             return String.valueOf(sector.getParentID());
         } else {
             return String.valueOf(sector.getID());
@@ -203,7 +177,6 @@ final public class FlagsSector extends Area implements Subdivision, Removable {
     @Override
     @Deprecated
     public String getSystemSubID() {
-        if (!isArea()) { throw new InvalidAreaException(); }
         if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
         return String.valueOf(sector.getID());
     }
