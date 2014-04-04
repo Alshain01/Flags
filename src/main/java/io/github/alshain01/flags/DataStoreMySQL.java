@@ -28,7 +28,6 @@ import io.github.alshain01.flags.area.*;
 import io.github.alshain01.flags.economy.EconomyPurchaseType;
 import io.github.alshain01.flags.sector.Sector;
 import io.github.alshain01.flags.sector.SectorLocation;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 

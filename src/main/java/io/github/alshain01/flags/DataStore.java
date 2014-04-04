@@ -37,7 +37,6 @@ import java.util.UUID;
 import io.github.alshain01.flags.sector.Sector;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 
