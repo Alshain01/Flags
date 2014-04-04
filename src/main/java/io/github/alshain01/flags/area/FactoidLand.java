@@ -41,9 +41,6 @@ import me.tabinol.factoid.playercontainer.PlayerContainerType;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 
-import javax.annotation.Nonnull;
-
-
 /**
  * Class for creating areas to manage a Factoid Land.
  */
@@ -78,6 +75,7 @@ final public class FactoidLand extends RemovableArea implements Subdivision {
      * @param land
      *            The Land Object
      */
+    @SuppressWarnings("WeakerAccess") // API
     public FactoidLand(Land land) {
         this.land = land;
     }
@@ -97,7 +95,7 @@ final public class FactoidLand extends RemovableArea implements Subdivision {
      *
      * @return The Land object
      */
-    @SuppressWarnings("WeakerAccess") // API
+    @SuppressWarnings("WeakerAccess, unused") // API
     public Land getLand() {
         return land;
     }

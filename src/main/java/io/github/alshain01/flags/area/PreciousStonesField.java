@@ -40,8 +40,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import javax.annotation.Nonnull;
-
 /**
  * Class for creating areas to manage a PreciousStones Field.
  */

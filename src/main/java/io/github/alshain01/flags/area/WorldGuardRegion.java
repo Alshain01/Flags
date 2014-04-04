@@ -31,15 +31,12 @@ import java.util.Set;
 import java.util.UUID;
 
 import io.github.alshain01.flags.exception.InvalidAreaException;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.World;
 
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-
-import javax.annotation.Nonnull;
 
 /**
  * Class for creating areas to manage a WorldGuard Region.

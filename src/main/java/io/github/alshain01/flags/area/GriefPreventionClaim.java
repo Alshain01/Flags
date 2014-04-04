@@ -36,11 +36,8 @@ import io.github.alshain01.flags.exception.InvalidAreaException;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.World;
-
-import javax.annotation.Nonnull;
 
 /**
  * Class for creating areas to manage a Grief Prevention Claim.
@@ -64,6 +61,7 @@ public class GriefPreventionClaim extends RemovableArea implements Siege, Admini
 	 * @param claim
 	 *            The claim object
 	 */
+    @SuppressWarnings("WeakerAccess") // API
 	public GriefPreventionClaim(Claim claim) {
 		this.claim = claim;
 	}

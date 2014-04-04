@@ -33,15 +33,12 @@ import java.util.Set;
 import java.util.UUID;
 
 import io.github.alshain01.flags.exception.InvalidAreaException;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
 import com.worldcretornica.plotme.Plot;
 import com.worldcretornica.plotme.PlotManager;
-
-import javax.annotation.Nonnull;
 
 /**
  * Class for creating areas to manage a PlotMe Plot.

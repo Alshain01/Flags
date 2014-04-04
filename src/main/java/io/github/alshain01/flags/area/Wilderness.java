@@ -43,8 +43,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.permissions.Permissible;
 
-import javax.annotation.Nonnull;
-
 /**
  * Class for creating areas to manage a Wilderness.
   */

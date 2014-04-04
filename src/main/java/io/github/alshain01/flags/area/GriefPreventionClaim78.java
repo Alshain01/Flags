@@ -33,8 +33,6 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-import javax.annotation.Nonnull;
-
 /**
  * Class for creating areas to manage a Grief Prevention Claim.
  */
@@ -66,6 +64,7 @@ final public class GriefPreventionClaim78 extends GriefPreventionClaim implement
      * @param claim
      *            The claim object
      */
+    @SuppressWarnings("WeakerAccess") // API
     public GriefPreventionClaim78(Claim claim) {
         super(claim);
     }

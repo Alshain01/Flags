@@ -25,7 +25,6 @@
 package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.CuboidType;
-import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.System;
 
 import java.util.Arrays;
@@ -34,15 +33,12 @@ import java.util.Set;
 import java.util.UUID;
 
 import io.github.alshain01.flags.exception.InvalidAreaException;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.World;
 
 import uk.co.jacekk.bukkit.infiniteplots.InfinitePlots;
 import uk.co.jacekk.bukkit.infiniteplots.plot.Plot;
 import uk.co.jacekk.bukkit.infiniteplots.plot.PlotLocation;
-
-import javax.annotation.Nonnull;
 
 /**
  * Class for creating areas to manage a InfinitePlots Plot.

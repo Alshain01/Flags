@@ -34,14 +34,11 @@ import java.util.UUID;
 
 import io.github.alshain01.flags.exception.InvalidAreaException;
 import io.github.alshain01.flags.exception.InvalidSubdivisionException;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
-
-import javax.annotation.Nonnull;
 
 /**
  * Class for creating areas to manage a Residence Claimed Residences.
@@ -78,6 +75,7 @@ final public class ResidenceClaimedResidence extends RemovableArea implements Su
      * @param residence
      *            The residence object
      */
+    @SuppressWarnings("WeakerAccess") // API
     public ResidenceClaimedResidence(ClaimedResidence residence) {
         this.residence = residence;
     }

@@ -63,7 +63,7 @@ public abstract class Area implements Comparable<Area> {
      *
      * @return The UUID for the area or null.
      */
-    public abstract UUID getUniqueId();
+    protected abstract UUID getUniqueId();
 
     /**
      * Gets the land system's ID for this area.
@@ -83,6 +83,7 @@ public abstract class Area implements Comparable<Area> {
      *         system.
      * @throws InvalidAreaException
      */
+    @SuppressWarnings("WeakerAccess") // API
     public abstract String getId();
 
     /**
@@ -108,6 +109,7 @@ public abstract class Area implements Comparable<Area> {
      *
      * @return The LandSystem that created this object
      */
+    @SuppressWarnings("WeakerAccess") // API
     public abstract String getName();
 
     /**
