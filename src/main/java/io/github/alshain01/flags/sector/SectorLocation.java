@@ -38,7 +38,7 @@ final public class SectorLocation implements ConfigurationSerializable {
     public SectorLocation(String location) {
         String[] arg = location.split(",");
 
-        world = UUID.fromString(arg[0]);
+        world = Bukkit.getWorld(arg[0]).getUID();
         for (int a = 0; a < 3; a++) {
             coords[a] = Integer.parseInt(arg[a+1]);
         }

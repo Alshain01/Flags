@@ -66,8 +66,8 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
     public Map<String, Object> serialize() {
         Map<String, Object> sector = new HashMap<String, Object>();
         sector.put("Parent", parent != null ? parent.toString() : "null");
-        sector.put("GreaterCorner", greater.toString());
-        sector.put("LesserCorner", lesser.toString());
+        sector.put("GreaterCorner", greater);
+        sector.put("LesserCorner", lesser);
         sector.put("Depth", depth);
         return sector;
     }

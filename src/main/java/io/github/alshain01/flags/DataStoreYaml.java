@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.*;
 
 import io.github.alshain01.flags.sector.Sector;
+import io.github.alshain01.flags.sector.SectorLocation;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
 import org.bukkit.Bukkit;
@@ -61,9 +62,6 @@ final class DataStoreYaml extends DataStore {
     private final static String VALUE_PATH = "Value";
     private final static String MESSAGE_PATH = "Message";
     private final static String INHERIT_PATH = "InheritParent";
-    //private final static String SECTOR_PATH = "Sectors";
-
-    private final static String DATA_FOOTER = "Data";
 
     private final File dataFolder;
     private final Plugin plugin;
@@ -115,7 +113,7 @@ final class DataStoreYaml extends DataStore {
     public void create(JavaPlugin plugin) {
         // Don't change the version here, not needed (will change in update)
         if (notExists(plugin)) {
-            writeVersion(new DataStoreVersion(1, 0, 0));
+            writeVersion(new DataStoreVersion(2, 0, 0));
         }
     }
 
@@ -238,11 +236,19 @@ final class DataStoreYaml extends DataStore {
 
             // Convert Sectors
             if(CuboidType.getActive() == CuboidType.FLAGS) {
+                // Remove old header
                 if (sectors.isConfigurationSection("Sectors")) {
                     for (String s : sectors.getConfigurationSection("Sectors").getKeys(false)) {
                         sectors.set(s, new Sector(UUID.fromString(s), sectors.getConfigurationSection("Sectors." + s).getValues(false)).serialize());
                     }
                     sectors.set("Sectors", null);
+                }
+
+                // Convert old sector location to serialized form.
+                for (String s : sectors.getKeys(true)) {
+                    if(s.contains("Corner") && sectors.isString(s)) {
+                        sectors.set(s, new SectorLocation(sectors.getString(s)).serialize());
+                    }
                 }
             }
 
