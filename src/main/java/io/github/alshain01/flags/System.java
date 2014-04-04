@@ -185,7 +185,7 @@ public enum System {
      * Gets the name of the area division for the system (i.e. Claim, Residence, Territory, Region, etc.)
      *
      * @return The name of the area division
-     * @deprecated Use CuboidType.getCuboidName() instead
+     * @deprecated Use CuboidType.getCuboidDescriptor() instead
      */
     @SuppressWarnings("unused, deprecation")
     @Deprecated

@@ -57,82 +57,49 @@ public abstract class Area implements Comparable<Area> {
     Area() { }
 
     /**
+     * Returns the system type that this object belongs to.
+     *
+     * @return The Cuboid System that created this object
+     */
+    public abstract CuboidType getCuboidType();
+
+    /**
+     * Checks if the underlying object from the cuboid system is null.
+     *
+     * @return true if the area is not null.
+     */
+    public abstract boolean isArea();
+
+    /**
      * Returns a unique id of the cuboid area,
-     * if supported by the land system.
+     * if supported by the cuboid system.
      * Otherwise null.
      *
      * @return The UUID for the area or null.
+     * @throws InvalidAreaException
      */
     protected abstract UUID getUniqueId();
 
     /**
-     * Gets the land system's ID for this area.
+     * Gets the cuboid system's ID for this area.
      *
-     * @return the area's ID in the format provided by the land management
-     *         system.
-     * @throws InvalidAreaException
-     * @deprecated Use getId() and getParent().getId() instead
-     */
-    @Deprecated
-    public abstract String getSystemID();
-
-    /**
-     * Gets the land system's ID for this area.
-     *
-     * @return the area's ID in the format provided by the land management
-     *         system.
+     * @return the area's ID in the format provided by the cuboid system.
      * @throws InvalidAreaException
      */
     @SuppressWarnings("WeakerAccess") // API
     public abstract String getId();
 
-    /**
-     * Returns the system type that this object belongs to.
-     *
-     * @return The LandSystem that created this object
-     * @deprecated Use getCuboidType instead
-     */
-    @SuppressWarnings("deprecation, unused")
-    @Deprecated
-    public abstract System getSystemType();
 
     /**
-     * Returns the system type that this object belongs to.
-     *
-     * @return The LandSystem that created this object
-     */
-    public abstract CuboidType getCuboidType();
-
-    /**
-     * Returns the name of the cuboid defined int he system.
+     * Returns the name of the cuboid defined in the system.
      * If the system does not support naming, the ID will be returned.
      *
      * @return The LandSystem that created this object
+     * @throws InvalidAreaException
      */
     @SuppressWarnings("WeakerAccess") // API
     public abstract String getName();
 
-    /**
-     * Gets a set of owners for the area. On many systems, there will only be
-     * one.
-     *
-     * @return the player name of the area owner.
-     * @throws InvalidAreaException
-     * @deprecated Use getOwnerNames() instead.  Future UUID support
-     */
-    @Deprecated
-    public Set<String> getOwners() {
-        return getOwnerNames();
-    }
-
-    /**
-     * Gets a set of owner names for the area. On many systems, there will only be
-     * one.
-     *
-     * @return the player name of the area owner.
-     * @throws InvalidAreaException
-     */
-    public abstract Set<String> getOwnerNames();
 
     /**
      * Gets the world for the area.
@@ -143,18 +110,21 @@ public abstract class Area implements Comparable<Area> {
     public abstract org.bukkit.World getWorld();
 
     /**
-     * Checks if area exists on the server and can be flagged.
+     * Gets a set of owner names for the area.
+     * On many systems, there will only be one.
      *
-     * @return true if the area exists.
+     * @return the player name of the area owner.
+     * @throws InvalidAreaException
      */
-    public abstract boolean isArea();
+    public abstract Set<String> getOwnerNames();
 
     /**
-     * Returns the system type that this object belongs to.
+     * Returns the description of the cuboid for the system.
+     * i.e. Claim, Region, Residence, Field, Sector, etc.
      *
-     * @return The LandSystem that created this object
+     * @return The cuboid descriptor for the cuboid system.
      */
-    public String getCuboidName() {
+    public String getCuboidDescriptor() {
         return getCuboidType().getCuboidName();
     }
 
@@ -174,7 +144,6 @@ public abstract class Area implements Comparable<Area> {
 
         Boolean value = Flags.getDataStore().readFlag(this, flag);
         if (absolute) { return value; }
-
         return value != null ? value : new Default(getWorld()).getValue(flag, false);
     }
 
@@ -256,7 +225,9 @@ public abstract class Area implements Comparable<Area> {
 	 * @return The message associated with the flag.
 	 */
 	@SuppressWarnings("WeakerAccess") // API
-    public final String getMessage(Flag flag) { return getMessage(flag, true); }
+    public final String getMessage(Flag flag) {
+        return getMessage(flag, true);
+    }
 
     /**
      * Gets the message associated with a player flag and parses {AreaType},
@@ -270,7 +241,6 @@ public abstract class Area implements Comparable<Area> {
      */
     public final String getMessage(Flag flag, String playerName) {
         Validate.notNull(playerName);
-
         return getMessage(flag, true).replace("{Player}", playerName);
     }
 
@@ -296,6 +266,7 @@ public abstract class Area implements Comparable<Area> {
 
 		if (parse) {
 			message = message
+                    .replace("{World}", getWorld().getName())
                     .replace("{AreaName}", getName())
                     .replace("{AreaType}", getCuboidType().getCuboidName().toLowerCase())
                     .replace("{Owner}", getOwnerNames().toArray()[0].toString());
@@ -545,47 +516,6 @@ public abstract class Area implements Comparable<Area> {
 		return p.hasPermission("flags.area.bundle.others");
 	}
 
-    /*
-     * Checks to make sure the player can afford the item. If false, the player
-     * is automatically notified.
-     */
-    private static boolean isFundingLow(EconomyPurchaseType product, Flag flag, Player player) {
-        final double price = flag.getPrice(product);
-
-        if (price > Flags.getEconomy().getBalance(player.getName())) {
-            player.sendMessage(Message.LowFunds
-                    .get()
-                    .replaceAll("\\{PurchaseType\\}",
-                            product.getLocal().toLowerCase())
-                    .replace("{Price}", Flags.getEconomy().format(price))
-                    .replaceAll("\\{Flag\\}", flag.getName()));
-            return true;
-        }
-        return false;
-    }
-
-    /*
-     * Makes the final purchase transaction.
-     */
-    private static boolean failedTransaction(EconomyTransactionType transaction,
-                                           EconomyPurchaseType product, Flag flag, Player player) {
-        final double price = flag.getPrice(product);
-
-        final EconomyResponse r = transaction == EconomyTransactionType.Withdraw ? Flags
-                .getEconomy().withdrawPlayer(player.getName(), price) // Withdrawal
-                : Flags.getEconomy().depositPlayer(player.getName(), price); // Deposit
-
-        if (r.transactionSuccess()) {
-            player.sendMessage(transaction.getMessage().replace("{Price}", Flags.getEconomy().format(price)));
-            return false;
-        }
-
-        // Something went wrong if we made it this far.
-        Bukkit.getPluginManager().getPlugin("Flags").getLogger().warning(String.format("[Economy Error] %s", r.errorMessage));
-        player.sendMessage(Message.Error.get().replaceAll("\\{Error\\}", r.errorMessage));
-        return true;
-    }
-
     /**
      * 0 if the the areas are the same
      * -1 if the area is a subdivision of the provided area.
@@ -616,4 +546,78 @@ public abstract class Area implements Comparable<Area> {
         }
         return 3;
     }
+
+    /*
+     * Checks to make sure the player can afford the item. If false, the player
+     * is automatically notified.
+     */
+    private static boolean isFundingLow(EconomyPurchaseType product, Flag flag, Player player) {
+        final double price = flag.getPrice(product);
+
+        if (price > Flags.getEconomy().getBalance(player.getName())) {
+            player.sendMessage(Message.LowFunds.get()
+                    .replace("{PurchaseType}", product.getLocal().toLowerCase())
+                    .replace("{Price}", Flags.getEconomy().format(price))
+                    .replace("{Flag}", flag.getName()));
+            return true;
+        }
+        return false;
+    }
+
+    /*
+     * Makes the final purchase transaction.
+     */
+    private static boolean failedTransaction(EconomyTransactionType transaction,
+                                           EconomyPurchaseType product, Flag flag, Player player) {
+        final double price = flag.getPrice(product);
+
+        final EconomyResponse r = transaction == EconomyTransactionType.Withdraw ? Flags
+                .getEconomy().withdrawPlayer(player.getName(), price) // Withdrawal
+                : Flags.getEconomy().depositPlayer(player.getName(), price); // Deposit
+
+        if (r.transactionSuccess()) {
+            player.sendMessage(transaction.getMessage().replace("{Price}", Flags.getEconomy().format(price)));
+            return false;
+        }
+
+        // Something went wrong if we made it this far.
+        Bukkit.getPluginManager().getPlugin("Flags").getLogger().warning(String.format("[Economy Error] %s", r.errorMessage));
+        player.sendMessage(Message.Error.get().replace("{Error}", r.errorMessage));
+        return true;
+    }
+
+    /**
+     * Gets a set of owners for the area. On many systems, there will only be
+     * one.
+     *
+     * @return the player name of the area owner.
+     * @throws InvalidAreaException
+     * @deprecated Use getOwnerNames() instead.  Future UUID support
+     */
+    @Deprecated
+    @SuppressWarnings("deprecation, unused")
+    public Set<String> getOwners() {
+        return getOwnerNames();
+    }
+
+    /**
+     * Returns the system type that this object belongs to.
+     *
+     * @return The LandSystem that created this object
+     * @deprecated Use getCuboidType instead
+     */
+    @SuppressWarnings("deprecation, unused")
+    @Deprecated
+    public abstract System getSystemType();
+
+    /**
+     * Gets the land system's ID for this area.
+     *
+     * @return the area's ID in the format provided by the land management
+     *         system.
+     * @throws InvalidAreaException
+     * @deprecated Use getId() and getParent().getId() instead
+     */
+    @Deprecated
+    public abstract String getSystemID();
 }
