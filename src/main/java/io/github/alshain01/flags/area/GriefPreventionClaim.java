@@ -149,21 +149,6 @@ public class GriefPreventionClaim extends RemovableArea implements Siege, Admini
         throw new InvalidAreaException();
     }
 
-    /**
-     * 0 if the the worlds are the same, 3 if they are not.
-     *
-     * @return The value of the comparison.
-     */
-    @Override
-    public int compareTo(@Nonnull Area a) {
-        Validate.notNull(a);
-        if(!(a instanceof GriefPreventionClaim)) {
-            return 3;
-        }
-
-        return (claim.equals(((GriefPreventionClaim)a).getClaim())) ? 0 : 3;
-    }
-
     @Override
     @Deprecated
     public String getSystemID() {

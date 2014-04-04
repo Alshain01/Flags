@@ -47,7 +47,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a Regios Region.
  */
-final public class RegiosRegion extends Area implements Removable{
+final public class RegiosRegion extends RemovableArea {
 	private final Region region;
 
 	/**
@@ -100,22 +100,15 @@ final public class RegiosRegion extends Area implements Removable{
 
     @Override
     public UUID getUniqueId() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return null;
+        if (isArea()) return null;
+        throw new InvalidAreaException();
     }
 
 	@Override
 	public Set<String> getOwnerNames() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return new HashSet<String>(Arrays.asList(region.getOwner()));
+        if (isArea()) return new HashSet<String>(Arrays.asList(region.getOwner()));
+        throw new InvalidAreaException();
     }
-
-	@Override
-    @Deprecated
-    @SuppressWarnings("deprecation")
-	public System getSystemType() {
-		return System.REGIOS;
-	}
 
     @Override
     public CuboidType getCuboidType() {
@@ -124,41 +117,38 @@ final public class RegiosRegion extends Area implements Removable{
 
     @Override
     public String getName() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return region.getName();
+        if (isArea()) return region.getName();
+        throw new InvalidAreaException();
     }
 
     @Override
     public String getId() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return region.getName();
-    }
-
-	@Override
-    @Deprecated
-	public String getSystemID() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return region.getName();
+        if (isArea()) return region.getName();
+        throw new InvalidAreaException();
     }
 
 	@Override
 	public World getWorld() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return Bukkit.getWorld(region.getWorld().getName());
+        if (isArea()) return Bukkit.getWorld(region.getWorld().getName());
+        throw new InvalidAreaException();
     }
 
 	@Override
-	public boolean isArea() { return region != null; }
-
-	@Override
-	public void remove() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        Flags.getDataStore().remove(this);
+	public boolean isArea() {
+        return region != null;
     }
 
     @Override
-    public int compareTo(@Nonnull Area a) {
-        Validate.notNull(a);
-        return a instanceof RegiosRegion && getSystemID().equals(a.getSystemID()) ? 0 : 3;
+    @Deprecated
+    @SuppressWarnings("deprecation")
+    public System getSystemType() {
+        return System.REGIOS;
+    }
+
+    @Override
+    @Deprecated
+    public String getSystemID() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        return region.getName();
     }
 }

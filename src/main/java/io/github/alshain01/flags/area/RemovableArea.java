@@ -24,16 +24,22 @@
 
 package io.github.alshain01.flags.area;
 
+import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.exception.InvalidAreaException;
 
 /**
  * Interface that defines area types that can be removed from the server by
  * practical non-administrative means.
  */
-interface Removable {
+abstract class RemovableArea extends Area {
 	/**
 	 * Permanently removes the area from the data store USE CAUTION!
      * @throws InvalidAreaException
 	 */
-	public void remove();
+    final public void remove() {
+        if (isArea()) {
+            Flags.getDataStore().remove(this);
+        }
+        throw new InvalidAreaException();
+    }
 }

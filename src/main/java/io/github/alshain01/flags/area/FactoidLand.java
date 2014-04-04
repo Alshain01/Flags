@@ -181,34 +181,6 @@ final public class FactoidLand extends RemovableArea implements Subdivision {
         throw new InvalidSubdivisionException();
     }
 
-    /**
-     * 0 if the the claims are the same
-     * -1 if the claim is a subdivision of the provided claim.
-     * 1 if the claim is a parent of the provided claim.
-     * 2 if they are "sister" subdivisions. 3 if they are completely unrelated.
-     *
-     * @return The value of the comparison.
-     */
-    @Override
-    public int compareTo(@Nonnull Area a) {
-        Validate.notNull(a);
-        if (!(a instanceof FactoidLand)) {
-            return 3;
-        }
-
-        Land testLand = ((FactoidLand)a).getLand();
-        if (land.equals(testLand)) {
-            return 0;
-        } else if (land.getParent() != null && land.getParent().equals(testLand)) {
-            return -1;
-        } else if (testLand.getParent() != null && testLand.getParent().equals(land)) {
-            return 1;
-        } else if (land.getParent() != null && land.getParent().equals(testLand.getParent())) {
-            return 2;
-        }
-        return 3;
-    }
-
     @Override
     @Deprecated
     public String getSystemID() {

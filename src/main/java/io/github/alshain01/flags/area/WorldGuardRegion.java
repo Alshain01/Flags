@@ -44,7 +44,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a WorldGuard Region.
  */
-final public class WorldGuardRegion extends Area implements Removable {
+final public class WorldGuardRegion extends RemovableArea {
 	private final ProtectedRegion region;
 	private final World world;
 
@@ -100,34 +100,20 @@ final public class WorldGuardRegion extends Area implements Removable {
      */
     @SuppressWarnings("unused") // API
     public ProtectedRegion getRegion() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return region;
+        if (isArea()) return region;
+        throw new InvalidAreaException();
     }
 
     @Override
     public UUID getUniqueId() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return null;
+        if (isArea()) return null;
+        throw new InvalidAreaException();
     }
 
     @Override
     public String getId() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return region.getId();
-    }
-
-	@Override
-    @Deprecated
-	public String getSystemID() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return region.getId();
-    }
-
-    @Override
-    @Deprecated
-    @SuppressWarnings("deprecation")
-    public System getSystemType() {
-        return System.WORLDGUARD;
+        if (isArea()) return region.getId();
+        throw new InvalidAreaException();
     }
 
     @Override
@@ -137,39 +123,38 @@ final public class WorldGuardRegion extends Area implements Removable {
 
     @Override
     public String getName() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return region.getId();
+        if (isArea()) return region.getId();
+        throw new InvalidAreaException();
     }
 
     @Override
     public Set<String> getOwnerNames() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return region.getOwners().getPlayers();
+        if (isArea()) return region.getOwners().getPlayers();
+        throw new InvalidAreaException();
     }
 
 	@Override
 	public org.bukkit.World getWorld() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return world;
+        if (isArea()) return world;
+        throw new InvalidAreaException();
     }
 
 	@Override
-	public boolean isArea() { return region != null && world != null; }
-
-	@Override
-	public void remove() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        Flags.getDataStore().remove(this);
+	public boolean isArea() {
+        return region != null && world != null;
     }
 
-    /**
-     * 0 if the the worlds are the same, 3 if they are not.
-     *
-     * @return The value of the comparison.
-     */
     @Override
-    public int compareTo(@Nonnull Area a) {
-        Validate.notNull(a);
-        return a instanceof WorldGuardRegion && getSystemID().equals(a.getSystemID()) ? 0 : 3;
+    @Deprecated
+    public String getSystemID() {
+        if(isArea()) return region.getId();
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    @Deprecated
+    @SuppressWarnings("deprecation")
+    public System getSystemType() {
+        return System.WORLDGUARD;
     }
 }

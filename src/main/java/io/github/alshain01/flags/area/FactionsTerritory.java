@@ -135,17 +135,6 @@ final public class FactionsTerritory extends RemovableArea {
         return world != null && faction != null;
     }
 
-    /**
-     * 0 if the the plots are the same, 3 if they are not.
-     *
-     * @return The value of the comparison.
-     */
-    @Override
-    public int compareTo(@Nonnull Area a) {
-        Validate.notNull(a);
-        return a instanceof FactionsTerritory && getSystemID().equals(a.getSystemID()) ? 0 : 3;
-    }
-
     @Override
     @Deprecated
     public String getSystemID() {

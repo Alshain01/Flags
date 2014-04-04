@@ -84,81 +84,65 @@ public class Wilderness extends Area {
 
     @Override
     public UUID getUniqueId() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return world.getUID();
+        if(isArea()) return world.getUID();
+        throw new InvalidAreaException();
     }
 
     @Override
     public String getId() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return world.getName();
+        if(isArea()) return world.getName();
+        throw new InvalidAreaException();
     }
-
-    @Override
-    @Deprecated
-    public String getSystemID() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return world.getName();
-    }
-
-    @Override
-    @Deprecated
-    @SuppressWarnings("deprecation")
-    public System getSystemType() { return System.WORLD; }
 
     @Override
     public CuboidType getCuboidType() { return CuboidType.WILDERNESS; }
 
     @Override
     public String getName() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return world.getName() + " Wilderness";
+        if(isArea()) return world.getName() + " Wilderness";
+        throw new InvalidAreaException();
     }
 
     @Override
     public Set<String> getOwnerNames() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return new HashSet<String>(Arrays.asList("wilderness"));
+        if(isArea()) return new HashSet<String>(Arrays.asList("wilderness"));
+        throw new InvalidAreaException();
     }
 
     @Override
     public org.bukkit.World getWorld() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return world;
+        if(isArea()) return world;
+        throw new InvalidAreaException();
     }
 
     @Override
-    public boolean isArea() { return world != null; }
+    public boolean isArea() {
+        return world != null;
+    }
 
     @Override
     public boolean hasPermission(Permissible p) {
-        if(!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(p);
         return p.hasPermission("flags.area.flag.wilderness");
     }
 
     @Override
     public boolean hasBundlePermission(Permissible p) {
-        if(!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(p);
         return p.hasPermission("flags.area.bundle.wilderness");
     }
 
     @Override
     public Boolean getValue(Flag flag, boolean absolute) {
-        if(!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(flag);
 
         final Boolean value = super.getValue(flag, true);
-        if (absolute) {
-            return value;
-        }
+        if (absolute) return value;
         return value != null ? value : flag.getDefault();
     }
 
     @Override
     public String getMessage(Flag flag, boolean parse) {
-        if(!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(flag);
 
         String message = Flags.getDataStore().readMessage(this, flag);
@@ -170,20 +154,25 @@ public class Wilderness extends Area {
         if (parse) {
             message = message
                     .replace("{AreaType}", CuboidType.WILDERNESS.getCuboidName().toLowerCase())
-                    .replace("{World}", world.getName());
+                    .replace("{World}", getName())
+                    .replace("{AreaName}", getName());
             message = ChatColor.translateAlternateColorCodes('&', message);
         }
         return message;
     }
 
-    /**
-     * 0 if the the worlds are the same, 3 if they are not.
-     *
-     * @return The value of the comparison.
-     */
+
     @Override
-    public int compareTo(@Nonnull Area a) {
-        Validate.notNull(a);
-        return a instanceof Wilderness && getSystemID().equals(a.getSystemID()) ? 0 : 3;
+    @Deprecated
+    public String getSystemID() {
+        if(isArea()) return world.getName();
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    @Deprecated
+    @SuppressWarnings("deprecation")
+    public System getSystemType() {
+        return System.WORLD;
     }
 }

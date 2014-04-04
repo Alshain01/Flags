@@ -142,22 +142,6 @@ final public class FlagsSector extends RemovableArea implements Subdivision  {
         throw new InvalidSubdivisionException();
     }
 
-    /**
-     * 0 if the the claims are the same
-     * -1 if the claim is a subdivision of the provided claim.
-     * 1 if the claim is a parent of the provided claim.
-     * 2 if they are "sister" subdivisions. 3 if they are completely unrelated.
-     *
-     * @return The value of the comparison.
-     */
-    @Override
-    public int compareTo(@Nonnull Area a) {
-        Validate.notNull(a);
-        if (!(a instanceof FlagsSector)) { return 3; }
-        Sector testSector = ((FlagsSector)a).getSector();
-        return sector.compareTo(testSector);
-    }
-
     @Override
     @Deprecated
     public String getSystemID() {

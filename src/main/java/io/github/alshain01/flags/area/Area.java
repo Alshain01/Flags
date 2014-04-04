@@ -48,6 +48,8 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 
+import javax.annotation.Nonnull;
+
 /**
  * Class for base functions of a specific area.
  */
@@ -580,5 +582,36 @@ public abstract class Area implements Comparable<Area> {
         Bukkit.getPluginManager().getPlugin("Flags").getLogger().warning(String.format("[Economy Error] %s", r.errorMessage));
         player.sendMessage(Message.Error.get().replaceAll("\\{Error\\}", r.errorMessage));
         return true;
+    }
+
+    /**
+     * 0 if the the areas are the same
+     * -1 if the area is a subdivision of the provided area.
+     * 1 if the area is a parent of the provided area.
+     * 2 if they are "sister" subdivisions.
+     * 3 if they are completely unrelated.
+     *
+     * @return The value of the comparison.
+     */
+    @Override
+    final public int compareTo(@Nonnull Area a) {
+        Validate.notNull(a);
+        if ((a.getClass().equals(this.getClass()))) {
+            if (getId().equals(a.getId())) {
+                return 0;
+            }
+
+            if (this instanceof Subdivision) {
+                if (((Subdivision) this).isSubdivision()) {
+                    if (((Subdivision) a).isSubdivision() && ((Subdivision) a).getParent().getId().equals(((Subdivision) this).getParent().getId()))
+                        return 2;
+                    if (((Subdivision) this).getParent().getId().equals(a.getId()))
+                        return -1;
+                } else if (((Subdivision) a).isSubdivision() && ((Subdivision) a).getParent().getId().equals(getId())) {
+                    return 1;
+                }
+            }
+        }
+        return 3;
     }
 }

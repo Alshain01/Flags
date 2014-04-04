@@ -112,34 +112,6 @@ final public class GriefPreventionClaim78 extends GriefPreventionClaim implement
         throw new InvalidSubdivisionException();
     }
 
-	/**
-	 * 0 if the the claims are the same 
-	 * -1 if the claim is a subdivision of the provided claim. 
-	 * 1 if the claim is a parent of the provided claim.
-	 * 2 if they are "sister" subdivisions. 3 if they are completely unrelated.
-	 * 
-	 * @return The value of the comparison.
-	 */
-	@Override
-	public int compareTo(@Nonnull Area a) {
-        Validate.notNull(a);
-		if (!(a instanceof GriefPreventionClaim78)) {
-			return 3;
-		}
-		
-		Claim testClaim = ((GriefPreventionClaim78)a).getClaim();
-		if(claim.equals(testClaim)) {
-			return 0;
-		} else if (claim.parent != null && claim.parent.equals(testClaim)) {
-			return -1;
-		} else if (testClaim.parent != null && testClaim.parent.equals(claim)) {
-			return 1;
-		} else if (claim.parent != null && claim.parent.equals(testClaim.parent)) {
-			return 2;
-		}
-		return 3;
-	}
-
     @Override
     @Deprecated
     public String getSystemSubID() {

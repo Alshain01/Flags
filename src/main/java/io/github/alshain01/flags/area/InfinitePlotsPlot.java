@@ -47,7 +47,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a InfinitePlots Plot.
  */
-final public class InfinitePlotsPlot extends Area implements Removable {
+final public class InfinitePlotsPlot extends RemovableArea {
 	private final Plot plot;
 
 	/**
@@ -98,28 +98,14 @@ final public class InfinitePlotsPlot extends Area implements Removable {
 
     @Override
     public UUID getUniqueId() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return null;
+        if (isArea()) return null;
+        throw new InvalidAreaException();
     }
 
     @Override
     public String getId() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return plot.getLocation().getX() + ";" + plot.getLocation().getZ();
-    }
-
-    @Override
-    @Deprecated
-    public String getSystemID() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return plot.getLocation().getX() + ";" + plot.getLocation().getZ();
-    }
-
-    @Override
-    @Deprecated
-    @SuppressWarnings("deprecation")
-    public System getSystemType() {
-        return System.INFINITEPLOTS;
+        if (isArea()) return plot.getLocation().getX() + ";" + plot.getLocation().getZ();
+        throw new InvalidAreaException();
     }
 
     @Override
@@ -129,39 +115,38 @@ final public class InfinitePlotsPlot extends Area implements Removable {
 
     @Override
     public String getName() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return plot.getName();
+        if (isArea()) return plot.getName();
+        throw new InvalidAreaException();
     }
 
 	@Override
 	public Set<String> getOwnerNames() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return new HashSet<String>(Arrays.asList(plot.getAdmin()));
+        if (isArea()) return new HashSet<String>(Arrays.asList(plot.getAdmin()));
+        throw new InvalidAreaException();
     }
 
 	@Override
 	public World getWorld() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return plot.getLocation().getWorld();
+        if (isArea()) return plot.getLocation().getWorld();
+        throw new InvalidAreaException();
     }
 
 	@Override
-	public boolean isArea() { return plot != null; }
-
-	@Override
-	public void remove() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        Flags.getDataStore().remove(this);
+	public boolean isArea() {
+        return plot != null;
     }
 
-    /**
-     * 0 if the the worlds are the same, 3 if they are not.
-     *
-     * @return The value of the comparison.
-     */
     @Override
-    public int compareTo(@Nonnull Area a) {
-        Validate.notNull(a);
-        return a instanceof InfinitePlotsPlot && getSystemID().equals(a.getSystemID()) ? 0 : 3;
+    @Deprecated
+    public String getSystemID() {
+        if (isArea()) return plot.getLocation().getX() + ";" + plot.getLocation().getZ();
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    @Deprecated
+    @SuppressWarnings("deprecation")
+    public System getSystemType() {
+        return System.INFINITEPLOTS;
     }
 }

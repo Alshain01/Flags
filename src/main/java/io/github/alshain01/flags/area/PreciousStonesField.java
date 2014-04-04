@@ -45,7 +45,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a PreciousStones Field.
  */
-final public class PreciousStonesField extends Area implements Subdivision, Removable {
+final public class PreciousStonesField extends RemovableArea implements Subdivision  {
 	private Field field;
 
     /**
@@ -96,6 +96,16 @@ final public class PreciousStonesField extends Area implements Subdivision, Remo
 			 }
 		 }
 	}
+
+    /**
+     * Creates an instance of PreciousStonesField based on a world and field object
+     *
+     * @param field
+     *            The field object
+     */
+    public PreciousStonesField(Field field) {
+        this.field = field;
+    }
 	
 	// This is private because it doesn't currently check parentOnly,
 	// should only be used when you know parentOnly will be true
@@ -130,25 +140,89 @@ final public class PreciousStonesField extends Area implements Subdivision, Remo
 
     @Override
     public UUID getUniqueId() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return null;
+        if (isArea()) return null;
+        throw new InvalidAreaException();
     }
 
     @Override
     public String getId() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return String.valueOf(field.getId());
+        if (isArea()) return String.valueOf(field.getId());
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public CuboidType getCuboidType() {
+        return CuboidType.PRECIOUSSTONES;
+    }
+
+    @Override
+    public String getName() {
+        if (isArea()) return field.getName();
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public Set<String> getOwnerNames() {
+        if (isArea()) return new HashSet<String>(Arrays.asList(field.getOwner()));
+        throw new InvalidAreaException();
+    }
+
+    @Override
+	public World getWorld() {
+        if (isArea()) return Bukkit.getWorld(field.getWorld());
+        throw new InvalidAreaException();
     }
 
 	@Override
-    @Deprecated
-	public String getSystemID() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-		if (field.isChild()) {
-			return String.valueOf(field.getParent().getId());
-		}
-		return String.valueOf(field.getId());
+	public boolean isArea() {
+        return field != null;
+    }
+
+    @Override
+    public boolean isSubdivision() {
+        if (isArea()) return field.isChild();
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public boolean isParent(Area area) {
+        if (isSubdivision()) {
+            Validate.notNull(area);
+            return area instanceof PreciousStonesField && field.isParent()
+                    && field.getChildren().contains(((PreciousStonesField) area).getField());
+        }
+        throw new InvalidSubdivisionException();
+    }
+
+    @Override
+    public Area getParent() {
+        if (isSubdivision()) return new PreciousStonesField(field.getParent().getLocation(), true);
+        throw new InvalidSubdivisionException();
+    }
+
+	@Override
+	public boolean isInherited() {
+        if (isSubdivision()) return Flags.getDataStore().readInheritance(this);
+        throw new InvalidSubdivisionException();
 	}
+
+	@Override
+	public void setInherited(boolean value) {
+        if (isSubdivision()) {
+            Flags.getDataStore().writeInheritance(this, value);
+        }
+        throw new InvalidSubdivisionException();
+	}
+
+    @Override
+    @Deprecated
+    public String getSystemID() {
+        if (!isArea()) { throw new InvalidAreaException(); }
+        if (field.isChild()) {
+            return String.valueOf(field.getParent().getId());
+        }
+        return String.valueOf(field.getId());
+    }
 
     @SuppressWarnings("deprecation")
     @Override
@@ -156,96 +230,9 @@ final public class PreciousStonesField extends Area implements Subdivision, Remo
     public System getSystemType() { return System.PRECIOUSSTONES; }
 
     @Override
-    public CuboidType getCuboidType() { return CuboidType.PRECIOUSSTONES; }
-
-    @Override
-    public String getName() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return field.getName();
-    }
-
-    @Override
-    public Set<String> getOwnerNames() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return new HashSet<String>(Arrays.asList(field.getOwner()));
-    }
-
-    @Override
-	public World getWorld() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return Bukkit.getWorld(field.getWorld());
-    }
-
-	@Override
-	public boolean isArea() { return field != null; }
-
-	@Override
-	public String getSystemSubID() {
-        if (!isArea()) { throw new InvalidAreaException(); }
+    @Deprecated
+    public String getSystemSubID() {
         if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-		return field.isChild() ? String.valueOf(field.getId()) : null;
-	}
-
-    @Override
-    public boolean isSubdivision() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return field.isChild();
-    }
-
-    @Override
-    public boolean isParent(Area area) {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        Validate.notNull(area);
-
-        return area instanceof PreciousStonesField && field.isParent()
-                && field.getChildren().contains(((PreciousStonesField)area).getField());
-    }
-
-    @Override
-    public Area getParent() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        return new PreciousStonesField(field.getParent().getLocation(), true);
-    }
-
-	@Override
-	public boolean isInherited() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-		return field.isChild() && Flags.getDataStore().readInheritance(this);
-	}
-
-	@Override
-	public void setInherited(boolean value) {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-    	Flags.getDataStore().writeInheritance(this, value);
-	}
-
-    @Override
-    public void remove() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        Flags.getDataStore().remove(this);
-    }
-
-    @Override
-    public int compareTo(@Nonnull Area a) {
-        Validate.notNull(a);
-        if (!(a instanceof PreciousStonesField)) {
-            return 3;
-        }
-
-        Field testField = ((PreciousStonesField)a).getField();
-        if(field.equals(testField)) {
-            return 0;
-        } else if (field.isChild() && field.getParent().equals(testField)) {
-            return -1;
-        } else if (testField.isChild() && testField.getParent().equals(field)) {
-            return 1;
-        } else if (field.isChild() && testField.isChild() && field.getParent().equals(testField.getParent())) {
-            return 2;
-        }
-        return 3;
+        return field.isChild() ? String.valueOf(field.getId()) : null;
     }
 }

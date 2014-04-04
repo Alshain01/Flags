@@ -79,28 +79,14 @@ final public class Default extends Area {
 
     @Override
     public UUID getUniqueId() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return world.getUID();
+        if (isArea()) return world.getUID();
+        throw new InvalidAreaException();
     }
 
     @Override
     public String getId() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return world.getName();
-    }
-
-    @Override
-    @Deprecated
-    public String getSystemID() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return world.getName();
-    }
-
-    @SuppressWarnings("deprecation")
-    @Deprecated
-    @Override
-    public System getSystemType() {
-        return System.DEFAULT;
+        if (isArea()) return world.getName();
+        throw new InvalidAreaException();
     }
 
     @Override
@@ -110,46 +96,44 @@ final public class Default extends Area {
 
     @Override
     public String getName() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return world.getName() + " Default";
+        if (isArea()) return world.getName() + " Default";
+        throw new InvalidAreaException();
     }
 
     @Override
     public Set<String> getOwnerNames() {
-        if(!isArea()) { throw new InvalidAreaException(); }
         return new HashSet<String>(Arrays.asList("default"));
     }
 
     @Override
     public World getWorld() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        return world;
+        if (isArea()) return world;
+        throw new InvalidAreaException();
     }
 
     @Override
-    public boolean isArea() { return world != null; }
+    public boolean isArea() {
+        return world != null;
+    }
 
     @Override
     public boolean hasBundlePermission(Permissible p) {
-        if(!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(p);
         return p.hasPermission("flags.area.bundle.default");
     }
 
     @Override
     public boolean hasPermission(Permissible p) {
-        if(!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(p);
         return p.hasPermission("flags.area.flag.default");
     }
 
     @Override
     public Boolean getValue(Flag flag, boolean absolute) {
-        if(!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(flag);
 
         final Boolean value = super.getValue(flag, true);
-        if (absolute) { return value; }
+        if (absolute) return value;
         return value != null ? value : flag.getDefault();
     }
 
@@ -164,7 +148,6 @@ final public class Default extends Area {
 	 */
 	@Override
 	public String getMessage(Flag flag, boolean parse) {
-        if (!isArea()) { throw new InvalidAreaException(); }
         Validate.notNull(flag);
 
 		// We are ignore parse here. We just want to override it.
@@ -172,14 +155,17 @@ final public class Default extends Area {
 		return message != null ? message : flag.getDefaultAreaMessage();
 	}
 
-    /**
-     * 0 if the the worlds are the same, 3 if they are not.
-     *
-     * @return The value of the comparison.
-     */
     @Override
-    public int compareTo(@Nonnull Area a) {
-        Validate.notNull(a);
-        return a instanceof Default && getSystemID().equals(a.getSystemID()) ? 0 : 3;
+    @Deprecated
+    public String getSystemID() {
+        if(isArea()) return world.getName();
+        throw new InvalidAreaException();
+    }
+
+    @SuppressWarnings("deprecation")
+    @Deprecated
+    @Override
+    public System getSystemType() {
+        return System.DEFAULT;
     }
 }

@@ -46,7 +46,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a PlotMe Plot.
  */
-final public class PlotMePlot extends Area implements Removable {
+final public class PlotMePlot extends RemovableArea  {
 	private final Plot plot;
 
 	/**
@@ -92,66 +92,53 @@ final public class PlotMePlot extends Area implements Removable {
 
     @Override
     public UUID getUniqueId() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return null;
+        if (isArea()) return null;
+        throw new InvalidAreaException();
     }
 
     @Override
     public String getId() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return plot.id;
+        if (isArea()) return plot.id;
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public CuboidType getCuboidType() {
+        return CuboidType.PLOTME;
+    }
+
+    @Override
+    public String getName() {
+        if (isArea()) return plot.id;
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public Set<String> getOwnerNames() {
+        if (isArea()) return new HashSet<String>(Arrays.asList(plot.owner));
+        throw new InvalidAreaException();
+    }
+
+	@Override
+	public World getWorld() {
+        if (isArea())return Bukkit.getWorld(plot.world);
+        throw new InvalidAreaException();
+    }
+
+	@Override
+	public boolean isArea() {
+        return plot != null;
     }
 
     @Override
     @Deprecated
     public String getSystemID() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return plot.id;
+        if (isArea()) return plot.id;
+        throw new InvalidAreaException();
     }
 
     @SuppressWarnings("deprecation")
     @Override
     @Deprecated
     public System getSystemType() { return System.PLOTME; }
-
-    @Override
-    public CuboidType getCuboidType() { return CuboidType.PLOTME; }
-
-    @Override
-    public String getName() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return plot.id;
-    }
-
-    @Override
-    public Set<String> getOwnerNames() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return new HashSet<String>(Arrays.asList(plot.owner));
-    }
-
-	@Override
-	public World getWorld() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return Bukkit.getWorld(plot.world);
-    }
-
-	@Override
-	public boolean isArea() { return plot != null; }
-
-	@Override
-	public void remove() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        Flags.getDataStore().remove(this);
-    }
-
-    /**
-     * 0 if the the worlds are the same, 3 if they are not.
-     *
-     * @return The value of the comparison.
-     */
-    @Override
-    public int compareTo(@Nonnull Area a) {
-        Validate.notNull(a);
-        return a instanceof PlotMePlot && getSystemID().equals(a.getSystemID()) ? 0	: 3;
-    }
 }
