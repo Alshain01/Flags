@@ -47,7 +47,7 @@ public enum EconomyPurchaseType {
 	EconomyPurchaseType(char alias) {
 		this.alias = alias;
         this.refundable = Bukkit.getServer().getPluginManager().getPlugin("Flags").getConfig()
-                .getBoolean("Flags.Economy.Refund." + this.toString());
+                .getBoolean("Economy.Refund." + this.toString());
 	}
 
 	/**

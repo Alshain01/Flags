@@ -62,7 +62,6 @@ public class Flags extends JavaPlugin {
     private static SectorManager sectors;
     private static boolean borderPatrol = false;
 
-
 	/**
 	 * Called when this plug-in is enabled
 	 */
@@ -73,10 +72,9 @@ public class Flags extends JavaPlugin {
 
         // Set up the plugin's configuration file
         saveDefaultConfig();
-        final ConfigurationSection pluginConfig = getConfig().getConfigurationSection("Flags");
 
         // Initialize the static variables
-        debugOn = pluginConfig.getBoolean("Debug");
+        debugOn = getConfig().getBoolean("Debug.Enabled");
         logger  = this.getLogger();
 
         // Acquire the messages from configuration
@@ -84,10 +82,10 @@ public class Flags extends JavaPlugin {
         CuboidType.loadNames(this);
 
         economy = setupEconomy();
-        EconomyBaseValue.valueOf(pluginConfig.getString("Economy.BaseValue")).set();
+        EconomyBaseValue.valueOf(getConfig().getString("Economy.BaseValue")).set();
 
-        CuboidType.find(pm, pluginConfig.getList("AreaPlugins"));
-        dataStore = DataStoreType.getByUrl(this, pluginConfig.getString("Database.Url"));
+        CuboidType.find(pm, getConfig().getList("AreaPlugins"));
+        dataStore = DataStoreType.getByUrl(this, getConfig().getString("Database.Url"));
         sqlData = dataStore instanceof DataStoreMySQL;
 
         // New installation
@@ -95,15 +93,15 @@ public class Flags extends JavaPlugin {
         dataStore.update(this);
 
         // Load Mr. Clean
-        MrClean.enable(this, pluginConfig.getBoolean("MrClean"));
+        MrClean.enable(this, getConfig().getBoolean("MrClean"));
 
         // Configure the updater
-		if (pluginConfig.getBoolean("Update.Enabled")) {
+		if (getConfig().getBoolean("Update.Enabled")) {
             new Updater(this);
 		}
 
 		// Load Border Patrol
-        ConfigurationSection bpConfig = pluginConfig.getConfigurationSection("BorderPatrol");
+        ConfigurationSection bpConfig = getConfig().getConfigurationSection("BorderPatrol");
 		if (bpConfig.getBoolean("Enable")) {
             borderPatrol = true;
 			BorderPatrol bp = new BorderPatrol(bpConfig.getInt("EventDivisor"), bpConfig.getInt("TimeDivisor"));
@@ -112,17 +110,17 @@ public class Flags extends JavaPlugin {
 
         // Load Sectors
         if(CuboidType.getActive() == CuboidType.FLAGS) {
-            sectors = new SectorManager(dataStore, pluginConfig.getConfigurationSection("Sector").getInt("DefaultDepth"));
+            sectors = new SectorManager(dataStore, getConfig().getConfigurationSection("Sector").getInt("DefaultDepth"));
         }
 
         // Set Command Executors
-        CommandFlag executor = new CommandFlag(Material.valueOf(pluginConfig.getString("Tools.FlagQuery")));
+        CommandFlag executor = new CommandFlag(Material.valueOf(getConfig().getString("Tools.FlagQuery")));
         getCommand("flag").setExecutor(executor);
         pm.registerEvents(executor, this);
         getCommand("bundle").setExecutor(new CommandBundle());
 
  		// Schedule tasks to perform after server is running
-		new onServerEnabledTask(this, pluginConfig.getBoolean("Metrics.Enabled")).runTask(this);
+		new onServerEnabledTask(this, getConfig().getBoolean("Metrics.Enabled")).runTask(this);
 		logger.info("Flags Has Been Enabled.");
 	}
 

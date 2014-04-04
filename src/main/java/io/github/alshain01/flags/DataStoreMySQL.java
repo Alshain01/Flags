@@ -150,7 +150,7 @@ final class DataStoreMySQL extends DataStore {
     public void create(JavaPlugin plugin) {
         if (notExists()) {
             executeStatement("CREATE TABLE IF NOT EXISTS Version (Major INT, Minor INT, Build INT);");
-            executeStatement("INSERT INTO Version (Major, Minor, Build) VALUES (1,4,3);");
+            executeStatement("INSERT INTO Version (Major, Minor, Build) VALUES (2,0,0);");
             executeStatement("CREATE TABLE IF NOT EXISTS Sectors (Id CHAR(36), GreaterCorner VARCHAR(255), LesserCorner VARCHAR(255), INTEGER Depth, PRIMARY KEY (Id));");
             executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(36), FlagName VARCHAR(36), CONSTRAINT pk_BundleEntry PRIMARY KEY (BundleName, FlagName));");
             executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(36), ProductType VARCHAR(36), Cost DOUBLE, CONSTRAINT pk_FlagType PRIMARY KEY (FlagName, ProductType));");

@@ -89,8 +89,8 @@ final class Updater {
 
     public Updater(Plugin plugin) {
         this.version = plugin.getDescription().getVersion();
-        long interval = plugin.getConfig().getLong("Flags.Update.Interval");
-        String key = plugin.getConfig().getString("Flags.Update.ServerModsAPIKey");
+        long interval = plugin.getConfig().getLong("Update.Interval");
+        String key = plugin.getConfig().getString("Update.ServerModsAPIKey");
 
         if (key == null || key.equalsIgnoreCase("null") || key.equals("")) { key = null; }
         this.apiKey = key;

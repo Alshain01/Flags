@@ -35,6 +35,7 @@ import io.github.alshain01.flags.sector.Sector;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -56,13 +57,11 @@ final class DataStoreYaml extends DataStore {
     private final static String SECTOR_FILE = "sector.yml";
 
     private final static String DATABASE_VERSION_PATH = "Default.Database.Version";
-    private final static String BUNDLE_PATH = "Bundle";
     private final static String TRUST_PATH = "Trust";
     private final static String VALUE_PATH = "Value";
     private final static String MESSAGE_PATH = "Message";
     private final static String INHERIT_PATH = "InheritParent";
-    private final static String PRICE_PATH = "Price";
-    private final static String SECTOR_PATH = "Sectors";
+    //private final static String SECTOR_PATH = "Sectors";
 
     private final static String DATA_FOOTER = "Data";
 
@@ -199,108 +198,68 @@ final class DataStoreYaml extends DataStore {
     @Override
     public void update(JavaPlugin plugin) {
         final DataStoreVersion ver = readVersion();
-        if (ver.getMajor() == 1 && ver.getMinor() == 4 && ver.getBuild() == 2) { return; }
-        if (ver.getMajor() <= 1 && ver.getMinor() <= 4 && ver.getBuild() <= 2) {
-            if (ver.getMajor() <= 1 && ver.getMinor() <= 2 && ver.getBuild() < 2) {
-                YamlConfiguration dataConfig = getYml("data");
-                ConfigurationSection cSec;
-                CuboidType system = CuboidType.getActive();
-                if (dataConfig.isConfigurationSection(CuboidType.getActive().toString() + DATA_FOOTER)) {
-                    if (system == CuboidType.GRIEF_PREVENTION || CuboidType.getActive() == CuboidType.RESIDENCE) {
-                        cSec = dataConfig.getConfigurationSection(CuboidType.getActive().toString() + DATA_FOOTER);
-
-                        final Set<String> keys = cSec.getKeys(true);
-                        for (final String k : keys) {
-
-                            if (k.contains(VALUE_PATH) || k.contains(MESSAGE_PATH)
-                                    || k.contains(TRUST_PATH) || k.contains(INHERIT_PATH)) {
-
-                                final String id = k.split("\\.")[0];
-                                String world;
-
-                                if (CuboidType.getActive() == CuboidType.GRIEF_PREVENTION) {
-                                    world = GriefPrevention.instance.dataStore
-                                            .getClaim(Long.valueOf(id))
-                                            .getGreaterBoundaryCorner().getWorld()
-                                            .getName();
-                                } else {
-                                    world = Residence.getResidenceManager()
-                                            .getByName(id).getWorld();
-                                }
-
-                                cSec.set(world + "." + k, cSec.get(k));
-                            }
-                        }
-                        // Remove the old
-                        for (final String k : keys) {
-                            if (k.split("\\.").length == 1
-                                    && Bukkit.getWorld(k.split("\\.")[0]) == null) {
-                                cSec.set(k, null);
-                            }
-                        }
-
-                    }
-
-                    //Convert values to boolean instead of string
-                    final String[] fileArray = {"data", "default", "world"};
-                    for (final String s : fileArray) {
-                        dataConfig = getYml(s);
-                        Set<String> keys = dataConfig.getKeys(true);
-                        for (final String k : keys) {
-                            if (k.contains("Value") || k.contains("InheritParent")) {
-                                dataConfig.set(k, Boolean.valueOf(dataConfig.getString(k)));
-                            }
-                        }
-                    }
-
-                    //Remove "Data" from the root heading.
-                    dataConfig = getYml("data");
-                    cSec = getYml("data").getConfigurationSection(CuboidType.getActive().toString() + "Data");
-                    ConfigurationSection newCSec = getYml("data").createSection(CuboidType.getActive().toString());
-                    Set<String> keys = cSec.getKeys(true);
-                    for (final String k : keys) {
-                        if (k.contains(VALUE_PATH) || k.contains(MESSAGE_PATH)
-                                || k.contains(TRUST_PATH) || k.contains(INHERIT_PATH)) {
-                            newCSec.set(k, cSec.get(k));
-                            cSec.set(k, null);
-                        }
-                    }
-                    dataConfig.set(CuboidType.getActive().toString() + "Data", null);
-                }
-                writeVersion(new DataStoreVersion(1, 2, 2));
-            }
-            // Upgrade to 1.4.2
-            YamlConfiguration cYml = getYml("wilderness");
-            if(cYml.isConfigurationSection("World")) {
-                ConfigurationSection cSec = cYml.getConfigurationSection("World");
-                ConfigurationSection newCSec = cYml.createSection("Wilderness");
+        if (ver.getMajor() == 1 && ver.getMajor() <= 4 && ver.getBuild() < 1) {
+            Logger.error("FAILED TO UPDATE DATABASE SCHEMA.  DATABASE VERSIONS PRIOR TO 1.4 CANNOT BE UPGRADED.");
+            Bukkit.getPluginManager().disablePlugin(Bukkit.getServer().getPluginManager().getPlugin("Flags"));
+            return;
+        }
+        if (ver.getMajor() <= 2) {
+            // Rename World to Wilderness
+            YamlConfiguration woldConfig = getYml("wilderness");
+            if (woldConfig.isConfigurationSection("World")) {
+                ConfigurationSection cSec = woldConfig.getConfigurationSection("World");
+                ConfigurationSection newCSec = woldConfig.createSection("Wilderness");
                 for (final String k : cSec.getKeys(true)) {
                     if (k.contains(VALUE_PATH) || k.contains(MESSAGE_PATH)
                             || k.contains(TRUST_PATH) || k.contains(INHERIT_PATH)) {
                         newCSec.set(k, cSec.get(k));
                     }
                 }
-
             }
-            cYml.set("World", null);
-            writeVersion(new DataStoreVersion(1, 4, 2));
+            woldConfig.set("World", null);
+
+            // Convert Bundles
+            if (bundle.isConfigurationSection("Bundle")) {
+                for (String s : bundle.getConfigurationSection("Bundle").getKeys(false)) {
+                    if (price.isList("Bundle." + s))
+                        bundle.set(s, bundle.getList("Bundle." + s));
+                }
+                bundle.set("Bundle", null);
+            }
+
+            // Convert Prices
+            if (price.isConfigurationSection("Price")) {
+                for (String s : price.getConfigurationSection("Price").getKeys(true)) {
+                    if (price.isList("Price." + s))
+                        price.set(s, price.getList("Price." + s));
+                }
+                price.set("Price", null);
+            }
+
+            // Convert Sectors
+            if(CuboidType.getActive() == CuboidType.FLAGS) {
+                if (sectors.isConfigurationSection("Sectors")) {
+                    for (String s : sectors.getConfigurationSection("Sectors").getKeys(false)) {
+                        sectors.set(s, new Sector(UUID.fromString(s), sectors.getConfigurationSection("Sectors." + s).getValues(false)).serialize());
+                    }
+                    sectors.set("Sectors", null);
+                }
+            }
+
+            writeVersion(new DataStoreVersion(2, 0, 0));
             saveData = true;
         }
     }
 
     @Override
     public final Set<String> readBundles() {
-        if(bundle.isConfigurationSection(BUNDLE_PATH)) {
-            return bundle.getConfigurationSection(BUNDLE_PATH).getKeys(false);
-        }
-        return new HashSet<String>();
+            return bundle.getKeys(false);
     }
 
     @Override
 	public final Set<Flag> readBundle(String bundleName) {
 		final HashSet<Flag> flags = new HashSet<Flag>();
-        if(!bundle.isConfigurationSection(BUNDLE_PATH)) { return flags; }
-		final List<?> list = bundle.getConfigurationSection(BUNDLE_PATH).getList(bundleName, new ArrayList<String>());
+		final List<?> list = bundle.getList(bundleName, new ArrayList<String>());
 
 		for (final Object o : list) {
 			if (Flags.getRegistrar().isFlag((String) o)) {
@@ -312,11 +271,9 @@ final class DataStoreYaml extends DataStore {
 
     @Override
     public final void writeBundle(String name, Set<Flag> flags) {
-        ConfigurationSection bundleConfig = getCreatedSection(bundle, BUNDLE_PATH);
-
         if (flags == null || flags.size() == 0) {
             // Delete the bundle
-            bundleConfig.set(name, null);
+            bundle.set(name, null);
             return;
         }
 
@@ -325,7 +282,7 @@ final class DataStoreYaml extends DataStore {
             list.add(f.getName());
         }
 
-        bundleConfig.set(name, list);
+        bundle.set(name, list);
         saveData = true;
     }
 
@@ -362,16 +319,14 @@ final class DataStoreYaml extends DataStore {
 
 	@Override
 	public double readPrice(Flag flag, EconomyPurchaseType type) {
-		final String path = PRICE_PATH + "." + type.toString();
-        if(!price.isConfigurationSection(path)) { return 0; }
-        final ConfigurationSection priceConfig = price.getConfigurationSection(path);
+        if(!price.isConfigurationSection(type.toString())) { return 0; }
+        final ConfigurationSection priceConfig = price.getConfigurationSection(type.toString());
 		return priceConfig.isSet(flag.getName()) ? priceConfig.getDouble(flag.getName()) : 0;
 	}
 
     @Override
     public void writePrice(Flag flag, EconomyPurchaseType type, double newPrice) {
-        final String path = PRICE_PATH + "." + type.toString();
-        final ConfigurationSection priceConfig = getCreatedSection(price, path);
+        final ConfigurationSection priceConfig = getCreatedSection(price, type.toString());
         priceConfig.set(flag.getName(), newPrice);
         saveData = true;
     }

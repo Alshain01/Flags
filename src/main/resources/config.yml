@@ -1,95 +1,94 @@
-Flags:
-  # Sets the database type, valid types are YAML and MYSQL
-  # Url, user, and password must be set for SQL Connections.
-  # AutoSave interval dictates how often (in minutes) a Yaml Database
-  # will be saved to disk. Set to 0 to only save on server reload/stop.
-  Database:
-    Url: yaml
-    User: none
-    Password: none
-    AutoSaveInterval: 60
-  # This sets the search order for land allocation systems  
-  # If you have only one system installed, you do not need to change this.
-  #
-  # If you have more than one system installed, change the order so the system
-  # that you wish Flags to use appears first.
-  #
-  # DO NOT ALTER THE NAMES
-  #
-  # If no system is discovered, Flags will use it's internal Sectors system.
-  #
-  AreaPlugins:
-    - Factions
-    - Factoid
-    - GriefPrevention
-    - InfinitePlots
-    - PlotMe
-    - PreciousStones
-    - Regios
-    - Residence
-    - WorldGuard
-  #
-  # Disable this to improve performance. However, any flag module using it will not
-  # receive notice that a player is changing areas.
-  #
-  # Divisors:
-  # Decrease these to make the border crossing based events react faster.
-  # Increase them to reduce event execution time.  It may help reduce lag on busy servers.
-  # Setting these to 1 will process every event.  Do not set lower than 1, use only whole numbers.
-  #
-  BorderPatrol:
-    Enable: true
-    EventDivisor: 10
-    TimeDivisor: 500
-  #
-  # PLUGIN: Player will be charged when the new flag value differs from default provided by the flag module or plugin.
-  # DEFAULT: Player will be charged when the new flag value differs from operator defined default value.
-  # ALWAYS: Player is always charged for setting the flag value.
-  #
-  # Refund allows the player to gain back the cost of the flag if the value is set
-  # to the PLUGIN or DEFAULT value.  If BaseValue is ALWAYS, refunds will only
-  # be given if the flag is removed.
-  # WARNING: Players will always be refunded the current price, 
-  #          even if they bought it at a different price.
-  #
-  Economy:
-    BaseValue: PLUGIN
-    Refund:
-      Flag: true
-      Message: false
-  #
-  # Sector Configuration
-  #
-  Sector:
-    DefaultDepth: 25
-  #
-  # Tool configuration
-  #
-  Tools:
-    FlagQuery: 'FEATHER'
-    Sector: 'GOLD_HOE'
-  #
-  # For supported land system plugins, Mr. Clean is a module that will remove data from the Flags database for
-  # areas that are unclaimed, abandoned, or deleted by the respective system.
-  #
-  MrClean: true
-  #
-  # Enable to check for updates and notify the console and permitted players of an existing update
-  # Interval defines the amount of time between checks in approximate minutes. 0 = Startup only
-  # ServerModsAPIKey is optional and can be found here https://dev.bukkit.org/home/servermods-apikey/  
-  # DO NOT SHARE WITH ANYONE!  The API key will only be uploaded to BukkitDev, not the author of this plugin.
-  #
-  Update:
-    Enabled: true
-    Interval: 1440
-    ServerModsAPIKey: null
-  #
-  # Enable or Disable MCStats metrics logging
-  #
-  Metrics:
-    Enabled: true
-  #
-  # Puts the plugin in debug mode.
-  #
-  Debug:
-    Enabled: false
+# Sets the database type, valid types are YAML and MYSQL
+# Url, user, and password must be set for SQL Connections.
+# AutoSave interval dictates how often (in minutes) a Yaml Database
+# will be saved to disk. Set to 0 to only save on server reload/stop.
+Database:
+  Url: yaml
+  User: none
+  Password: none
+  AutoSaveInterval: 60
+# This sets the search order for land allocation systems
+# If you have only one system installed, you do not need to change this.
+#
+# If you have more than one system installed, change the order so the system
+# that you wish Flags to use appears first.
+#
+# DO NOT ALTER THE NAMES
+#
+# If no system is discovered, Flags will use it's internal Sectors system.
+#
+AreaPlugins:
+  - Factions
+  - Factoid
+  - GriefPrevention
+  - InfinitePlots
+  - PlotMe
+  - PreciousStones
+  - Regios
+  - Residence
+  - WorldGuard
+#
+# Disable this to improve performance. However, any flag module using it will not
+# receive notice that a player is changing areas.
+#
+# Divisors:
+# Decrease these to make the border crossing based events react faster.
+# Increase them to reduce event execution time.  It may help reduce lag on busy servers.
+# Setting these to 1 will process every event.  Do not set lower than 1, use only whole numbers.
+#
+BorderPatrol:
+  Enable: true
+  EventDivisor: 10
+  TimeDivisor: 500
+#
+# PLUGIN: Player will be charged when the new flag value differs from default provided by the flag module or plugin.
+# DEFAULT: Player will be charged when the new flag value differs from operator defined default value.
+# ALWAYS: Player is always charged for setting the flag value.
+#
+# Refund allows the player to gain back the cost of the flag if the value is set
+# to the PLUGIN or DEFAULT value.  If BaseValue is ALWAYS, refunds will only
+# be given if the flag is removed.
+# WARNING: Players will always be refunded the current price,
+#          even if they bought it at a different price.
+#
+Economy:
+  BaseValue: PLUGIN
+  Refund:
+    Flag: true
+    Message: false
+#
+# Sector Configuration
+#
+Sector:
+  DefaultDepth: 25
+#
+# Tool configuration
+#
+Tools:
+  FlagQuery: 'FEATHER'
+  Sector: 'GOLD_HOE'
+#
+# For supported land system plugins, Mr. Clean is a module that will remove data from the Flags database for
+# areas that are unclaimed, abandoned, or deleted by the respective system.
+#
+MrClean: true
+#
+# Enable to check for updates and notify the console and permitted players of an existing update
+# Interval defines the amount of time between checks in approximate minutes. 0 = Startup only
+# ServerModsAPIKey is optional and can be found here https://dev.bukkit.org/home/servermods-apikey/
+# DO NOT SHARE WITH ANYONE!  The API key will only be uploaded to BukkitDev, not the author of this plugin.
+#
+Update:
+  Enabled: true
+  Interval: 1440
+  ServerModsAPIKey: null
+#
+# Enable or Disable MCStats metrics logging
+#
+Metrics:
+  Enabled: true
+#
+# Puts the plugin in debug mode.
+#
+Debug:
+  Enabled: false
