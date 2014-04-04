@@ -203,40 +203,72 @@ final class CommandBundle extends Command implements CommandExecutor {
                 .replace("{Bundle}", bundleName));
     }
 
-    private static void trust(Player player, CommandLocation location, String bundleName, Set<String> playerList) {
+    private static boolean trust(Player player, CommandLocation location, String bundleName, Set<String> trustees) {
+        if(trustees.size() == 0) { return false; }
+
         boolean success = true;
         Area area = getArea(player, location);
 
-        if(Validate.notPermittedBundle(player, area, bundleName)) { return; }
+        if(Validate.notPermittedBundle(player, area, bundleName)) { return true; }
 
         for(Flag f : Bundle.getBundle(bundleName)) {
             if(!f.isPlayerFlag()) { continue; }
 
-            for(String p : playerList) {
-                if(!area.setTrust(f, p, true, player)) { success = false; }
+            Set<String> permissions = new HashSet<String>();
+            Set<String> playerList = new HashSet<String>();
+            for(String t : trustees) {
+                if(t.contains(".")) {
+                    permissions.add(t);
+                }
+                playerList.add(t);
+            }
+
+            Set<Player> players = getPlayerList(player, playerList);
+
+            for(Player p : players) {
+                if(!area.setPlayerTrust(f, p, player)) { success = false; }
+            }
+
+            for(String p : permissions) {
+                if(!area.setPermissionTrust(f, p, player)) { success = false; }
             }
         }
 
         player.sendMessage((success ? Message.SetTrust.get() : Message.SetTrustError.get())
                 .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
                 .replace("{Flag}", bundleName));
+        return true;
     }
 
-    private static void distrust(Player player, CommandLocation location, String bundleName, Set<String> playerList) {
+    private static void distrust(Player player, CommandLocation location, String bundleName, Set<String> trustees) {
         boolean success = true;
         Area area = getArea(player, location);
 
         if(Validate.notPermittedBundle(player, area, bundleName)) { return; }
 
         for(Flag f : Bundle.getBundle(bundleName)) {
-            if(!f.isPlayerFlag()) { continue; }
+            Set<String> permissions = new HashSet<String>();
+            Set<String> playerList = new HashSet<String>();
+            for(String t : trustees) {
+                if(t.contains(".")) {
+                    permissions.add(t);
+                }
+                playerList.add(t);
+            }
 
-            Set<String> trustList = area.getTrustList(f);
-            if(Validate.notTrustList(trustList)) { continue; }
+            Map<UUID, String> trustList = area.getPlayerTrustList(f);
 
             //If playerList is empty, remove everyone
-            for(String p : playerList.isEmpty() ? trustList : playerList) {
-                if (!area.setTrust(f, p, false, player)) { success = false; }
+            for(String p : playerList.isEmpty() && permissions.isEmpty() ? trustList.values() : playerList) {
+                for(UUID u : trustList.keySet()) {
+                    if(trustList.get(u).equals(p)) {
+                        if (!area.removePlayerTrust(f, u, player)) { success = false; }
+                    }
+                }
+            }
+
+            for(String p : permissions) {
+                if(!area.removePermissionTrust(f, p, player)) { success = false; }
             }
         }
 

@@ -31,9 +31,11 @@ import io.github.alshain01.flags.economy.EconomyPurchaseType;
 import io.github.alshain01.flags.economy.EconomyTransactionType;
 import io.github.alshain01.flags.events.FlagChangedEvent;
 import io.github.alshain01.flags.events.MessageChangedEvent;
-import io.github.alshain01.flags.events.TrustChangedEvent;
+import io.github.alshain01.flags.events.PermissionTrustChangedEvent;
+import io.github.alshain01.flags.events.PlayerTrustChangedEvent;
 import io.github.alshain01.flags.exception.InvalidAreaException;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -47,6 +49,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
+import org.bukkit.permissions.Permission;
 
 import javax.annotation.Nonnull;
 
@@ -344,19 +347,6 @@ public abstract class Area implements Comparable<Area> {
         return true;
     }
 
-	/**
-	 * Gets a full trust list
-	 * 
-	 * @param flag
-	 *            The flag to retrieve the trust list for.
-	 * @return The list of trustees
-	 */
-	public final Set<String> getTrustList(Flag flag) {
-        Validate.notNull(flag);
-
-		return Flags.getDataStore().readTrust(this,	flag);
-	}
-
     /**
      * Gets a list of trusted players
      *
@@ -364,7 +354,7 @@ public abstract class Area implements Comparable<Area> {
      *            The flag to retrieve the trust list for.
      * @return The list of players
      */
-    public final Set<String> getPlayerTrustList(Flag flag) {
+    public final Map<UUID, String> getPlayerTrustList(Flag flag) {
         Validate.notNull(flag);
 
         return Flags.getDataStore().readPlayerTrust(this, flag);
@@ -378,63 +368,178 @@ public abstract class Area implements Comparable<Area> {
      * @return The list of permissions
      */
     @SuppressWarnings("unused") // API
-    public final Set<String> getPermissionTrustList(Flag flag) {
+    public final Set<Permission> getPermissionTrustList(Flag flag) {
         Validate.notNull(flag);
 
         return Flags.getDataStore().readPermissionTrust(this, flag);
     }
 
     /**
-     * Adds or removes a player from the trust list.
+     * Adds player to a the trust list.
      *
      * @param flag
      *            The flag to change trust for.
      * @param trustee
-     *            The player being trusted or distrusted
-     * @param trusted
-     *            True if adding to the trust list, false if removing.
+     *            The player being trusted
      * @param sender
      *            CommandSender for event, may be null if no associated player
      *            or console.
      * @return True if successful.
      */
-    public final boolean setTrust(Flag flag, String trustee, boolean trusted, CommandSender sender) {
+    public final boolean setPlayerTrust(Flag flag, Player trustee, CommandSender sender) {
         Validate.notNull(flag);
         Validate.notNull(trustee);
 
-        final Set<String> trustList = Flags.getDataStore().readTrust(this, flag);
+        final Map<UUID, String> trustList = Flags.getDataStore().readPlayerTrust(this, flag);
 
         // Set player to trusted.
-        if (trusted) {
-            if (trustList.contains(trustee.toLowerCase())) {
-                return false;
-            }
-            trustList.add(trustee.toLowerCase());
-
-            final TrustChangedEvent event = new TrustChangedEvent(this, flag, trustee, true, sender);
-            Bukkit.getServer().getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                return false;
-            }
-
-            // Set the list
-            Flags.getDataStore().writeTrust(this, flag, trustList);
-            return true;
-        }
-
-        // Remove player from trusted.
-        if (!trustList.contains(trustee.toLowerCase())) {
+        if (trustList.containsKey(trustee.getUniqueId())) {
             return false;
         }
+        trustList.put(trustee.getUniqueId(), trustee.getName());
 
-        final TrustChangedEvent event = new TrustChangedEvent(this, flag, trustee, false, sender);
+        final PlayerTrustChangedEvent event = new PlayerTrustChangedEvent(this, flag, trustee.getUniqueId(), true, sender);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return false;
         }
 
-        trustList.remove(trustee.toLowerCase());
-        Flags.getDataStore().writeTrust(this, flag, trustList);
+        Flags.getDataStore().writePlayerTrust(this, flag, trustList);
+        return true;
+    }
+
+
+    /**
+     * Adds permission to a the trust list.
+     *
+     * @param flag
+     *            The flag to change trust for.
+     * @param permission
+     *            The permission being trusted
+     * @param sender
+     *            CommandSender for event, may be null if no associated player
+     *            or console.
+     * @return True if successful.
+     */
+    public final boolean setPermissionTrust(Flag flag, String permission, CommandSender sender) {
+        return setPermissionTrust(flag, new Permission(permission), sender);
+    }
+
+    /**
+     * Adds permission to a the trust list.
+     *
+     * @param flag
+     *            The flag to change trust for.
+     * @param permission
+     *            The permission being trusted
+     * @param sender
+     *            CommandSender for event, may be null if no associated player
+     *            or console.
+     * @return True if successful.
+     */
+    public final boolean setPermissionTrust(Flag flag, Permission permission, CommandSender sender) {
+        Validate.notNull(flag);
+        Validate.notNull(permission);
+
+        final Set<Permission> trustList = Flags.getDataStore().readPermissionTrust(this, flag);
+
+        // Set player to trusted.
+        if (trustList.contains(permission)) {
+            return false;
+        }
+        trustList.add(permission);
+
+        final PermissionTrustChangedEvent event = new PermissionTrustChangedEvent(this, flag, permission, true, sender);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return false;
+        }
+
+        Flags.getDataStore().writePermissionTrust(this, flag, trustList);
+        return true;
+    }
+
+    /**
+     * Removes a player from the trust list.
+     *
+     * @param flag
+     *            The flag to change trust for.
+     * @param trustee
+     *            The player being distrusted
+     * @param sender
+     *            CommandSender for event, may be null if no associated player
+     *            or console.
+     * @return True if successful.
+     */
+    public final boolean removePlayerTrust(Flag flag, UUID trustee, CommandSender sender) {
+        Validate.notNull(flag);
+        Validate.notNull(trustee);
+
+        final Map<UUID, String> trustList = Flags.getDataStore().readPlayerTrust(this, flag);
+
+        // Remove player from trusted.
+        if (!trustList.containsKey(trustee)) {
+            return false;
+        }
+        trustList.remove(trustee);
+
+        final PlayerTrustChangedEvent event = new PlayerTrustChangedEvent(this, flag, trustee, false, sender);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return false;
+        }
+
+        Flags.getDataStore().writePlayerTrust(this, flag, trustList);
+        return true;
+    }
+
+    /**
+     * Removes a permission from the trust list.
+     *
+     * @param flag
+     *            The flag to change trust for.
+     * @param permission
+     *            The permission being distrusted
+     * @param sender
+     *            CommandSender for event, may be null if no associated player
+     *            or console.
+     * @return True if successful.
+     */
+    public final boolean removePermissionTrust(Flag flag, String permission, CommandSender sender) {
+        return removePermissionTrust(flag, new Permission(permission), sender);
+    }
+
+    /**
+     * Removes a permission from the trust list.
+     *
+     * @param flag
+     *            The flag to change trust for.
+     * @param permission
+     *            The permission being distrusted
+     * @param sender
+     *            CommandSender for event, may be null if no associated player
+     *            or console.
+     * @return True if successful.
+     */
+    public final boolean removePermissionTrust(Flag flag, Permission permission, CommandSender sender) {
+        Validate.notNull(flag);
+        Validate.notNull(permission);
+
+        final Set<Permission> trustList = Flags.getDataStore().readPermissionTrust(this, flag);
+
+        // Remove player from trusted.
+        if (!trustList.contains(permission)) {
+            return false;
+        }
+        trustList.remove(permission);
+
+        final PermissionTrustChangedEvent event = new PermissionTrustChangedEvent(this, flag, permission, false, sender);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return false;
+        }
+
+        Flags.getDataStore().writePermissionTrust(this, flag, trustList);
         return true;
     }
 
@@ -454,16 +559,15 @@ public abstract class Area implements Comparable<Area> {
 
         if (getOwnerNames().contains(player.getName().toLowerCase())) { return true; }
 
-        Set<String> tl = getTrustList(flag);
-        if(tl.contains(player.getName().toLowerCase())) {
+        Map<UUID, String> tl = getPlayerTrustList(flag);
+        if(tl.containsKey(player.getUniqueId())) {
             return true;
         }
 
-        for(String p : tl) {
-            if(p.contains(".")) {
-                if(player.hasPermission(p)) {
-                    return true;
-                }
+        Set<Permission> pTl = getPermissionTrustList(flag);
+        for(Permission p : pTl) {
+            if(player.hasPermission(p)) {
+                return true;
             }
         }
 

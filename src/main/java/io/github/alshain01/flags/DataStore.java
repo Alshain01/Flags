@@ -37,6 +37,8 @@ import java.util.UUID;
 import io.github.alshain01.flags.sector.Sector;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class DataStore {
@@ -137,13 +139,13 @@ public abstract class DataStore {
 
     public abstract void writePrice(Flag flag, EconomyPurchaseType type, double price);
 
-	public abstract Set<String> readTrust(Area area, Flag flag);
+    public abstract Map<UUID, String> readPlayerTrust(Area area, Flag flag);
 
-    public abstract Set<String> readPlayerTrust(Area area, Flag flag);
+    public abstract Set<Permission> readPermissionTrust(Area area, Flag flag);
 
-    public abstract Set<String> readPermissionTrust(Area area, Flag flag);
+    public abstract void writePlayerTrust(Area area, Flag flag, Map<UUID, String> players);
 
-    public abstract void writeTrust(Area area, Flag flag, Set<String> players);
+    public abstract void writePermissionTrust(Area area, Flag flag, Set<Permission> permissions);
 
     public abstract boolean readInheritance(Area area);
 
@@ -209,10 +211,16 @@ public abstract class DataStore {
                     target.writeMessage(a, f, message);
                 }
 
-                //Trust Lists
-                Set<String> trust = source.readTrust(a, f);
+                //Player Trust Lists
+                Map<UUID, String> trust = source.readPlayerTrust(a, f);
                 if(!trust.isEmpty()) {
-                    target.writeTrust(a, f, trust);
+                    target.writePlayerTrust(a, f, trust);
+                }
+
+                //Permission Trust Lists
+                Set<Permission> permtrust = source.readPermissionTrust(a, f);
+                if(!trust.isEmpty()) {
+                    target.writePermissionTrust(a, f, permtrust);
                 }
             }
         }

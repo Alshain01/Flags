@@ -17,6 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.permissions.Permission;
 
 import java.util.*;
 
@@ -368,12 +369,14 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         StringBuilder message;
         Area area = getArea(player, location);
 
-        Set<String> trustList;
+        Set<String> trustList = new HashSet<String>();
         if(player.hasPermission("flags.view.permtrust")) {
-            trustList = area.getTrustList(flag);
-        } else {
-            trustList = area.getPlayerTrustList(flag);
+            Set<Permission> perms = area.getPermissionTrustList(flag);
+            for(Permission p : perms) {
+                trustList.add(p.getName());
+            }
         }
+        trustList.addAll(area.getPlayerTrustList(flag).values());
 
         if(Validate.notPlayerFlag(player, flag)
                 || Validate.notArea(player, area)
@@ -394,19 +397,31 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         player.sendMessage(message.toString());
     }
 
-    private static boolean trust(Player player, CommandLocation location, Flag flag, Set<String> playerNames) {
-        if(playerNames.size() == 0) { return false; }
+    private static boolean trust(Player player, CommandLocation location, Flag flag, Set<String> trustees) {
+        if(trustees.size() == 0) { return false; }
 
         Area area = getArea(player, location);
         if(Validate.notPlayerFlag(player, flag)
                 || Validate.notPermittedFlag(player, area, flag, flag.getName())) { return true; }
 
-        Set<Player> players = getPlayerList(player, playerNames);
-        if(players.size() == 0) { return true; }
+        Set<String> permissions = new HashSet<String>();
+        Set<String> playerList = new HashSet<String>();
+        for(String t : trustees) {
+            if(t.contains(".")) {
+                permissions.add(t);
+            }
+            playerList.add(t);
+        }
+
+        Set<Player> players = getPlayerList(player, playerList);
 
         boolean success = true;
         for(Player p : players) {
-            if(!area.setTrust(flag, p.getName(), true, player)) {	success = false; }
+            if(!area.setPlayerTrust(flag, p, player)) { success = false; }
+        }
+
+        for(String p : permissions) {
+            if(!area.setPermissionTrust(flag, p, player)) { success = false; }
         }
 
         player.sendMessage((success ? Message.SetTrust.get() : Message.SetTrustError.get())
@@ -415,57 +430,44 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         return true;
     }
 
-    private static void distrust(Player player, CommandLocation location, Flag flag, Set<String> playerList) {
+    private static void distrust(Player player, CommandLocation location, Flag flag, Set<String> trustees) {
         boolean success = true;
         Area area = getArea(player, location);
 
         if(Validate.notPlayerFlag(player, flag)
                 || Validate.notPermittedFlag(player, area, flag, flag.getName())) { return; }
 
-        Set<String> trustList = area.getTrustList(flag);
-        if(Validate.notTrustList(player, trustList, area.getCuboidType().getCuboidName(), flag.getName())) {
+        if(Validate.notTrustList(player, trustees, area.getCuboidType().getCuboidName(), flag.getName())) {
             return;
         }
 
+        Set<String> permissions = new HashSet<String>();
+        Set<String> playerList = new HashSet<String>();
+        for(String t : trustees) {
+            if(t.contains(".")) {
+                permissions.add(t);
+            }
+            playerList.add(t);
+        }
+
+        Map<UUID, String> trustList = area.getPlayerTrustList(flag);
+
         //If playerList is empty, remove everyone
-        for(String p : playerList.isEmpty() ? trustList : playerList) {
-            if (!area.setTrust(flag, p, false, player)) { success = false; }
+        for(String p : playerList.isEmpty() && permissions.isEmpty() ? trustList.values() : playerList) {
+            for(UUID u : trustList.keySet()) {
+                if(trustList.get(u).equals(p)) {
+                    if (!area.removePlayerTrust(flag, u, player)) { success = false; }
+                }
+            }
+        }
+
+        for(String p : permissions) {
+            if(!area.removePermissionTrust(flag, p, player)) { success = false; }
         }
 
         player.sendMessage((success ? Message.RemoveTrust.get() : Message.RemoveTrustError.get())
                 .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
                 .replace("{Flag}", flag.getName()));
-    }
-
-    private static Set<Player> getPlayerList(Player player, Set<String> playerNames) {
-        // Convert the strings to players
-        Set<String> failedPlayers = new HashSet<String>();
-        Set<Player> players = new HashSet<Player>();
-        for(String name : playerNames) {
-            Player p = Bukkit.getPlayer(name);
-            if(p != null) {
-                players.add(p);
-            } else {
-                failedPlayers.add(name);
-            }
-        }
-
-        // Send a message letting them know there was an issue
-        if(failedPlayers.size() > 0) {
-            boolean first = true;
-            StringBuilder failedList = new StringBuilder();
-            for(String name : failedPlayers) {
-                if(!first) {
-                    failedList.append(", ");
-                } else {
-                    first = false;
-                }
-                failedList.append(name);
-            }
-
-            player.sendMessage(Message.PlayerNotFoundError.get().replace("{Player}", failedList.toString()));
-        }
-        return players;
     }
 
     /*

@@ -4,6 +4,7 @@ import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Default;
 import io.github.alshain01.flags.area.Subdivision;
 import io.github.alshain01.flags.area.Wilderness;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -258,5 +259,36 @@ abstract class Command {
 
     static Area getArea(Player player, CommandLocation location) {
         return getArea(player.getLocation(), location);
+    }
+
+    protected static Set<Player> getPlayerList(Player player, Set<String> playerNames) {
+        // Convert the strings to players
+        Set<String> failedPlayers = new HashSet<String>();
+        Set<Player> players = new HashSet<Player>();
+        for(String name : playerNames) {
+            Player p = Bukkit.getPlayer(name);
+            if(p != null) {
+                players.add(p);
+            } else {
+                failedPlayers.add(name);
+            }
+        }
+
+        // Send a message letting them know there was an issue
+        if(failedPlayers.size() > 0) {
+            boolean first = true;
+            StringBuilder failedList = new StringBuilder();
+            for(String name : failedPlayers) {
+                if(!first) {
+                    failedList.append(", ");
+                } else {
+                    first = false;
+                }
+                failedList.append(name);
+            }
+
+            player.sendMessage(Message.PlayerNotFoundError.get().replace("{Player}", failedList.toString()));
+        }
+        return players;
     }
 }

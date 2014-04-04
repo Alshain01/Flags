@@ -110,7 +110,7 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
         try {
             return (Flag) super.clone();
         } catch (CloneNotSupportedException ex) {
-
+            Logger.error("Illegal Clone Attempt");
         }
         return null;
     }

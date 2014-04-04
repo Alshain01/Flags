@@ -15,7 +15,6 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
     private final SectorLocation greater, lesser;
     private int depth;
 
-
     Sector(UUID id, Location corner1, Location corner2, int depth) {
         this.id = id;
         parent = null;

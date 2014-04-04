@@ -4,6 +4,7 @@ import io.github.alshain01.flags.DataStore;
 import io.github.alshain01.flags.events.SectorDeleteEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
 import java.util.*;
 
@@ -13,6 +14,8 @@ final public class SectorManager {
     private final DataStore dataStore;
 
     public SectorManager(DataStore data, int defaultDepth) {
+        ConfigurationSerialization.registerClass(Sector.class);
+        ConfigurationSerialization.registerClass(SectorLocation.class);
         this.defaultDepth = defaultDepth;
         this.sectors = data.readSectors();
         this.dataStore = data;

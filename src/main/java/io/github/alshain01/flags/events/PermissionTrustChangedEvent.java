@@ -31,59 +31,60 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.permissions.Permission;
 
 /**
- * Event that occurs when a trustee is added or removed.
+ * Event that occurs when a permission trust is added or removed.
  */
-public class TrustChangedEvent extends Event implements Cancellable {
+public class PermissionTrustChangedEvent extends Event implements Cancellable {
 
-	private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerList();
 
-	private final Area area;
-	private final Flag flag;
-	private final String trustee;
-	private final CommandSender sender;
-	private final boolean value;
+    private final Area area;
+    private final Flag flag;
+    private final Permission permission;
+    private final CommandSender sender;
+    private final boolean value;
 
-	private boolean cancel = false;
+    private boolean cancel = false;
 
-	/**
-	 * Creates a new TrustChangedEvent
-	 * 
-	 * @param area
-	 *            The area the flag is being set for.
-	 * @param trustee
-	 *            The player the trust is changing for.
-	 * @param isTrusted
-	 *            True if the player is being added, false if being removed.
-	 * @param sender
-	 *            The sender changing the trust.
-	 */
-	public TrustChangedEvent(Area area, Flag flag, String trustee, boolean isTrusted, CommandSender sender) {
-		this.area = area;
-		this.flag = flag;
-		this.trustee = trustee;
-		this.sender = sender;
-		value = isTrusted;
-	}
+    /**
+     * Creates a new PlayerTrustChangedEvent
+     *
+     * @param area
+     *            The area the flag is being set for.
+     * @param permission
+     *            The permission node the trust is changing for.
+     * @param isTrusted
+     *            True if the player is being added, false if being removed.
+     * @param sender
+     *            The sender changing the trust.
+     */
+    public PermissionTrustChangedEvent(Area area, Flag flag, Permission permission, boolean isTrusted, CommandSender sender) {
+        this.area = area;
+        this.flag = flag;
+        this.permission = permission;
+        this.sender = sender;
+        value = isTrusted;
+    }
 
     /**
      * Gets the area where the trust is changing
      *
      * @return The area associated with the event.
      */
-	public Area getArea() {
-		return area;
-	}
+    public Area getArea() {
+        return area;
+    }
 
     /**
      * Gets the flag that trust is changing for
      *
      * @return The flag associated with the event.
      */
-	public Flag getFlag() {
-		return flag;
-	}
+    public Flag getFlag() {
+        return flag;
+    }
 
 
     /**
@@ -92,32 +93,32 @@ public class TrustChangedEvent extends Event implements Cancellable {
      * @return The CommandSender. Null if no sender involved (caused by plug-in).
      */
     @SuppressWarnings("unused") // API
-	public CommandSender getSender() {
-		return sender;
-	}
-
-	/**
-     * Gets the player whos trust is changing
-     *
-	 * @return The name of the player
-	 */
-    @SuppressWarnings("unused") // API
-	public String getTrustee() {
-		return trustee;
-	}
-
-	/**
-     * Gets whether the player is gaining or losing trust
-     *
-	 * @return True if the player is being added, false if being removed.
-	 */
-    @SuppressWarnings("unused") // API
-	public boolean isTrusted() {
-		return value;
-	}
+    public CommandSender getSender() {
+        return sender;
+    }
 
     /**
-     * Static HandlerList for TrustChangedEvent
+     * Gets the permission node whos trust is changing
+     *
+     * @return The permission node
+     */
+    @SuppressWarnings("unused") // API
+    public Permission getTrustee() {
+        return permission;
+    }
+
+    /**
+     * Gets whether the player is gaining or losing trust
+     *
+     * @return True if the player is being added, false if being removed.
+     */
+    @SuppressWarnings("unused") // API
+    public boolean isTrusted() {
+        return value;
+    }
+
+    /**
+     * Static HandlerList for PlayerTrustChangedEvent
      *
      * @return A list of event handlers, stored per-event.
      */
@@ -136,8 +137,8 @@ public class TrustChangedEvent extends Event implements Cancellable {
         return cancel;
     }
 
-	@Override
-	public void setCancelled(boolean cancel) {
-		this.cancel = cancel;
-	}
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancel = cancel;
+    }
 }
