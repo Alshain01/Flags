@@ -82,12 +82,6 @@ final public class FlagsSector extends RemovableArea implements Subdividable {
     }
 
     @Override
-    public String getName() {
-        if (isArea()) return sector.getName();
-        throw new InvalidAreaException();
-    }
-
-    @Override
     public World getWorld() {
         if (isArea()) return sector.getWorld();
         throw new InvalidAreaException();

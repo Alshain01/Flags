@@ -43,7 +43,7 @@ import org.bukkit.Location;
 /**
  * Class for creating areas to manage a Factoid Land.
  */
-final public class FactoidLand extends RemovableArea implements Ownable, Subdividable {
+final public class FactoidLand extends RemovableArea implements Nameable, Ownable, Subdividable {
     private final Land land;
 
     /**

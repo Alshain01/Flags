@@ -42,7 +42,7 @@ import uk.co.jacekk.bukkit.infiniteplots.plot.PlotLocation;
 /**
  * Class for creating areas to manage a InfinitePlots Plot.
  */
-final public class InfinitePlotsPlot extends RemovableArea implements Ownable {
+final public class InfinitePlotsPlot extends RemovableArea implements Nameable, Ownable {
 	private final Plot plot;
 
 	/**

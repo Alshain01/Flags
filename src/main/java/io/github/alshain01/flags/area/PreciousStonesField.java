@@ -42,7 +42,7 @@ import org.bukkit.World;
 /**
  * Class for creating areas to manage a PreciousStones Field.
  */
-final public class PreciousStonesField extends RemovableArea implements Ownable, Subdividable {
+final public class PreciousStonesField extends RemovableArea implements Nameable, Ownable, Subdividable {
 	private Field field;
 
     /**

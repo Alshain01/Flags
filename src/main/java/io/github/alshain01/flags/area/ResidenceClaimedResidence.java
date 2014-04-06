@@ -41,7 +41,7 @@ import org.bukkit.Location;
 /**
  * Class for creating areas to manage a Residence Claimed Residences.
  */
-final public class ResidenceClaimedResidence extends RemovableArea implements Ownable, Subdividable {
+final public class ResidenceClaimedResidence extends RemovableArea implements Nameable, Ownable, Subdividable {
 	private final ResidenceArea residence;
 
 	/**

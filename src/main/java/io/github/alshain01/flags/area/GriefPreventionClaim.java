@@ -112,12 +112,6 @@ public class GriefPreventionClaim extends RemovableArea implements Ownable, Sieg
     }
 
     @Override
-    public String getName() {
-        if (isArea()) return String.valueOf(claim.getID());
-        throw new InvalidAreaException();
-    }
-
-    @Override
     public Set<String> getOwnerName() {
         if (isArea()) return new HashSet<String>(Arrays.asList(claim.getOwnerName()));
         throw new InvalidAreaException();

@@ -120,12 +120,6 @@ final public class WorldGuardRegion extends RemovableArea implements Ownable {
     }
 
     @Override
-    public String getName() {
-        if (isArea()) return region.getId();
-        throw new InvalidAreaException();
-    }
-
-    @Override
     public Set<UUID> getOwnerUniqueId() {
         //TODO: Waiting on WorldGuard
         return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));

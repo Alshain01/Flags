@@ -43,7 +43,7 @@ import org.bukkit.plugin.Plugin;
 /**
  * Class for creating areas to manage a Regios Region.
  */
-final public class RegiosRegion extends RemovableArea implements Ownable {
+final public class RegiosRegion extends RemovableArea implements Nameable, Ownable {
 	private final Region region;
 
 	/**

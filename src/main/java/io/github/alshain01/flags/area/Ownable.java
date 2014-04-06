@@ -13,7 +13,7 @@ public interface Ownable {
      * @deprecated NOT READY YET! DO NOT USE!
      */
     @Deprecated
-    public abstract Set<UUID> getOwnerUniqueId();
+    public Set<UUID> getOwnerUniqueId();
 
     /**
      * Gets a set of owner names for the area.
@@ -22,5 +22,5 @@ public interface Ownable {
      * @return the player name of the area owners.
      * @throws io.github.alshain01.flags.exception.InvalidAreaException
      */
-    public abstract Set<String> getOwnerName();
+    public Set<String> getOwnerName();
 }

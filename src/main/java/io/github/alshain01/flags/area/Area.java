@@ -52,6 +52,7 @@ import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 
 import javax.annotation.Nonnull;
+import javax.lang.model.element.Name;
 
 /**
  * Class for base functions of a specific area.
@@ -93,15 +94,7 @@ public abstract class Area implements Comparable<Area> {
     public abstract String getId();
 
 
-    /**
-     * Returns the name of the cuboid defined in the system.
-     * If the system does not support naming, the ID will be returned.
-     *
-     * @return The LandSystem that created this object
-     * @throws InvalidAreaException
-     */
-    @SuppressWarnings("WeakerAccess") // API
-    public abstract String getName();
+
 
 
     /**
@@ -264,8 +257,13 @@ public abstract class Area implements Comparable<Area> {
 		if (parse) {
 			message = message
                     .replace("{World}", getWorld().getName())
-                    .replace("{AreaName}", getName())
                     .replace("{AreaType}", getCuboidType().getCuboidName().toLowerCase());
+
+            if(this instanceof Nameable) {
+                message = message.replace("{AreaName}", ((Nameable)this).getName());
+            } else {
+                message = message.replace("{AreaName}", getId());
+            }
 
             if(this instanceof Ownable) {
                 message = message.replace("{Owner}", ((Ownable) this).getOwnerName().toArray()[0].toString());

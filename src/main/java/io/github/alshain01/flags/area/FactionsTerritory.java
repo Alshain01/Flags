@@ -43,7 +43,7 @@ import com.massivecraft.mcore.ps.PS;
 /**
  * Class for creating areas to manage a Factions Territory.
  */
-final public class FactionsTerritory extends RemovableArea implements Ownable {
+final public class FactionsTerritory extends RemovableArea implements Nameable, Ownable {
 	private final Faction faction;
 	private final World world;
 

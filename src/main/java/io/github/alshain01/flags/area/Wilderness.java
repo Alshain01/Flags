@@ -95,12 +95,6 @@ public class Wilderness extends Area {
     public CuboidType getCuboidType() { return CuboidType.WILDERNESS; }
 
     @Override
-    public String getName() {
-        if(isArea()) return world.getName() + " Wilderness";
-        throw new InvalidAreaException();
-    }
-
-    @Override
     public org.bukkit.World getWorld() {
         if(isArea()) return world;
         throw new InvalidAreaException();
@@ -145,8 +139,8 @@ public class Wilderness extends Area {
         if (parse) {
             message = message
                     .replace("{AreaType}", CuboidType.WILDERNESS.getCuboidName().toLowerCase())
-                    .replace("{World}", getName())
-                    .replace("{AreaName}", getName());
+                    .replace("{World}", getWorld().getName())
+                    .replace("{AreaName}", getWorld().getName());
             message = ChatColor.translateAlternateColorCodes('&', message);
         }
         return message;

@@ -92,12 +92,6 @@ final public class Default extends Area {
     }
 
     @Override
-    public String getName() {
-        if (isArea()) return world.getName() + " Default";
-        throw new InvalidAreaException();
-    }
-
-    @Override
     public World getWorld() {
         if (isArea()) return world;
         throw new InvalidAreaException();

@@ -104,12 +104,6 @@ final public class PlotMePlot extends RemovableArea implements Ownable  {
     }
 
     @Override
-    public String getName() {
-        if (isArea()) return plot.id;
-        throw new InvalidAreaException();
-    }
-
-    @Override
     public Set<UUID> getOwnerUniqueId() {
         //TODO: Waiting on PlotMe
         return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
