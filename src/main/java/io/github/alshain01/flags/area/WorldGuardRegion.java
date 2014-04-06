@@ -26,6 +26,8 @@ package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.*;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -40,7 +42,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 /**
  * Class for creating areas to manage a WorldGuard Region.
  */
-final public class WorldGuardRegion extends RemovableArea {
+final public class WorldGuardRegion extends RemovableArea implements Ownable {
 	private final ProtectedRegion region;
 	private final World world;
 
@@ -124,7 +126,13 @@ final public class WorldGuardRegion extends RemovableArea {
     }
 
     @Override
-    public Set<String> getOwnerNames() {
+    public Set<UUID> getOwnerUniqueId() {
+        //TODO: Waiting on WorldGuard
+        return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
+    }
+
+    @Override
+    public Set<String> getOwnerName() {
         if (isArea()) return region.getOwners().getPlayers();
         throw new InvalidAreaException();
     }

@@ -101,12 +101,6 @@ public class Wilderness extends Area {
     }
 
     @Override
-    public Set<String> getOwnerNames() {
-        if(isArea()) return new HashSet<String>(Arrays.asList("wilderness"));
-        throw new InvalidAreaException();
-    }
-
-    @Override
     public org.bukkit.World getWorld() {
         if(isArea()) return world;
         throw new InvalidAreaException();

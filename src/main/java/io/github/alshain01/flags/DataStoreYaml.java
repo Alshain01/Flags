@@ -476,7 +476,7 @@ final class DataStoreYaml extends DataStore {
 
     @Override
     public boolean readInheritance(Area area) {
-        if (!(area instanceof Subdivision) || !((Subdivision)area).isSubdivision()) {
+        if (!(area instanceof Subdividable) || !((Subdividable)area).isSubdivision()) {
             return true;
         }
 
@@ -489,7 +489,7 @@ final class DataStoreYaml extends DataStore {
 
     @Override
     public void writeInheritance(Area area, boolean value) {
-        if ((area instanceof Subdivision) && ((Subdivision) area).isSubdivision()) {
+        if ((area instanceof Subdividable) && ((Subdividable) area).isSubdivision()) {
             String path = area.getCuboidType().toString() + DELIMETER + area.getWorld().getName() + DELIMETER + area.getId();
 
             ConfigurationSection inheritConfig = getCreatedSection(getYml(path), path);

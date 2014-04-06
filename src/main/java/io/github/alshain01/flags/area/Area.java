@@ -113,15 +113,6 @@ public abstract class Area implements Comparable<Area> {
     public abstract World getWorld();
 
     /**
-     * Gets a set of owner names for the area.
-     * On many systems, there will only be one.
-     *
-     * @return the player name of the area owner.
-     * @throws InvalidAreaException
-     */
-    public abstract Set<String> getOwnerNames();
-
-    /**
      * Gets the value of the flag for this area following the inheritance path.
      * Equivalent to getSetting(flag, false);
      *
@@ -274,8 +265,13 @@ public abstract class Area implements Comparable<Area> {
 			message = message
                     .replace("{World}", getWorld().getName())
                     .replace("{AreaName}", getName())
-                    .replace("{AreaType}", getCuboidType().getCuboidName().toLowerCase())
-                    .replace("{Owner}", getOwnerNames().toArray()[0].toString());
+                    .replace("{AreaType}", getCuboidType().getCuboidName().toLowerCase());
+
+            if(this instanceof Ownable) {
+                message = message.replace("{Owner}", ((Ownable) this).getOwnerName().toArray()[0].toString());
+            } else {
+                message = message.replace("{Owner}", "the administrator");
+            }
 			message = ChatColor.translateAlternateColorCodes('&', message);
 		}
 		return message;
@@ -560,7 +556,7 @@ public abstract class Area implements Comparable<Area> {
         Validate.notNull(flag);
         Validate.notNull(player);
 
-        if (getOwnerNames().contains(player.getName().toLowerCase())) { return true; }
+        if (this instanceof Ownable && (((Ownable)this).getOwnerName().contains(player.getName().toLowerCase()))) { return true; }
 
         Map<UUID, String> tl = getPlayerTrustList(flag);
         if(tl.containsKey(player.getUniqueId())) {
@@ -587,8 +583,8 @@ public abstract class Area implements Comparable<Area> {
     public boolean hasPermission(Permissible p) {
         Validate.notNull(p);
 
-        if (p instanceof HumanEntity
-                && getOwnerNames().contains(((HumanEntity) p).getName())) {
+        if (this instanceof Ownable && p instanceof HumanEntity
+                && ((Ownable)this).getOwnerName().contains(((HumanEntity) p).getName())) {
             return p.hasPermission("flags.command.flag.set");
         }
 
@@ -610,8 +606,8 @@ public abstract class Area implements Comparable<Area> {
 	public boolean hasBundlePermission(Permissible p) {
         Validate.notNull(p);
 
-		if (p instanceof HumanEntity
-				&& getOwnerNames().contains(((HumanEntity) p).getName())) {
+		if (this instanceof Ownable && p instanceof HumanEntity
+				&& ((Ownable)this).getOwnerName().contains(((HumanEntity) p).getName())) {
 			return p.hasPermission("flags.command.bundle.set");
 		}
 
@@ -640,13 +636,13 @@ public abstract class Area implements Comparable<Area> {
                 return 0;
             }
 
-            if (this instanceof Subdivision) {
-                if (((Subdivision) this).isSubdivision()) {
-                    if (((Subdivision) a).isSubdivision() && ((Subdivision) a).getParent().getId().equals(((Subdivision) this).getParent().getId()))
+            if (this instanceof Subdividable) {
+                if (((Subdividable) this).isSubdivision()) {
+                    if (((Subdividable) a).isSubdivision() && ((Subdividable) a).getParent().getId().equals(((Subdividable) this).getParent().getId()))
                         return 2;
-                    if (((Subdivision) this).getParent().getId().equals(a.getId()))
+                    if (((Subdividable) this).getParent().getId().equals(a.getId()))
                         return -1;
-                } else if (((Subdivision) a).isSubdivision() && ((Subdivision) a).getParent().getId().equals(getId())) {
+                } else if (((Subdividable) a).isSubdivision() && ((Subdividable) a).getParent().getId().equals(getId())) {
                     return 1;
                 }
             }

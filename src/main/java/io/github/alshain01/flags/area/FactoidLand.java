@@ -43,7 +43,7 @@ import org.bukkit.Location;
 /**
  * Class for creating areas to manage a Factoid Land.
  */
-final public class FactoidLand extends RemovableArea implements Subdivision {
+final public class FactoidLand extends RemovableArea implements Ownable, Subdividable {
     private final Land land;
 
     /**
@@ -123,11 +123,23 @@ final public class FactoidLand extends RemovableArea implements Subdivision {
     }
 
     @Override
-    public Set<String> getOwnerNames() {
+    public Set<String> getOwnerName() {
         if (isArea()) {
             Set<String> owners = new HashSet<String>();
             if (land.getOwner().getContainerType() == PlayerContainerType.PLAYER) {
                 owners.add(((PlayerContainerPlayer)land.getOwner()).getPlayerName());
+            }
+            return owners;
+        }
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public Set<UUID> getOwnerUniqueId() {
+        if (isArea()) {
+            Set<UUID> owners = new HashSet<UUID>();
+            if (land.getOwner().getContainerType() == PlayerContainerType.PLAYER) {
+                owners.add(((PlayerContainerPlayer) land.getOwner()).getMinecraftUUID());
             }
             return owners;
         }

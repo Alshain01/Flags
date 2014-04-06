@@ -41,7 +41,7 @@ import org.bukkit.World;
 /**
  * Class for creating areas to manage a Grief Prevention Claim.
  */
-public class GriefPreventionClaim extends RemovableArea implements Siege, Administrator {
+public class GriefPreventionClaim extends RemovableArea implements Ownable, Siege, Administrator {
 	final Claim claim;
 
 	/**
@@ -118,9 +118,15 @@ public class GriefPreventionClaim extends RemovableArea implements Siege, Admini
     }
 
     @Override
-    public Set<String> getOwnerNames() {
+    public Set<String> getOwnerName() {
         if (isArea()) return new HashSet<String>(Arrays.asList(claim.getOwnerName()));
         throw new InvalidAreaException();
+    }
+
+    @Override
+    public Set<UUID> getOwnerUniqueId() {
+        //TODO: Waiting on GriefPrevention
+        return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
     }
 
 	@Override

@@ -2,7 +2,7 @@ package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Default;
-import io.github.alshain01.flags.area.Subdivision;
+import io.github.alshain01.flags.area.Subdividable;
 import io.github.alshain01.flags.area.Wilderness;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -59,7 +59,7 @@ abstract class Command {
                 ((CommandSender)p).sendMessage(((a instanceof Wilderness || a instanceof Default)
                         ? Message.WildernessPermError.get() : Message.AreaPermError.get())
                         .replace("{AreaType}", a.getCuboidType().getCuboidName())
-                        .replace("{OwnerName}", a.getOwnerNames().toArray()[0].toString())
+                        .replace("{OwnerName}", a.getOwnerName().toArray()[0].toString())
                         .replace("{Type}", Message.Flag.get().toLowerCase()));
             }
             return true;
@@ -103,7 +103,7 @@ abstract class Command {
                 ((CommandSender)p).sendMessage(((area instanceof Wilderness || area instanceof Default)
                         ? Message.WildernessPermError.get() : Message.AreaPermError.get())
                         .replace("{AreaType}", area.getCuboidType().getCuboidName())
-                        .replace("{OwnerName}", area.getOwnerNames().toArray()[0].toString())
+                        .replace("{OwnerName}", area.getOwnerName().toArray()[0].toString())
                         .replace("{Type}", Message.Bundle.get().toLowerCase()));
             }
             return true;
@@ -138,7 +138,7 @@ abstract class Command {
         }
 
         static boolean notSubdivision(CommandSender cs, Area a) {
-            if(!(a instanceof Subdivision) || !((Subdivision)a).isSubdivision()) {
+            if(!(a instanceof Subdividable) || !((Subdividable)a).isSubdivision()) {
                 cs.sendMessage(Message.SubdivisionError.get());
                 return true;
             }

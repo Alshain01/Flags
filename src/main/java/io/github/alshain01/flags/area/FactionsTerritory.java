@@ -43,7 +43,7 @@ import com.massivecraft.mcore.ps.PS;
 /**
  * Class for creating areas to manage a Factions Territory.
  */
-final public class FactionsTerritory extends RemovableArea {
+final public class FactionsTerritory extends RemovableArea implements Ownable {
 	private final Faction faction;
 	private final World world;
 
@@ -113,8 +113,14 @@ final public class FactionsTerritory extends RemovableArea {
         throw new InvalidAreaException();
     }
 
+    @Override
+    public Set<UUID> getOwnerUniqueId() {
+        //TODO Waiting on Factions
+        return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
+    }
+
 	@Override
-	public Set<String> getOwnerNames() {
+	public Set<String> getOwnerName() {
         if (isArea()) return new HashSet<String>(Arrays.asList(getFaction().getLeader().getName()));
         throw new InvalidAreaException();
     }

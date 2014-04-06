@@ -2,7 +2,7 @@ package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.area.Area;
 import io.github.alshain01.flags.area.Default;
-import io.github.alshain01.flags.area.Subdivision;
+import io.github.alshain01.flags.area.Subdividable;
 import io.github.alshain01.flags.economy.EconomyPurchaseType;
 
 import org.bukkit.Location;
@@ -523,12 +523,12 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         }
 
         if(value == null) {
-            value = !((Subdivision)area).isInherited();
+            value = !((Subdividable)area).isInherited();
         }
 
-        ((Subdivision)area).setInherited(value);
+        ((Subdividable)area).setInherited(value);
         player.sendMessage(Message.SetInherited.get()
-                .replace("{Value}", getFormattedValue(((Subdivision) area).isInherited()).toLowerCase()));
+                .replace("{Value}", getFormattedValue(((Subdividable) area).isInherited()).toLowerCase()));
     }
 
     /*

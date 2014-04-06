@@ -33,17 +33,16 @@ import java.util.UUID;
 
 import io.github.alshain01.flags.exception.InvalidAreaException;
 import io.github.alshain01.flags.exception.InvalidSubdivisionException;
+import net.t00thpick1.residence.api.ResidenceAPI;
+import net.t00thpick1.residence.api.areas.ResidenceArea;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-
-import com.bekvon.bukkit.residence.Residence;
-import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 
 /**
  * Class for creating areas to manage a Residence Claimed Residences.
  */
-final public class ResidenceClaimedResidence extends RemovableArea implements Subdivision {
-	private final ClaimedResidence residence;
+final public class ResidenceClaimedResidence extends RemovableArea implements Ownable, Subdividable {
+	private final ResidenceArea residence;
 
 	/**
 	 * Creates an instance of ResidenceClaimedResidence based on a Bukkit
@@ -53,7 +52,7 @@ final public class ResidenceClaimedResidence extends RemovableArea implements Su
 	 *            The Bukkit location
 	 */
 	public ResidenceClaimedResidence(Location location) {
-		residence = Residence.getResidenceManager().getByLoc(location);
+		residence = ResidenceAPI.getResidenceManager().getByLocation(location);
 	}
 
 
@@ -65,7 +64,7 @@ final public class ResidenceClaimedResidence extends RemovableArea implements Su
 	 *            The residence name
 	 */
 	public ResidenceClaimedResidence(String name) {
-		residence = Residence.getResidenceManager().getByName(name);
+		residence = ResidenceAPI.getResidenceManager().getByName(name);
 	}
 
     /**
@@ -75,7 +74,7 @@ final public class ResidenceClaimedResidence extends RemovableArea implements Su
      *            The residence object
      */
     @SuppressWarnings("WeakerAccess") // API
-    public ResidenceClaimedResidence(ClaimedResidence residence) {
+    public ResidenceClaimedResidence(ResidenceArea residence) {
         this.residence = residence;
     }
 
@@ -85,7 +84,7 @@ final public class ResidenceClaimedResidence extends RemovableArea implements Su
 	 * @return True if a residence exists at the location.
 	 */
 	public static boolean hasResidence(Location location) {
-		return Residence.getResidenceManager().getByLoc(location) != null;
+		return ResidenceAPI.getResidenceManager().getByLocation(location) != null;
 	}
 
     /**
@@ -94,7 +93,7 @@ final public class ResidenceClaimedResidence extends RemovableArea implements Su
      * @return The ClaimedResidence object
      */
     @SuppressWarnings("WeakerAccess") // API
-    public ClaimedResidence getResidence() {
+    public ResidenceArea getResidence() {
         return residence;
     }
 
@@ -121,15 +120,21 @@ final public class ResidenceClaimedResidence extends RemovableArea implements Su
         throw new InvalidAreaException();
     }
 
+    @Override
+    public Set<UUID> getOwnerUniqueId() {
+        //TODO: Waiting on Residence
+        return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
+    }
+
 	@Override
-	public Set<String> getOwnerNames() {
+	public Set<String> getOwnerName() {
         if (isArea()) return new HashSet<String>(Arrays.asList(residence.getOwner()));
         throw new InvalidAreaException();
     }
 
     @Override
     public org.bukkit.World getWorld() {
-        if (isArea()) return Bukkit.getServer().getWorld(residence.getWorld());
+        if (isArea()) return residence.getWorld();
         throw new InvalidAreaException();
     }
 

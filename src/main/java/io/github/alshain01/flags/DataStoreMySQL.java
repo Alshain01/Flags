@@ -422,7 +422,7 @@ final class DataStoreMySQL extends DataStore {
 
     @Override
     public boolean readInheritance(Area area) {
-        if (!(area instanceof Subdivision) || !((Subdivision) area).isSubdivision()) {
+        if (!(area instanceof Subdividable) || !((Subdividable) area).isSubdivision()) {
             return false;
         }
 
@@ -440,7 +440,7 @@ final class DataStoreMySQL extends DataStore {
 
     @Override
     public void writeInheritance(Area area, boolean setting) {
-        if (!(area instanceof Subdivision) || !((Subdivision) area).isSubdivision()) {
+        if (!(area instanceof Subdividable) || !((Subdividable) area).isSubdivision()) {
             return;
         }
 

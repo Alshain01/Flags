@@ -98,11 +98,6 @@ final public class Default extends Area {
     }
 
     @Override
-    public Set<String> getOwnerNames() {
-        return new HashSet<String>(Arrays.asList("default"));
-    }
-
-    @Override
     public World getWorld() {
         if (isArea()) return world;
         throw new InvalidAreaException();

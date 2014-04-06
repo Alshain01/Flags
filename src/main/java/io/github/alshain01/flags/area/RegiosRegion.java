@@ -43,7 +43,7 @@ import org.bukkit.plugin.Plugin;
 /**
  * Class for creating areas to manage a Regios Region.
  */
-final public class RegiosRegion extends RemovableArea {
+final public class RegiosRegion extends RemovableArea implements Ownable {
 	private final Region region;
 
 	/**
@@ -100,8 +100,14 @@ final public class RegiosRegion extends RemovableArea {
         throw new InvalidAreaException();
     }
 
+    @Override
+    public Set<UUID> getOwnerUniqueId() {
+        //TODO: Waiting on Regios
+        return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
+    }
+
 	@Override
-	public Set<String> getOwnerNames() {
+	public Set<String> getOwnerName() {
         if (isArea()) return new HashSet<String>(Arrays.asList(region.getOwner()));
         throw new InvalidAreaException();
     }

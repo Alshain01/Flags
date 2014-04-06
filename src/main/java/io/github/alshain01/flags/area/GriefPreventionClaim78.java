@@ -36,7 +36,7 @@ import org.bukkit.Location;
 /**
  * Class for creating areas to manage a Grief Prevention Claim.
  */
-final public class GriefPreventionClaim78 extends GriefPreventionClaim implements Subdivision {
+final public class GriefPreventionClaim78 extends GriefPreventionClaim implements Subdividable {
 
 	/**
 	 * Creates an instance of GriefPreventionClaim78 based on a Bukkit Location

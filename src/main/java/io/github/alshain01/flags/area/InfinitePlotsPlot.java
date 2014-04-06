@@ -42,7 +42,7 @@ import uk.co.jacekk.bukkit.infiniteplots.plot.PlotLocation;
 /**
  * Class for creating areas to manage a InfinitePlots Plot.
  */
-final public class InfinitePlotsPlot extends RemovableArea {
+final public class InfinitePlotsPlot extends RemovableArea implements Ownable {
 	private final Plot plot;
 
 	/**
@@ -114,8 +114,15 @@ final public class InfinitePlotsPlot extends RemovableArea {
         throw new InvalidAreaException();
     }
 
+    @Override
+    public Set<UUID> getOwnerUniqueId()
+    {
+        //TODO: Waiting on InfinitePlots
+        return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
+    }
+
 	@Override
-	public Set<String> getOwnerNames() {
+	public Set<String> getOwnerName() {
         if (isArea()) return new HashSet<String>(Arrays.asList(plot.getAdmin()));
         throw new InvalidAreaException();
     }

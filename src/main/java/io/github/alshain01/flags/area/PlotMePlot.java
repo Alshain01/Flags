@@ -42,7 +42,7 @@ import com.worldcretornica.plotme.PlotManager;
 /**
  * Class for creating areas to manage a PlotMe Plot.
  */
-final public class PlotMePlot extends RemovableArea  {
+final public class PlotMePlot extends RemovableArea implements Ownable  {
 	private final Plot plot;
 
 	/**
@@ -110,7 +110,13 @@ final public class PlotMePlot extends RemovableArea  {
     }
 
     @Override
-    public Set<String> getOwnerNames() {
+    public Set<UUID> getOwnerUniqueId() {
+        //TODO: Waiting on PlotMe
+        return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
+    }
+
+    @Override
+    public Set<String> getOwnerName() {
         if (isArea()) return new HashSet<String>(Arrays.asList(plot.owner));
         throw new InvalidAreaException();
     }

@@ -42,7 +42,7 @@ import org.bukkit.World;
 /**
  * Class for creating areas to manage a PreciousStones Field.
  */
-final public class PreciousStonesField extends RemovableArea implements Subdivision  {
+final public class PreciousStonesField extends RemovableArea implements Ownable, Subdividable {
 	private Field field;
 
     /**
@@ -159,7 +159,13 @@ final public class PreciousStonesField extends RemovableArea implements Subdivis
     }
 
     @Override
-    public Set<String> getOwnerNames() {
+    public Set<UUID> getOwnerUniqueId() {
+        //TODO: Waiting on PreciousStones
+        return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
+    }
+
+    @Override
+    public Set<String> getOwnerName() {
         if (isArea()) return new HashSet<String>(Arrays.asList(field.getOwner()));
         throw new InvalidAreaException();
     }

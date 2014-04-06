@@ -10,12 +10,9 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
-final public class FlagsSector extends RemovableArea implements Subdivision  {
+final public class FlagsSector extends RemovableArea implements Subdividable {
     private final Sector sector;
 
     /**
@@ -87,12 +84,6 @@ final public class FlagsSector extends RemovableArea implements Subdivision  {
     @Override
     public String getName() {
         if (isArea()) return sector.getName();
-        throw new InvalidAreaException();
-    }
-
-    @Override
-    public Set<String> getOwnerNames() {
-        if (isArea()) return new HashSet<String>(Arrays.asList("Administrator"));
         throw new InvalidAreaException();
     }
 

@@ -32,7 +32,7 @@ import io.github.alshain01.flags.exception.InvalidSubdivisionException;
  * subdivisions.
  *
  */
-public interface Subdivision {
+public interface Subdividable {
     /**
      * Checks if the area is a subdivision.
      *
