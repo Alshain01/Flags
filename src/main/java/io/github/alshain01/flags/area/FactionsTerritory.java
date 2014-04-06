@@ -25,7 +25,6 @@
 package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.CuboidType;
-import io.github.alshain01.flags.System;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -129,19 +128,5 @@ final public class FactionsTerritory extends RemovableArea {
 	@Override
 	public boolean isArea() {
         return world != null && faction != null;
-    }
-
-    @Override
-    @Deprecated
-    public String getSystemID() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return getFaction().getId();
-    }
-
-    @SuppressWarnings("deprecation")
-    @Deprecated
-    @Override
-    public System getSystemType() {
-        return System.FACTIONS;
     }
 }

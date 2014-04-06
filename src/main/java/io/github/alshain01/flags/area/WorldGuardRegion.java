@@ -25,7 +25,6 @@
 package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.System;
 
 import java.util.Set;
 import java.util.UUID;
@@ -139,19 +138,5 @@ final public class WorldGuardRegion extends RemovableArea {
 	@Override
 	public boolean isArea() {
         return region != null && world != null;
-    }
-
-    @Override
-    @Deprecated
-    public String getSystemID() {
-        if(isArea()) return region.getId();
-        throw new InvalidAreaException();
-    }
-
-    @Override
-    @Deprecated
-    @SuppressWarnings("deprecation")
-    public System getSystemType() {
-        return System.WORLDGUARD;
     }
 }

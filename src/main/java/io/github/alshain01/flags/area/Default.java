@@ -25,7 +25,6 @@
 package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.System;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -127,10 +126,10 @@ final public class Default extends Area {
     }
 
     @Override
-    public Boolean getValue(Flag flag, boolean absolute) {
+    public Boolean getSetting(Flag flag, boolean absolute) {
         Validate.notNull(flag);
 
-        final Boolean value = super.getValue(flag, true);
+        final Boolean value = super.getSetting(flag, true);
         if (absolute) return value;
         return value != null ? value : flag.getDefault();
     }
@@ -152,18 +151,4 @@ final public class Default extends Area {
 		final String message = Flags.getDataStore().readMessage(this, flag);
 		return message != null ? message : flag.getDefaultAreaMessage();
 	}
-
-    @Override
-    @Deprecated
-    public String getSystemID() {
-        if(isArea()) return world.getName();
-        throw new InvalidAreaException();
-    }
-
-    @SuppressWarnings("deprecation")
-    @Deprecated
-    @Override
-    public System getSystemType() {
-        return System.DEFAULT;
-    }
 }

@@ -145,18 +145,6 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
 		return area;
 	}
 
-	/**
-	 * Gets the default wilderness message of the flag
-	 * 
-	 * @return The default wilderness message.
-     * @deprecated Use getDefaultWildernessMessage
-	 */
-    @Deprecated
-    @SuppressWarnings("unused") // Deprecated
-	public String getDefaultWorldMessage() {
-		return wilderness;
-	}
-
     /**
      * Gets the default wilderness message of the flag
      *

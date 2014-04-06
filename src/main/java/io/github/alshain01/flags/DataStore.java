@@ -112,7 +112,6 @@ public abstract class DataStore {
 
     public abstract void close();
 
-    @SuppressWarnings("unused") // Future use
     public abstract DataStoreVersion readVersion();
 
     public abstract DataStoreType getType();

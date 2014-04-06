@@ -25,7 +25,6 @@
 package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.System;
 
 import java.util.*;
 
@@ -211,26 +210,4 @@ final public class PreciousStonesField extends RemovableArea implements Subdivis
         }
         throw new InvalidSubdivisionException();
 	}
-
-    @Override
-    @Deprecated
-    public String getSystemID() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        if (field.isChild()) {
-            return String.valueOf(field.getParent().getId());
-        }
-        return String.valueOf(field.getId());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    @Deprecated
-    public System getSystemType() { return System.PRECIOUSSTONES; }
-
-    @Override
-    @Deprecated
-    public String getSystemSubID() {
-        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        return field.isChild() ? String.valueOf(field.getId()) : null;
-    }
 }

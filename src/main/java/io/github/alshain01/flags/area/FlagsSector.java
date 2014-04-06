@@ -2,7 +2,6 @@ package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.CuboidType;
 import io.github.alshain01.flags.Flags;
-import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.exception.InvalidAreaException;
 import io.github.alshain01.flags.exception.InvalidSubdivisionException;
 import io.github.alshain01.flags.sector.Sector;
@@ -139,28 +138,5 @@ final public class FlagsSector extends RemovableArea implements Subdivision  {
             Flags.getDataStore().writeInheritance(this, value);
         }
         throw new InvalidSubdivisionException();
-    }
-
-    @Override
-    @Deprecated
-    public String getSystemID() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        if (sector.getParentID() != null) {
-            return String.valueOf(sector.getParentID());
-        } else {
-            return String.valueOf(sector.getID());
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    @Deprecated
-    @Override
-    public System getSystemType() { return System.FLAGS; }
-
-    @Override
-    @Deprecated
-    public String getSystemSubID() {
-        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        return String.valueOf(sector.getID());
     }
 }

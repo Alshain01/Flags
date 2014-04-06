@@ -282,7 +282,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         if (flag != null) {
             // Return the single flag requested
             player.sendMessage(Message.GetFlag.get()
-                    .replace("{AreaType}", area.getCuboidDescriptor().toLowerCase())
+                    .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
                     .replace("{Flag}", flag.getName())
                     .replace("{Value}", getFormattedValue(area.getValue(flag, false)).toLowerCase()));
             return;
@@ -290,7 +290,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
 
         // No flag provided, list all set flags for the area
         StringBuilder message = new StringBuilder(Message.GetAllFlags.get()
-                .replace("{AreaType}", area.getCuboidDescriptor().toLowerCase()));
+                .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase()));
         boolean first = true; // Governs whether we insert a comma or not (true means no)
         Boolean value;
         Area defaultArea = new Default(player.getWorld());
@@ -323,7 +323,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         // Set the flag
         if(area.setValue(flag, value, player)) {
             player.sendMessage(Message.SetFlag.get()
-                    .replace("{AreaType}", area.getCuboidDescriptor().toLowerCase())
+                    .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
                     .replace("{Flag}", flag.getName())
                     .replace("{Value}", getFormattedValue(value).toLowerCase()));
         }

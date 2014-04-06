@@ -25,7 +25,6 @@
 package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.System;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -170,24 +169,5 @@ final public class ResidenceClaimedResidence extends RemovableArea implements Su
             Flags.getDataStore().writeInheritance(this, value);
         }
         throw new InvalidSubdivisionException();
-    }
-
-    @Override
-    @Deprecated
-    public String getSystemID() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return residence.getParent() != null ? residence.getParent().getName() : residence.getName();
-    }
-
-    @Override
-    @Deprecated
-    @SuppressWarnings("deprecation")
-    public System getSystemType() { return System.RESIDENCE; }
-
-    @Override
-    @Deprecated
-    public String getSystemSubID() {
-        if (!isSubdivision()) { throw new InvalidSubdivisionException(); }
-        return residence.getName().split("\\.")[1];
     }
 }

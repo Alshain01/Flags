@@ -110,13 +110,4 @@ final public class GriefPreventionClaim78 extends GriefPreventionClaim implement
         }
         throw new InvalidSubdivisionException();
     }
-
-    @Override
-    @Deprecated
-    public String getSystemSubID() {
-        if(isSubdivision()) return String.valueOf(claim.getID());
-
-        throw new InvalidSubdivisionException();
-    }
-
 }

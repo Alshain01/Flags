@@ -25,7 +25,6 @@
 package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.CuboidType;
-import io.github.alshain01.flags.System;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -130,19 +129,5 @@ final public class InfinitePlotsPlot extends RemovableArea {
 	@Override
 	public boolean isArea() {
         return plot != null;
-    }
-
-    @Override
-    @Deprecated
-    public String getSystemID() {
-        if (isArea()) return plot.getLocation().getX() + ";" + plot.getLocation().getZ();
-        throw new InvalidAreaException();
-    }
-
-    @Override
-    @Deprecated
-    @SuppressWarnings("deprecation")
-    public System getSystemType() {
-        return System.INFINITEPLOTS;
     }
 }

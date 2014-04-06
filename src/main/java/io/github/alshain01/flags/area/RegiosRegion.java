@@ -25,7 +25,6 @@
 package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.System;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -133,19 +132,5 @@ final public class RegiosRegion extends RemovableArea {
 	@Override
 	public boolean isArea() {
         return region != null;
-    }
-
-    @Override
-    @Deprecated
-    @SuppressWarnings("deprecation")
-    public System getSystemType() {
-        return System.REGIOS;
-    }
-
-    @Override
-    @Deprecated
-    public String getSystemID() {
-        if (!isArea()) { throw new InvalidAreaException(); }
-        return region.getName();
     }
 }

@@ -25,7 +25,6 @@
 package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.System;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -126,16 +125,4 @@ final public class PlotMePlot extends RemovableArea  {
 	public boolean isArea() {
         return plot != null;
     }
-
-    @Override
-    @Deprecated
-    public String getSystemID() {
-        if (isArea()) return plot.id;
-        throw new InvalidAreaException();
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    @Deprecated
-    public System getSystemType() { return System.PLOTME; }
 }

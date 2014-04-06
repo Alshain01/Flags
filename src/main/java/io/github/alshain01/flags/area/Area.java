@@ -25,7 +25,6 @@ http://creativecommons.org/licenses/by-nc/3.0/
 package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.economy.EconomyBaseValue;
 import io.github.alshain01.flags.economy.EconomyPurchaseType;
 import io.github.alshain01.flags.economy.EconomyTransactionType;
@@ -45,6 +44,7 @@ import org.apache.commons.lang.Validate;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -110,7 +110,7 @@ public abstract class Area implements Comparable<Area> {
      * @return the world associated with the area.
      * @throws InvalidAreaException
      */
-    public abstract org.bukkit.World getWorld();
+    public abstract World getWorld();
 
     /**
      * Gets a set of owner names for the area.
@@ -122,13 +122,16 @@ public abstract class Area implements Comparable<Area> {
     public abstract Set<String> getOwnerNames();
 
     /**
-     * Returns the description of the cuboid for the system.
-     * i.e. Claim, Region, Residence, Field, Sector, etc.
+     * Gets the value of the flag for this area following the inheritance path.
+     * Equivalent to getSetting(flag, false);
      *
-     * @return The cuboid descriptor for the cuboid system.
+     * @param flag
+     *            The flag to retrieve the value for.
+     * @return The value of the flag or the inherited value of the flag from
+     *         defaults if not defined.
      */
-    public String getCuboidDescriptor() {
-        return getCuboidType().getCuboidName();
+    public boolean getSetting(Flag flag) {
+        return getSetting(flag, false);
     }
 
     /**
@@ -142,12 +145,12 @@ public abstract class Area implements Comparable<Area> {
      * @return The value of the flag or the inherited value of the flag from
      *         defaults if not defined.
      */
-    public Boolean getValue(Flag flag, boolean absolute) {
+    public Boolean getSetting(Flag flag, boolean absolute) {
         Validate.notNull(flag);
 
         Boolean value = Flags.getDataStore().readFlag(this, flag);
         if (absolute) { return value; }
-        return value != null ? value : new Default(getWorld()).getValue(flag, false);
+        return value != null ? value : new Default(getWorld()).getSetting(flag, false);
     }
 
     /**
@@ -170,7 +173,7 @@ public abstract class Area implements Comparable<Area> {
         if (Flags.getEconomy() != null // No economy
                 && sender != null
                 && sender instanceof Player // Need a player to charge
-                && value != getValue(flag, true) // The flag isn't actually
+                && value != getSetting(flag, true) // The flag isn't actually
                 // changing
                 && flag.getPrice(EconomyPurchaseType.Flag) != 0 // No defined price
                 && !(this instanceof Wilderness) // No charge for world flags
@@ -181,11 +184,11 @@ public abstract class Area implements Comparable<Area> {
             if (value != null
                     && (EconomyBaseValue.ALWAYS.isSet()
                     || EconomyBaseValue.PLUGIN.isSet()
-                    && (getValue(flag, true) == null || getValue(flag, true) != flag.getDefault())
+                    && (getSetting(flag, true) == null || getSetting(flag, true) != flag.getDefault())
                     || EconomyBaseValue.DEFAULT.isSet()
-                    && getValue(flag, true) != new Default(
+                    && getSetting(flag, true) != new Default(
                     ((Player) sender).getLocation().getWorld())
-                    .getValue(flag, true))) {
+                    .getSetting(flag, true))) {
                 // The flag is being set, see if the player can afford it.
                 if (isFundingLow(EconomyPurchaseType.Flag, flag,
                         (Player) sender)) {
@@ -233,18 +236,18 @@ public abstract class Area implements Comparable<Area> {
     }
 
     /**
-     * Gets the message associated with a player flag and parses {AreaType},
+     * Gets the message associated with a player flag and parses {AreaType}, {AreaName},
      * {Owner}, {World}, and {Player}
      *
      * @param flag
      *            The flag to retrieve the message for.
-     * @param playerName
-     *            The player name to insert into the message.
+     * @param player
+     *            The player who's name will be inserted into the message.
      * @return The message associated with the flag.
      */
-    public final String getMessage(Flag flag, String playerName) {
-        Validate.notNull(playerName);
-        return getMessage(flag, true).replace("{Player}", playerName);
+    public final String getMessage(Flag flag, Player player) {
+        Validate.notNull(player.getName());
+        return getMessage(flag, true).replace("{Player}", player.getName());
     }
 
 	/**
@@ -253,7 +256,7 @@ public abstract class Area implements Comparable<Area> {
 	 * @param flag
 	 *            The flag to retrieve the message for.
 	 * @param parse
-	 *            True if you wish to populate instances of {AreaType}, {Owner},
+	 *            True if you wish to populate instances of {AreaType}, {Owner}, {AreaName},
 	 *            and {World} and translate color codes
 	 * @return The message associated with the flag.
 	 */
@@ -689,39 +692,4 @@ public abstract class Area implements Comparable<Area> {
         player.sendMessage(Message.Error.get().replace("{Error}", r.errorMessage));
         return true;
     }
-
-    /**
-     * Gets a set of owners for the area. On many systems, there will only be
-     * one.
-     *
-     * @return the player name of the area owner.
-     * @throws InvalidAreaException
-     * @deprecated Use getOwnerNames() instead.  Future UUID support
-     */
-    @Deprecated
-    @SuppressWarnings("deprecation, unused")
-    public Set<String> getOwners() {
-        return getOwnerNames();
-    }
-
-    /**
-     * Returns the system type that this object belongs to.
-     *
-     * @return The LandSystem that created this object
-     * @deprecated Use getCuboidType instead
-     */
-    @SuppressWarnings("deprecation, unused")
-    @Deprecated
-    public abstract System getSystemType();
-
-    /**
-     * Gets the land system's ID for this area.
-     *
-     * @return the area's ID in the format provided by the land management
-     *         system.
-     * @throws InvalidAreaException
-     * @deprecated Use getId() and getParent().getId() instead
-     */
-    @Deprecated
-    public abstract String getSystemID();
 }

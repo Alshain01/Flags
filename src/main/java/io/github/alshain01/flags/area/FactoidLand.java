@@ -25,7 +25,6 @@
 package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.System;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -177,29 +176,5 @@ final public class FactoidLand extends RemovableArea implements Subdivision {
             Flags.getDataStore().writeInheritance(this, value);
         }
         throw new InvalidSubdivisionException();
-    }
-
-    @Override
-    @Deprecated
-    public String getSystemID() {
-        if(isArea()) { return land.getAncestor(land.getGenealogy()).getUUID().toString(); }
-        throw new InvalidAreaException();
-    }
-
-    @SuppressWarnings("deprecation")
-    @Deprecated
-    @Override
-    public System getSystemType() {
-        return System.FACTOID;
-    }
-
-    @Override
-    @Deprecated
-    public String getSystemSubID() {
-        if(isArea()) {
-            if(isSubdivision()) { return land.getUUID().toString(); }
-            throw new InvalidSubdivisionException();
-        }
-        throw new InvalidAreaException();
     }
 }

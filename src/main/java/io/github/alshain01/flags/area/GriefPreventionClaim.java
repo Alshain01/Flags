@@ -25,7 +25,6 @@
 package io.github.alshain01.flags.area;
 
 import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.System;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -145,22 +144,5 @@ public class GriefPreventionClaim extends RemovableArea implements Siege, Admini
 	public boolean isUnderSiege() {
         if (isArea()) return claim.siegeData != null;
         throw new InvalidAreaException();
-    }
-
-    @Override
-    @Deprecated
-    public String getSystemID() {
-        if(!isArea()) { throw new InvalidAreaException(); }
-        if (claim.parent != null) {
-            return String.valueOf(claim.parent.getID());
-        }
-        return String.valueOf(claim.getID());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    @Deprecated
-    public System getSystemType() {
-        return System.GRIEF_PREVENTION;
     }
 }

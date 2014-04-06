@@ -33,16 +33,15 @@ import java.util.*;
 
 import io.github.alshain01.flags.sector.Sector;
 import io.github.alshain01.flags.sector.SectorLocation;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.bekvon.bukkit.residence.Residence;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -58,10 +57,12 @@ final class DataStoreYaml extends DataStore {
     private final static String SECTOR_FILE = "sector.yml";
 
     private final static String DATABASE_VERSION_PATH = "Default.Database.Version";
-    private final static String TRUST_PATH = "Trust";
+    private final static String PLAYER_TRUST_PATH = "PlayerTrust";
+    private final static String PERM_TRUST_PATH = "PermissionTrust";
     private final static String VALUE_PATH = "Value";
     private final static String MESSAGE_PATH = "Message";
     private final static String INHERIT_PATH = "InheritParent";
+    private final static String DELIMETER = ".";
 
     private final File dataFolder;
     private final Plugin plugin;
@@ -209,7 +210,7 @@ final class DataStoreYaml extends DataStore {
                 ConfigurationSection newCSec = woldConfig.createSection("Wilderness");
                 for (final String k : cSec.getKeys(true)) {
                     if (k.contains(VALUE_PATH) || k.contains(MESSAGE_PATH)
-                            || k.contains(TRUST_PATH) || k.contains(INHERIT_PATH)) {
+                            || k.contains("Trust") || k.contains(INHERIT_PATH)) {
                         newCSec.set(k, cSec.get(k));
                     }
                 }
@@ -252,17 +253,17 @@ final class DataStoreYaml extends DataStore {
 
             // Convert Subdivision Data To the upper level.
             for(World w : Bukkit.getWorlds()) {
-                if (data.isConfigurationSection(w.getName() + "." + CuboidType.getActive().toString())) {
-                    ConfigurationSection config = data.getConfigurationSection(w.getName() + "." + CuboidType.getActive().toString());
+                if (data.isConfigurationSection(w.getName() + DELIMETER + CuboidType.getActive().toString())) {
+                    ConfigurationSection config = data.getConfigurationSection(w.getName() + DELIMETER + CuboidType.getActive().toString());
                     for (String p : config.getKeys(false)) { // Parent claims
                         for (String s : config.getConfigurationSection(p).getKeys(false)) { // Subdivision Claims
                             if (Flags.getRegistrar().getFlag(s) == null) { // If it's not a flag, it's a subdivision
                                 if(CuboidType.getActive() == CuboidType.RESIDENCE) { // Residence uses the nested format by design, we will string replace it with a "-"
-                                    config.set(p + "-" + s, config.getConfigurationSection(p + "." + s).getValues(true)); // Move the whole thing up one level
+                                    config.set(p + "-" + s, config.getConfigurationSection(p + DELIMETER + s).getValues(true)); // Move the whole thing up one level
                                 } else {
-                                    config.set(s, config.getConfigurationSection(p + "." + s).getValues(true)); // Move the whole thing up one level
+                                    config.set(s, config.getConfigurationSection(p + DELIMETER + s).getValues(true)); // Move the whole thing up one level
                                 }
-                                config.set(p + "." + s, null); // Erase it
+                                config.set(p + DELIMETER + s, null); // Erase it
                             }
                         }
                     }
@@ -274,8 +275,8 @@ final class DataStoreYaml extends DataStore {
                 World world = Bukkit.getWorld(s);
                 if(world != null) {
                     data.set(CuboidType.getActive().toString() + world.getUID().toString(),
-                                data.getConfigurationSection(CuboidType.getActive().toString() + "." + s).getValues(true));
-                    data.set(CuboidType.getActive().toString() + "." + s, null);
+                                data.getConfigurationSection(CuboidType.getActive().toString() + DELIMETER + s).getValues(true));
+                    data.set(CuboidType.getActive().toString() + DELIMETER + s, null);
                 }
             }
 
@@ -341,43 +342,12 @@ final class DataStoreYaml extends DataStore {
         saveData = true;
     }
 
-	@Override
-	public Boolean readFlag(Area area, Flag flag) {
-        final String path = getAreaPath(area) + "." + flag.getName();
-        if(!getYml(path).isConfigurationSection(path)) { return null; }
-        final ConfigurationSection flagConfig = getYml(path).getConfigurationSection(path);
-		return flagConfig.isSet(VALUE_PATH) ? flagConfig.getBoolean(VALUE_PATH) : null;
-	}
-
     @Override
-    public void writeFlag(Area area, Flag flag, Boolean value) {
-        final String path = getAreaPath(area) + "." + flag.getName();
-        final ConfigurationSection flagConfig = getCreatedSection(getYml(path), path);
-        flagConfig.set(VALUE_PATH, value);
-        saveData = true;
-    }
-
-	@Override
-	public String readMessage(Area area, Flag flag) {
-        final String path = getAreaPath(area) + "." + flag.getName();
-        if(!getYml(path).isConfigurationSection(path)) { return null; }
-		return getYml(path).getConfigurationSection(path).getString(MESSAGE_PATH);
-	}
-
-    @Override
-    public void writeMessage(Area area, Flag flag, String message) {
-        final String path = getAreaPath(area) + "." + flag.getName();
-        final ConfigurationSection dataConfig = getCreatedSection(getYml(path), path);
-        dataConfig.set(MESSAGE_PATH, message);
-        saveData = true;
-    }
-
-	@Override
-	public double readPrice(Flag flag, EconomyPurchaseType type) {
+    public double readPrice(Flag flag, EconomyPurchaseType type) {
         if(!price.isConfigurationSection(type.toString())) { return 0; }
         final ConfigurationSection priceConfig = price.getConfigurationSection(type.toString());
-		return priceConfig.isSet(flag.getName()) ? priceConfig.getDouble(flag.getName()) : 0;
-	}
+        return priceConfig.isSet(flag.getName()) ? priceConfig.getDouble(flag.getName()) : 0;
+    }
 
     @Override
     public void writePrice(Flag flag, EconomyPurchaseType type, double newPrice) {
@@ -386,61 +356,122 @@ final class DataStoreYaml extends DataStore {
         saveData = true;
     }
 
-	@Override
-	public Set<String> readTrust(Area area, Flag flag) {
-		final String path = getAreaPath(area) + "." + flag.getName();
-        final Set<String> stringData = new HashSet<String>();
-        if(!getYml(path).isConfigurationSection(path)) { return stringData; }
-		final List<?> setData = getYml(path).getConfigurationSection(path).getList(TRUST_PATH, new ArrayList<String>());
+    @Override
+    public Map<UUID, Sector> readSectors() {
+        Map<UUID, Sector> sectorMap = new HashMap<UUID, Sector>();
 
-		for (final Object o : setData) {
-			stringData.add((String) o);
-		}
-		return stringData;
+        for(String s : this.sectors.getKeys(false)) {
+            UUID sID = UUID.fromString(s);
+            sectorMap.put(sID, new Sector(sID, sectors.getConfigurationSection(s).getValues(false)));
+        }
+
+        return sectorMap;
+    }
+
+    @Override
+    public void writeSector(Sector sector) {
+        sectors.set(sector.getID().toString(), sector.serialize());
+        saveData = true;
+    }
+
+    @Override
+    public void deleteSector(UUID sID) {
+        sectors.set(sID.toString(), null);
+        saveData = true;
+    }
+
+
+    @Override
+	public Boolean readFlag(Area area, Flag flag) {
+        final String path = getAreaPath(area) + DELIMETER + flag.getName();
+        if(getYml(path).isConfigurationSection(path)) {
+            final ConfigurationSection flagConfig = getYml(path).getConfigurationSection(path);
+            return flagConfig.isSet(VALUE_PATH) ? flagConfig.getBoolean(VALUE_PATH) : null;
+        }
+        return null;
 	}
 
     @Override
-    public Set<String> readPlayerTrust(Area area, Flag flag) {
-        final String path = getAreaPath(area) + "." + flag.getName();
-        final Set<String> stringData = new HashSet<String>();
-        if(!getYml(path).isConfigurationSection(path)) { return stringData; }
-        final List<?> setData = getYml(path).getConfigurationSection(path).getList(TRUST_PATH, new ArrayList<String>());
-
-        for (final Object o : setData) {
-            if(!((String)o).contains(".")) {
-                stringData.add((String) o);
-            }
-        }
-        return stringData;
-    }
-
-    @Override
-    public Set<String> readPermissionTrust(Area area, Flag flag) {
-        final String path = getAreaPath(area) + "." + flag.getName();
-        final Set<String> stringData = new HashSet<String>();
-        if(!getYml(path).isConfigurationSection(path)) { return stringData; }
-        final List<?> setData = getYml(path).getConfigurationSection(path).getList(TRUST_PATH, new ArrayList<String>());
-
-        for (final Object o : setData) {
-            if(((String)o).contains(".")) {
-                stringData.add((String) o);
-            }
-        }
-        return stringData;
-    }
-
-    @Override
-    public void writeTrust(Area area, Flag flag, Set<String> players) {
-        final String path = getAreaPath(area) + "." + flag.getName() + ".Trust";
-        final ConfigurationSection trustConfig = getCreatedSection(getYml(path), path);
-        final List<String> list = new ArrayList<String>();
-
-        for (final String s : players) {
-            list.add(s);
-        }
-
-        trustConfig.set(path, list);
+    public void writeFlag(Area area, Flag flag, Boolean value) {
+        final String path = getAreaPath(area) + DELIMETER + flag.getName();
+        final ConfigurationSection flagConfig = getCreatedSection(getYml(path), path);
+        flagConfig.set(VALUE_PATH, value);
         saveData = true;
+    }
+
+	@Override
+	public String readMessage(Area area, Flag flag) {
+        final String path = getAreaPath(area) + DELIMETER + flag.getName();
+        if(getYml(path).isConfigurationSection(path)) {
+            return getYml(path).getConfigurationSection(path).getString(MESSAGE_PATH);
+        }
+        return null;
+	}
+
+    @Override
+    public void writeMessage(Area area, Flag flag, String message) {
+        final String path = getAreaPath(area) + DELIMETER + flag.getName();
+        final ConfigurationSection dataConfig = getCreatedSection(getYml(path), path);
+        dataConfig.set(MESSAGE_PATH, message);
+        saveData = true;
+    }
+
+    @Override
+	public Map<UUID, String> readPlayerTrust(Area area, Flag flag) {
+		final String path = getAreaPath(area) + DELIMETER + flag.getName() + DELIMETER + PLAYER_TRUST_PATH;
+        final Map<UUID, String> playerData = new HashMap<UUID, String>();
+        if(getYml(path).isConfigurationSection(path)) {
+            for(String player : getYml(path).getConfigurationSection(path).getKeys(false)) {
+                playerData.put(UUID.fromString(player), getYml(path).getString(path + DELIMETER + player));
+            }
+        }
+		return playerData;
+	}
+
+    @Override
+    public void writePlayerTrust(Area area, Flag flag, Map<UUID, String> players) {
+        final String path = getAreaPath(area) + DELIMETER + flag.getName() + DELIMETER + PLAYER_TRUST_PATH;
+        final ConfigurationSection trustConfig = getCreatedSection(getYml(path), path);
+
+        // Remove players
+        for(UUID player : readPlayerTrust(area, flag).keySet()) {
+            if(!players.containsKey(player)) {
+                trustConfig.set(player.toString(), null);
+            }
+        }
+
+        // Add new players
+        for(UUID player : players.keySet()) {
+            trustConfig.set(player.toString(), players.get(player));
+        }
+        saveData = true;
+    }
+
+    @Override
+    public Set<Permission> readPermissionTrust(Area area, Flag flag) {
+        final String path = getAreaPath(area) + DELIMETER + flag.getName() + DELIMETER + PERM_TRUST_PATH;
+        final Set<Permission> permData = new HashSet<Permission>();
+        if(getYml(path).isList(path)) {
+            final List<?> setData = getYml(path).getList(path, new ArrayList<String>());
+
+            for (final Object o : setData) {
+                permData.add(new Permission((String) o));
+            }
+        }
+        return permData;
+    }
+
+    @Override
+    public void writePermissionTrust(Area area, Flag flag, Set<Permission> permissions) {
+        final String path = getAreaPath(area) + DELIMETER + flag.getName();
+        ConfigurationSection permConfig = getCreatedSection(getYml(path), path);
+
+        List<String> permList = new ArrayList<String>();
+        for(Permission p : permissions) {
+            permList.add(p.getName());
+        }
+
+        permConfig.set(PERM_TRUST_PATH, permList);
     }
 
     @Override
@@ -449,8 +480,7 @@ final class DataStoreYaml extends DataStore {
             return true;
         }
 
-        String path = area.getCuboidType().toString() + "." + area.getWorld().getName() + "."
-                + area.getSystemID() + "." + ((Subdivision) area).getSystemSubID();
+        String path = area.getCuboidType().toString() + DELIMETER + area.getWorld().getName() + DELIMETER + area.getId();
 
         if(!getYml(path).isConfigurationSection(path)) { return true; }
         ConfigurationSection inheritConfig = getYml(path).getConfigurationSection(path);
@@ -459,47 +489,13 @@ final class DataStoreYaml extends DataStore {
 
     @Override
     public void writeInheritance(Area area, boolean value) {
-        if (!(area instanceof Subdivision) || !((Subdivision) area).isSubdivision()) {
-            return;
+        if ((area instanceof Subdivision) && ((Subdivision) area).isSubdivision()) {
+            String path = area.getCuboidType().toString() + DELIMETER + area.getWorld().getName() + DELIMETER + area.getId();
+
+            ConfigurationSection inheritConfig = getCreatedSection(getYml(path), path);
+            inheritConfig.set(path, value);
+            saveData = true;
         }
-
-        String path = area.getCuboidType().toString() + "." + area.getWorld().getName() + "."
-                + area.getSystemID() + "." + ((Subdivision) area).getSystemSubID();
-
-        ConfigurationSection inheritConfig = getCreatedSection(getYml(path), path);
-        inheritConfig.set(path, value);
-        saveData = true;
-    }
-
-    @Override
-    public Map<UUID, Sector> readSectors() {
-        Map<UUID, Sector> sectors = new HashMap<UUID, Sector>();
-        File file = new File(plugin.getDataFolder(), SECTOR_FILE);
-        if(!file.exists()) { return sectors; }
-        YamlConfiguration sector = YamlConfiguration.loadConfiguration(file);
-        if(!sector.isConfigurationSection(SECTOR_PATH)) { return sectors; }
-        ConfigurationSection sectorConfig = sector.getConfigurationSection(SECTOR_PATH);
-
-        for(String s : sectorConfig.getKeys(false)) {
-            UUID sID = UUID.fromString(s);
-            sectors.put(sID, new Sector(sID, sectorConfig.getConfigurationSection(s).getValues(false)));
-        }
-
-        return sectors;
-    }
-
-    @Override
-    public void writeSector(Sector sector) {
-        ConfigurationSection sectorConfig = getCreatedSection(sectors, SECTOR_PATH);
-        sectorConfig.set(sector.getID().toString(), sector.serialize());
-        saveData = true;
-    }
-
-    @Override
-    public void deleteSector(UUID sID) {
-        ConfigurationSection sectorConfig = getCreatedSection(sectors, SECTOR_PATH);
-        sectorConfig.set(sID.toString(), null);
-        saveData = true;
     }
 
 	@Override
@@ -507,50 +503,6 @@ final class DataStoreYaml extends DataStore {
         String path = getAreaPath(area);
         getYml(path).set(path, null);
 	}
-
-    /*
-     * Used in SQL Import/Export
-     */
-    @SuppressWarnings("unused") // Future Use
-    protected Set<String> getAreaIDs() {
-        ConfigurationSection cSec = getYml("data").getConfigurationSection(CuboidType.getActive().toString() + "Data");
-        if(cSec == null) { return new HashSet<String>(); }
-        return cSec.getKeys(false);
-    }
-
-    @SuppressWarnings("unused") // Future Use
-    protected Set<String> getAreaSubIDs(String id) {
-        ConfigurationSection cSec = getYml("data").getConfigurationSection(CuboidType.getActive().toString() + "Data." + id);
-        Set<String> subIDs = new HashSet<String>();
-        if(cSec == null) { return subIDs; }
-
-        for(String i : cSec.getKeys(true)) {
-            String[] nodes = i.split("\\.");
-            if(nodes.length == 4) { // All keys for the parent should have 3 nodes.
-                subIDs.add(nodes[0]);
-            }
-        }
-        return subIDs;
-    }
-
-    Set<String> readKeys() {
-        return data.getKeys(true);
-    }
-
-    Boolean getBoolean(String dataLocation) {
-        if(data.isBoolean(dataLocation)) {
-            return data.getBoolean(dataLocation);
-        }
-        return null;
-    }
-
-    String getString(String dataLocation) {
-        return data.getString(dataLocation);
-    }
-
-    List<?> getList(String dataLocation) {
-        return data.getList(dataLocation);
-    }
 
     /*
      * Private
@@ -566,17 +518,7 @@ final class DataStoreYaml extends DataStore {
     }
 
     private String getAreaPath(Area area) {
-        String path = area.getCuboidType().toString() + "." + area.getWorld().getName();
-
-        if (!(area instanceof Wilderness || area instanceof Default)) {
-            path += "." + area.getSystemID();
-        }
-
-        if (area instanceof Subdivision && !readInheritance(area)) {
-            path += "." + ((Subdivision) area).getSystemSubID();
-        }
-
-        return path;
+        return area.getCuboidType().toString() + "." + area.getWorld().getName() + "." + area.getId();
     }
 
     private ConfigurationSection getCreatedSection(YamlConfiguration config, String path) {
