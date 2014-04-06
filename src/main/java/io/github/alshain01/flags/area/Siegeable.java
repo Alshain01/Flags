@@ -31,7 +31,7 @@ import io.github.alshain01.flags.exception.InvalidAreaException;
  * management system
  */
 @SuppressWarnings("WeakerAccess") // API
-public interface Siege {
+public interface Siegeable {
 	/**
 	 * Checks if the area is under siege. (Grief Prevention Feature)
 	 * 

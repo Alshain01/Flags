@@ -41,7 +41,7 @@ import org.bukkit.World;
 /**
  * Class for creating areas to manage a Grief Prevention Claim.
  */
-public class GriefPreventionClaim extends RemovableArea implements Ownable, Siege, Administrator {
+public class GriefPreventionClaim extends RemovableArea implements Ownable, Siegeable, Administrator {
 	final Claim claim;
 
 	/**
