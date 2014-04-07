@@ -24,7 +24,6 @@
 
 package io.github.alshain01.flags.api;
 
-import io.github.alshain01.flags.Flags;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
@@ -35,7 +34,6 @@ import java.util.Set;
 /**
  * API for bundle management.
  */
-@SuppressWarnings("WeakerAccess") // API
 public final class Bundle {
 	/**
 	 * Gets a bundle from the data store.
@@ -48,7 +46,7 @@ public final class Bundle {
 	public static Set<Flag> getBundle(String bundle) {
         Validate.notNull(bundle);
         if(!isBundle(bundle)) { throw new IllegalArgumentException("The provided bundle name does not exist."); }
-		return Flags.getDataStore().readBundle(bundle.toLowerCase());
+		return FlagsAPI.getDataStore().readBundle(bundle.toLowerCase());
 	}
 
 	/**
@@ -57,7 +55,7 @@ public final class Bundle {
 	 * @return A set of bundles names configured on the server.
 	 */
 	public static Set<String> getBundleNames() {
-		return Flags.getDataStore().readBundles();
+		return FlagsAPI.getDataStore().readBundles();
 	}
 
 	/**
@@ -77,7 +75,6 @@ public final class Bundle {
      *
      * @return A count of the bundles on the server
      */
-    @SuppressWarnings("unused") // API
     public static int count() {
         return getBundleNames().size();
     }
@@ -90,7 +87,6 @@ public final class Bundle {
 	 * @param flags
 	 *            A list of flags in the bundle.
 	 */
-    @SuppressWarnings("unused") // API
 	public static void setBundle(String name, Set<Flag> flags) {
         Validate.notNull(name);
 
@@ -100,7 +96,7 @@ public final class Bundle {
             Validate.noNullElements(flags);
         }
 
-		Flags.getDataStore().writeBundle(name, flags);
+        FlagsAPI.getDataStore().writeBundle(name, flags);
         String permName = "flags.bundle." + name.toLowerCase();
         if(flags == null || flags.size() == 0) {
             if(Bukkit.getPluginManager().getPermission(permName) != null) {
@@ -115,7 +111,7 @@ public final class Bundle {
 
     // Used only on plugin enable
     static void registerPermissions() {
-        for(String b : Flags.getDataStore().readBundles()) {
+        for(String b : FlagsAPI.getDataStore().readBundles()) {
             addPermission(b);
         }
     }

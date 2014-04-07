@@ -24,8 +24,7 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.api.CuboidType;
-import io.github.alshain01.flags.area.*;
+import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.event.SectorDeleteEvent;
 import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
 import me.tabinol.factoid.event.LandDeleteEvent;
@@ -52,9 +51,9 @@ class MrClean {
     static void enable(Plugin plugin, boolean enable) {
         if(!enable) { return; }
         PluginManager pm = plugin.getServer().getPluginManager();
-        switch (CuboidType.getActive()) {
+        switch (FlagsAPI.getCuboidPlugin()) {
             case GRIEF_PREVENTION:
-                if (Float.valueOf(pm.getPlugin(CuboidType.getActive().toString())
+                if (Float.valueOf(pm.getPlugin(FlagsAPI.getCuboidPlugin().getName())
                         .getDescription().getVersion().substring(0, 3)) >= 7.8) {
 
                     pm.registerEvents(new GriefPreventionCleaner(),	plugin);

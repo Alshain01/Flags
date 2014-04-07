@@ -10,7 +10,6 @@ class NewUpdateFoundEvent extends Event {
         super(true);
     }
 
-    @SuppressWarnings("unused") // API
     public static HandlerList getHandlerList() {
         return handlers;
     }

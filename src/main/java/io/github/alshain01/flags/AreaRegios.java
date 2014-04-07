@@ -22,14 +22,14 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags.area;
+package io.github.alshain01.flags;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import io.github.alshain01.flags.api.CuboidType;
+import io.github.alshain01.flags.api.CuboidPlugin;
 import io.github.alshain01.flags.api.area.Nameable;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
@@ -87,14 +87,6 @@ final public class AreaRegios extends AreaRemovable implements Nameable, Ownable
         return plugin != null && ((RegiosAPI)plugin).isInRegion(location);
 	}
 
-    /**
-     * Gets the region object embedded in the area class.
-     *
-     * @return The region object
-     */
-    @SuppressWarnings("unused") // API
-    public Region getRegion() { return region; }
-
     @Override
     public UUID getUniqueId() {
         if (isArea()) return null;
@@ -114,8 +106,8 @@ final public class AreaRegios extends AreaRemovable implements Nameable, Ownable
     }
 
     @Override
-    public CuboidType getCuboidType() {
-        return CuboidType.REGIOS;
+    public CuboidPlugin getCuboidPlugin() {
+        return CuboidPlugin.REGIOS;
     }
 
     @Override

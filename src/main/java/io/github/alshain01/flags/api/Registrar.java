@@ -50,7 +50,7 @@ public final class Registrar {
 	 */
 	public Flag getFlag(String flag) {
         Validate.notNull(flag);
-        return isFlag(flag) ? flagStore.get(flag) : null;
+        return isFlag(flag) ? flagStore.get(flag).clone() : null;
 	}
 
 	/**
@@ -99,7 +99,7 @@ public final class Registrar {
         Validate.notNull(flag);
 		for (final Flag f : getFlags()) {
 			if (f.getName().equalsIgnoreCase(flag)) {
-				return f;
+				return f.clone();
 			}
 		}
 		return null;
@@ -134,7 +134,7 @@ public final class Registrar {
 
         for (final Flag flag : flagStore.values()) {
             if (group.equalsIgnoreCase(flag.getGroup())) {
-                flags.add(flag);
+                flags.add(flag.clone());
             }
         }
         return flags;
@@ -152,7 +152,7 @@ public final class Registrar {
 
         for(Flag f : getGroup(group)) {
             if(p.hasPermission(f.getPermission())) {
-                flags.add(f);
+                flags.add(f.clone());
             }
         }
 
@@ -169,7 +169,7 @@ public final class Registrar {
         for(Flag f : flagStore.values()) {
             if(flagMap.containsKey(f.getGroup())) {
                 Set<Flag> flags = flagMap.get(f.getGroup());
-                flags.add(f);
+                flags.add(f.clone());
                 flagMap.put(f.getGroup(), flags);
             } else {
                 flagMap.put(f.getGroup(), new HashSet<Flag>(Arrays.asList(f)));
@@ -190,7 +190,7 @@ public final class Registrar {
             if(p.hasPermission(f.getPermission())) {
                 if(flagMap.containsKey(f.getGroup())) {
                     Set<Flag> flags = flagMap.get(f.getGroup());
-                    flags.add(f);
+                    flags.add(f.clone());
                     flagMap.put(f.getGroup(), flags);
                 } else {
                     flagMap.put(f.getGroup(), new HashSet<Flag>(Arrays.asList(f)));
@@ -210,7 +210,7 @@ public final class Registrar {
 
         for (final Flag flag : flagStore.values()) {
             if (!flag.isPlayerFlag()) {
-                flags.add(flag);
+                flags.add(flag.clone());
             }
         }
 
@@ -227,7 +227,7 @@ public final class Registrar {
 
         for (final Flag flag : flagStore.values()) {
             if (flag.isPlayerFlag()) {
-                flags.add(flag);
+                flags.add(flag.clone());
             }
         }
 
@@ -244,7 +244,7 @@ public final class Registrar {
         final Set<Flag> flags = new HashSet<Flag>();
         for(final Flag flag : flagStore.values()) {
             if(permissible.hasPermission(flag.getPermission())) {
-                flags.add(flag);
+                flags.add(flag.clone());
             }
         }
         return flags;
@@ -260,7 +260,7 @@ public final class Registrar {
         final Set<Flag> flags = new HashSet<Flag>();
         for(final Flag flag : flagStore.values()) {
             if(permissible.hasPermission(flag.getBypassPermission())) {
-                flags.add(flag);
+                flags.add(flag.clone());
             }
         }
         return flags;
@@ -302,7 +302,7 @@ public final class Registrar {
 
 		Bukkit.getServer().getPluginManager().addPermission(flag.getPermission());
 		flagStore.put(name, flag);
-		return flag;
+		return flag.clone();
 	}
 
 	/**
@@ -339,65 +339,65 @@ public final class Registrar {
 		Bukkit.getServer().getPluginManager().addPermission(flag.getBypassPermission());
 
 		flagStore.put(name, flag);
-		return flag;
+		return flag.clone();
 	}
-	
-	/**
-	 * Registers a set of flags from a formatted yml file
-	 * 
-	 * @param yaml
-	 *            The ModuleYML file containing the flags
-	 * @param group
-	 *            The group the flags belong in.
-	 * @return The set of flags if the flags were successfully registered. May be null or empty.
-	 */
-	public Set<Flag> register(ModuleYML yaml, String group) {
-        Validate.notNull(yaml);
+
+    /**
+     * Registers a set of flags from a formatted ConfigurationSection
+     *
+     * @param data
+     *            The configuration section file containing the flag keys
+     * @param group
+     *            The group the flags belong in.
+     * @return The set of flags if the flags were successfully registered. May be null or empty.
+     */
+    public Set<Flag> register(ConfigurationSection data, String group) {
+        Validate.notNull(data);
         Validate.notNull(group);
 
-		Set<Flag> flags = new HashSet<Flag>();
-		for (final String f : yaml.getModuleData().getConfigurationSection("Flag").getKeys(false)) {
-			final ConfigurationSection data = yaml.getModuleData().getConfigurationSection("Flag." + f);
-			// We don't want to register flags that aren't supported.
-			// It would just muck up the help menu.
-			// Null value is assumed to support all versions.
-			final String api = data.getString("MinimumAPI");
-			if (api != null && !Flags.checkAPI(api)) {
-				continue;
-			}
-	
-			// The description that appears when using help commands.
-			final String desc = data.getString("Description");
-			if(desc == null) {
-				continue;
-			}
-	
-			final boolean def = !data.isSet("AreaDefault") || data.getBoolean("AreaDefault");
-			final boolean isPlayer = data.isSet("Player") && data.getBoolean("Player");
-	
-			// The default message players getType while in the area.
-			final String area = data.getString("AreaMessage");
-	
-			// The default message players getType while in the wilderness.
-			String wilderness = data.getString("WildernessMessage");
+        Set<Flag> flags = new HashSet<Flag>();
+        for (final String f : data.getKeys(false)) {
+            final ConfigurationSection flagSection = data.getConfigurationSection(f);
+            // We don't want to register flags that aren't supported.
+            // It would just muck up the help menu.
+            // Null value is assumed to support all versions.
+            final String api = flagSection.getString("MinimumAPI");
+            if (api != null && !Flags.checkAPI(api)) {
+                continue;
+            }
+
+            // The description that appears when using help commands.
+            final String desc = flagSection.getString("Description");
+            if(desc == null) {
+                continue;
+            }
+
+            final boolean def = !flagSection.isSet("AreaDefault") || flagSection.getBoolean("AreaDefault");
+            final boolean isPlayer = flagSection.isSet("Player") && flagSection.getBoolean("Player");
+
+            // The default message players getType while in the area.
+            final String area = flagSection.getString("AreaMessage");
+
+            // The default message players getType while in the wilderness.
+            String wilderness = flagSection.getString("WildernessMessage");
             if(wilderness == null) {
                 // Backward compatibility
-                wilderness = data.getString("WorldMessage");
+                wilderness = flagSection.getString("WorldMessage");
             }
-			
-			if(isPlayer && (area == null || wilderness == null)) {
-				continue;
-			}
-			
-			// Register it!
-			// Be sure to send a plug-in name or group description for the help command!
-			// It can be this.getName() or another string.
-			if (isPlayer) {
-				flags.add(register(f, desc, def, group, area, wilderness));
-			} else {
-				flags.add(register(f, desc, def, group));
-			}
-		}
-		return flags;
-	}
+
+            if(isPlayer && (area == null || wilderness == null)) {
+                continue;
+            }
+
+            // Register it!
+            // Be sure to send a plug-in name or group description for the help command!
+            // It can be this.getName() or another string.
+            if (isPlayer) {
+                flags.add(register(f, desc, def, group, area, wilderness));
+            } else {
+                flags.add(register(f, desc, def, group));
+            }
+        }
+        return flags;
+    }
 }

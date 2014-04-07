@@ -1,17 +1,53 @@
 package io.github.alshain01.flags.api;
 
-import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.api.area.Area;
-import io.github.alshain01.flags.area.AreaDefault;
-import io.github.alshain01.flags.area.AreaWilderness;
+import io.github.alshain01.flags.AreaDefault;
+import io.github.alshain01.flags.AreaWilderness;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 
-public class FlagsAPI {
-    static Registrar registrar = new Registrar();
+final public class FlagsAPI {
+    private static Registrar registrar = new Registrar();
+    private static CuboidPlugin activeSystem;
+    private static DataStore dataStore;
+
+    static DataStore getDataStore() {
+        return dataStore;
+    }
+
+    /**
+     * Starts the API
+     * Cannot be used externally
+     *
+     * @param cuboidSystem The cuboid system detected
+     * @param data The datastore to be used
+     */
+    public static void initialize(CuboidPlugin cuboidSystem, DataStore data) {
+        Validate.notNull(data); // Prevents plugins from using this method.
+        activeSystem = cuboidSystem;
+        dataStore = data;
+        CuboidPlugin.loadNames();
+
+        ConfigurationSerialization.registerClass(Flag.class);
+        Bundle.registerPermissions();
+    }
+
+    /**
+     * Closes the API
+     * Cannot be used externally
+     *
+     * @param data The data store to close
+     */
+    public static void close(DataStore data) {
+        Validate.notNull(data); // Prevents plugins from using this method.
+        registrar = null;
+        activeSystem = null;
+        dataStore = null;
+    }
 
     /**
      * Gets the registrar for this instance of Flags.
@@ -30,7 +66,7 @@ public class FlagsAPI {
      * @return True if there is an area present at the location.
      */
     public static boolean hasArea(Location location) {
-        return CuboidType.getActive().hasArea(location);
+        return activeSystem.hasArea(location);
     }
 
     /*
@@ -42,7 +78,7 @@ public class FlagsAPI {
      */
     public static Area getAreaAt(Location location) {
         Validate.notNull(location);
-        Area area = CuboidType.getActive().getCuboidAt(location);
+        Area area = activeSystem.getCuboidAt(location);
         return area.isArea() ? area : getWildernessArea(location.getWorld());
     }
 
@@ -76,9 +112,18 @@ public class FlagsAPI {
      * @return True if the player is in pvp combat, false is not or if cuboid system is
      *         unsupported.
      */
-    public boolean inPvpCombat(Player player) {
+    public static boolean inPvpCombat(Player player) {
         Validate.notNull(player);
-        return CuboidType.getActive() == CuboidType.GRIEF_PREVENTION
+        return activeSystem == CuboidPlugin.GRIEF_PREVENTION
                 && GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
+    }
+
+    /**
+     * Gets the currently active cuboid system.
+     *
+     * @return The Cuboid System in use by Flags.
+     */
+    public static CuboidPlugin getCuboidPlugin() {
+        return activeSystem;
     }
 }

@@ -22,10 +22,9 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags.area;
+package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.api.area.Area;
-import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
@@ -66,8 +65,7 @@ final public class AreaGriefPrevention78 extends AreaGriefPrevention implements 
      * @param claim
      *            The claim object
      */
-    @SuppressWarnings("WeakerAccess") // API
-    public AreaGriefPrevention78(Claim claim) {
+    private AreaGriefPrevention78(Claim claim) {
         super(claim);
     }
 
@@ -76,7 +74,6 @@ final public class AreaGriefPrevention78 extends AreaGriefPrevention implements 
         if (isArea()) return Bukkit.getServer().getWorld(claim.getClaimWorldName());
         throw new InvalidAreaException();
     }
-
 
     @Override
     public boolean isSubdivision() {
@@ -88,7 +85,7 @@ final public class AreaGriefPrevention78 extends AreaGriefPrevention implements 
     public boolean isParent(Area area) {
         if (isSubdivision()) {
             Validate.notNull(area);
-            return area instanceof AreaGriefPrevention78 && claim.parent.equals(((AreaGriefPrevention78) area).getClaim());
+            return area instanceof AreaGriefPrevention78 && claim.parent.equals(((AreaGriefPrevention78) area).claim);
         }
         throw new InvalidSubdivisionException();
     }

@@ -82,7 +82,6 @@ public class PlayerChangedAreaEvent extends Event implements Cancellable {
      *
 	 * @return The area the player left to enter this area.
 	 */
-    @SuppressWarnings("unused") // API
 	public Area getAreaLeft() {
 		return exitArea;
 	}

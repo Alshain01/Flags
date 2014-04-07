@@ -22,14 +22,11 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags;
+package io.github.alshain01.flags.api;
 
-import io.github.alshain01.flags.api.CuboidType;
-import io.github.alshain01.flags.api.Flag;
-import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
-import io.github.alshain01.flags.area.AreaDefault;
-import io.github.alshain01.flags.area.AreaWilderness;
+import io.github.alshain01.flags.AreaDefault;
+import io.github.alshain01.flags.AreaWilderness;
 import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 
 import java.util.HashSet;
@@ -44,12 +41,12 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class DataStore {
-    final class DataStoreVersion {
+    public final class DataStoreVersion {
         private final int major;
         private final int minor;
         private final int build;
 
-        DataStoreVersion(int major, int minor, int build) {
+        public DataStoreVersion(int major, int minor, int build) {
             this.major = major;
             this.minor = minor;
             this.build = build;
@@ -60,30 +57,13 @@ public abstract class DataStore {
         public int getBuild() { return build; }
     }
 
-    enum DataStoreType {
-        YAML("yaml", "YAML") {
-            public DataStore getDataStore(JavaPlugin plugin) {
-                final int interval =  plugin.getConfig().getInt("Flags.Database.AutoSaveInterval");
-                return new DataStoreYaml(plugin, interval);
-            }
-        },
-        MYSQL("mysql", "MySQL") {
-            public DataStore getDataStore(JavaPlugin plugin) {
-                final String url = plugin.getConfig().getString("Flags.Database.Url");
-                final String user = plugin.getConfig().getString("Flags.Database.User");
-                final String pw = plugin.getConfig().getString("Flags.Database.Password");
+    public enum DataStoreType {
+        YAML("YAML"),
+        MYSQL("MySQL");
 
-                return new DataStoreMySQL(url, user, pw);
-            }
-        };
-
-        private final String identifier;
         private final String niceName;
 
-        protected abstract DataStore getDataStore(JavaPlugin plugin);
-
-        private DataStoreType(String identifier, String niceName) {
-            this.identifier = identifier;
+        private DataStoreType(String niceName) {
             this.niceName = niceName;
         }
 
@@ -93,19 +73,6 @@ public abstract class DataStore {
          */
         public String getName() {
             return niceName;
-        }
-
-        static DataStore getByUrl(JavaPlugin plugin, String url) {
-            return getType(url).getDataStore(plugin);
-        }
-
-        private static DataStoreType getType(String url) {
-            for(DataStoreType d : DataStoreType.values()) {
-                if(url.contains(d.identifier)) {
-                    return d;
-                }
-            }
-            return DataStoreType.YAML;
         }
     }
 
@@ -119,7 +86,6 @@ public abstract class DataStore {
 
     public abstract DataStoreType getType();
 
-    @SuppressWarnings("UnusedParameters") // Future use
     public abstract void update(JavaPlugin plugin);
 
     public abstract Set<String> readBundles();
@@ -160,11 +126,11 @@ public abstract class DataStore {
 
     public abstract void remove(Area area);
 
-    protected void importDataStore(DataStore source) {
+    public void importDataStore(DataStore source) {
         migrate(source, this);
     }
 
-    protected void exportDataStore(DataStore target) {
+    public void exportDataStore(DataStore target) {
         migrate(this, target);
     }
 
@@ -185,7 +151,7 @@ public abstract class DataStore {
         }
 
         //Convert the sectors
-        if(CuboidType.getActive() == CuboidType.FLAGS) {
+        if(FlagsAPI.getCuboidPlugin() == CuboidPlugin.FLAGS) {
             for(Sector s : source.readSectors().values()) {
                 target.writeSector(s);
             }

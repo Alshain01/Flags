@@ -92,7 +92,6 @@ public class PermissionTrustChangedEvent extends Event implements Cancellable {
      *
      * @return The CommandSender. Null if no sender involved (caused by plug-in).
      */
-    @SuppressWarnings("unused") // API
     public CommandSender getSender() {
         return sender;
     }
@@ -102,7 +101,6 @@ public class PermissionTrustChangedEvent extends Event implements Cancellable {
      *
      * @return The permission node
      */
-    @SuppressWarnings("unused") // API
     public Permission getTrustee() {
         return permission;
     }
@@ -112,7 +110,6 @@ public class PermissionTrustChangedEvent extends Event implements Cancellable {
      *
      * @return True if the player is being added, false if being removed.
      */
-    @SuppressWarnings("unused") // API
     public boolean isTrusted() {
         return value;
     }
@@ -122,7 +119,6 @@ public class PermissionTrustChangedEvent extends Event implements Cancellable {
      *
      * @return A list of event handlers, stored per-event.
      */
-    @SuppressWarnings("unused") // API
     public static HandlerList getHandlerList() {
         return handlers;
     }

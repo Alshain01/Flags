@@ -1,11 +1,9 @@
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.api.CuboidType;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.Registrar;
 import io.github.alshain01.flags.api.area.Area;
-import io.github.alshain01.flags.area.AreaDefault;
 import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 
@@ -82,7 +80,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
             if(tool != null && e.getPlayer().getItemInHand().getType() == tool) {
                 if (e.getPlayer().hasPermission("flags.command.flag")) {
                     CommandLocation loc = CommandLocation.WILDERNESS;
-                    if(CuboidType.getActive().hasArea(e.getClickedBlock().getLocation())) {
+                    if(FlagsAPI.hasArea(e.getClickedBlock().getLocation())) {
                         loc = CommandLocation.AREA;
                     }
                     get(e.getPlayer(), e.getClickedBlock().getLocation(), loc, null);
@@ -237,7 +235,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
             usage.append("|charge");
         }
 
-        if(player.hasPermission("flags.command.flag.set") && area.hasPermission(player) && CuboidType.getActive().hasSubdivisions()) {
+        if(player.hasPermission("flags.command.flag.set") && area.hasPermission(player) && FlagsAPI.getCuboidPlugin().hasSubdivisions()) {
             usage.append("|inherit");
         }
 
@@ -286,7 +284,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         if (flag != null) {
             // Return the single flag requested
             player.sendMessage(Message.GetFlag.get()
-                    .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
+                    .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                     .replace("{Flag}", flag.getName())
                     .replace("{Value}", getFormattedValue(area.getValue(flag, false)).toLowerCase()));
             return;
@@ -294,7 +292,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
 
         // No flag provided, list all set flags for the area
         StringBuilder message = new StringBuilder(Message.GetAllFlags.get()
-                .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase()));
+                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase()));
         boolean first = true; // Governs whether we insert a comma or not (true means no)
         Boolean value;
         Area defaultArea = new AreaDefault(player.getWorld());
@@ -327,7 +325,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         // Set the flag
         if(area.setValue(flag, value, player)) {
             player.sendMessage(Message.SetFlag.get()
-                    .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
+                    .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                     .replace("{Flag}", flag.getName())
                     .replace("{Value}", getFormattedValue(value).toLowerCase()));
         }
@@ -344,7 +342,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
 
             if(area.setValue(flag, null, player)) {
                 player.sendMessage(Message.RemoveFlag.get()
-                        .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
+                        .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                         .replace("{Flag}", flag.getName()));
             }
             return;
@@ -361,7 +359,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         }
 
         player.sendMessage((success ? Message.RemoveAllFlags.get() : Message.RemoveAllFlagsError.get())
-                .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase()));
+                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase()));
     }
 
     /*
@@ -383,11 +381,11 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
 
         if(Validate.notPlayerFlag(player, flag)
                 || Validate.notArea(player, area)
-                || Validate.notTrustList(player, trustList, area.getCuboidType().getCuboidName(), flag.getName())) { return; }
+                || Validate.notTrustList(player, trustList, area.getCuboidPlugin().getCuboidName(), flag.getName())) { return; }
 
         // List all set flags
         message = new StringBuilder(Message.GetTrust.get()
-                .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
+                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                 .replace("{Flag}", flag.getName()));
 
         for (String p : trustList) {
@@ -428,7 +426,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         }
 
         player.sendMessage((success ? Message.SetTrust.get() : Message.SetTrustError.get())
-                .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
+                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                 .replace("{Flag}", flag.getName()));
         return true;
     }
@@ -440,7 +438,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         if(Validate.notPlayerFlag(player, flag)
                 || Validate.notPermittedFlag(player, area, flag, flag.getName())) { return; }
 
-        if(Validate.notTrustList(player, trustees, area.getCuboidType().getCuboidName(), flag.getName())) {
+        if(Validate.notTrustList(player, trustees, area.getCuboidPlugin().getCuboidName(), flag.getName())) {
             return;
         }
 
@@ -469,7 +467,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         }
 
         player.sendMessage((success ? Message.RemoveTrust.get() : Message.RemoveTrustError.get())
-                .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
+                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                 .replace("{Flag}", flag.getName()));
     }
 

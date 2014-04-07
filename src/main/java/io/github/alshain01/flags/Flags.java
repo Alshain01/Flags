@@ -24,13 +24,10 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.api.Bundle;
-import io.github.alshain01.flags.api.CuboidType;
-import io.github.alshain01.flags.api.Flag;
-import io.github.alshain01.flags.api.Registrar;
+import io.github.alshain01.flags.api.*;
 import io.github.alshain01.flags.api.economy.EconomyBaseValue;
 import io.github.alshain01.flags.sector.SectorManager;
-import io.github.alshain01.flags.DataStore.DataStoreType;
+import io.github.alshain01.flags.api.DataStore.DataStoreType;
 import io.github.alshain01.flags.api.event.PlayerChangedAreaEvent;
 
 import net.milkbowl.vault.economy.Economy;
@@ -39,13 +36,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.List;
 
 /**
  * Flags
@@ -58,7 +56,6 @@ public class Flags extends JavaPlugin {
     // Made static to access from enumerations and lower hefty method calls
     private static DataStore dataStore;
     private static Economy economy = null;
-    private static java.util.logging.Logger logger;
     private static boolean debugOn = false;
 
     // Made static for use by API
@@ -71,29 +68,27 @@ public class Flags extends JavaPlugin {
 	@Override
 	public void onEnable() {
         PluginManager pm = getServer().getPluginManager();
-        ConfigurationSerialization.registerClass(Flag.class);
+
 
         // Set up the plugin's configuration file
         saveDefaultConfig();
 
         // Initialize the static variables
         debugOn = getConfig().getBoolean("Debug.Enabled");
-        logger  = this.getLogger();
 
         // Acquire the messages from configuration
         Message.load(this);
-        CuboidType.loadNames(this);
 
         economy = setupEconomy();
         EconomyBaseValue.valueOf(getConfig().getString("Economy.BaseValue")).set();
 
-        CuboidType.find(pm, getConfig().getList("AreaPlugins"));
-        dataStore = DataStoreType.getByUrl(this, getConfig().getString("Database.Url"));
-        sqlData = dataStore instanceof DataStoreMySQL;
-
-        // New installation
+        // Activate the API
+        CuboidPlugin cuboidPlugin = findCuboidPlugin(pm, getConfig().getList("AreaPlugins"));
+        dataStore = findDataStore();
         dataStore.create(this);
         dataStore.update(this);
+        sqlData = dataStore instanceof DataStoreMySQL;
+        FlagsAPI.initialize(cuboidPlugin, dataStore);
 
         // Load Mr. Clean
         MrClean.enable(this, getConfig().getBoolean("MrClean"));
@@ -112,7 +107,7 @@ public class Flags extends JavaPlugin {
 		}
 
         // Load Sectors
-        if(CuboidType.getActive() == CuboidType.FLAGS) {
+        if(FlagsAPI.getCuboidPlugin() == CuboidPlugin.FLAGS) {
             sectors = new SectorManager(dataStore, getConfig().getConfigurationSection("Sector").getInt("DefaultDepth"));
         }
 
@@ -124,7 +119,7 @@ public class Flags extends JavaPlugin {
 
  		// Schedule tasks to perform after server is running
 		new onServerEnabledTask(this, getConfig().getBoolean("Metrics.Enabled")).runTask(this);
-		logger.info("Flags Has Been Enabled.");
+		Logger.info("Flags Has Been Enabled.");
 	}
 
     /**
@@ -133,11 +128,12 @@ public class Flags extends JavaPlugin {
     @Override
     public void onDisable() {
         dataStore.close();
+        FlagsAPI.close(dataStore);
+        Logger.close();
 
         // Static cleanup
         dataStore = null;
         economy = null;
-        logger = null;
         sectors = null;
         this.getLogger().info("Flags Has Been Disabled.");
     }
@@ -157,7 +153,7 @@ public class Flags extends JavaPlugin {
 
         if(args[0].equalsIgnoreCase("import")) {
             if(sqlData) {
-                dataStore.importDataStore(new DataStoreYaml(this, 0));
+                dataStore.importDataStore(new DataStoreYaml(this, false));
                 return true;
             }
             sender.sendMessage(Message.SQLDatabaseError.get());
@@ -186,11 +182,34 @@ public class Flags extends JavaPlugin {
         // Acquire the messages from configuration
         Message.load(this);
 
-        EconomyBaseValue.valueOf(this.getConfig().getString("Flags.Economy.BaseValue")).set();
+        EconomyBaseValue.valueOf(this.getConfig().getString("Economy.BaseValue")).set();
 
-        debugOn = getConfig().getBoolean("Flags.Debug");
+        debugOn = getConfig().getBoolean("Debug");
         dataStore.reload();
-        logger.info("Flag Database Reloaded");
+        Logger.info("Flag Database Reloaded");
+    }
+
+    private CuboidPlugin findCuboidPlugin(PluginManager pm, List<?> plugins) {
+        if(plugins != null && plugins.size() > 0) {
+            for(Object o : plugins) {
+                if (pm.isPluginEnabled((String) o)) {
+                    Logger.info(o + " detected. Enabling integrated support.");
+                    return CuboidPlugin.getByName((String) o);
+                }
+            }
+        }
+        Logger.info("No cuboid system detected. Flags Sectors Enabled.");
+        return CuboidPlugin.FLAGS;
+    }
+
+    private DataStore findDataStore() {
+        DataStoreType dbType = DataStoreType.valueOf(getConfig().getString("Database"));
+        switch(dbType) {
+            case MYSQL:
+                return new DataStoreMySQL(this);
+            default:
+                return new DataStoreYaml(this);
+        }
     }
 
     /**
@@ -230,14 +249,14 @@ public class Flags extends JavaPlugin {
      *
      * @return The dataStore object in Flags.
      */
-    public static DataStore getDataStore() { return dataStore; }
+    static DataStore getDataStore() { return dataStore; }
 
     /**
      * Gets the vault economy for this instance of Flags.
      *
      * @return The vault economy.
      */
-    public static Economy getEconomy() { return economy; }
+    static Economy getEconomy() { return economy; }
 
     /**
      * Gets the sector manager for this instance of Flags.
@@ -262,17 +281,12 @@ public class Flags extends JavaPlugin {
 
 		@Override
 		public void run() {
-            // Tell Bukkit about the existing bundles
-            for(String b : Flags.getDataStore().readBundles()) {
-                Bundle.addPermission(b);
-            }
-
 			// Check the handlers to see if anything is registered for Border Patrol
 			final RegisteredListener[] listeners = PlayerChangedAreaEvent.getHandlerList().getRegisteredListeners();
 			if (borderPatrol && (listeners == null || listeners.length == 0)) {
                 borderPatrol = false;
                 PlayerMoveEvent.getHandlerList().unregister(Bukkit.getPluginManager().getPlugin("Flags"));
-				logger.info("No plugins have registered for Flags' Border Patrol listener. Unregistering PlayerMoveEvent.");
+				Logger.info("No plugins have registered for Flags' Border Patrol listener. Unregistering PlayerMoveEvent.");
 			}
 
             if (mcStats && !debugOn && Flags.checkAPI("1.3.2")) {

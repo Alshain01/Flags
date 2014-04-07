@@ -33,7 +33,6 @@ import org.bukkit.event.HandlerList;
  */
 public class SectorDeleteEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-
     private final Sector sector;
 
     /**
@@ -60,7 +59,6 @@ public class SectorDeleteEvent extends Event {
      *
      * @return A list of event handlers, stored per-event.
      */
-    @SuppressWarnings("unused") // API
     public static HandlerList getHandlerList() {
         return handlers;
     }

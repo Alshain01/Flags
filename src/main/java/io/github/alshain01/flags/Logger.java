@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 
 public class Logger {
     private static java.util.logging.Logger logger = Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger();
-    private static boolean debugEnabled = Bukkit.getServer().getPluginManager().getPlugin("Flags").getConfig().getBoolean("Flags.Debug");
+    final private static boolean debugEnabled = Bukkit.getServer().getPluginManager().getPlugin("Flags").getConfig().getBoolean("Flags.Debug");
 
     public enum DebugCategory {
         SQL, Area, Flag
@@ -27,4 +27,6 @@ public class Logger {
     public static void info(String message) {
         logger.info(message);
     }
+
+    static void close() { logger = null; }
 }

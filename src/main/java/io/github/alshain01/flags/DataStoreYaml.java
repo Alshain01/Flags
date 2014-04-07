@@ -24,7 +24,8 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.api.CuboidType;
+import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.DataStore;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
@@ -60,7 +61,9 @@ final class DataStoreYaml extends DataStore {
     private final static String BUNDLE_FILE = "bundle.yml";
     private final static String PRICE_FILE = "price.yml";
     private final static String SECTOR_FILE = "sector.yml";
+    private final static String CONFIG_FILE = "yamlConfig.yml";
 
+    private final static String AUTO_SAVE_PATH = "AutoSaveInterval";
     private final static String DATABASE_VERSION_PATH = "AreaDefault.Database.Version";
     private final static String PLAYER_TRUST_PATH = "PlayerTrust";
     private final static String PERM_TRUST_PATH = "PermissionTrust";
@@ -71,7 +74,6 @@ final class DataStoreYaml extends DataStore {
 
     private final File dataFolder;
     private final Plugin plugin;
-    private final int saveInterval;
 
     // Auto-Save manager
     private BukkitTask as;
@@ -88,11 +90,21 @@ final class DataStoreYaml extends DataStore {
     /*
      * Constructor
      */
-	DataStoreYaml(Plugin plugin, int autoSaveInterval) {
+    DataStoreYaml(Plugin plugin, boolean enableAutoSave) {
         this.dataFolder = plugin.getDataFolder();
         this.plugin = plugin;
-        this.saveInterval = autoSaveInterval;
+        updateWorldFile();
+        reload(enableAutoSave);
+    }
 
+	DataStoreYaml(Plugin plugin) {
+        this.dataFolder = plugin.getDataFolder();
+        this.plugin = plugin;
+        updateWorldFile();
+        reload();
+	}
+
+    private void updateWorldFile() {
         // Upgrade sequence from older versions
         File worldFile = new File(dataFolder, "world.yml");
         File wildFile = new File(dataFolder, WILDERNESS_FILE);
@@ -101,9 +113,7 @@ final class DataStoreYaml extends DataStore {
                 Logger.error("Failed to rename world.yml to wilderness.yml");
             }
         }
-
-        reload();
-	}
+    }
 
     private class AutoSave extends BukkitRunnable {
         @Override
@@ -125,6 +135,22 @@ final class DataStoreYaml extends DataStore {
 
     @Override
     public void reload() {
+        reload(true);
+    }
+
+    void reload(boolean enableAutoSave) {
+        File yamlConfigFile = new File(dataFolder, CONFIG_FILE);
+        YamlConfiguration yamlConfig =YamlConfiguration.loadConfiguration(yamlConfigFile);
+        if(!yamlConfig.isInt(AUTO_SAVE_PATH)) {
+            yamlConfig.set(AUTO_SAVE_PATH, 60);
+            try {
+                yamlConfig.save(yamlConfigFile);
+            } catch (IOException ex) {
+                Logger.warning("Failed to write default Yaml Configuration file.");
+            }
+        }
+        int saveInterval = yamlConfig.getInt(AUTO_SAVE_PATH);
+
         wilderness = YamlConfiguration.loadConfiguration(new File(dataFolder, WILDERNESS_FILE));
         def = YamlConfiguration.loadConfiguration(new File(dataFolder, DEFAULT_FILE));
         data = YamlConfiguration.loadConfiguration(new File(dataFolder, DATA_FILE));
@@ -143,7 +169,7 @@ final class DataStoreYaml extends DataStore {
         }
         price = YamlConfiguration.loadConfiguration(priceFile);
 
-        if(CuboidType.getActive() == CuboidType.FLAGS) {
+        if(FlagsAPI.getCuboidPlugin() == CuboidPlugin.FLAGS) {
             sectors = YamlConfiguration.loadConfiguration(new File(dataFolder, SECTOR_FILE));
         }
 
@@ -159,7 +185,7 @@ final class DataStoreYaml extends DataStore {
         }
     }
 
-    public void save() {
+    void save() {
         if(!saveData) { return; }
         try {
             wilderness.save(new File(dataFolder, WILDERNESS_FILE));
@@ -167,7 +193,7 @@ final class DataStoreYaml extends DataStore {
             data.save(new File(dataFolder, DATA_FILE));
             bundle.save(new File(dataFolder, BUNDLE_FILE));
             price.save(new File(dataFolder, PRICE_FILE));
-            if(CuboidType.getActive() == CuboidType.FLAGS) {
+            if(FlagsAPI.getCuboidPlugin() == CuboidPlugin.FLAGS) {
                 sectors.save(new File(dataFolder, SECTOR_FILE));
             }
             saveData = false;
@@ -241,7 +267,7 @@ final class DataStoreYaml extends DataStore {
             }
 
             // Convert Sectors
-            if(CuboidType.getActive() == CuboidType.FLAGS) {
+            if(FlagsAPI.getCuboidPlugin() == CuboidPlugin.FLAGS) {
                 // Remove old header
                 if (sectors.isConfigurationSection("Sectors")) {
                     sectors.set("", sectors.getConfigurationSection("Sectors").getValues(true));
@@ -258,12 +284,12 @@ final class DataStoreYaml extends DataStore {
 
             // Convert Subdivision Data To the upper level.
             for(World w : Bukkit.getWorlds()) {
-                if (data.isConfigurationSection(w.getName() + DELIMETER + CuboidType.getActive().toString())) {
-                    ConfigurationSection config = data.getConfigurationSection(w.getName() + DELIMETER + CuboidType.getActive().toString());
+                if (data.isConfigurationSection(w.getName() + DELIMETER + FlagsAPI.getCuboidPlugin().getName())) {
+                    ConfigurationSection config = data.getConfigurationSection(w.getName() + DELIMETER + FlagsAPI.getCuboidPlugin().getName());
                     for (String p : config.getKeys(false)) { // Parent claims
                         for (String s : config.getConfigurationSection(p).getKeys(false)) { // Subdivision Claims
                             if (FlagsAPI.getRegistrar().getFlag(s) == null) { // If it's not a flag, it's a subdivision
-                                if(CuboidType.getActive() == CuboidType.RESIDENCE) { // Residence uses the nested format by design, we will string replace it with a "-"
+                                if(FlagsAPI.getCuboidPlugin() == CuboidPlugin.RESIDENCE) { // Residence uses the nested format by design, we will string replace it with a "-"
                                     config.set(p + "-" + s, config.getConfigurationSection(p + DELIMETER + s).getValues(true)); // Move the whole thing up one level
                                 } else {
                                     config.set(s, config.getConfigurationSection(p + DELIMETER + s).getValues(true)); // Move the whole thing up one level
@@ -276,12 +302,12 @@ final class DataStoreYaml extends DataStore {
             }
 
             //Convert World Names to UUID
-            for(String s : data.getConfigurationSection(CuboidType.getActive().toString()).getKeys(false)) {
+            for(String s : data.getConfigurationSection(FlagsAPI.getCuboidPlugin().getName()).getKeys(false)) {
                 World world = Bukkit.getWorld(s);
                 if(world != null) {
-                    data.set(CuboidType.getActive().toString() + world.getUID().toString(),
-                                data.getConfigurationSection(CuboidType.getActive().toString() + DELIMETER + s).getValues(true));
-                    data.set(CuboidType.getActive().toString() + DELIMETER + s, null);
+                    data.set(FlagsAPI.getCuboidPlugin().getName() + world.getUID().toString(),
+                            data.getConfigurationSection(FlagsAPI.getCuboidPlugin().getName() + DELIMETER + s).getValues(true));
+                    data.set(FlagsAPI.getCuboidPlugin().getName() + DELIMETER + s, null);
                 }
             }
 
@@ -485,7 +511,7 @@ final class DataStoreYaml extends DataStore {
             return true;
         }
 
-        String path = area.getCuboidType().toString() + DELIMETER + area.getWorld().getName() + DELIMETER + area.getId();
+        String path = area.getCuboidPlugin().getName() + DELIMETER + area.getWorld().getName() + DELIMETER + area.getId();
 
         if(!getYml(path).isConfigurationSection(path)) { return true; }
         ConfigurationSection inheritConfig = getYml(path).getConfigurationSection(path);
@@ -495,7 +521,7 @@ final class DataStoreYaml extends DataStore {
     @Override
     public void writeInheritance(Area area, boolean value) {
         if ((area instanceof Subdividable) && ((Subdividable) area).isSubdivision()) {
-            String path = area.getCuboidType().toString() + DELIMETER + area.getWorld().getName() + DELIMETER + area.getId();
+            String path = area.getCuboidPlugin().getName() + DELIMETER + area.getWorld().getName() + DELIMETER + area.getId();
 
             ConfigurationSection inheritConfig = getCreatedSection(getYml(path), path);
             inheritConfig.set(path, value);
@@ -523,7 +549,7 @@ final class DataStoreYaml extends DataStore {
     }
 
     private String getAreaPath(Area area) {
-        return area.getCuboidType().toString() + "." + area.getWorld().getName() + "." + area.getId();
+        return area.getCuboidPlugin().getName() + "." + area.getWorld().getName() + "." + area.getId();
     }
 
     private ConfigurationSection getCreatedSection(YamlConfiguration config, String path) {

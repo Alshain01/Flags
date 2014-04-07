@@ -93,7 +93,6 @@ public class PlayerTrustChangedEvent extends Event implements Cancellable {
      *
      * @return The CommandSender. Null if no sender involved (caused by plug-in).
      */
-    @SuppressWarnings("unused") // API
 	public CommandSender getSender() {
 		return sender;
 	}
@@ -103,7 +102,6 @@ public class PlayerTrustChangedEvent extends Event implements Cancellable {
      *
 	 * @return The UUID of the player
 	 */
-    @SuppressWarnings("unused") // API
 	public UUID getTrustee() {
 		return trustee;
 	}
@@ -113,7 +111,6 @@ public class PlayerTrustChangedEvent extends Event implements Cancellable {
      *
 	 * @return True if the player is being added, false if being removed.
 	 */
-    @SuppressWarnings("unused") // API
 	public boolean isTrusted() {
 		return value;
 	}
@@ -123,7 +120,6 @@ public class PlayerTrustChangedEvent extends Event implements Cancellable {
      *
      * @return A list of event handlers, stored per-event.
      */
-    @SuppressWarnings("unused") // API
     public static HandlerList getHandlerList() {
         return handlers;
     }

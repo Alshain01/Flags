@@ -2,7 +2,7 @@
 # Url, user, and password must be set for SQL Connections.
 # AutoSave interval dictates how often (in minutes) a Yaml Database
 # will be saved to disk. Set to 0 to only save on server reload/stop.
-Database:
+Database: YAML
   Url: yaml
   User: none
   Password: none

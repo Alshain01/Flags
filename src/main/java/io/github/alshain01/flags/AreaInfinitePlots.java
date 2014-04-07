@@ -22,69 +22,66 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags.area;
+package io.github.alshain01.flags;
+
+import io.github.alshain01.flags.api.CuboidPlugin;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import io.github.alshain01.flags.api.CuboidType;
+import io.github.alshain01.flags.api.area.Nameable;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import com.worldcretornica.plotme.Plot;
-import com.worldcretornica.plotme.PlotManager;
+import uk.co.jacekk.bukkit.infiniteplots.InfinitePlots;
+import uk.co.jacekk.bukkit.infiniteplots.plot.Plot;
+import uk.co.jacekk.bukkit.infiniteplots.plot.PlotLocation;
 
 /**
- * Class for creating areas to manage a PlotMe Plot.
+ * Class for creating areas to manage a InfinitePlots Plot.
  */
-final public class AreaPlotMe extends AreaRemovable implements Ownable {
+final public class AreaInfinitePlots extends AreaRemovable implements Nameable, Ownable {
 	private final Plot plot;
 
 	/**
-	 * Creates an instance of AreaPlotMe based on a Bukkit Location
+	 * Creates an instance of AreaInfinitePlots based on a Bukkit Location
 	 * 
 	 * @param location
 	 *            The Bukkit location
 	 */
-	public AreaPlotMe(Location location) {
-		plot = PlotManager.getPlotById(location);
+	public AreaInfinitePlots(Location location) {
+		plot = InfinitePlots.getInstance().getPlotManager()
+				.getPlotAt(PlotLocation.fromWorldLocation(location));
 	}
 
 	/**
-	 * Creates an instance of AreaPlotMe based on a plot ID and Bukkit world
+	 * Creates an instance of AreaInfinitePlots based on a Bukkit world and Plot
+	 * Location
 	 * 
-	 * @param plotID
-	 *            The plot ID
 	 * @param world
 	 *            The Bukkit world
+	 * @param X
+	 *            The Plot X Location (not Bukkit location)
+	 * @param Z
+	 *			  The Plot Z Location (not Bukkit location)
 	 */
-	public AreaPlotMe(World world, String plotID) {
-		plot = PlotManager.getPlotById(world, plotID);
+	public AreaInfinitePlots(World world, int X, int Z) {
+		plot = InfinitePlots.getInstance().getPlotManager()
+				.getPlotAt(new PlotLocation(world.getName(), X, Z));
 	}
 
-    /**
+	/**
 	 * Gets if there is a plot at the location.
 	 * 
-	 * @return True if a plot exists at the location.
+	 * @return True if a territory exists at the plot.
 	 */
 	public static boolean hasPlot(Location location) {
-		return PlotManager.getPlotById(location) != null;
+		return InfinitePlots.getInstance().getPlotManager().getPlotAt(PlotLocation.fromWorldLocation(location)) != null;
 	}
-
-    /**
-     * Gets the plot object embedded in the area class.
-     *
-     * @return The plot object
-     */
-    @SuppressWarnings("unused") // API
-    public Plot getPlot() {
-        return plot;
-    }
 
     @Override
     public UUID getUniqueId() {
@@ -94,30 +91,37 @@ final public class AreaPlotMe extends AreaRemovable implements Ownable {
 
     @Override
     public String getId() {
-        if (isArea()) return plot.id;
+        if (isArea()) return plot.getLocation().getX() + ";" + plot.getLocation().getZ();
         throw new InvalidAreaException();
     }
 
     @Override
-    public CuboidType getCuboidType() {
-        return CuboidType.PLOTME;
+    public CuboidPlugin getCuboidPlugin() {
+        return CuboidPlugin.INFINITEPLOTS;
     }
 
     @Override
-    public Set<UUID> getOwnerUniqueId() {
-        //TODO: Waiting on PlotMe
+    public String getName() {
+        if (isArea()) return plot.getName();
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public Set<UUID> getOwnerUniqueId()
+    {
+        //TODO: Waiting on InfinitePlots
         return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
     }
 
-    @Override
-    public Set<String> getOwnerName() {
-        if (isArea()) return new HashSet<String>(Arrays.asList(plot.owner));
+	@Override
+	public Set<String> getOwnerName() {
+        if (isArea()) return new HashSet<String>(Arrays.asList(plot.getAdmin()));
         throw new InvalidAreaException();
     }
 
 	@Override
 	public World getWorld() {
-        if (isArea())return Bukkit.getWorld(plot.world);
+        if (isArea()) return plot.getLocation().getWorld();
         throw new InvalidAreaException();
     }
 

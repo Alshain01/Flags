@@ -1,8 +1,7 @@
-package io.github.alshain01.flags.area;
+package io.github.alshain01.flags;
 
+import io.github.alshain01.flags.api.CuboidPlugin;
 import io.github.alshain01.flags.api.area.Area;
-import io.github.alshain01.flags.api.CuboidType;
-import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
@@ -38,16 +37,6 @@ final public class AreaFlags extends AreaRemovable implements Subdividable {
     }
 
     /**
-     * Creates an instance of AreaFlags based on a sector object
-     *
-     * @param sector
-     *            The sector
-     */
-    public AreaFlags(Sector sector) {
-        this.sector = sector;
-    }
-
-    /**
      * Gets if there is a sector at the location.
      *
      * @return True if a claim exists at the location.
@@ -56,19 +45,9 @@ final public class AreaFlags extends AreaRemovable implements Subdividable {
         return Flags.getSectorManager().getAt(location) != null;
     }
 
-    /**
-     * Gets the sector object embedded in the area class.
-     *
-     * @return The claim object
-     */
-    @SuppressWarnings("WeakerAccess") // API
-    public Sector getSector() {
-        return sector;
-    }
-
     @Override
-    public CuboidType getCuboidType() {
-        return CuboidType.FLAGS;
+    public CuboidPlugin getCuboidPlugin() {
+        return CuboidPlugin.FLAGS;
     }
 
     @Override
@@ -109,7 +88,7 @@ final public class AreaFlags extends AreaRemovable implements Subdividable {
 
     @Override
     public Area getParent() {
-        if (isSubdivision()) return sector.getParentID() == null ? null : new AreaFlags(sector.getParentID());
+        if (isSubdivision()) return new AreaFlags(sector.getParentID());
         throw new InvalidSubdivisionException();
     }
 

@@ -88,7 +88,6 @@ public class MessageChangedEvent extends Event implements Cancellable {
      *
      * @return The CommandSender. Null if no sender involved (caused by plug-in).
      */
-    @SuppressWarnings("unused") // API
     public CommandSender getSender() { return sender; }
 
 	/**
@@ -105,7 +104,6 @@ public class MessageChangedEvent extends Event implements Cancellable {
      *
      * @return A list of event handlers, stored per-event.
      */
-    @SuppressWarnings("unused") // API
     public static HandlerList getHandlerList() {
         return handlers;
     }

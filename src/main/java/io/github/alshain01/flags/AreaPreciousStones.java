@@ -22,13 +22,11 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags.area;
-
-import io.github.alshain01.flags.*;
+package io.github.alshain01.flags;
 
 import java.util.*;
 
-import io.github.alshain01.flags.api.CuboidType;
+import io.github.alshain01.flags.api.CuboidPlugin;
 import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.area.Nameable;
 import io.github.alshain01.flags.api.area.Ownable;
@@ -105,23 +103,9 @@ final public class AreaPreciousStones extends AreaRemovable implements Nameable,
      * @param field
      *            The field object
      */
-    public AreaPreciousStones(Field field) {
+    private AreaPreciousStones(Field field) {
         this.field = field;
     }
-	
-	// This is private because it doesn't currently check parentOnly,
-	// should only be used when you know parentOnly will be true
-	// Works for now, but needs enhancement
-    @SuppressWarnings("unused")
-	private AreaPreciousStones(Location location, boolean parentOnly) {
-		List<Field> fields = PreciousStones.API().getFieldsProtectingArea(FieldFlag.ALL, location);
-		for(Field field : fields) {
-			if(field.isParent()) {
-				this.field = field;
-				return;
-			}
-		}
-	}
 
     /**
      * Gets if there is a field at the location.
@@ -131,14 +115,6 @@ final public class AreaPreciousStones extends AreaRemovable implements Nameable,
     public static boolean hasField(Location location) {
         return PreciousStones.API().isFieldProtectingArea(FieldFlag.ALL, location);
     }
-
-    /**
-     * Gets the field object embedded in the area class.
-     *
-     * @return The field object
-     */
-    @SuppressWarnings("WeakerAccess") // API
-	public Field getField() { return field; }
 
     @Override
     public UUID getUniqueId() {
@@ -153,8 +129,8 @@ final public class AreaPreciousStones extends AreaRemovable implements Nameable,
     }
 
     @Override
-    public CuboidType getCuboidType() {
-        return CuboidType.PRECIOUSSTONES;
+    public CuboidPlugin getCuboidPlugin() {
+        return CuboidPlugin.PRECIOUSSTONES;
     }
 
     @Override
@@ -197,14 +173,14 @@ final public class AreaPreciousStones extends AreaRemovable implements Nameable,
         if (isSubdivision()) {
             Validate.notNull(area);
             return area instanceof AreaPreciousStones && field.isParent()
-                    && field.getChildren().contains(((AreaPreciousStones) area).getField());
+                    && field.getChildren().contains(((AreaPreciousStones) area).field);
         }
         throw new InvalidSubdivisionException();
     }
 
     @Override
     public Area getParent() {
-        if (isSubdivision()) return new AreaPreciousStones(field.getParent().getLocation(), true);
+        if (isSubdivision()) return new AreaPreciousStones(field.getParent());
         throw new InvalidSubdivisionException();
     }
 

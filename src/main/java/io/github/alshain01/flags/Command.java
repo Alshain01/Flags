@@ -1,13 +1,11 @@
 package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.api.Bundle;
-import io.github.alshain01.flags.api.CuboidType;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
-import io.github.alshain01.flags.area.AreaDefault;
+import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.area.Subdividable;
-import io.github.alshain01.flags.area.AreaWilderness;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -45,7 +43,7 @@ abstract class Command {
         static boolean notArea(CommandSender cs, Area area) {
             if(area != null && area.isArea()) { return false; }
             cs.sendMessage(Message.NoAreaError.get()
-                    .replace("{AreaType}", CuboidType.getActive().getCuboidName().toLowerCase()));
+                    .replace("{AreaType}", FlagsAPI.getCuboidPlugin().getCuboidName().toLowerCase()));
             return true;
         }
 
@@ -60,11 +58,17 @@ abstract class Command {
         static boolean notPermittedFlag(Permissible p, Area a) {
             if (a.hasPermission(p)) { return false; }
             if(p instanceof CommandSender) {
-                ((CommandSender)p).sendMessage(((a instanceof AreaWilderness || a instanceof AreaDefault)
-                        ? Message.WildernessPermError.get() : Message.AreaPermError.get())
-                        .replace("{AreaType}", a.getCuboidType().getCuboidName())
-                        .replace("{OwnerName}", a.getOwnerName().toArray()[0].toString())
-                        .replace("{Type}", Message.Flag.get().toLowerCase()));
+                String message = a instanceof AreaWilderness || a instanceof AreaDefault
+                        ? Message.WildernessPermError.get() : Message.AreaPermError.get()
+                        .replace("{AreaType}", a.getCuboidPlugin().getCuboidName())
+                        .replace("{Type}", Message.Flag.get().toLowerCase());
+
+                if(a instanceof Ownable) {
+                    message = message.replace("{OwnerName}", ((Ownable)a).getOwnerName().toArray()[0].toString());
+                } else {
+                    message = message.replace("{OwnerName}", "an administrator");
+                }
+                ((CommandSender)p).sendMessage(message);
             }
             return true;
         }
@@ -104,11 +108,18 @@ abstract class Command {
         private static boolean notPermittedBundle(Permissible p, Area area) {
             if (area.hasBundlePermission(p)) { return false; }
             if(p instanceof CommandSender) {
-                ((CommandSender)p).sendMessage(((area instanceof AreaWilderness || area instanceof AreaDefault)
+                String message = ((area instanceof AreaWilderness || area instanceof AreaDefault)
                         ? Message.WildernessPermError.get() : Message.AreaPermError.get())
-                        .replace("{AreaType}", area.getCuboidType().getCuboidName())
-                        .replace("{OwnerName}", area.getOwnerName().toArray()[0].toString())
-                        .replace("{Type}", Message.Bundle.get().toLowerCase()));
+                        .replace("{AreaType}", area.getCuboidPlugin().getCuboidName())
+                        .replace("{Type}", Message.Bundle.get().toLowerCase());
+
+                if(area instanceof Ownable) {
+                    message = message.replace("{OwnerName}", ((Ownable)area).getOwnerName().toArray()[0].toString());
+                } else {
+                    message = message.replace("{OwnerName}", "an administrator");
+                }
+
+                ((CommandSender)p).sendMessage(message);
             }
             return true;
         }
@@ -136,8 +147,8 @@ abstract class Command {
         }
 
         static boolean notSubdividable(CommandSender cs) {
-            if(CuboidType.getActive().hasSubdivisions()) { return false; }
-            cs.sendMessage(Message.SubdivisionSupportError.get().replace("{System}", CuboidType.getActive().getDisplayName()));
+            if(FlagsAPI.getCuboidPlugin().hasSubdivisions()) { return false; }
+            cs.sendMessage(Message.SubdivisionSupportError.get().replace("{System}", FlagsAPI.getCuboidPlugin().getDisplayName()));
             return true;
         }
 
@@ -265,7 +276,7 @@ abstract class Command {
         return getArea(player.getLocation(), location);
     }
 
-    protected static Set<Player> getPlayerList(Player player, Set<String> playerNames) {
+    static Set<Player> getPlayerList(Player player, Set<String> playerNames) {
         // Convert the strings to players
         Set<String> failedPlayers = new HashSet<String>();
         Set<Player> players = new HashSet<Player>();

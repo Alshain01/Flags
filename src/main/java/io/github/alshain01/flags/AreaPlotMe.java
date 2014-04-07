@@ -22,76 +22,59 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags.area;
-
-import io.github.alshain01.flags.api.CuboidType;
+package io.github.alshain01.flags;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import io.github.alshain01.flags.api.area.Nameable;
+import io.github.alshain01.flags.api.CuboidPlugin;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import com.massivecraft.factions.entity.BoardColls;
-import com.massivecraft.factions.entity.Faction;
-import com.massivecraft.factions.entity.FactionColls;
-import com.massivecraft.mcore.ps.PS;
+import com.worldcretornica.plotme.Plot;
+import com.worldcretornica.plotme.PlotManager;
 
 /**
- * Class for creating areas to manage a Factions Territory.
+ * Class for creating areas to manage a PlotMe Plot.
  */
-final public class AreaFactions extends AreaRemovable implements Nameable, Ownable {
-	private final Faction faction;
-	private final World world;
+final public class AreaPlotMe extends AreaRemovable implements Ownable {
+	private final Plot plot;
 
 	/**
-	 * Creates an instance of AreaFactions based on a Bukkit Location
+	 * Creates an instance of AreaPlotMe based on a Bukkit Location
 	 * 
 	 * @param location
 	 *            The Bukkit location
 	 */
-	public AreaFactions(Location location) {
-		faction = BoardColls.get().getFactionAt(PS.valueOf(location));
-		world = location.getWorld();
+	public AreaPlotMe(Location location) {
+		plot = PlotManager.getPlotById(location);
 	}
 
 	/**
-	 * Creates an instance of AreaFactions based on a Bukkit World and
-	 * faction ID
+	 * Creates an instance of AreaPlotMe based on a plot ID and Bukkit world
 	 * 
-	 * @param factionID
-	 *            The faction ID
+	 * @param plotID
+	 *            The plot ID
 	 * @param world
 	 *            The Bukkit world
 	 */
-	public AreaFactions(World world, String factionID) {
-		faction = FactionColls.get().getForWorld(world.getName()).get(factionID);
-		this.world = world;
+	public AreaPlotMe(World world, String plotID) {
+		plot = PlotManager.getPlotById(world, plotID);
 	}
 
     /**
-     * Gets the faction object embedded in the area class.
-     *
-     * @return The faction object
-     */
-    @SuppressWarnings("WeakerAccess") // API
-    public Faction getFaction() {
-        return faction;
-    }
-
-    /**
-     * Gets if there is a territory at the location.
-     *
-     * @return True if a territory exists at the location.
-     */
-    public static boolean hasTerritory(Location location) {
-        return BoardColls.get().getFactionAt(PS.valueOf(location)) != null;
-    }
+	 * Gets if there is a plot at the location.
+	 * 
+	 * @return True if a plot exists at the location.
+	 */
+	public static boolean hasPlot(Location location) {
+		return PlotManager.getPlotById(location) != null;
+	}
 
     @Override
     public UUID getUniqueId() {
@@ -99,42 +82,37 @@ final public class AreaFactions extends AreaRemovable implements Nameable, Ownab
         throw new InvalidAreaException();
     }
 
+    @Override
     public String getId() {
-        if (isArea()) return getFaction().getId();
+        if (isArea()) return plot.id;
         throw new InvalidAreaException();
     }
 
     @Override
-    public CuboidType getCuboidType() {
-        return CuboidType.FACTIONS;
-    }
-
-    @Override
-    public String getName() {
-        if (isArea()) return faction.getName();
-        throw new InvalidAreaException();
+    public CuboidPlugin getCuboidPlugin() {
+        return CuboidPlugin.PLOTME;
     }
 
     @Override
     public Set<UUID> getOwnerUniqueId() {
-        //TODO Waiting on Factions
+        //TODO: Waiting on PlotMe
         return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
     }
 
-	@Override
-	public Set<String> getOwnerName() {
-        if (isArea()) return new HashSet<String>(Arrays.asList(getFaction().getLeader().getName()));
+    @Override
+    public Set<String> getOwnerName() {
+        if (isArea()) return new HashSet<String>(Arrays.asList(plot.owner));
         throw new InvalidAreaException();
     }
 
 	@Override
 	public World getWorld() {
-        if (isArea()) return world;
+        if (isArea())return Bukkit.getWorld(plot.world);
         throw new InvalidAreaException();
     }
 
 	@Override
 	public boolean isArea() {
-        return world != null && faction != null;
+        return plot != null;
     }
 }

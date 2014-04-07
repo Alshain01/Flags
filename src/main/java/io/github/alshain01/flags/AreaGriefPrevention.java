@@ -22,14 +22,14 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags.area;
+package io.github.alshain01.flags;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import io.github.alshain01.flags.api.CuboidType;
+import io.github.alshain01.flags.api.CuboidPlugin;
 import io.github.alshain01.flags.api.area.Administrator;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.area.Siegeable;
@@ -62,8 +62,7 @@ public class AreaGriefPrevention extends AreaRemovable implements Ownable, Siege
 	 * @param claim
 	 *            The claim object
 	 */
-    @SuppressWarnings("WeakerAccess") // API
-	public AreaGriefPrevention(Claim claim) {
+	protected AreaGriefPrevention(Claim claim) {
 		this.claim = claim;
 	}
 
@@ -86,16 +85,6 @@ public class AreaGriefPrevention extends AreaRemovable implements Ownable, Siege
 		return GriefPrevention.instance.dataStore.getClaimAt(location, false, null) != null;
 	}
 
-    /**
-     * Gets the claim object embedded in the area class.
-     *
-     * @return The claim object
-     */
-    @SuppressWarnings("WeakerAccess") // API
-    public Claim getClaim() {
-        return claim;
-    }
-
     @Override
     public UUID getUniqueId() {
         if (isArea()) return null;
@@ -109,8 +98,8 @@ public class AreaGriefPrevention extends AreaRemovable implements Ownable, Siege
     }
 
     @Override
-    public CuboidType getCuboidType() {
-        return CuboidType.GRIEF_PREVENTION;
+    public CuboidPlugin getCuboidPlugin() {
+        return CuboidPlugin.GRIEF_PREVENTION;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package io.github.alshain01.flags.api.area;
 
-import io.github.alshain01.flags.api.CuboidType;
+import io.github.alshain01.flags.api.CuboidPlugin;
 import io.github.alshain01.flags.api.Flag;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -12,14 +12,13 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
 public interface Area extends Comparable<Area> {
     /**
      * Returns the system type that this object belongs to.
      *
      * @return The Cuboid System that created this object
      */
-    public CuboidType getCuboidType();
+    public CuboidPlugin getCuboidPlugin();
 
     /**
      * Checks if the underlying object from the cuboid system is null.

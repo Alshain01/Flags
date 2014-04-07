@@ -24,7 +24,6 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.api.CuboidType;
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.area.Subdividable;

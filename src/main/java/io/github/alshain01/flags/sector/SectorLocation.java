@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@SuppressWarnings("WeakerAccess") // API
 final public class SectorLocation implements ConfigurationSerializable {
     private final UUID world;
     private final int coords[] = new int[3];

@@ -24,7 +24,6 @@
 
 package io.github.alshain01.flags.api;
 
-import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.Logger;
 import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 
@@ -79,7 +78,6 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
 		this.player = player;
 	}
 
-    @SuppressWarnings("unused") // Future use
     Flag(String name, Map<String, Object> flag) {
         this.name = name;
         description = (String)flag.get("Description");
@@ -204,7 +202,7 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
 	 */
 	public double getPrice(EconomyPurchaseType type) {
         Validate.notNull(type);
-        return Flags.getDataStore().readPrice(this, type);
+        return FlagsAPI.getDataStore().readPrice(this, type);
 	}
 
 	/**
@@ -226,7 +224,7 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
 	 */
 	public void setPrice(EconomyPurchaseType type, double price) {
         Validate.notNull(type);
-		Flags.getDataStore().writePrice(this, type, price);
+		FlagsAPI.getDataStore().writePrice(this, type, price);
 	}
 
 	/**

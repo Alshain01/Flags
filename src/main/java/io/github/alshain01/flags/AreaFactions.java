@@ -22,9 +22,9 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags.area;
+package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.api.CuboidType;
+import io.github.alshain01.flags.api.CuboidPlugin;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -37,60 +37,50 @@ import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import uk.co.jacekk.bukkit.infiniteplots.InfinitePlots;
-import uk.co.jacekk.bukkit.infiniteplots.plot.Plot;
-import uk.co.jacekk.bukkit.infiniteplots.plot.PlotLocation;
+import com.massivecraft.factions.entity.BoardColls;
+import com.massivecraft.factions.entity.Faction;
+import com.massivecraft.factions.entity.FactionColls;
+import com.massivecraft.mcore.ps.PS;
 
 /**
- * Class for creating areas to manage a InfinitePlots Plot.
+ * Class for creating areas to manage a Factions Territory.
  */
-final public class AreaInfinitePlots extends AreaRemovable implements Nameable, Ownable {
-	private final Plot plot;
+final public class AreaFactions extends AreaRemovable implements Nameable, Ownable {
+	private final Faction faction;
+	private final World world;
 
 	/**
-	 * Creates an instance of AreaInfinitePlots based on a Bukkit Location
+	 * Creates an instance of AreaFactions based on a Bukkit Location
 	 * 
 	 * @param location
 	 *            The Bukkit location
 	 */
-	public AreaInfinitePlots(Location location) {
-		plot = InfinitePlots.getInstance().getPlotManager()
-				.getPlotAt(PlotLocation.fromWorldLocation(location));
+	public AreaFactions(Location location) {
+		faction = BoardColls.get().getFactionAt(PS.valueOf(location));
+		world = location.getWorld();
 	}
 
 	/**
-	 * Creates an instance of AreaInfinitePlots based on a Bukkit world and Plot
-	 * Location
+	 * Creates an instance of AreaFactions based on a Bukkit World and
+	 * faction ID
 	 * 
+	 * @param factionID
+	 *            The faction ID
 	 * @param world
 	 *            The Bukkit world
-	 * @param X
-	 *            The Plot X Location (not Bukkit location)
-	 * @param Z
-	 *			  The Plot Z Location (not Bukkit location)
 	 */
-	public AreaInfinitePlots(World world, int X, int Z) {
-		plot = InfinitePlots.getInstance().getPlotManager()
-				.getPlotAt(new PlotLocation(world.getName(), X, Z));
-	}
-
-	/**
-	 * Gets if there is a plot at the location.
-	 * 
-	 * @return True if a territory exists at the plot.
-	 */
-	public static boolean hasPlot(Location location) {
-		return InfinitePlots.getInstance().getPlotManager().getPlotAt(PlotLocation.fromWorldLocation(location)) != null;
+	public AreaFactions(World world, String factionID) {
+		faction = FactionColls.get().getForWorld(world.getName()).get(factionID);
+		this.world = world;
 	}
 
     /**
-     * Gets the plot object embedded in the area class.
+     * Gets if there is a territory at the location.
      *
-     * @return The plot object
+     * @return True if a territory exists at the location.
      */
-    @SuppressWarnings("unused") // API
-    public Plot getPlot() {
-        return plot;
+    public static boolean hasTerritory(Location location) {
+        return BoardColls.get().getFactionAt(PS.valueOf(location)) != null;
     }
 
     @Override
@@ -99,44 +89,42 @@ final public class AreaInfinitePlots extends AreaRemovable implements Nameable, 
         throw new InvalidAreaException();
     }
 
-    @Override
     public String getId() {
-        if (isArea()) return plot.getLocation().getX() + ";" + plot.getLocation().getZ();
+        if (isArea()) return faction.getId();
         throw new InvalidAreaException();
     }
 
     @Override
-    public CuboidType getCuboidType() {
-        return CuboidType.INFINITEPLOTS;
+    public CuboidPlugin getCuboidPlugin() {
+        return CuboidPlugin.FACTIONS;
     }
 
     @Override
     public String getName() {
-        if (isArea()) return plot.getName();
+        if (isArea()) return faction.getName();
         throw new InvalidAreaException();
     }
 
     @Override
-    public Set<UUID> getOwnerUniqueId()
-    {
-        //TODO: Waiting on InfinitePlots
+    public Set<UUID> getOwnerUniqueId() {
+        //TODO Waiting on Factions
         return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
     }
 
 	@Override
 	public Set<String> getOwnerName() {
-        if (isArea()) return new HashSet<String>(Arrays.asList(plot.getAdmin()));
+        if (isArea()) return new HashSet<String>(Arrays.asList(faction.getLeader().getName()));
         throw new InvalidAreaException();
     }
 
 	@Override
 	public World getWorld() {
-        if (isArea()) return plot.getLocation().getWorld();
+        if (isArea()) return world;
         throw new InvalidAreaException();
     }
 
 	@Override
 	public boolean isArea() {
-        return plot != null;
+        return world != null && faction != null;
     }
 }

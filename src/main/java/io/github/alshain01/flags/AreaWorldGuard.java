@@ -22,14 +22,14 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags.area;
+package io.github.alshain01.flags;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import io.github.alshain01.flags.api.CuboidType;
+import io.github.alshain01.flags.api.CuboidPlugin;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import org.bukkit.Location;
@@ -91,17 +91,6 @@ final public class AreaWorldGuard extends AreaRemovable implements Ownable {
 		return WGBukkit.getRegionManager(location.getWorld()).getApplicableRegions(location).size() != 0;
 	}
 
-    /**
-     * Gets the region object embedded in the area class.
-     *
-     * @return The region object
-     */
-    @SuppressWarnings("unused") // API
-    public ProtectedRegion getRegion() {
-        if (isArea()) return region;
-        throw new InvalidAreaException();
-    }
-
     @Override
     public UUID getUniqueId() {
         if (isArea()) return null;
@@ -115,8 +104,8 @@ final public class AreaWorldGuard extends AreaRemovable implements Ownable {
     }
 
     @Override
-    public CuboidType getCuboidType() {
-        return CuboidType.WORLDGUARD;
+    public CuboidPlugin getCuboidPlugin() {
+        return CuboidPlugin.WORLDGUARD;
     }
 
     @Override

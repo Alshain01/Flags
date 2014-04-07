@@ -83,13 +83,6 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>com.bekvon.bukkit.residence</groupId>
-			<artifactId>Residence</artifactId>
-			<version>3.0.0.0</version>
-			<optional>true</optional>
-		</dependency>
-		
-		<dependency>
 			<groupId>net.jzx7.regiosapi</groupId>
 			<artifactId>Regios</artifactId>
 			<version>5.9.9</version>
@@ -101,6 +94,7 @@
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
 			<version>1.7.5-R0.1-SNAPSHOT</version>
+            <optional>true</optional>
 		</dependency>
 
 		<dependency>

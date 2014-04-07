@@ -22,155 +22,157 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags.area;
+package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.*;
-
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import io.github.alshain01.flags.api.CuboidType;
+import io.github.alshain01.flags.api.CuboidPlugin;
 import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.area.Nameable;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
-import net.t00thpick1.residence.api.ResidenceAPI;
-import net.t00thpick1.residence.api.areas.ResidenceArea;
+
+import me.tabinol.factoid.Factoid;
+import me.tabinol.factoid.lands.Land;
+import me.tabinol.factoid.playercontainer.PlayerContainerPlayer;
+import me.tabinol.factoid.playercontainer.PlayerContainerType;
+
+import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 
 /**
- * Class for creating areas to manage a Residence Claimed Residences.
+ * Class for creating areas to manage a Factoid Land.
  */
-final public class AreaResidence extends AreaRemovable implements Nameable, Ownable, Subdividable {
-	private final ResidenceArea residence;
-
-	/**
-	 * Creates an instance of AreaResidence based on a Bukkit
-	 * Location
-	 * 
-	 * @param location
-	 *            The Bukkit location
-	 */
-	public AreaResidence(Location location) {
-		residence = ResidenceAPI.getResidenceManager().getByLocation(location);
-	}
-
-
-	/**
-	 * Creates an instance of AreaResidence based on a residence
-	 * name
-	 * 
-	 * @param name
-	 *            The residence name
-	 */
-	public AreaResidence(String name) {
-		residence = ResidenceAPI.getResidenceManager().getByName(name);
-	}
+final public class AreaFactoid extends AreaRemovable implements Nameable, Ownable, Subdividable {
+    private final Land land;
 
     /**
-     * Creates an instance of AreaResidence based on a ClaimedResidence object
+     * Creates an instance of AreaFactoid based on a Bukkit
+     * Location
      *
-     * @param residence
-     *            The residence object
+     * @param location
+     *            The Bukkit location
      */
-    @SuppressWarnings("WeakerAccess") // API
-    public AreaResidence(ResidenceArea residence) {
-        this.residence = residence;
+    public AreaFactoid(Location location) {
+        land = Factoid.getLands().getLand(location);
     }
 
-	/**
-	 * Gets if there is a residence at the location.
-	 * 
-	 * @return True if a residence exists at the location.
-	 */
-	public static boolean hasResidence(Location location) {
-		return ResidenceAPI.getResidenceManager().getByLocation(location) != null;
-	}
+    /**
+     * Creates an instance of AreaFactoid based on a Land
+     * name
+     *
+     * @param id
+     *            The land UUID
+     */
+    public AreaFactoid(UUID id) {
+        land = Factoid.getLands().getLand(id);
+    }
 
     /**
-     * Gets the ClaimedResidence object embedded in the area class.
+     * Creates an instance of AreaFactoid based on a Land Object
      *
-     * @return The ClaimedResidence object
+     * @param land
+     *            The Land Object
      */
-    @SuppressWarnings("WeakerAccess") // API
-    public ResidenceArea getResidence() {
-        return residence;
+    private AreaFactoid(Land land) {
+        this.land = land;
+    }
+
+    /**
+     * Gets if there is a land at the location.
+     *
+     * @return True if a land exists at the location.
+     */
+    public static boolean hasLand(Location location) {
+        return Factoid.getLands().getLand(location) != null;
+    }
+
+    @Override
+    public CuboidPlugin getCuboidPlugin() {
+        return CuboidPlugin.FACTOID;
     }
 
     @Override
     public UUID getUniqueId() {
-        if (isArea()) return null;
+        if (isArea()) return land.getUUID();
         throw new InvalidAreaException();
     }
 
     @Override
     public String getId() {
-        if (isArea()) return residence.getName();
+        if (isArea()) return land.getUUID().toString();
         throw new InvalidAreaException();
     }
 
     @Override
-    public CuboidType getCuboidType() {
-        return CuboidType.RESIDENCE;
+    public String getName() {
+        if (isArea()) return land.getName();
+        throw new InvalidAreaException();
     }
 
     @Override
-    public String getName() {
-        if (isArea()) return residence.getName();
+    public Set<String> getOwnerName() {
+        if (isArea()) {
+            Set<String> owners = new HashSet<String>();
+            if (land.getOwner().getContainerType() == PlayerContainerType.PLAYER) {
+                owners.add(((PlayerContainerPlayer)land.getOwner()).getPlayerName());
+            }
+            return owners;
+        }
         throw new InvalidAreaException();
     }
 
     @Override
     public Set<UUID> getOwnerUniqueId() {
-        //TODO: Waiting on Residence
-        return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
-    }
-
-	@Override
-	public Set<String> getOwnerName() {
-        if (isArea()) return new HashSet<String>(Arrays.asList(residence.getOwner()));
+        if (isArea()) {
+            Set<UUID> owners = new HashSet<UUID>();
+            if (land.getOwner().getContainerType() == PlayerContainerType.PLAYER) {
+                owners.add(((PlayerContainerPlayer) land.getOwner()).getMinecraftUUID());
+            }
+            return owners;
+        }
         throw new InvalidAreaException();
     }
 
     @Override
     public org.bukkit.World getWorld() {
-        if (isArea()) return residence.getWorld();
+        if (isArea()) return land.getWorld();
         throw new InvalidAreaException();
     }
 
     @Override
     public boolean isArea() {
-        return residence != null;
+        return land != null;
     }
 
     @Override
     public boolean isSubdivision() {
-        if (isArea()) return residence.getParent() != null;
+        if (isArea()) return land.getParent() != null;
         throw new InvalidAreaException();
     }
 
     @Override
     public boolean isParent(Area area) {
-        if (isSubdivision()) return area instanceof AreaResidence &&
-                    residence.getParent().equals(((AreaResidence) area).getResidence());
+        Validate.notNull(area);
+        if (isSubdivision()) return area instanceof AreaFactoid && land.getParent().getUUID().equals(area.getUniqueId());
         throw new InvalidSubdivisionException();
     }
 
     @Override
     public Area getParent() {
-        if (isSubdivision()) return new AreaResidence(residence.getParent());
+        if (isSubdivision()) return new AreaFactoid(land.getParent());
         throw new InvalidSubdivisionException();
     }
 
     @Override
-	public boolean isInherited() {
+    public boolean isInherited() {
         if (isSubdivision()) return Flags.getDataStore().readInheritance(this);
         throw new InvalidSubdivisionException();
-	}
+    }
 
     @Override
     public void setInherited(boolean value) {

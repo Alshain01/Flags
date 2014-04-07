@@ -22,78 +22,75 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags.area;
-
-
-import io.github.alshain01.flags.api.CuboidType;
-import io.github.alshain01.flags.api.Flag;
-import io.github.alshain01.flags.Flags;
+package io.github.alshain01.flags;
 
 import java.util.UUID;
 
+import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.permissions.Permissible;
 
 /**
- * Class for creating areas to manage a AreaWilderness.
-  */
-final public class AreaWilderness extends AreaBase {
-    private final World world;
+ * Class for creating areas to manage server defaults.
+ */
+final public class AreaDefault extends AreaBase {
+	private final World world;
 
-    /**
-     * Creates an instance of AreaWilderness based on a Bukkit Location
-     *
-     * @param location
-     *            The Bukkit location
-     */
-    @SuppressWarnings("unused") // API
-    public AreaWilderness(Location location) {
-        this(location.getWorld());
-    }
+	/**
+	 * Creates an instance of AreaDefault based on a Bukkit Location
+	 * 
+	 * @param location
+	 *            The Bukkit location
+	 */
+	public AreaDefault(Location location) {
+		this(location.getWorld());
+	}
 
-    /**
-     * Creates an instance of AreaWilderness based on a Bukkit World
-     *
-     * @param world
-     *            The Bukkit world
-     */
-    @SuppressWarnings("WeakerAccess") //API
-    public AreaWilderness(World world) {
-        this.world = world;
-    }
-
-    /**
-     * Creates an instance of AreaWilderness based on a Bukkit World name
-     *
-     * @param worldName
-     *            The Bukkit world
-     */
-    @SuppressWarnings("WeakerAccess, unused") // API
-    public AreaWilderness(String worldName) { this(Bukkit.getWorld(worldName)); }
+	/**
+	 * Creates an instance of AreaDefault based on a Bukkit World
+	 * 
+	 * @param world
+	 *            The Bukkit world
+	 */
+	public AreaDefault(World world) {
+		this.world = world;
+	}
+	
+	/**
+	 * Creates an instance of AreaDefault based on a Bukkit World name
+	 * 
+	 * @param worldName
+	 *            The Bukkit world
+	 */
+	public AreaDefault(String worldName) {
+        this.world = Bukkit.getWorld(worldName);
+	}
 
     @Override
     public UUID getUniqueId() {
-        if(isArea()) return world.getUID();
+        if (isArea()) return world.getUID();
         throw new InvalidAreaException();
     }
 
     @Override
     public String getId() {
-        if(isArea()) return world.getName();
+        if (isArea()) return world.getName();
         throw new InvalidAreaException();
     }
 
     @Override
-    public CuboidType getCuboidType() { return CuboidType.WILDERNESS; }
+    public CuboidPlugin getCuboidPlugin() {
+        return CuboidPlugin.DEFAULT;
+    }
 
     @Override
-    public org.bukkit.World getWorld() {
-        if(isArea()) return world;
+    public World getWorld() {
+        if (isArea()) return world;
         throw new InvalidAreaException();
     }
 
@@ -103,15 +100,15 @@ final public class AreaWilderness extends AreaBase {
     }
 
     @Override
-    public boolean hasPermission(Permissible p) {
+    public boolean hasBundlePermission(Permissible p) {
         Validate.notNull(p);
-        return p.hasPermission("flags.area.flag.wilderness");
+        return p.hasPermission("flags.area.bundle.default");
     }
 
     @Override
-    public boolean hasBundlePermission(Permissible p) {
+    public boolean hasPermission(Permissible p) {
         Validate.notNull(p);
-        return p.hasPermission("flags.area.bundle.wilderness");
+        return p.hasPermission("flags.area.flag.default");
     }
 
     @Override
@@ -123,23 +120,21 @@ final public class AreaWilderness extends AreaBase {
         return value != null ? value : flag.getDefault();
     }
 
-    @Override
-    public String getMessage(Flag flag, boolean parse) {
+	/**
+	 * Gets the message associated with a player flag.
+	 * 
+	 * @param flag
+	 *            The flag to retrieve the message for.
+	 * @param parse
+	 *            Ignored by AreaDefault area.
+	 * @return The message associated with the flag.
+	 */
+	@Override
+	public String getMessage(Flag flag, boolean parse) {
         Validate.notNull(flag);
 
-        String message = Flags.getDataStore().readMessage(this, flag);
-
-        if (message == null) {
-            message = flag.getDefaultWildernessMessage();
-        }
-
-        if (parse) {
-            message = message
-                    .replace("{AreaType}", CuboidType.WILDERNESS.getCuboidName().toLowerCase())
-                    .replace("{World}", getWorld().getName())
-                    .replace("{AreaName}", getWorld().getName());
-            message = ChatColor.translateAlternateColorCodes('&', message);
-        }
-        return message;
-    }
+		// We are ignore parse here. We just want to override it.
+		final String message = Flags.getDataStore().readMessage(this, flag);
+		return message != null ? message : flag.getDefaultAreaMessage();
+	}
 }

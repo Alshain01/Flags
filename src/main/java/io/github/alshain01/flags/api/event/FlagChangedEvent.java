@@ -87,7 +87,6 @@ public class FlagChangedEvent extends Event implements Cancellable {
      *
      * @return The CommandSender. Null if no sender involved (caused by plug-in).
      */
-    @SuppressWarnings("unused") // API
     public CommandSender getSender() {
         return sender;
     }
@@ -97,7 +96,6 @@ public class FlagChangedEvent extends Event implements Cancellable {
      *
 	 * @return The new value of the flag if being set, null if being removed.
 	 */
-    @SuppressWarnings("unused") // API
 	public Boolean getNewValue() {
 		return value;
 	}
@@ -107,7 +105,6 @@ public class FlagChangedEvent extends Event implements Cancellable {
      *
      * @return A list of event handlers, stored per-event.
      */
-    @SuppressWarnings("unused") // API
     public static HandlerList getHandlerList() {
         return handlers;
     }

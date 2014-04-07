@@ -1,10 +1,11 @@
 package io.github.alshain01.flags.sector;
 
-import io.github.alshain01.flags.DataStore;
+import io.github.alshain01.flags.api.DataStore;
 import io.github.alshain01.flags.api.event.SectorDeleteEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
@@ -13,9 +14,10 @@ final public class SectorManager {
     private final int defaultDepth;
     private final DataStore dataStore;
 
-    public SectorManager(DataStore data, int defaultDepth) {
+    public SectorManager(JavaPlugin plugin, DataStore data, int defaultDepth) {
         ConfigurationSerialization.registerClass(Sector.class);
         ConfigurationSerialization.registerClass(SectorLocation.class);
+        plugin.getCommand("sector").setExecutor(new SectorCommand());
         this.defaultDepth = defaultDepth;
         this.sectors = data.readSectors();
         this.dataStore = data;
@@ -51,7 +53,6 @@ final public class SectorManager {
         return s;
     }
 
-    @SuppressWarnings("WeakerAccess") // API
     public void delete(UUID id) {
         Sector sector = get(id);
         if(sector.getParentID() == null) {

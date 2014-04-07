@@ -22,9 +22,8 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags.area;
+package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 
 /**

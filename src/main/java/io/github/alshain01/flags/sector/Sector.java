@@ -90,7 +90,6 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
      *
      * @return The location of the corner block
      */
-    @SuppressWarnings("WeakerAccess") // API
     public Location getGreaterCorner() {
         return greater.getLocation();
     }
@@ -100,7 +99,6 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
      *
      * @return The location of the corner block
      */
-    @SuppressWarnings("WeakerAccess") // API
     public Location getGreaterXCorner() {
         return new SectorLocation(greater.getWorld(), greater.getX(), greater.getY(), lesser.getZ()).getLocation();
     }
@@ -110,7 +108,6 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
      *
      * @return The location of the corner block
      */
-    @SuppressWarnings("WeakerAccess") // API
     public Location getGreaterZCorner() {
         return new SectorLocation(greater.getWorld(), lesser.getX(), greater.getY(), greater.getZ()).getLocation();
     }
@@ -120,7 +117,6 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
      *
      * @return The location of the corner block
      */
-    @SuppressWarnings("WeakerAccess") // API
     public Location getLesserCorner() {
         return lesser.getLocation();
     }
@@ -139,7 +135,6 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
      *
      * @return The depth of the sector
      */
-    @SuppressWarnings("unused") // API
     public int getDepth() { return depth; }
 
     /**
@@ -147,7 +142,6 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
      *
      * @param depth The new depth of the sector
      */
-    @SuppressWarnings("unused") // API
     public void setDepth(int depth) { this.depth = depth; }
 
     /**

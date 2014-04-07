@@ -22,9 +22,8 @@ Notice: For any reuse or distribution, you must make clear to others the license
 http://creativecommons.org/licenses/by-nc/3.0/
 */
 
-package io.github.alshain01.flags.area;
+package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.*;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.area.Administrator;
@@ -159,7 +158,7 @@ public abstract class AreaBase implements Area, Comparable<Area> {
 		if (parse) {
 			message = message
                     .replace("{World}", getWorld().getName())
-                    .replace("{AreaType}", getCuboidType().getCuboidName().toLowerCase());
+                    .replace("{AreaType}", getCuboidPlugin().getCuboidName().toLowerCase());
 
             if(this instanceof Nameable) {
                 message = message.replace("{AreaName}", ((Nameable)this).getName());

@@ -1,7 +1,6 @@
 package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.api.Bundle;
-import io.github.alshain01.flags.api.CuboidType;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
@@ -186,7 +185,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.SetBundle.get() : Message.SetMultipleFlagsError.get())
-                .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
+                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                 .replace("{Bundle}", bundleName)
                 .replace("{Value}", getFormattedValue(value).toLowerCase()));
     }
@@ -203,7 +202,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.RemoveBundle.get() : Message.RemoveAllFlags.get())
-                .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
+                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                 .replace("{Bundle}", bundleName));
     }
 
@@ -239,7 +238,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.SetTrust.get() : Message.SetTrustError.get())
-                .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
+                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                 .replace("{Flag}", bundleName));
         return true;
     }
@@ -277,7 +276,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.RemoveTrust.get() : Message.RemoveTrustError.get())
-                .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase())
+                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                 .replace("{Flag}", bundleName));
     }
 
