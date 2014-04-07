@@ -27,7 +27,7 @@ package io.github.alshain01.flags;
 import io.github.alshain01.flags.api.*;
 import io.github.alshain01.flags.api.economy.EconomyBaseValue;
 import io.github.alshain01.flags.sector.SectorManager;
-import io.github.alshain01.flags.api.DataStore.DataStoreType;
+import io.github.alshain01.flags.DataStore.DataStoreType;
 import io.github.alshain01.flags.api.event.PlayerChangedAreaEvent;
 
 import net.milkbowl.vault.economy.Economy;

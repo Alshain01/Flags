@@ -22,11 +22,12 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.flags.api;
+package io.github.alshain01.flags;
 
+import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.Flag;
+import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
-import io.github.alshain01.flags.AreaDefault;
-import io.github.alshain01.flags.AreaWilderness;
 import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 
 import java.util.HashSet;
@@ -41,6 +42,8 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class DataStore {
+    private DataStore() { }
+
     public final class DataStoreVersion {
         private final int major;
         private final int minor;

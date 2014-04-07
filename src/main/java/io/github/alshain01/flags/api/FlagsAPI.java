@@ -1,5 +1,6 @@
 package io.github.alshain01.flags.api;
 
+import io.github.alshain01.flags.DataStore;
 import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.AreaDefault;
 import io.github.alshain01.flags.AreaWilderness;
@@ -14,6 +15,8 @@ final public class FlagsAPI {
     private static Registrar registrar = new Registrar();
     private static CuboidPlugin activeSystem;
     private static DataStore dataStore;
+
+    private FlagsAPI() { }
 
     static DataStore getDataStore() {
         return dataStore;

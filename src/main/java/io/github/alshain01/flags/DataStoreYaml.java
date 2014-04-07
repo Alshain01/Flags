@@ -25,7 +25,6 @@
 package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.api.CuboidPlugin;
-import io.github.alshain01.flags.api.DataStore;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;

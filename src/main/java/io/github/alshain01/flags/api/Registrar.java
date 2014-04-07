@@ -38,8 +38,7 @@ import org.bukkit.permissions.Permissible;
 public final class Registrar {
 	private final Map<String, Flag> flagStore = new HashMap<String, Flag>();
 
-	Registrar() {
-	}
+	Registrar() { }
 
 	/**
 	 * Gets a flag based on it's case sensitive name.

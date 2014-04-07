@@ -35,6 +35,8 @@ import java.util.Set;
  * API for bundle management.
  */
 public final class Bundle {
+    private Bundle() { }
+
 	/**
 	 * Gets a bundle from the data store.
 	 * 
@@ -124,7 +126,4 @@ public final class Bundle {
         perm.addParent("flags.bundle", true);
         Bukkit.getPluginManager().addPermission(perm);
     }
-
-	private Bundle() {
-	}
 }
