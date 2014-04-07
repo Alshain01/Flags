@@ -61,24 +61,10 @@ public enum CuboidPlugin {
     GRIEF_PREVENTION("Grief Prevention", true) {
         Area getCuboidAt(Location location) {
             if(!hasArea(location)) { return new AreaWilderness(location); }
-
-            final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention");
-            final float pluginVersion = Float.valueOf(plugin.getDescription().getVersion().substring(0, 3));
-
-            return pluginVersion >= (float)7.8
-                    ? new AreaGriefPrevention78(location)
-                    : new AreaGriefPrevention(location);
+            return new AreaGriefPrevention(location);
         }
 
-        Area getArea(String name) {
-            final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention");
-            final float pluginVersion = Float.valueOf(plugin.getDescription().getVersion().substring(0, 3));
-
-            return pluginVersion >= (float)7.8
-                    ? new AreaGriefPrevention78(Long.parseLong(name))
-                    : new AreaGriefPrevention(Long.parseLong(name));
-        }
-
+        Area getArea(String name) { return new AreaGriefPrevention(Long.parseLong(name)); }
         boolean hasArea(Location location) { return AreaGriefPrevention.hasClaim(location); }
     },
 
@@ -101,6 +87,7 @@ public enum CuboidPlugin {
             if(!hasArea(location)) { return new AreaWilderness(location); }
             return new AreaResidence(location);
         }
+
         Area getArea(String name) { return new AreaResidence(name); }
         boolean hasArea(Location location) { return AreaResidence.hasResidence(location); }
     },

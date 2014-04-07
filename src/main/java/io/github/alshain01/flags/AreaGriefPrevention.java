@@ -30,20 +30,21 @@ import java.util.Set;
 import java.util.UUID;
 
 import io.github.alshain01.flags.api.CuboidPlugin;
-import io.github.alshain01.flags.api.area.Administrator;
-import io.github.alshain01.flags.api.area.Ownable;
-import io.github.alshain01.flags.api.area.Siegeable;
+import io.github.alshain01.flags.api.area.*;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
+import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
+import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
 /**
  * Class for creating areas to manage a Grief Prevention Claim.
  */
-public class AreaGriefPrevention extends AreaRemovable implements Ownable, Siegeable, Administrator {
+public class AreaGriefPrevention extends AreaRemovable implements Ownable, Siegeable, Subdividable, Administrator {
 	final Claim claim;
 
 	/**
@@ -114,12 +115,6 @@ public class AreaGriefPrevention extends AreaRemovable implements Ownable, Siege
         return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
     }
 
-	@Override
-	public World getWorld() {
-        if (isArea()) return claim.getGreaterBoundaryCorner().getWorld();
-        throw new InvalidAreaException();
-    }
-
     @Override
     public boolean isArea() {
         return claim != null;
@@ -135,5 +130,46 @@ public class AreaGriefPrevention extends AreaRemovable implements Ownable, Siege
 	public boolean isUnderSiege() {
         if (isArea()) return claim.siegeData != null;
         throw new InvalidAreaException();
+    }
+
+    @Override
+    public org.bukkit.World getWorld() {
+        if (isArea()) return Bukkit.getServer().getWorld(claim.getClaimWorldName());
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public boolean isSubdivision() {
+        if (isArea()) return claim.parent != null;
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public boolean isParent(Area area) {
+        if (isSubdivision()) {
+            Validate.notNull(area);
+            return area instanceof AreaGriefPrevention && claim.parent.equals(((AreaGriefPrevention) area).claim);
+        }
+        throw new InvalidSubdivisionException();
+    }
+
+    @Override
+    public Area getParent() {
+        if (isSubdivision()) return new AreaGriefPrevention(claim);
+        throw new InvalidSubdivisionException();
+    }
+
+    @Override
+    public boolean isInherited() {
+        if (isSubdivision()) return Flags.getDataStore().readInheritance(this);
+        throw new InvalidSubdivisionException();
+    }
+
+    @Override
+    public void setInherited(boolean value) {
+        if (isSubdivision()) {
+            Flags.getDataStore().writeInheritance(this, value);
+        }
+        throw new InvalidSubdivisionException();
     }
 }

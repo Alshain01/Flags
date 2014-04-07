@@ -108,7 +108,7 @@ public class Flags extends JavaPlugin {
 
         // Load Sectors
         if(FlagsAPI.getCuboidPlugin() == CuboidPlugin.FLAGS) {
-            sectors = new SectorManager(dataStore, getConfig().getConfigurationSection("Sector").getInt("DefaultDepth"));
+            sectors = new SectorManager(this, dataStore, getConfig().getConfigurationSection("Sector").getInt("DefaultDepth"));
         }
 
         // Set Command Executors

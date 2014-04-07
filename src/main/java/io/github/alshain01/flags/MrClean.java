@@ -53,11 +53,7 @@ class MrClean {
         PluginManager pm = plugin.getServer().getPluginManager();
         switch (FlagsAPI.getCuboidPlugin()) {
             case GRIEF_PREVENTION:
-                if (Float.valueOf(pm.getPlugin(FlagsAPI.getCuboidPlugin().getName())
-                        .getDescription().getVersion().substring(0, 3)) >= 7.8) {
-
-                    pm.registerEvents(new GriefPreventionCleaner(),	plugin);
-                }
+                pm.registerEvents(new GriefPreventionCleaner(),	plugin);
                 break;/*
             case RESIDENCE:
                 pm.registerEvents(new ResidenceCleaner(), plugin);
@@ -108,7 +104,7 @@ class MrClean {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onClaimDeleted(ClaimDeletedEvent e) {
 			// Cleanup the database, keep the file from growing too large.
-            new AreaGriefPrevention78(e.getClaim().getID()).remove();
+            new AreaGriefPrevention(e.getClaim().getID()).remove();
 		}
 	}
 
