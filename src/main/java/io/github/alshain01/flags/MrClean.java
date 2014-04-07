@@ -24,8 +24,9 @@
 
 package io.github.alshain01.flags;
 
+import io.github.alshain01.flags.api.CuboidType;
 import io.github.alshain01.flags.area.*;
-import io.github.alshain01.flags.events.SectorDeleteEvent;
+import io.github.alshain01.flags.api.event.SectorDeleteEvent;
 import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
 import me.tabinol.factoid.event.LandDeleteEvent;
 import net.jzx7.regiosapi.events.RegionDeleteEvent;
@@ -37,7 +38,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
-import com.bekvon.bukkit.residence.event.ResidenceDeleteEvent;
 import com.massivecraft.factions.event.FactionsEventDisband;
 
 /*
@@ -59,10 +59,10 @@ class MrClean {
 
                     pm.registerEvents(new GriefPreventionCleaner(),	plugin);
                 }
-                break;
+                break;/*
             case RESIDENCE:
                 pm.registerEvents(new ResidenceCleaner(), plugin);
-                break;
+                break;*/
             case FACTIONS:
                 pm.registerEvents(new FactionsCleaner(), plugin);
                 break;
@@ -86,7 +86,7 @@ class MrClean {
     private static class FlagsCleaner implements Listener {
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         private void onSectorDelete(SectorDeleteEvent e) {
-            new FlagsSector(e.getSector().getID()).remove();
+            new AreaFlags(e.getSector().getID()).remove();
         }
     }
 
@@ -97,7 +97,7 @@ class MrClean {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onFactionDisband(FactionsEventDisband e) {
 			for (final org.bukkit.World world : Bukkit.getWorlds()) {
-				new FactionsTerritory(world, e.getFaction().getId()).remove();
+				new AreaFactions(world, e.getFaction().getId()).remove();
 			}
 		}
 	}
@@ -109,20 +109,20 @@ class MrClean {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onClaimDeleted(ClaimDeletedEvent e) {
 			// Cleanup the database, keep the file from growing too large.
-            new GriefPreventionClaim78(e.getClaim().getID()).remove();
+            new AreaGriefPrevention78(e.getClaim().getID()).remove();
 		}
 	}
 
     /*
      * Residence Cleaner
-     */
+     *
 	private static class ResidenceCleaner implements Listener {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onResidenceDelete(ResidenceDeleteEvent e) {
 			// Cleanup the database, keep the file from growing too large.
-			new ResidenceClaimedResidence(e.getResidence().getName()).remove();
+			new AreaResidence(e.getResidence().getName()).remove();
 		}
-	}
+	}*/
 
     /*
      * Regios Cleaner
@@ -131,7 +131,7 @@ class MrClean {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onRegionDelete(RegionDeleteEvent e) {
 			// Cleanup the database, keep the file from growing too large.
-			new RegiosRegion(e.getRegion().getName()).remove();
+			new AreaRegios(e.getRegion().getName()).remove();
 		}
 	}
 
@@ -142,7 +142,7 @@ class MrClean {
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         private void onRegionDelete(LandDeleteEvent e) {
             // Cleanup the database, keep the file from growing too large.
-            new FactoidLand(e.getLand().getUUID()).remove();
+            new AreaFactoid(e.getLand().getUUID()).remove();
         }
     }
 }

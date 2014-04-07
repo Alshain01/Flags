@@ -1,9 +1,13 @@
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.area.Area;
-import io.github.alshain01.flags.area.Default;
-import io.github.alshain01.flags.area.Subdividable;
-import io.github.alshain01.flags.economy.EconomyPurchaseType;
+import io.github.alshain01.flags.api.CuboidType;
+import io.github.alshain01.flags.api.Flag;
+import io.github.alshain01.flags.api.FlagsAPI;
+import io.github.alshain01.flags.api.Registrar;
+import io.github.alshain01.flags.api.area.Area;
+import io.github.alshain01.flags.area.AreaDefault;
+import io.github.alshain01.flags.api.area.Subdividable;
+import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -93,7 +97,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
 
         if (args.length < 1) {
             if(sender instanceof Player) {
-                sender.sendMessage(getFlagUsage((Player)sender, CuboidType.getActive().getAreaAt(((Player)sender).getLocation())));
+                sender.sendMessage(getFlagUsage((Player)sender, FlagsAPI.getAreaAt(((Player)sender).getLocation())));
                 return true;
             }
             return false;
@@ -102,7 +106,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         final FlagCommandType command = FlagCommandType.get(args[0]);
         if(command == null) {
             if(sender instanceof Player) {
-                sender.sendMessage(getFlagUsage((Player)sender, CuboidType.getActive().getAreaAt(((Player)sender).getLocation())));
+                sender.sendMessage(getFlagUsage((Player)sender, FlagsAPI.getAreaAt(((Player)sender).getLocation())));
                 return true;
             }
             return false;
@@ -139,7 +143,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         // Get the flag if required.
         if(command.requiresFlag != null) {
             if(command.requiresFlag || args.length >= 3) {
-                flag = Flags.getRegistrar().getFlagIgnoreCase(args[2]);
+                flag = FlagsAPI.getRegistrar().getFlagIgnoreCase(args[2]);
                 if (Validate.notFlag(sender, flag, args[2])) { return true; }
             }
         }
@@ -259,7 +263,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
     }
 
     private static Flag getFlag(String[] args) {
-        Registrar registrar = Flags.getRegistrar();
+        Registrar registrar = FlagsAPI.getRegistrar();
         if(args.length == 2 && registrar.isFlag(args[1]))  {
             return registrar.getFlag(args[1]);
         }
@@ -293,15 +297,15 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
                 .replace("{AreaType}", area.getCuboidType().getCuboidName().toLowerCase()));
         boolean first = true; // Governs whether we insert a comma or not (true means no)
         Boolean value;
-        Area defaultArea = new Default(player.getWorld());
+        Area defaultArea = new AreaDefault(player.getWorld());
 
-        for(Flag f : Flags.getRegistrar().getFlags()) {
+        for(Flag f : FlagsAPI.getRegistrar().getFlags()) {
             value = area.getValue(f, true);
 
             // Output the flag name
             if (value != null) {
-                if ((area instanceof Default && value != f.getDefault())
-                        || (!(area instanceof Default) && value != defaultArea.getValue(f, false))){
+                if ((area instanceof AreaDefault && value != f.getDefault())
+                        || (!(area instanceof AreaDefault) && value != defaultArea.getValue(f, false))){
                     if (!first) { message.append(", ");	}
                     else { first = false; }
                     message.append(f.getName());
@@ -348,7 +352,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
 
         // Removing all flags if the player has permission
         boolean success = true;
-        for(Flag f : Flags.getRegistrar().getFlags()) {
+        for(Flag f : FlagsAPI.getRegistrar().getFlags()) {
             if(area.getValue(f, true) != null) {
                 if (!player.hasPermission(f.getPermission()) || !area.setValue(f, null, player)) {
                     success = false;
@@ -485,7 +489,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         if(area == null) { return false; }
 
         // Send the message
-        player.sendMessage(area.getMessage(flag, player.getName()));
+        player.sendMessage(area.getMessage(flag, player));
         return true;
     }
 
@@ -496,7 +500,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
                 || Validate.notPermittedFlag(player, area, flag, flag.getName())) { return; }
 
         if(area.setMessage(flag, message, player)) {
-            player.sendMessage(area.getMessage(flag, player.getName()));
+            player.sendMessage(area.getMessage(flag, player));
         }
     }
 
@@ -507,7 +511,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
                 || Validate.notPermittedFlag(player, area, flag, flag.getName())) { return; }
 
         if (area.setMessage(flag, null, player)) {
-            player.sendMessage(area.getMessage(flag, player.getName()));
+            player.sendMessage(area.getMessage(flag, player));
         }
     }
 
@@ -568,7 +572,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
             return;
         }
 
-        Registrar registrar = Flags.getRegistrar();
+        Registrar registrar = FlagsAPI.getRegistrar();
 
         //Build the list of help topics
         Set<String> groupNames = new HashSet<String>();

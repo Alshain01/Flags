@@ -1,9 +1,13 @@
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.area.Area;
-import io.github.alshain01.flags.area.Default;
-import io.github.alshain01.flags.area.Subdividable;
-import io.github.alshain01.flags.area.Wilderness;
+import io.github.alshain01.flags.api.Bundle;
+import io.github.alshain01.flags.api.CuboidType;
+import io.github.alshain01.flags.api.Flag;
+import io.github.alshain01.flags.api.FlagsAPI;
+import io.github.alshain01.flags.api.area.Area;
+import io.github.alshain01.flags.area.AreaDefault;
+import io.github.alshain01.flags.api.area.Subdividable;
+import io.github.alshain01.flags.area.AreaWilderness;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -56,7 +60,7 @@ abstract class Command {
         static boolean notPermittedFlag(Permissible p, Area a) {
             if (a.hasPermission(p)) { return false; }
             if(p instanceof CommandSender) {
-                ((CommandSender)p).sendMessage(((a instanceof Wilderness || a instanceof Default)
+                ((CommandSender)p).sendMessage(((a instanceof AreaWilderness || a instanceof AreaDefault)
                         ? Message.WildernessPermError.get() : Message.AreaPermError.get())
                         .replace("{AreaType}", a.getCuboidType().getCuboidName())
                         .replace("{OwnerName}", a.getOwnerName().toArray()[0].toString())
@@ -100,7 +104,7 @@ abstract class Command {
         private static boolean notPermittedBundle(Permissible p, Area area) {
             if (area.hasBundlePermission(p)) { return false; }
             if(p instanceof CommandSender) {
-                ((CommandSender)p).sendMessage(((area instanceof Wilderness || area instanceof Default)
+                ((CommandSender)p).sendMessage(((area instanceof AreaWilderness || area instanceof AreaDefault)
                         ? Message.WildernessPermError.get() : Message.AreaPermError.get())
                         .replace("{AreaType}", area.getCuboidType().getCuboidName())
                         .replace("{OwnerName}", area.getOwnerName().toArray()[0].toString())
@@ -246,12 +250,12 @@ abstract class Command {
 
     static Area getArea(Location loc, CommandLocation location) {
         if (location == CommandLocation.DEFAULT) {
-            return new Default(loc.getWorld());
+            return new AreaDefault(loc.getWorld());
         } else if (location == CommandLocation.WILDERNESS) {
-            return new Wilderness(loc.getWorld());
+            return new AreaWilderness(loc.getWorld());
         } else if (location == CommandLocation.AREA) {
-            Area area = CuboidType.getActive().getAreaAt(loc);
-            return (area instanceof Wilderness) ? null : area;
+            Area area = FlagsAPI.getAreaAt(loc);
+            return (area instanceof AreaWilderness) ? null : area;
         }
         // Invalid location selection
         return null;

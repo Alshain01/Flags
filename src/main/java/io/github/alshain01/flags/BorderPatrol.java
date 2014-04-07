@@ -24,16 +24,18 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.area.Area;
-import io.github.alshain01.flags.area.Subdividable;
-import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
+import io.github.alshain01.flags.api.CuboidType;
+import io.github.alshain01.flags.api.FlagsAPI;
+import io.github.alshain01.flags.api.area.Area;
+import io.github.alshain01.flags.api.area.Subdividable;
+import io.github.alshain01.flags.api.event.PlayerChangedAreaEvent;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import io.github.alshain01.flags.events.PlayerChangedUniqueAreaEvent;
+import io.github.alshain01.flags.api.event.PlayerChangedUniqueAreaEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -125,8 +127,8 @@ final class BorderPatrol implements Listener {
 
 		if (process) {
 			// Acquire the area moving to and the area moving from.
-			final Area areaTo = CuboidType.getActive().getAreaAt(e.getTo());
-			final Area areaFrom = CuboidType.getActive().getAreaAt(playerPrevMove.location);
+			final Area areaTo = FlagsAPI.getAreaAt(e.getTo());
+			final Area areaFrom = FlagsAPI.getAreaAt(playerPrevMove.location);
 
 			// If they are the same area, don't bother.
 			if (areaFrom.compareTo(areaTo) != 0) {

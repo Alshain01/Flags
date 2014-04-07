@@ -27,6 +27,8 @@
 */
 package io.github.alshain01.flags;
 
+import io.github.alshain01.flags.api.CuboidType;
+import io.github.alshain01.flags.api.FlagsAPI;
 import org.bukkit.Bukkit;
 //import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -123,7 +125,7 @@ static void StartFlagsMetrics(Plugin plugin) {
 			 * Flag groups installed
 			 */
         final Graph groupGraph = metrics.createGraph("Flag Groups");
-        for (final String group : Flags.getRegistrar().getFlagGroups()) {
+        for (final String group : FlagsAPI.getRegistrar().getFlagGroups()) {
             groupGraph.addPlotter(new Metrics.Plotter(group) {
                 @Override
                 public int getValue() {
@@ -796,7 +798,7 @@ static void StartFlagsMetrics(Plugin plugin) {
          * Construct a plotter with the default plot name
          */
         public Plotter() {
-            this("Default");
+            this("AreaDefault");
         }
 
         /**

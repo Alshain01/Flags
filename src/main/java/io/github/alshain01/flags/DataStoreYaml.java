@@ -24,8 +24,13 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.area.*;
-import io.github.alshain01.flags.economy.EconomyPurchaseType;
+import io.github.alshain01.flags.api.CuboidType;
+import io.github.alshain01.flags.api.Flag;
+import io.github.alshain01.flags.api.FlagsAPI;
+import io.github.alshain01.flags.api.area.Area;
+//import io.github.alshain01.flags.api.area.Subdividable;
+import io.github.alshain01.flags.api.area.Subdividable;
+import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +61,7 @@ final class DataStoreYaml extends DataStore {
     private final static String PRICE_FILE = "price.yml";
     private final static String SECTOR_FILE = "sector.yml";
 
-    private final static String DATABASE_VERSION_PATH = "Default.Database.Version";
+    private final static String DATABASE_VERSION_PATH = "AreaDefault.Database.Version";
     private final static String PLAYER_TRUST_PATH = "PlayerTrust";
     private final static String PERM_TRUST_PATH = "PermissionTrust";
     private final static String VALUE_PATH = "Value";
@@ -203,11 +208,11 @@ final class DataStoreYaml extends DataStore {
             return;
         }
         if (ver.getMajor() <= 2) {
-            // Rename World to Wilderness
+            // Rename World to AreaWilderness
             YamlConfiguration woldConfig = getYml("wilderness");
             if (woldConfig.isConfigurationSection("World")) {
                 ConfigurationSection cSec = woldConfig.getConfigurationSection("World");
-                ConfigurationSection newCSec = woldConfig.createSection("Wilderness");
+                ConfigurationSection newCSec = woldConfig.createSection("AreaWilderness");
                 for (final String k : cSec.getKeys(true)) {
                     if (k.contains(VALUE_PATH) || k.contains(MESSAGE_PATH)
                             || k.contains("Trust") || k.contains(INHERIT_PATH)) {
@@ -257,7 +262,7 @@ final class DataStoreYaml extends DataStore {
                     ConfigurationSection config = data.getConfigurationSection(w.getName() + DELIMETER + CuboidType.getActive().toString());
                     for (String p : config.getKeys(false)) { // Parent claims
                         for (String s : config.getConfigurationSection(p).getKeys(false)) { // Subdivision Claims
-                            if (Flags.getRegistrar().getFlag(s) == null) { // If it's not a flag, it's a subdivision
+                            if (FlagsAPI.getRegistrar().getFlag(s) == null) { // If it's not a flag, it's a subdivision
                                 if(CuboidType.getActive() == CuboidType.RESIDENCE) { // Residence uses the nested format by design, we will string replace it with a "-"
                                     config.set(p + "-" + s, config.getConfigurationSection(p + DELIMETER + s).getValues(true)); // Move the whole thing up one level
                                 } else {
@@ -281,24 +286,24 @@ final class DataStoreYaml extends DataStore {
             }
 
             // Because the CuboidSystems sometimes need a world id,
-            // Wilderness and Default will be converted to use world id and system id
+            // AreaWilderness and AreaDefault will be converted to use world id and system id
             // In order to be universal.  This will result in the same key twice, nested.
             // But it's necessary to reuse code later in the class.
-            for(String s : wilderness.getConfigurationSection("Wilderness").getKeys(false)) {
+            for(String s : wilderness.getConfigurationSection("AreaWilderness").getKeys(false)) {
                 World world = Bukkit.getWorld(s);
                 if(world != null) {
-                    wilderness.set("Wilderness." + world.getUID().toString() + world.getUID().toString(),
-                            wilderness.getConfigurationSection("Wilderness." + s).getValues(true));
-                    wilderness.set("Wilderness." + s, null);
+                    wilderness.set("AreaWilderness." + world.getUID().toString() + world.getUID().toString(),
+                            wilderness.getConfigurationSection("AreaWilderness." + s).getValues(true));
+                    wilderness.set("AreaWilderness." + s, null);
                 }
             }
 
-            for(String s : def.getConfigurationSection("Default").getKeys(false)) {
+            for(String s : def.getConfigurationSection("AreaDefault").getKeys(false)) {
                 World world = Bukkit.getWorld(s);
                 if(world != null) {
-                    def.set("Default." + world.getUID().toString() + world.getUID().toString(),
-                            def.getConfigurationSection("Default." + s).getValues(true));
-                    def.set("Default." + s, null);
+                    def.set("AreaDefault." + world.getUID().toString() + world.getUID().toString(),
+                            def.getConfigurationSection("AreaDefault." + s).getValues(true));
+                    def.set("AreaDefault." + s, null);
                 }
             }
 
@@ -318,8 +323,8 @@ final class DataStoreYaml extends DataStore {
 		final List<?> list = bundle.getList(bundleName, new ArrayList<String>());
 
 		for (final Object o : list) {
-			if (Flags.getRegistrar().isFlag((String) o)) {
-				flags.add(Flags.getRegistrar().getFlag((String) o));
+			if (FlagsAPI.getRegistrar().isFlag((String) o)) {
+				flags.add(FlagsAPI.getRegistrar().getFlag((String) o));
 			}
 		}
 		return flags;

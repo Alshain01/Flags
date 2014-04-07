@@ -1,6 +1,10 @@
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.area.Area;
+import io.github.alshain01.flags.api.Bundle;
+import io.github.alshain01.flags.api.CuboidType;
+import io.github.alshain01.flags.api.Flag;
+import io.github.alshain01.flags.api.FlagsAPI;
+import io.github.alshain01.flags.api.area.Area;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -56,7 +60,7 @@ final class CommandBundle extends Command implements CommandExecutor {
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args) {
         if (args.length < 1) {
             if(sender instanceof Player) {
-                sender.sendMessage(getUsage((Player) sender, CuboidType.getActive().getAreaAt(((Player) sender).getLocation())));
+                sender.sendMessage(getUsage((Player) sender, FlagsAPI.getAreaAt(((Player) sender).getLocation())));
                 return true;
             }
             return false;
@@ -65,7 +69,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         final BundleCommandType command = BundleCommandType.get(args[0]);
         if(command == null) {
             if(sender instanceof Player) {
-                sender.sendMessage(getUsage((Player) sender, CuboidType.getActive().getAreaAt(((Player) sender).getLocation())));
+                sender.sendMessage(getUsage((Player) sender, FlagsAPI.getAreaAt(((Player) sender).getLocation())));
                 return true;
             }
             return false;
@@ -290,7 +294,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         }
 
         for(String f : flags) {
-            flag = Flags.getRegistrar().getFlagIgnoreCase(f);
+            flag = FlagsAPI.getRegistrar().getFlagIgnoreCase(f);
             if (flag == null) {
                 sender.sendMessage(Message.AddBundleError.get());
                 return;
@@ -311,7 +315,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         Set<Flag> bundle = Bundle.getBundle(bundleName.toLowerCase());
 
         for(String s : flags) {
-            Flag flag = Flags.getRegistrar().getFlag(s);
+            Flag flag = FlagsAPI.getRegistrar().getFlag(s);
             if (flag == null || !bundle.remove(flag)) {
                 success = false; }
         }

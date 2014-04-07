@@ -24,10 +24,13 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.area.Area;
-import io.github.alshain01.flags.area.Default;
-import io.github.alshain01.flags.area.Wilderness;
-import io.github.alshain01.flags.economy.EconomyPurchaseType;
+import io.github.alshain01.flags.api.CuboidType;
+import io.github.alshain01.flags.api.Flag;
+import io.github.alshain01.flags.api.FlagsAPI;
+import io.github.alshain01.flags.api.area.Area;
+import io.github.alshain01.flags.area.AreaDefault;
+import io.github.alshain01.flags.area.AreaWilderness;
+import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -172,7 +175,7 @@ public abstract class DataStore {
         }
 
         //Convert the prices
-        for(Flag f : Flags.getRegistrar().getFlags()) {
+        for(Flag f : FlagsAPI.getRegistrar().getFlags()) {
             for(EconomyPurchaseType t : EconomyPurchaseType.values()) {
                 double price = source.readPrice(f, t);
                 if (price > (double) 0) {
@@ -191,11 +194,11 @@ public abstract class DataStore {
         //Convert world & default data
         Set<Area> areas = new HashSet<Area>();
         for(World w : Bukkit.getWorlds()) {
-            areas.add(new Wilderness(w));
-            areas.add(new Default(w));
+            areas.add(new AreaWilderness(w));
+            areas.add(new AreaDefault(w));
         }
 
-        for(Flag f : Flags.getRegistrar().getFlags()) {
+        for(Flag f : FlagsAPI.getRegistrar().getFlags()) {
             for(Area a : areas) {
                 //Flags
                 Boolean value = source.readFlag(a, f);

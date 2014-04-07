@@ -2,7 +2,7 @@ package io.github.alshain01.flags.sector;
 
 import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.Message;
-import io.github.alshain01.flags.events.SectorCreateEvent;
+import io.github.alshain01.flags.api.event.SectorCreateEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

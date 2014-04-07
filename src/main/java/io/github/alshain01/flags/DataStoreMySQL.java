@@ -24,8 +24,11 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.area.*;
-import io.github.alshain01.flags.economy.EconomyPurchaseType;
+import io.github.alshain01.flags.api.Flag;
+import io.github.alshain01.flags.api.FlagsAPI;
+import io.github.alshain01.flags.api.area.Area;
+import io.github.alshain01.flags.api.area.Subdividable;
+import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 import io.github.alshain01.flags.sector.Sector;
 import io.github.alshain01.flags.sector.SectorLocation;
 import org.bukkit.permissions.Permission;
@@ -206,8 +209,8 @@ final class DataStoreMySQL extends DataStore {
         try {
             while (results.next()) {
                 String flagName = results.getString("FlagName");
-                if (Flags.getRegistrar().getFlag(flagName) != null) {
-                    flags.add(Flags.getRegistrar().getFlag(flagName));
+                if (FlagsAPI.getRegistrar().getFlag(flagName) != null) {
+                    flags.add(FlagsAPI.getRegistrar().getFlag(flagName));
                 }
             }
         } catch (SQLException ex) {

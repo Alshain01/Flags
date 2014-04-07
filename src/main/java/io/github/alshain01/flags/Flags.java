@@ -24,10 +24,14 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.economy.EconomyBaseValue;
+import io.github.alshain01.flags.api.Bundle;
+import io.github.alshain01.flags.api.CuboidType;
+import io.github.alshain01.flags.api.Flag;
+import io.github.alshain01.flags.api.Registrar;
+import io.github.alshain01.flags.api.economy.EconomyBaseValue;
 import io.github.alshain01.flags.sector.SectorManager;
 import io.github.alshain01.flags.DataStore.DataStoreType;
-import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
+import io.github.alshain01.flags.api.event.PlayerChangedAreaEvent;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -58,7 +62,6 @@ public class Flags extends JavaPlugin {
     private static boolean debugOn = false;
 
     // Made static for use by API
-    private static Registrar flagRegistrar = new Registrar();
     private static SectorManager sectors;
     private static boolean borderPatrol = false;
 
@@ -135,7 +138,6 @@ public class Flags extends JavaPlugin {
         dataStore = null;
         economy = null;
         logger = null;
-        flagRegistrar = null;
         sectors = null;
         this.getLogger().info("Flags Has Been Disabled.");
     }
@@ -238,13 +240,6 @@ public class Flags extends JavaPlugin {
     public static Economy getEconomy() { return economy; }
 
     /**
-     * Gets the registrar for this instance of Flags.
-     *
-     * @return The flag registrar.
-     */
-    public static Registrar getRegistrar() { return flagRegistrar; }
-
-    /**
      * Gets the sector manager for this instance of Flags.
      *
      * @return The flag registrar. Null if disabled.
@@ -268,7 +263,9 @@ public class Flags extends JavaPlugin {
 		@Override
 		public void run() {
             // Tell Bukkit about the existing bundles
-            Bundle.registerPermissions();
+            for(String b : Flags.getDataStore().readBundles()) {
+                Bundle.addPermission(b);
+            }
 
 			// Check the handlers to see if anything is registered for Border Patrol
 			final RegisteredListener[] listeners = PlayerChangedAreaEvent.getHandlerList().getRegisteredListeners();
