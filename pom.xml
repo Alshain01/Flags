@@ -160,6 +160,11 @@
 			<version>5.8</version>
 			<optional>true</optional>
 			<exclusions>
+                <exclusion>
+                    <groupId>com.sk89q</groupId>
+                    <artifactId>commandbook</artifactId>
+                </exclusion>
+
 				<exclusion>
 					<groupId>com.nijikokun</groupId>
 					<artifactId>iconomy</artifactId>
@@ -183,21 +188,6 @@
 				<exclusion>
 					<groupId>de.schlichtherle</groupId>
 					<artifactId>truezip</artifactId>
-				</exclusion>
-
-				<exclusion>
-					<groupId>rhino</groupId>
-					<artifactId>js</artifactId>
-				</exclusion>
-
-				<exclusion>
-					<groupId>com.sk89q</groupId>
-					<artifactId>commandbook</artifactId>
-				</exclusion>
-
-				<exclusion>
-					<groupId>com.sk89q</groupId>
-					<artifactId>jchronic</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
