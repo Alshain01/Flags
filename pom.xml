@@ -89,6 +89,13 @@
 			<optional>true</optional>
 		</dependency>
 
+        <dependency>
+            <groupId>net.t00thpick1.residence</groupId>
+            <artifactId>Residence</artifactId>
+            <version>3.0.0.0</version>
+            <optional>true</optional>
+        </dependency>
+
 	<!-- Maven Dependencies -->
 		<dependency>
 			<groupId>org.bukkit</groupId>

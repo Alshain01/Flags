@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-    <groupId>com.bekvon.bukkit.residence</groupId>
+    <groupId>net.t00thpick1.residence</groupId>
     <artifactId>Residence</artifactId>
     <versioning>
         <release>3.0.0.0</release>

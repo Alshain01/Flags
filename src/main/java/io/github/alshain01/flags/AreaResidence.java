@@ -143,7 +143,7 @@ final public class AreaResidence extends AreaRemovable implements Nameable, Owna
     @Override
     public boolean isParent(Area area) {
         if (isSubdivision()) return area instanceof AreaResidence &&
-                    residence.getParent().equals(((AreaResidence) area).getResidence());
+                    residence.getParent().equals(((AreaResidence) area).residence);
         throw new InvalidSubdivisionException();
     }
 
