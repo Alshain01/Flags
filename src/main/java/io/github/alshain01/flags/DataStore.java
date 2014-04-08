@@ -41,6 +41,9 @@ import org.bukkit.World;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * Defines the Data Storage for Flags.  Not directly accessible externally.
+ */
 public abstract class DataStore {
     DataStore() { }
 

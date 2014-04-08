@@ -2,13 +2,16 @@ package io.github.alshain01.flags;
 
 import org.bukkit.Bukkit;
 
+/**
+ * Defines the Data Storage for Flags.  Not meant to be used externally.
+ */
 public class Logger {
     private static java.util.logging.Logger logger = Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger();
     final private static boolean debugEnabled = Bukkit.getServer().getPluginManager().getPlugin("Flags").getConfig().getBoolean("Flags.Debug");
 
-    public enum DebugCategory {
+    /*public enum DebugCategory {
         SQL, Area, Flag
-    }
+    }*/
 
     public static void debug(String message) {
         if(debugEnabled) {
