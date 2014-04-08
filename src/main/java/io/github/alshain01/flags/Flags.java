@@ -152,24 +152,14 @@ public class Flags extends JavaPlugin {
         }
 
         if(args[0].equalsIgnoreCase("import")) {
-            if(sqlData) {
+            if(dataStore instanceof DataStoreMySQL) {
                 dataStore.importDataStore(new DataStoreYaml(this, false));
                 return true;
+            } else {
+                dataStore.importDataStore(new DataStoreMySQL(this));
             }
-            sender.sendMessage(Message.SQLDatabaseError.get());
             return true;
         }
-
-        /*
-        if(args[0].equalsIgnoreCase("export")) {
-            if(sqlData) {
-                ((DataStoreMySQL)dataStore).exportDB();
-                return true;
-            }
-            sender.sendMessage(Message.SQLDatabaseError.get());
-            return true;
-        }
-        */
         return false;
 	}
 

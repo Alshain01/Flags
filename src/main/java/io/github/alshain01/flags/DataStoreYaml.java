@@ -280,8 +280,8 @@ final class DataStoreYaml extends DataStore {
                     for (String p : config.getKeys(false)) { // Parent claims
                         for (String s : config.getConfigurationSection(p).getKeys(false)) { // Subdivision Claims
                             if (config.isBoolean(p + "." + s + ".InheritParent")) { // If it's a subdivision, it will have an InheritParent key
-                                if(FlagsAPI.getCuboidPlugin() == CuboidPlugin.RESIDENCE) { // Residence uses the nested format by design, we will string replace it with a "-"
-                                    config.set(p + "-" + s, config.getConfigurationSection(p + "." + s).getValues(true)); // Move the whole thing up one level
+                                if(FlagsAPI.getCuboidPlugin() == CuboidPlugin.RESIDENCE) { // Residence uses the nested format by design, we will string replace it with a "_"
+                                    config.set(p + "_" + s, config.getConfigurationSection(p + "." + s).getValues(true)); // Move the whole thing up one level
                                 } else {
                                     config.set(s, config.getConfigurationSection(p + "." + s).getValues(true)); // Move the whole thing up one level
                                 }
@@ -522,7 +522,7 @@ final class DataStoreYaml extends DataStore {
             return true;
         }
 
-        String path = area.getCuboidPlugin().getName() + DELIMETER + area.getWorld().getUID().toString() + DELIMETER + area.getId().replace('.', '-');
+        String path = area.getCuboidPlugin().getName() + DELIMETER + area.getWorld().getUID().toString() + DELIMETER + area.getId().replace('.', '_');
 
         if(!getYml(path).isConfigurationSection(path)) { return true; }
         ConfigurationSection inheritConfig = getYml(path).getConfigurationSection(path);
@@ -532,7 +532,7 @@ final class DataStoreYaml extends DataStore {
     @Override
     public void writeInheritance(Area area, boolean value) {
         if ((area instanceof Subdividable) && ((Subdividable) area).isSubdivision()) {
-            String path = area.getCuboidPlugin().getName() + DELIMETER + area.getWorld().getUID().toString() + DELIMETER + area.getId().replace('.', '-');
+            String path = area.getCuboidPlugin().getName() + DELIMETER + area.getWorld().getUID().toString() + DELIMETER + area.getId().replace('.', '_');
 
             ConfigurationSection inheritConfig = getCreatedSection(getYml(path), path);
             inheritConfig.set(path, value);
@@ -545,6 +545,19 @@ final class DataStoreYaml extends DataStore {
         String path = getAreaPath(area);
         getYml(path).set(path, null);
 	}
+
+    @Override
+    Set<String> getAllAreaIds(World world) {
+        Set<String> areas = new HashSet<String>();
+        Set<String> preformattedAreas = new HashSet<String>();
+        if(data.isConfigurationSection(FlagsAPI.getCuboidPlugin().getName() + DELIMETER + world.getUID().toString())) {
+            preformattedAreas = data.getConfigurationSection(FlagsAPI.getCuboidPlugin().getName() + DELIMETER + world.getUID().toString()).getKeys(false);
+        }
+        for(String s : preformattedAreas) {
+            areas.add(s.replace("_", "."));
+        }
+        return areas;
+    }
 
     /*
      * Private
@@ -560,7 +573,7 @@ final class DataStoreYaml extends DataStore {
     }
 
     private String getAreaPath(Area area) {
-        return area.getCuboidPlugin().getName() + "." + area.getWorld().getUID().toString() + "." + area.getId().replace('.', '-');
+        return area.getCuboidPlugin().getName() + "." + area.getWorld().getUID().toString() + "." + area.getId().replace('.', '_');
     }
 
     private ConfigurationSection getCreatedSection(YamlConfiguration config, String path) {

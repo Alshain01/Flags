@@ -136,11 +136,10 @@ public abstract class DataStore {
         migrate(source, this);
     }
 
-    public void exportDataStore(DataStore target) {
-        migrate(this, target);
-    }
+    abstract Set<String> getAllAreaIds(World world);
 
     private static void migrate(DataStore source, DataStore target) {
+        Logger.info("Beginning data migration from " + source.getType().getName() + " to " + target.getType().getName() + ".");
         //Convert the bundles
         for(String b : source.readBundles()) {
             target.writeBundle(b, source.readBundle(b));
@@ -163,13 +162,20 @@ public abstract class DataStore {
             }
         }
 
-        //Convert world & default data
+        //Gather the areas to convert
         Set<Area> areas = new HashSet<Area>();
         for(World w : Bukkit.getWorlds()) {
             areas.add(new AreaWilderness(w));
             areas.add(new AreaDefault(w));
+            for(String id : source.getAllAreaIds(w)) {
+                Area area = AreaFactory.getArea(FlagsAPI.getCuboidPlugin(), id);
+                if(area != null && area.isArea()) {
+                    areas.add(area);
+                }
+            }
         }
 
+        // Perform the area coversion
         for(Flag f : FlagsAPI.getRegistrar().getFlags()) {
             for(Area a : areas) {
                 //Flags
@@ -197,5 +203,6 @@ public abstract class DataStore {
                 }
             }
         }
+        Logger.info("Data migration complete.");
     }
 }

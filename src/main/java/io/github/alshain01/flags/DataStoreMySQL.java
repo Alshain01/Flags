@@ -31,6 +31,7 @@ import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 import io.github.alshain01.flags.sector.Sector;
 import io.github.alshain01.flags.sector.SectorLocation;
+import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
@@ -528,5 +529,28 @@ final class DataStoreMySQL extends DataStore {
 
         executeStatement(areaBuilder(deleteString, area)
                 .replace("%table%", "PermissionTrust"));
+    }
+
+    @Override
+    Set<String> getAllAreaIds(World world) {
+        Set<String> areas = new HashSet<String>();
+        ResultSet results = executeQuery("SELECT DISTINCT AreaId FROM Flags;");
+        try {
+            while (results.next()) {
+                areas.add(results.getString("AreaId"));
+            }
+        } catch (SQLException ex) {
+            Logger.warning("Failed to read Area IDs from MySQL.");
+        }
+
+        results = executeQuery("SELECT DISTINCT AreaId FROM Trust;");
+        try {
+            while (results.next()) {
+                areas.add(results.getString("AreaId"));
+            }
+        } catch (SQLException ex) {
+            Logger.warning("Failed to read Area IDs from MySQL.");
+        }
+        return areas;
     }
 }
