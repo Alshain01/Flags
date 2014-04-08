@@ -6,6 +6,7 @@ import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.sector.SectorManager;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -143,5 +144,28 @@ final public class FlagsAPI {
      */
     public static CuboidPlugin getCuboidPlugin() {
         return activeSystem;
+    }
+
+    /**
+     * Utility method that checks if the provided string represents
+     * a version number that is equal to or lower than the current Bukkit API version.
+     *
+     * String should be formatted with 3 numbers: x.y.z
+     *
+     * @return true if the version provided is compatible
+     */
+    public static boolean checkAPI(String version) {
+        try {
+            final String bukkitVersion = Bukkit.getServer().getBukkitVersion();
+            final float apiVersion = Float.valueOf(bukkitVersion.substring(0, 3));
+            final float CompareVersion = Float.valueOf(version.substring(0, 3));
+            final int apiBuild = Integer.valueOf(bukkitVersion.substring(4, 5));
+            final int CompareBuild = Integer.valueOf(version.substring(4, 5));
+
+            return (apiVersion > CompareVersion
+                    || apiVersion == CompareVersion	&& apiBuild >= CompareBuild);
+        } catch (NumberFormatException ex) {
+            return false;
+        }
     }
 }

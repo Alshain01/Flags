@@ -51,8 +51,6 @@ import java.util.List;
  * @author Alshain01
  */
 public class Flags extends JavaPlugin {
-    private boolean sqlData = false;
-
     // Made static to access from enumerations and lower hefty method calls
     private static DataStore dataStore;
     private static Economy economy = null;
@@ -86,8 +84,6 @@ public class Flags extends JavaPlugin {
         dataStore = findDataStore();
         dataStore.create(this);
         dataStore.update(this);
-        sqlData = dataStore instanceof DataStoreMySQL;
-
 
         // Load Mr. Clean
         MrClean.enable(this, getConfig().getBoolean("MrClean"));
@@ -205,30 +201,6 @@ public class Flags extends JavaPlugin {
     }
 
     /**
-     * Checks if the provided string represents a version number that is equal
-     * to or lower than the current Bukkit API version.
-     *
-     * String should be formatted with 3 numbers: x.y.z
-     *
-     * @return true if the version provided is compatible
-     */
-    public static boolean checkAPI(String version) {
-        try {
-            final String bukkitVersion = Bukkit.getServer().getBukkitVersion();
-            final float apiVersion = Float.valueOf(bukkitVersion.substring(0, 3));
-            final float CompareVersion = Float.valueOf(version.substring(0, 3));
-            final int apiBuild = Integer.valueOf(bukkitVersion.substring(4, 5));
-            final int CompareBuild = Integer.valueOf(version.substring(4, 5));
-
-            return (apiVersion > CompareVersion
-                    || apiVersion == CompareVersion	&& apiBuild >= CompareBuild);
-        } catch (NumberFormatException ex) {
-            Logger.warning("The API version could not be determined. Some compatible flags may be disabled.");
-            return false;
-        }
-    }
-
-    /**
      * Gets the status of the border patrol event listener. (i.e
      * PlayerChangedAreaEvent)
      *
@@ -272,10 +244,7 @@ public class Flags extends JavaPlugin {
                 PlayerMoveEvent.getHandlerList().unregister(Bukkit.getPluginManager().getPlugin("Flags"));
 				Logger.info("No plugins have registered for Flags' Border Patrol listener. Unregistering PlayerMoveEvent.");
 			}
-
-            if (mcStats && !debugOn && Flags.checkAPI("1.3.2")) {
-                Metrics.StartFlagsMetrics(plugin);
-            }
+            Metrics.StartFlagsMetrics(plugin);
 		}
 	}
 
