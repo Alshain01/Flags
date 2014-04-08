@@ -29,7 +29,7 @@ final class SectorBase implements Sector {
         lesser = getLesserCorner(corner1, corner2);
     }
 
-    SectorBase(Location corner1, Location corner2, int depth) {
+    private SectorBase(Location corner1, Location corner2, int depth) {
         id = UUID.randomUUID();
         parent = null;
         this.depth = depth;

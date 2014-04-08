@@ -22,7 +22,7 @@ final class SectorLocationBase implements SectorLocation {
         this.world = world;
     }
 
-    SectorLocationBase(Map<String, Object> location) {
+    private SectorLocationBase(Map<String, Object> location) {
         this.world = UUID.fromString((String)location.get("World"));
         coords[0] = (Integer)location.get("X");
         coords[1] = (Integer)location.get("Y");
