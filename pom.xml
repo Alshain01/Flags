@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.alshain01.flags</groupId>
 	<artifactId>Flags</artifactId>
@@ -8,7 +9,6 @@
 	<url>http://dev.bukkit.org/bukkit-plugins/flags/</url>
 
     <properties>
-        <dependencydir>C:\build_libraries</dependencydir>
         <project.author>Alshain01</project.author>
         <project.main>${project.groupId}.${project.name}</project.main>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -97,18 +97,18 @@
         </dependency>
 
 	<!-- Maven Dependencies -->
-		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
-			<version>1.7.5-R0.1-SNAPSHOT</version>
-		</dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.7.5-R0.1-SNAPSHOT</version>
+        </dependency>
 
-		<dependency>
-			<groupId>net.milkbowl.vault</groupId>
-			<artifactId>Vault</artifactId>
-			<version>RELEASE</version>
-			<optional>true</optional>
-		</dependency>
+        <dependency>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>Vault</artifactId>
+            <version>RELEASE</version>
+            <optional>true</optional>
+        </dependency>
 
 		<dependency>
 			<groupId>net.sacredlabyrinth.Phaed</groupId>
@@ -151,6 +151,11 @@
 					<groupId>org.bukkit</groupId>
 					<artifactId>craftbukkit</artifactId>
 				</exclusion>
+
+                <exclusion>
+                    <groupId>net.milkbowl.vault</groupId>
+                    <artifactId>Vault</artifactId>
+                </exclusion>
 			</exclusions>
 		</dependency>
 
@@ -161,8 +166,18 @@
 			<optional>true</optional>
 			<exclusions>
                 <exclusion>
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>bukkit</artifactId>
+                </exclusion>
+
+                <exclusion>
                     <groupId>com.sk89q</groupId>
                     <artifactId>commandbook</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>com.sk89q</groupId>
+                    <artifactId>jchronic</artifactId>
                 </exclusion>
 
 				<exclusion>
@@ -179,6 +194,11 @@
 					<groupId>net.sf.opencsv</groupId>
 					<artifactId>opencsv</artifactId>
 				</exclusion>
+
+                <exclusion>
+                    <groupId>rhino</groupId>
+                    <artifactId>js</artifactId>
+                </exclusion>
 
 				<exclusion>
 					<groupId>junit</groupId>
