@@ -39,6 +39,7 @@ import java.util.UUID;
 /**
  * Class for acquiring data from the active cuboid system
  */
+@SuppressWarnings("unused")
 public enum CuboidPlugin {
     DEFAULT("Default", false, true),
     WILDERNESS("Wilderness", false, true),

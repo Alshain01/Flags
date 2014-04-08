@@ -27,6 +27,7 @@ package io.github.alshain01.flags.api.economy;
 /**
  * Enumeration for handling the BaseFlagValue setting
  */
+@SuppressWarnings("unused")
 public enum EconomyBaseValue {
 	PLUGIN, DEFAULT, ALWAYS;
 

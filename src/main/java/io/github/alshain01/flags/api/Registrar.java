@@ -35,6 +35,7 @@ import org.bukkit.permissions.Permissible;
 /**
  * Class for handling the registration of new flags
  */
+@SuppressWarnings("unused")
 public final class Registrar {
 	private final Map<String, Flag> flagStore = new HashMap<String, Flag>();
 

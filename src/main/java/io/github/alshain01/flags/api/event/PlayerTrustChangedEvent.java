@@ -37,6 +37,7 @@ import java.util.UUID;
 /**
  * Event that occurs when a trustee is added or removed.
  */
+@SuppressWarnings("unused")
 public class PlayerTrustChangedEvent extends Event implements Cancellable {
 
 	private static final HandlerList handlers = new HandlerList();

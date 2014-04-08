@@ -55,6 +55,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
+@SuppressWarnings("ALL")
 class Metrics {
 
 /**

@@ -36,6 +36,7 @@ import org.bukkit.permissions.Permission;
 /**
  * Event that occurs when a permission trust is added or removed.
  */
+@SuppressWarnings("unused")
 public class PermissionTrustChangedEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();

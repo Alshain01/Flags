@@ -35,6 +35,7 @@ import org.bukkit.event.HandlerList;
 /**
  * Event for that occurs when a message is set, changed or removed.
  */
+@SuppressWarnings("unused")
 public class MessageChangedEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 

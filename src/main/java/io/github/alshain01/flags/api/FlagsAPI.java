@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 /**
  * Primary class for hooking into the API.
  */
+@SuppressWarnings("unused")
 final public class FlagsAPI {
     private static Registrar registrar = new Registrar();
     private static CuboidPlugin activeSystem;

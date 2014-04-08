@@ -31,6 +31,7 @@ import org.bukkit.event.HandlerList;
 /**
  * Event that occurs when a sector is created.
  */
+@SuppressWarnings("unused")
 public class SectorCreateEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 

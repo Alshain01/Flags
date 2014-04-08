@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+@SuppressWarnings("unused")
 public interface Area extends Comparable<Area> {
     /**
      * Returns the system type that this object belongs to.

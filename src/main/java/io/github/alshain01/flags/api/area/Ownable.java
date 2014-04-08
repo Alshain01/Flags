@@ -6,6 +6,7 @@ import java.util.UUID;
 /**
  * Interface that defines if the land system allows cuboids to be owned by players.
  */
+@SuppressWarnings("unused")
 public interface Ownable extends Area {
     /**
      * Gets a set of owners for the area.

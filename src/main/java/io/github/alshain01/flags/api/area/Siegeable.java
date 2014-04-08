@@ -30,6 +30,7 @@ import io.github.alshain01.flags.api.exception.InvalidAreaException;
  * Interface that defines area types that can be placed under siege by the land
  * management system
  */
+@SuppressWarnings("unused")
 public interface Siegeable extends Area {
 	/**
 	 * Checks if the area is under siege. (Grief Prevention Feature)

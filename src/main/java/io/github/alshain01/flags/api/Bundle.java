@@ -34,6 +34,7 @@ import java.util.Set;
 /**
  * API for bundle management.
  */
+@SuppressWarnings("unused")
 public final class Bundle {
     private Bundle() { }
 

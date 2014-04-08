@@ -45,7 +45,7 @@ import org.bukkit.World;
  * Class for creating areas to manage a Grief Prevention Claim.
  */
 class AreaGriefPrevention extends AreaRemovable implements Siegeable, Subdividable, Administrator {
-	final Claim claim;
+	private final Claim claim;
 
 	/**
 	 * Creates an instance of AreaGriefPrevention based on a Bukkit Location
@@ -63,7 +63,7 @@ class AreaGriefPrevention extends AreaRemovable implements Siegeable, Subdividab
 	 * @param claim
 	 *            The claim object
 	 */
-	protected AreaGriefPrevention(Claim claim) {
+	private AreaGriefPrevention(Claim claim) {
 		this.claim = claim;
 	}
 
