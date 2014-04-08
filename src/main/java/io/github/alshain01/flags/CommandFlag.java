@@ -487,7 +487,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         if(area == null) { return false; }
 
         // Send the message
-        player.sendMessage(area.getMessage(flag, player));
+        player.sendMessage(area.getMessage(flag, player.getName()));
         return true;
     }
 
@@ -498,7 +498,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
                 || Validate.notPermittedFlag(player, area, flag, flag.getName())) { return; }
 
         if(area.setMessage(flag, message, player)) {
-            player.sendMessage(area.getMessage(flag, player));
+            player.sendMessage(area.getMessage(flag, player.getName()));
         }
     }
 
@@ -509,7 +509,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
                 || Validate.notPermittedFlag(player, area, flag, flag.getName())) { return; }
 
         if (area.setMessage(flag, null, player)) {
-            player.sendMessage(area.getMessage(flag, player));
+            player.sendMessage(area.getMessage(flag, player.getName()));
         }
     }
 
