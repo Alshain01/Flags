@@ -1,5 +1,8 @@
 package io.github.alshain01.flags.api.area;
 
+/**
+ * Interface that defines if the land system allows cuboids to be given custom names.
+ */
 public interface Nameable extends Area {
     /**
      * Returns the name of the cuboid defined in the system.

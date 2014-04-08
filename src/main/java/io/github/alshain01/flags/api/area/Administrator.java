@@ -31,7 +31,7 @@ import io.github.alshain01.flags.api.exception.InvalidAreaException;
  * Administrator areas are special areas that differ from areas normal players
  * create.
  */
-public interface Administrator extends Area {
+public interface Administrator extends Ownable {
 	/**
 	 * Checks if the area is an Administrator area defined by the system.
 	 * 

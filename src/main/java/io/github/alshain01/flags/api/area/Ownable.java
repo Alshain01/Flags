@@ -3,6 +3,9 @@ package io.github.alshain01.flags.api.area;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Interface that defines if the land system allows cuboids to be owned by players.
+ */
 public interface Ownable extends Area {
     /**
      * Gets a set of owners for the area.

@@ -30,7 +30,6 @@ import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
 /**
  * Interface that defines area types that can be subdivided into parent/child
  * subdivisions.
- *
  */
 public interface Subdividable extends Area {
     /**
