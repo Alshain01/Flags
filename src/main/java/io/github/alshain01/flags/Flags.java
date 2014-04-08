@@ -26,10 +26,10 @@ package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.api.*;
 import io.github.alshain01.flags.api.economy.EconomyBaseValue;
-import io.github.alshain01.flags.sector.SectorManager;
 import io.github.alshain01.flags.DataStore.DataStoreType;
 import io.github.alshain01.flags.api.event.PlayerChangedAreaEvent;
 
+import io.github.alshain01.flags.api.sector.SectorManager;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -59,7 +59,6 @@ public class Flags extends JavaPlugin {
     private static boolean debugOn = false;
 
     // Made static for use by API
-    private static SectorManager sectors;
     private static boolean borderPatrol = false;
 
 	/**
@@ -88,7 +87,7 @@ public class Flags extends JavaPlugin {
         dataStore.create(this);
         dataStore.update(this);
         sqlData = dataStore instanceof DataStoreMySQL;
-        FlagsAPI.initialize(cuboidPlugin, dataStore);
+
 
         // Load Mr. Clean
         MrClean.enable(this, getConfig().getBoolean("MrClean"));
@@ -107,9 +106,13 @@ public class Flags extends JavaPlugin {
 		}
 
         // Load Sectors
+        SectorManager sectors = null;
         if(FlagsAPI.getCuboidPlugin() == CuboidPlugin.FLAGS) {
-            sectors = new SectorManager(this, dataStore, getConfig().getConfigurationSection("Sector").getInt("DefaultDepth"));
+            sectors = new SectorManagerBase(this, dataStore, getConfig().getConfigurationSection("Sector").getInt("DefaultDepth"));
         }
+
+        // Start the API
+        FlagsAPI.initialize(cuboidPlugin, sectors, dataStore);
 
         // Set Command Executors
         CommandFlag executor = new CommandFlag(Material.valueOf(getConfig().getString("Tools.FlagQuery")));
@@ -134,7 +137,6 @@ public class Flags extends JavaPlugin {
         // Static cleanup
         dataStore = null;
         economy = null;
-        sectors = null;
         this.getLogger().info("Flags Has Been Disabled.");
     }
 
@@ -247,14 +249,6 @@ public class Flags extends JavaPlugin {
      * @return The vault economy.
      */
     static Economy getEconomy() { return economy; }
-
-    /**
-     * Gets the sector manager for this instance of Flags.
-     *
-     * @return The flag registrar. Null if disabled.
-     */
-    public static SectorManager getSectorManager() { return sectors; }
-
 
 	/*
 	 * Tasks that must be run only after the entire sever has loaded.

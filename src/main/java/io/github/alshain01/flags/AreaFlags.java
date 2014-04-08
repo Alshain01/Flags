@@ -1,13 +1,14 @@
 package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.area.Identifiable;
 import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
-import io.github.alshain01.flags.sector.Sector;
 
+import io.github.alshain01.flags.api.sector.Sector;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -24,7 +25,7 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Subdividabl
      *            The Bukkit location
      */
     public AreaFlags(Location location) {
-        sector = Flags.getSectorManager().getAt(location);
+        sector = FlagsAPI.getSectorManager().getAt(location);
     }
 
     /**
@@ -34,7 +35,7 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Subdividabl
      *            The sector ID
      */
     public AreaFlags(UUID id) {
-        sector = Flags.getSectorManager().get(id);
+        sector = FlagsAPI.getSectorManager().get(id);
     }
 
     /**
@@ -43,7 +44,7 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Subdividabl
      * @return True if a claim exists at the location.
      */
     public static boolean hasSector(Location location) {
-        return Flags.getSectorManager().getAt(location) != null;
+        return FlagsAPI.getSectorManager().getAt(location) != null;
     }
 
     @Override

@@ -3,10 +3,10 @@ package io.github.alshain01.flags;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-class NewUpdateFoundEvent extends Event {
+class UpdateFoundEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
-    public NewUpdateFoundEvent() {
+    public UpdateFoundEvent() {
         super(true);
     }
 

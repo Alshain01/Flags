@@ -3,6 +3,7 @@ package io.github.alshain01.flags.api;
 import io.github.alshain01.flags.AreaFactory;
 import io.github.alshain01.flags.DataStore;
 import io.github.alshain01.flags.api.area.Area;
+import io.github.alshain01.flags.api.sector.SectorManager;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
@@ -18,6 +19,7 @@ final public class FlagsAPI {
     private static Registrar registrar = new Registrar();
     private static CuboidPlugin activeSystem;
     private static DataStore dataStore;
+    private static SectorManager sectorManager;
 
     private FlagsAPI() { }
 
@@ -32,10 +34,11 @@ final public class FlagsAPI {
      * @param cuboidSystem The cuboid system detected
      * @param data The datastore to be used
      */
-    public static void initialize(CuboidPlugin cuboidSystem, DataStore data) {
+    public static void initialize(CuboidPlugin cuboidSystem, SectorManager sectors, DataStore data) {
         Validate.notNull(data); // Prevents plugins from using this method.
         activeSystem = cuboidSystem;
         dataStore = data;
+        sectorManager = sectors;
         CuboidPlugin.loadNames();
 
         ConfigurationSerialization.registerClass(Flag.class);
@@ -53,6 +56,7 @@ final public class FlagsAPI {
         registrar = null;
         activeSystem = null;
         dataStore = null;
+        sectorManager = null;
     }
 
     /**
@@ -63,6 +67,14 @@ final public class FlagsAPI {
     public static Registrar getRegistrar() {
         return registrar;
     }
+
+    /**
+     * Gets the sector manager for this instance of Flags.
+     * Null if Flags is not configured to use sectors.
+     *
+     * @return The sector manager for Flags
+     */
+    public static SectorManager getSectorManager() { return sectorManager; }
 
     /**
      * Gets if the configured cuboid system has an area at a specific location.

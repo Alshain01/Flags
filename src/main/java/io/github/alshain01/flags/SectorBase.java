@@ -1,21 +1,25 @@
-package io.github.alshain01.flags.sector;
+package io.github.alshain01.flags;
 
+import io.github.alshain01.flags.api.sector.Sector;
+import io.github.alshain01.flags.api.sector.SectorLocation;
 import org.bukkit.World;
 import org.bukkit.Location;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-final public class Sector implements ConfigurationSerializable, Comparable<Sector> {
+/**
+ * Defines a Sector cuboid.
+ */
+final class SectorBase implements Sector {
     private final UUID id;
     private final UUID parent;
     private final SectorLocation greater, lesser;
     private int depth;
 
-    Sector(UUID id, Location corner1, Location corner2, int depth) {
+    SectorBase(UUID id, Location corner1, Location corner2, int depth) {
         this.id = id;
         parent = null;
         this.depth = depth;
@@ -25,7 +29,7 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
         lesser = getLesserCorner(corner1, corner2);
     }
 
-    Sector(Location corner1, Location corner2, int depth) {
+    SectorBase(Location corner1, Location corner2, int depth) {
         id = UUID.randomUUID();
         parent = null;
         this.depth = depth;
@@ -35,7 +39,7 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
         lesser = getLesserCorner(corner1, corner2);
     }
 
-    Sector(UUID id, Location corner1, Location corner2, int depth, UUID parentID) {
+    SectorBase(UUID id, Location corner1, Location corner2, int depth, UUID parentID) {
         this.id = id;
         parent = parentID;
         this.depth = depth;
@@ -46,7 +50,7 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
     }
 
     // For loading from SQL
-    public Sector(UUID id, SectorLocation greater, SectorLocation lesser, int depth, UUID parentID) {
+    public SectorBase(UUID id, SectorLocation greater, SectorLocation lesser, int depth, UUID parentID) {
         this.id = id;
         parent = parentID;
         this.depth = depth;
@@ -54,10 +58,10 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
         this.lesser = lesser;
     }
 
-    public Sector(UUID id, Map<String, Object> sector) {
+    public SectorBase(UUID id, Map<String, Object> sector) {
         this.id = id;
-        greater = new SectorLocation((String)sector.get("GreaterCorner"));
-        lesser = new SectorLocation((String)sector.get("LesserCorner"));
+        greater = new SectorLocationBase((String)sector.get("GreaterCorner"));
+        lesser = new SectorLocationBase((String)sector.get("LesserCorner"));
         parent = String.valueOf(sector.get("Parent")).equals("null") ? null : UUID.fromString((String)sector.get("Parent"));
         depth = (Integer)sector.get("Depth");
     }
@@ -90,8 +94,9 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
      *
      * @return The location of the corner block
      */
-    public Location getGreaterCorner() {
-        return greater.getLocation();
+    @Override
+    public SectorLocation getGreaterCorner() {
+        return greater;
     }
 
     /**
@@ -99,8 +104,8 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
      *
      * @return The location of the corner block
      */
-    public Location getGreaterXCorner() {
-        return new SectorLocation(greater.getWorld(), greater.getX(), greater.getY(), lesser.getZ()).getLocation();
+    public SectorLocation getGreaterXCorner() {
+        return new SectorLocationBase(greater.getWorld(), greater.getX(), greater.getY(), lesser.getZ());
     }
 
     /**
@@ -108,8 +113,8 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
      *
      * @return The location of the corner block
      */
-    public Location getGreaterZCorner() {
-        return new SectorLocation(greater.getWorld(), lesser.getX(), greater.getY(), greater.getZ()).getLocation();
+    public SectorLocation getGreaterZCorner() {
+        return new SectorLocationBase(greater.getWorld(), lesser.getX(), greater.getY(), greater.getZ());
     }
 
     /**
@@ -117,8 +122,8 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
      *
      * @return The location of the corner block
      */
-    public Location getLesserCorner() {
-        return lesser.getLocation();
+    public SectorLocation getLesserCorner() {
+        return lesser;
     }
 
     /**
@@ -194,12 +199,12 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
      */
     public boolean overlaps(Location corner1, Location corner2) {
         //Find the lesser/greater corners
-        Sector testSector = new Sector(corner1, corner2, 25);
+        Sector testSector = new SectorBase(corner1, corner2, 25);
 
-        return testSector.contains(getGreaterCorner()) || testSector.contains(getLesserCorner())
-                || testSector.contains(getGreaterXCorner()) || testSector.contains(getGreaterZCorner())
-                || contains(testSector.getGreaterCorner()) || contains(testSector.getLesserCorner())
-                || contains(testSector.getGreaterXCorner()) || contains(testSector.getGreaterZCorner());
+        return testSector.contains(getGreaterCorner().getLocation()) || testSector.contains(getLesserCorner().getLocation())
+                || testSector.contains(getGreaterXCorner().getLocation()) || testSector.contains(getGreaterZCorner().getLocation())
+                || contains(testSector.getGreaterCorner().getLocation()) || contains(testSector.getLesserCorner().getLocation())
+                || contains(testSector.getGreaterXCorner().getLocation()) || contains(testSector.getGreaterZCorner().getLocation());
     }
 
     @Override
@@ -245,7 +250,7 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
         int x = getLesserPoint(loc1.getBlockX(), loc2.getBlockX());
         int z = getLesserPoint(loc1.getBlockZ(), loc2.getBlockZ());
 
-        return new SectorLocation(world, x, y, z);
+        return new SectorLocationBase(world, x, y, z);
     }
 
     private SectorLocation getGreaterCorner(Location loc1, Location loc2) {
@@ -255,6 +260,6 @@ final public class Sector implements ConfigurationSerializable, Comparable<Secto
         int x = getGreaterPoint(loc1.getBlockX(), loc2.getBlockX());
         int z = getGreaterPoint(loc1.getBlockZ(), loc2.getBlockZ());
 
-        return new SectorLocation(world, x, y, z);
+        return new SectorLocationBase(world, x, y, z);
     }
 }

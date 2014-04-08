@@ -29,8 +29,8 @@ import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
-import io.github.alshain01.flags.sector.Sector;
-import io.github.alshain01.flags.sector.SectorLocation;
+import io.github.alshain01.flags.api.sector.Sector;
+import io.github.alshain01.flags.api.sector.SectorLocation;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.permissions.Permission;
@@ -483,11 +483,11 @@ final class DataStoreMySQL extends DataStore {
                     parent = UUID.fromString(results.getString("ParentId"));
                 }
 
-                SectorLocation greater = new SectorLocation(results.getString("GreaterCorner"));
-                SectorLocation lesser = new SectorLocation(results.getString("LesserCorner"));
+                SectorLocation greater = new SectorLocationBase(results.getString("GreaterCorner"));
+                SectorLocation lesser = new SectorLocationBase(results.getString("LesserCorner"));
                 int depth = results.getInt("Depth");
 
-                sectors.put(id, new Sector(id, greater, lesser, depth, parent));
+                sectors.put(id, new SectorBase(id, greater, lesser, depth, parent));
             }
         } catch (SQLException ex) {
             Logger.error("Failed to read sectors from MySQL.");

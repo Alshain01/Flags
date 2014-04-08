@@ -78,7 +78,7 @@ final class Updater {
         }
 
         @EventHandler(priority = EventPriority.MONITOR)
-        private void onNewUpdateFound(NewUpdateFoundEvent e) {
+        private void onNewUpdateFound(UpdateFoundEvent e) {
             for(Player p : Bukkit.getOnlinePlayers()) {
                 notifyUpdate(p);
             }
@@ -221,7 +221,7 @@ final class Updater {
             String versionName = Updater.this.read();
             if (versionName != null && Updater.this.versionCheck(versionName)) {
                 Updater.this.result = UpdateResult.UPDATE_AVAILABLE;
-                pm.callEvent(new NewUpdateFoundEvent());
+                pm.callEvent(new UpdateFoundEvent());
                 this.cancel();
             }
         }

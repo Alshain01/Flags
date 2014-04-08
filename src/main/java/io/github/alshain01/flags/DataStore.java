@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import io.github.alshain01.flags.sector.Sector;
+import io.github.alshain01.flags.api.sector.Sector;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.permissions.Permission;

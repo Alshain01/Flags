@@ -1,25 +1,28 @@
-package io.github.alshain01.flags.sector;
+package io.github.alshain01.flags;
 
+import io.github.alshain01.flags.api.sector.SectorLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-final public class SectorLocation implements ConfigurationSerializable {
+/**
+ * Provides a "load safe" location for sector coordinates.
+ */
+final class SectorLocationBase implements SectorLocation {
     private final UUID world;
     private final int coords[] = new int[3];
 
-    SectorLocation(UUID world, int x, int y, int z) {
+    SectorLocationBase(UUID world, int x, int y, int z) {
         coords[0] = x;
         coords[1] = y;
         coords[2] = z;
         this.world = world;
     }
 
-    SectorLocation(Map<String, Object> location) {
+    SectorLocationBase(Map<String, Object> location) {
         this.world = UUID.fromString((String)location.get("World"));
         coords[0] = (Integer)location.get("X");
         coords[1] = (Integer)location.get("Y");
@@ -27,14 +30,14 @@ final public class SectorLocation implements ConfigurationSerializable {
     }
 
     public static SectorLocation valueOf(Map<String, Object> location) {
-        return new SectorLocation(location);
+        return new SectorLocationBase(location);
     }
 
     public static SectorLocation deserialize(Map<String, Object> location) {
-        return new SectorLocation(location);
+        return new SectorLocationBase(location);
     }
 
-    public SectorLocation(String location) {
+    public SectorLocationBase(String location) {
         String[] arg = location.split(",");
 
         world = Bukkit.getWorld(arg[0]).getUID();
@@ -58,27 +61,27 @@ final public class SectorLocation implements ConfigurationSerializable {
         return world + "," + coords[0] + "," + coords[1] + "," + coords[2];
     }
 
+    @Override
     public Location getLocation() {
         return new Location(Bukkit.getWorld(world), coords[0], coords[1], coords[2]);
     }
 
+    @Override
     public int getX() {
         return coords[0];
     }
 
+    @Override
     public int getY() {
         return coords[1];
     }
 
+    @Override
     public int getZ() {
         return coords[2];
     }
 
-    /**
-     * Gets the unique ID of the world associated with this location
-     *
-     * @return The unique ID of the world
-     */
+    @Override
     public UUID getWorld() {
         return world;
     }

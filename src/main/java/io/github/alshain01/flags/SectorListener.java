@@ -1,8 +1,8 @@
-package io.github.alshain01.flags.sector;
+package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.Flags;
-import io.github.alshain01.flags.Message;
+import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.event.SectorCreateEvent;
+import io.github.alshain01.flags.api.sector.SectorManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,7 +44,7 @@ final class SectorListener implements Listener {
 
         if(e.getAction() == Action.RIGHT_CLICK_BLOCK && createQueue.containsKey(player.getUniqueId())) {
             // Process the second corner and final creation
-            SectorManager sectors = Flags.getSectorManager();
+            SectorManager sectors = FlagsAPI.getSectorManager();
             Location corner2 = createQueue.get(player.getUniqueId());
 
             if(sectors.isOverlap(corner1, corner2)) {

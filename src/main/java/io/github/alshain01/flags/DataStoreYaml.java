@@ -36,8 +36,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import io.github.alshain01.flags.sector.Sector;
-import io.github.alshain01.flags.sector.SectorLocation;
+import io.github.alshain01.flags.api.sector.Sector;
+import io.github.alshain01.flags.api.sector.SectorLocation;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -268,7 +268,7 @@ final class DataStoreYaml extends DataStore {
                 // Convert old sector location to serialized form.
                 for (String s : sectors.getKeys(true)) {
                     if(s.contains("Corner") && sectors.isString(s)) {
-                        sectors.set(s, new SectorLocation(sectors.getString(s)).serialize());
+                        sectors.set(s, new SectorLocationBase(sectors.getString(s)).serialize());
                     }
                 }
             }
@@ -404,7 +404,7 @@ final class DataStoreYaml extends DataStore {
 
         for(String s : this.sectors.getKeys(false)) {
             UUID sID = UUID.fromString(s);
-            sectorMap.put(sID, new Sector(sID, sectors.getConfigurationSection(s).getValues(false)));
+            sectorMap.put(sID, new SectorBase(sID, sectors.getConfigurationSection(s).getValues(false)));
         }
 
         return sectorMap;

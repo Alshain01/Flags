@@ -1,14 +1,15 @@
-package io.github.alshain01.flags.sector;
+package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.Message;
+import io.github.alshain01.flags.api.FlagsAPI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 
-final class SectorCommand implements CommandExecutor {
+final class CommandSector implements CommandExecutor {
     private enum SectorCommandType {
         DELETE('d'), DELETEALL('a'), DELETETOPLEVEL('t');
 
@@ -57,16 +58,16 @@ final class SectorCommand implements CommandExecutor {
 
         switch(cType) {
             case DELETE:
-                sender.sendMessage(Flags.getSectorManager().delete(((Player)sender).getLocation())
+                sender.sendMessage(FlagsAPI.getSectorManager().delete(((Player)sender).getLocation())
                     ? Message.DeleteSector.get()
                     : Message.NoSectorError.get());
                 return true;
             case DELETETOPLEVEL:
-                sender.sendMessage(Flags.getSectorManager().deleteTopLevel(((Player)sender).getLocation())
+                sender.sendMessage(FlagsAPI.getSectorManager().deleteTopLevel(((Player)sender).getLocation())
                         ? Message.DeleteSector.get()
                         : Message.NoSectorError.get());
             case DELETEALL:
-                Flags.getSectorManager().clear();
+                FlagsAPI.getSectorManager().clear();
                 sender.sendMessage(Message.DeleteAllSectors.get());
                 return true;
         }
