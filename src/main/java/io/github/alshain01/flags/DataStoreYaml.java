@@ -49,6 +49,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.yaml.snakeyaml.Yaml;
 
 /**
  * Class for managing YAML Database Storage
@@ -63,7 +64,7 @@ final class DataStoreYaml extends DataStore {
     private final static String CONFIG_FILE = "yamlConfig.yml";
 
     private final static String AUTO_SAVE_PATH = "AutoSaveInterval";
-    private final static String DATABASE_VERSION_PATH = "AreaDefault.Database.Version";
+    private final static String DATABASE_VERSION_PATH = "Default.Database.Version";
     private final static String PLAYER_TRUST_PATH = "PlayerTrust";
     private final static String PERM_TRUST_PATH = "PermissionTrust";
     private final static String VALUE_PATH = "Value";
@@ -179,7 +180,7 @@ final class DataStoreYaml extends DataStore {
         }
 
         // Set up autosave
-        if (saveInterval > 0) {
+        if (saveInterval > 0 && enableAutoSave) {
             as = new AutoSave().runTaskTimer(plugin, saveInterval * 1200, saveInterval * 1200);
         }
     }
@@ -233,19 +234,11 @@ final class DataStoreYaml extends DataStore {
             return;
         }
         if (ver.getMajor() <= 2) {
-            // Rename World to AreaWilderness
-            YamlConfiguration woldConfig = getYml("wilderness");
-            if (woldConfig.isConfigurationSection("World")) {
-                ConfigurationSection cSec = woldConfig.getConfigurationSection("World");
-                ConfigurationSection newCSec = woldConfig.createSection("AreaWilderness");
-                for (final String k : cSec.getKeys(true)) {
-                    if (k.contains(VALUE_PATH) || k.contains(MESSAGE_PATH)
-                            || k.contains("Trust") || k.contains(INHERIT_PATH)) {
-                        newCSec.set(k, cSec.get(k));
-                    }
-                }
+            // Rename World to Wilderness
+            if (wilderness.isConfigurationSection("World")) {
+                wilderness.set("Wilderness", wilderness.getConfigurationSection("World").getValues(true));
             }
-            woldConfig.set("World", null);
+            wilderness.set("World", null);
 
             // Convert Bundles
             if (bundle.isConfigurationSection("Bundle")) {
@@ -287,13 +280,13 @@ final class DataStoreYaml extends DataStore {
                     ConfigurationSection config = data.getConfigurationSection(w.getName() + DELIMETER + FlagsAPI.getCuboidPlugin().getName());
                     for (String p : config.getKeys(false)) { // Parent claims
                         for (String s : config.getConfigurationSection(p).getKeys(false)) { // Subdivision Claims
-                            if (FlagsAPI.getRegistrar().getFlag(s) == null) { // If it's not a flag, it's a subdivision
+                            if (config.isBoolean(p + "." + s + ".InheritParent")) { // If it's a subdivision, it will have an InheritParent key
                                 if(FlagsAPI.getCuboidPlugin() == CuboidPlugin.RESIDENCE) { // Residence uses the nested format by design, we will string replace it with a "-"
-                                    config.set(p + "-" + s, config.getConfigurationSection(p + DELIMETER + s).getValues(true)); // Move the whole thing up one level
+                                    config.set(p + "-" + s, config.getConfigurationSection(p + "." + s).getValues(true)); // Move the whole thing up one level
                                 } else {
-                                    config.set(s, config.getConfigurationSection(p + DELIMETER + s).getValues(true)); // Move the whole thing up one level
+                                    config.set(s, config.getConfigurationSection(p + "." + s).getValues(true)); // Move the whole thing up one level
                                 }
-                                config.set(p + DELIMETER + s, null); // Erase it
+                                config.set(p + "." + s, null); // Erase it
                             }
                         }
                     }
@@ -314,21 +307,41 @@ final class DataStoreYaml extends DataStore {
             // AreaWilderness and AreaDefault will be converted to use world id and system id
             // In order to be universal.  This will result in the same key twice, nested.
             // But it's necessary to reuse code later in the class.
-            for(String s : wilderness.getConfigurationSection("AreaWilderness").getKeys(false)) {
+            for(String s : wilderness.getConfigurationSection("Wilderness").getKeys(false)) {
                 World world = Bukkit.getWorld(s);
                 if(world != null) {
-                    wilderness.set("AreaWilderness." + world.getUID().toString() + world.getUID().toString(),
-                            wilderness.getConfigurationSection("AreaWilderness." + s).getValues(true));
-                    wilderness.set("AreaWilderness." + s, null);
+                    wilderness.set("Wilderness." + world.getUID().toString() + world.getUID().toString(),
+                            wilderness.getConfigurationSection("Wilderness." + s).getValues(true));
+                    wilderness.set("Wilderness." + s, null);
                 }
             }
 
-            for(String s : def.getConfigurationSection("AreaDefault").getKeys(false)) {
+            for(String s : def.getConfigurationSection("Default").getKeys(false)) {
                 World world = Bukkit.getWorld(s);
                 if(world != null) {
-                    def.set("AreaDefault." + world.getUID().toString() + world.getUID().toString(),
-                            def.getConfigurationSection("AreaDefault." + s).getValues(true));
-                    def.set("AreaDefault." + s, null);
+                    def.set("Default." + world.getUID().toString() + world.getUID().toString(),
+                            def.getConfigurationSection("Default." + s).getValues(true));
+                    def.set("Default." + s, null);
+                }
+            }
+
+            // Convert Trust List to UUID
+            YamlConfiguration[] dataFiles = {wilderness, def, data};
+            for(YamlConfiguration config : dataFiles) {
+                for (String k : config.getKeys(true)) {
+                    if (k.contains("Trust") && config.isList(k)) {
+                        List<?> trustList = config.getList(k);
+                        List<String> permissionTrustList = new ArrayList<String>();
+                        for (Object o : trustList) {
+                            if (((String) o).contains(".")) {
+                                permissionTrustList.add((String) o);
+                            } else {
+                                config.set(k.replace("Trust", "PlayerTrust." + Bukkit.getOfflinePlayer((String) o).getUniqueId()), o);
+                            }
+                        }
+                        config.set(k.replace("Trust", "PermissionTrust"), permissionTrustList);
+                        config.set(k, null);
+                    }
                 }
             }
 
@@ -510,7 +523,7 @@ final class DataStoreYaml extends DataStore {
             return true;
         }
 
-        String path = area.getCuboidPlugin().getName() + DELIMETER + area.getWorld().getName() + DELIMETER + area.getId();
+        String path = area.getCuboidPlugin().getName() + DELIMETER + area.getWorld().getUID().toString() + DELIMETER + area.getId().replace('.', '-');
 
         if(!getYml(path).isConfigurationSection(path)) { return true; }
         ConfigurationSection inheritConfig = getYml(path).getConfigurationSection(path);
@@ -520,7 +533,7 @@ final class DataStoreYaml extends DataStore {
     @Override
     public void writeInheritance(Area area, boolean value) {
         if ((area instanceof Subdividable) && ((Subdividable) area).isSubdivision()) {
-            String path = area.getCuboidPlugin().getName() + DELIMETER + area.getWorld().getName() + DELIMETER + area.getId();
+            String path = area.getCuboidPlugin().getName() + DELIMETER + area.getWorld().getUID().toString() + DELIMETER + area.getId().replace('.', '-');
 
             ConfigurationSection inheritConfig = getCreatedSection(getYml(path), path);
             inheritConfig.set(path, value);
@@ -548,7 +561,7 @@ final class DataStoreYaml extends DataStore {
     }
 
     private String getAreaPath(Area area) {
-        return area.getCuboidPlugin().getName() + "." + area.getWorld().getName() + "." + area.getId();
+        return area.getCuboidPlugin().getName() + "." + area.getWorld().getUID().toString() + "." + area.getId().replace('.', '-');
     }
 
     private ConfigurationSection getCreatedSection(YamlConfiguration config, String path) {

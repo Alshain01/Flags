@@ -59,7 +59,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for base functions of a specific area.
  */
-public abstract class AreaBase implements Area, Comparable<Area> {
+abstract class AreaBase implements Area, Comparable<Area> {
     AreaBase() { }
 
     @Override
@@ -140,9 +140,9 @@ public abstract class AreaBase implements Area, Comparable<Area> {
     }
 
     @Override
-    public final String getMessage(Flag flag, Player player) {
-        Validate.notNull(player.getName());
-        return getMessage(flag, true).replace("{Player}", player.getName());
+    public final String getMessage(Flag flag, String playerName) {
+        Validate.notNull(playerName);
+        return getMessage(flag, true).replace("{Player}", playerName);
     }
 
     @Override

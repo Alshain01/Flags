@@ -111,7 +111,7 @@ public interface Area extends Comparable<Area> {
      *            The player who's name will be inserted into the message.
      * @return The message associated with the flag.
      */
-    public String getMessage(Flag flag, Player player);
+    public String getMessage(Flag flag, String playerName);
 
     /**
      * Gets the message associated with a player flag.

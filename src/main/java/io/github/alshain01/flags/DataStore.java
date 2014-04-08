@@ -42,7 +42,7 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class DataStore {
-    private DataStore() { }
+    DataStore() { }
 
     public final class DataStoreVersion {
         private final int major;
