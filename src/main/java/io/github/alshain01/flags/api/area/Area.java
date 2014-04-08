@@ -45,42 +45,42 @@ public interface Area extends Comparable<Area> {
     public World getWorld();
 
     /**
-     * Gets the value of the flag for this area following the inheritance path.
-     * Equivalent to getValue(flag, false);
+     * Gets the state of the flag for this area following the inheritance path.
+     * Equivalent to getState(flag, false);
      *
      * @param flag
-     *            The flag to retrieve the value for.
-     * @return The value of the flag or the inherited value of the flag from
+     *            The flag to retrieve the state for.
+     * @return The state of the flag or the inherited state of the flag from
      *         defaults if not defined.
      */
-    public boolean getValue(Flag flag);
+    public boolean getState(Flag flag);
 
     /**
-     * Gets the value of the flag for this area.
+     * Gets the state of the flag for this area.
      *
      * @param flag
-     *            The flag to retrieve the value for.
+     *            The flag to retrieve the state for.
      * @param absolute
-     *            True if you want a null value if the flag is not defined.
+     *            True if you want a null state if the flag is not defined.
      *            False if you want the inherited default (ensures not null).
-     * @return The value of the flag or the inherited value of the flag from
+     * @return The state of the flag or the inherited state of the flag from
      *         defaults if not defined.
      */
-    public Boolean getValue(Flag flag, boolean absolute);
+    public Boolean getState(Flag flag, boolean absolute);
 
     /**
-     * Sets the value of the flag for this area.
+     * Sets the state of the flag for this area.
      *
      * @param flag
-     *            The flag to set the value for.
-     * @param value
-     *            The value to set, null to remove.
+     *            The flag to set the state for.
+     * @param state
+     *            The state to set, null to remove.
      * @param sender
      *            The command sender for event call and economy, may be null if
      *            no associated player or console.
      * @return False if the event was canceled.
      */
-    public boolean setValue(Flag flag, Boolean value, CommandSender sender);
+    public boolean setState(Flag flag, Boolean state, CommandSender sender);
 
     /**
      * Gets the message associated with a player flag. Translates the color

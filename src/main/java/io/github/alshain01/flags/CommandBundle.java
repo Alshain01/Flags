@@ -169,7 +169,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         for(Flag flag : bundle) {
             player.sendMessage(Message.GetBundle.get()
                     .replace("{Bundle}", flag.getName())
-                    .replace("{Value}", getFormattedValue(area.getValue(flag, false))));
+                    .replace("{Value}", getFormattedValue(area.getState(flag, false))));
         }
     }
 
@@ -181,7 +181,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         final Set<Flag> bundle = Bundle.getBundle(bundleName);
 
         for(Flag flag : bundle) {
-            if(!area.setValue(flag, value, player)) { success = false; }
+            if(!area.setState(flag, value, player)) { success = false; }
         }
 
         player.sendMessage((success ? Message.SetBundle.get() : Message.SetMultipleFlagsError.get())
@@ -198,7 +198,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         final Set<Flag> bundle = Bundle.getBundle(bundleName);
 
         for (Flag flag : bundle) {
-            if (!area.setValue(flag, null, player)) { success = false; }
+            if (!area.setState(flag, null, player)) { success = false; }
         }
 
         player.sendMessage((success ? Message.RemoveBundle.get() : Message.RemoveAllFlags.get())

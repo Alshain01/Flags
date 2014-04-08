@@ -112,10 +112,10 @@ final class AreaWilderness extends AreaBase implements Identifiable {
     }
 
     @Override
-    public Boolean getValue(Flag flag, boolean absolute) {
+    public Boolean getState(Flag flag, boolean absolute) {
         Validate.notNull(flag);
 
-        final Boolean value = super.getValue(flag, true);
+        final Boolean value = super.getState(flag, true);
         if (absolute) return value;
         return value != null ? value : flag.getDefault();
     }

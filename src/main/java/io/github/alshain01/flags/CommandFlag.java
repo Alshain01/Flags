@@ -286,7 +286,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
             player.sendMessage(Message.GetFlag.get()
                     .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                     .replace("{Flag}", flag.getName())
-                    .replace("{Value}", getFormattedValue(area.getValue(flag, false)).toLowerCase()));
+                    .replace("{Value}", getFormattedValue(area.getState(flag, false)).toLowerCase()));
             return;
         }
 
@@ -298,12 +298,12 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         Area defaultArea = new AreaDefault(player.getWorld());
 
         for(Flag f : FlagsAPI.getRegistrar().getFlags()) {
-            value = area.getValue(f, true);
+            value = area.getState(f, true);
 
             // Output the flag name
             if (value != null) {
                 if ((area instanceof AreaDefault && value != f.getDefault())
-                        || (!(area instanceof AreaDefault) && value != defaultArea.getValue(f, false))){
+                        || (!(area instanceof AreaDefault) && value != defaultArea.getState(f, false))){
                     if (!first) { message.append(", ");	}
                     else { first = false; }
                     message.append(f.getName());
@@ -320,10 +320,10 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         if(Validate.notPermittedFlag(player, area, flag, flag.getName())) { return; }
 
         // Acquire the value (maybe)
-        if(value == null) {	value = !area.getValue(flag, false); }
+        if(value == null) {	value = !area.getState(flag, false); }
 
         // Set the flag
-        if(area.setValue(flag, value, player)) {
+        if(area.setState(flag, value, player)) {
             player.sendMessage(Message.SetFlag.get()
                     .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                     .replace("{Flag}", flag.getName())
@@ -340,7 +340,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         if (flag != null) {
             if (Validate.notPermittedFlag(player, flag)) { return; }
 
-            if(area.setValue(flag, null, player)) {
+            if(area.setState(flag, null, player)) {
                 player.sendMessage(Message.RemoveFlag.get()
                         .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                         .replace("{Flag}", flag.getName()));
@@ -351,8 +351,8 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         // Removing all flags if the player has permission
         boolean success = true;
         for(Flag f : FlagsAPI.getRegistrar().getFlags()) {
-            if(area.getValue(f, true) != null) {
-                if (!player.hasPermission(f.getPermission()) || !area.setValue(f, null, player)) {
+            if(area.getState(f, true) != null) {
+                if (!player.hasPermission(f.getPermission()) || !area.setState(f, null, player)) {
                     success = false;
                 }
             }

@@ -63,21 +63,21 @@ abstract class AreaBase implements Area, Comparable<Area> {
     AreaBase() { }
 
     @Override
-    public boolean getValue(Flag flag) {
-        return getValue(flag, false);
+    public boolean getState(Flag flag) {
+        return getState(flag, false);
     }
 
     @Override
-    public Boolean getValue(Flag flag, boolean absolute) {
+    public Boolean getState(Flag flag, boolean absolute) {
         Validate.notNull(flag);
 
         Boolean value = Flags.getDataStore().readFlag(this, flag);
         if (absolute) { return value; }
-        return value != null ? value : new AreaDefault(getWorld()).getValue(flag, false);
+        return value != null ? value : new AreaDefault(getWorld()).getState(flag, false);
     }
 
     @Override
-    public final boolean setValue(Flag flag, Boolean value, CommandSender sender) {
+    public final boolean setState(Flag flag, Boolean value, CommandSender sender) {
         Validate.notNull(flag);
 
         // Check to see if this can be paid for
@@ -85,7 +85,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
         if (Flags.getEconomy() != null // No economy
                 && sender != null
                 && sender instanceof Player // Need a player to charge
-                && value != getValue(flag, true) // The flag isn't actually
+                && value != getState(flag, true) // The flag isn't actually
                 // changing
                 && flag.getPrice(EconomyPurchaseType.Flag) != 0 // No defined price
                 && !(this instanceof AreaWilderness) // No charge for world flags
@@ -96,11 +96,11 @@ abstract class AreaBase implements Area, Comparable<Area> {
             if (value != null
                     && (EconomyBaseValue.ALWAYS.isSet()
                     || EconomyBaseValue.PLUGIN.isSet()
-                    && (getValue(flag, true) == null || getValue(flag, true) != flag.getDefault())
+                    && (getState(flag, true) == null || getState(flag, true) != flag.getDefault())
                     || EconomyBaseValue.DEFAULT.isSet()
-                    && getValue(flag, true) != new AreaDefault(
+                    && getState(flag, true) != new AreaDefault(
                     ((Player) sender).getLocation().getWorld())
-                    .getValue(flag, true))) {
+                    .getState(flag, true))) {
                 // The flag is being set, see if the player can afford it.
                 if (isFundingLow(EconomyPurchaseType.Flag, flag,
                         (Player) sender)) {
