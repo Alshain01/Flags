@@ -44,7 +44,7 @@ import org.bukkit.plugin.Plugin;
 /**
  * Class for creating areas to manage a Regios Region.
  */
-final public class AreaRegios extends AreaRemovable implements Nameable, Ownable {
+final class AreaRegios extends AreaRemovable implements Nameable, Ownable {
 	private final Region region;
 
 	/**
@@ -86,12 +86,6 @@ final public class AreaRegios extends AreaRemovable implements Nameable, Ownable
         Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Regios");
         return plugin != null && ((RegiosAPI)plugin).isInRegion(location);
 	}
-
-    @Override
-    public UUID getUniqueId() {
-        if (isArea()) return null;
-        throw new InvalidAreaException();
-    }
 
     @Override
     public Set<UUID> getOwnerUniqueId() {

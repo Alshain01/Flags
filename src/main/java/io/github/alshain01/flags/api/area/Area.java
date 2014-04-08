@@ -28,16 +28,6 @@ public interface Area extends Comparable<Area> {
     public boolean isArea();
 
     /**
-     * Returns a unique id of the cuboid area,
-     * if supported by the cuboid system.
-     * Otherwise null.
-     *
-     * @return The UUID for the area or null.
-     * @throws io.github.alshain01.flags.api.exception.InvalidAreaException
-     */
-    public UUID getUniqueId();
-
-    /**
      * Gets the cuboid system's ID for this area.
      *
      * @return the area's ID in the format provided by the cuboid system.
@@ -107,7 +97,7 @@ public interface Area extends Comparable<Area> {
      *
      * @param flag
      *            The flag to retrieve the message for.
-     * @param player
+     * @param playerName
      *            The player who's name will be inserted into the message.
      * @return The message associated with the flag.
      */

@@ -40,184 +40,29 @@ import java.util.UUID;
  * Class for acquiring data from the active cuboid system
  */
 public enum CuboidPlugin {
-    DEFAULT("AreaDefault", false) {
-        Area getCuboidAt(Location location) { return new AreaDefault(location); }
-        Area getArea(String name) { return new AreaDefault(name); }
-        boolean hasArea(Location location) { return true; }
-    },
-
-    WILDERNESS("AreaWilderness", false) {
-        Area getCuboidAt(Location location) { return new AreaWilderness(location); }
-        Area getArea(String name) { return new AreaWilderness(name); }
-        boolean hasArea(Location location) { return true; }
-    },
-
-    FLAGS("Flags", true) {
-        Area getCuboidAt(Location location) { return new AreaFlags(location); }
-        Area getArea(String name) { return new AreaFlags(UUID.fromString(name)); }
-        boolean hasArea(Location location) { return AreaFlags.hasSector(location); }
-    },
-
-    GRIEF_PREVENTION("Grief Prevention", true) {
-        Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new AreaWilderness(location); }
-            return new AreaGriefPrevention(location);
-        }
-
-        Area getArea(String name) { return new AreaGriefPrevention(Long.parseLong(name)); }
-        boolean hasArea(Location location) { return AreaGriefPrevention.hasClaim(location); }
-    },
-
-    WORLDGUARD("WorldGuard", false) {
-        Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new AreaWilderness(location); }
-            return new AreaWorldGuard(location);
-        }
-
-        Area getArea(String name) {
-            String path[] = name.split("\\.");
-            return new AreaWorldGuard(Bukkit.getWorld(path[0]), path[1]);
-        }
-
-        boolean hasArea(Location location) { return AreaWorldGuard.hasRegion(location); }
-    },
-
-    RESIDENCE("Residence", true) {
-        Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new AreaWilderness(location); }
-            return new AreaResidence(location);
-        }
-
-        Area getArea(String name) { return new AreaResidence(name); }
-        boolean hasArea(Location location) { return AreaResidence.hasResidence(location); }
-    },
-
-    INFINITEPLOTS("InfinitePlots", false) {
-        Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new AreaWilderness(location); }
-            return new AreaInfinitePlots(location);
-        }
-
-        Area getArea(String name) {
-            String path[] = name.split("\\.");
-            final String[] coordinates = path[1].split(";");
-            return new AreaInfinitePlots(Bukkit.getWorld(path[0]), Integer.valueOf(coordinates[0]), Integer.valueOf(coordinates[1]));
-        }
-
-        boolean hasArea(Location location) { return AreaInfinitePlots.hasPlot(location); }
-    },
-
-    FACTIONS("Factions", false) {
-        Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new AreaWilderness(location); }
-            return new AreaFactions(location);
-        }
-
-        Area getArea(String name) {
-            String path[] = name.split("\\.");
-            return new AreaFactions(Bukkit.getWorld(path[0]), path[1]);
-        }
-
-        boolean hasArea(Location location) { return AreaFactions.hasTerritory(location); }
-    },
-
-    FACTOID("Factoid", true) {
-        Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new AreaWilderness(location); }
-            return new AreaFactoid(location);
-        }
-
-        public Area getArea(String id) {
-            return new AreaFactoid(UUID.fromString(id));
-        }
-
-        public boolean hasArea(Location location) { return AreaFactoid.hasLand(location); }
-    },
-
-    PLOTME("PlotMe",false) {
-        Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new AreaWilderness(location); }
-            return new AreaPlotMe(location);
-        }
-
-        Area getArea(String name) {
-            String path[] = name.split("\\.");
-            return new AreaPlotMe(Bukkit.getWorld(path[0]), path[1]);
-        }
-
-        boolean hasArea(Location location) { return AreaPlotMe.hasPlot(location); }
-    },
-
-    REGIOS("Regios", false) {
-        Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new AreaWilderness(location); }
-            return new AreaRegios(location);
-        }
-        Area getArea(String name) { return new AreaRegios(name); }
-        boolean hasArea(Location location) { return AreaRegios.hasRegion(location); }
-    },
-
-    PRECIOUSSTONES("PreciousStones", true){
-        Area getCuboidAt(Location location) {
-            if(!hasArea(location)) { return new AreaWilderness(location); }
-            return new AreaPreciousStones(location);
-        }
-
-        Area getArea(String name) {
-            String path[] = name.split("\\.");
-            return new AreaPreciousStones(Bukkit.getWorld(path[0]), Long.valueOf(path[1]));
-        }
-
-        boolean hasArea(Location location) { return AreaPreciousStones.hasField(location); }
-    };
+    DEFAULT("Default", false, true),
+    WILDERNESS("Wilderness", false, true),
+    FLAGS("Flags", true, true),
+    GRIEF_PREVENTION("Grief Prevention", true, false),
+    WORLDGUARD("WorldGuard", false, false),
+    RESIDENCE("Residence", true, false),
+    INFINITEPLOTS("InfinitePlots", false, false),
+    FACTIONS("Factions", false, false),
+    FACTOID("Factoid", true, true),
+    PLOTME("PlotMe",false, false),
+    REGIOS("Regios", false, false),
+    PRECIOUSSTONES("PreciousStones", true, false);
 
     private String cuboidName;
     private String displayName = null;
     private final boolean subdivisions;
+    private final boolean uniqueIdSupport;
 
-    private CuboidPlugin(String displayName, boolean hasSubivisions) {
+    private CuboidPlugin(String displayName, boolean hasSubivisions, boolean uniqueIdSupport) {
         this.displayName = displayName;
         this.subdivisions = hasSubivisions;
+        this.uniqueIdSupport = uniqueIdSupport;
     }
-
-    /*
-     * Gets an area from the data store at a specific location.
-     *
-     * @param location
-     *            The location to request an area.
-     * @return An Area from the configured cuboid system which may fail isArea()
-     */
-    abstract Area getCuboidAt(Location location);
-
-    /*
-     * Gets an area by cuboid system specific name. The name is formatted based on the
-     * cuboid system.
-     *
-     * GriefPrevention = ID number
-     * WorldGuard = WorldName.RegionName
-     * Regios = Region name
-     * Residence = Residence name OR ResidenceName.Sub-zoneName
-     * PreciousStones = WorldName.ID
-     * InfinitePlots = WorldName.PlotLoc (X;Z)
-     * Factoid = Land UUID
-     * Factions = WorldName.FactionID
-     * PlotMe = WorldName.PlotID
-     * Flags = Sector UUID
-     *
-     * @param name
-     *            The cuboid system specific name of the area or world name
-     * @return The Area requested, may be null in cases of invalid cuboid system
-     *         selection.
-     */
-    abstract Area getArea(String name);
-
-    /*
-     * Gets whether there is an area for this cuboid system that Flags can use at the location
-     *
-     * @param location The location to check for an area
-     * @return True if there is an area
-     */
-    abstract boolean hasArea(Location location);
 
     /**
      * Gets the plug-in name as indicated in it's plugin.yml
@@ -267,6 +112,14 @@ public enum CuboidPlugin {
      */
     public boolean hasSubdivisions() {
         return subdivisions;
+    }
+
+    /**
+     * Gets if the cuboid plugin identifies areas by UUID
+     * @return true if the cuboid plugin identifies areas by UUID.
+     */
+    public boolean hasUniqueId() {
+        return uniqueIdSupport;
     }
 
     /**

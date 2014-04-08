@@ -44,7 +44,7 @@ import org.bukkit.World;
 /**
  * Class for creating areas to manage a Grief Prevention Claim.
  */
-public class AreaGriefPrevention extends AreaRemovable implements Ownable, Siegeable, Subdividable, Administrator {
+class AreaGriefPrevention extends AreaRemovable implements Ownable, Siegeable, Subdividable, Administrator {
 	final Claim claim;
 
 	/**
@@ -85,12 +85,6 @@ public class AreaGriefPrevention extends AreaRemovable implements Ownable, Siege
 	public static boolean hasClaim(Location location) {
 		return GriefPrevention.instance.dataStore.getClaimAt(location, false, null) != null;
 	}
-
-    @Override
-    public UUID getUniqueId() {
-        if (isArea()) return null;
-        throw new InvalidAreaException();
-    }
 
     @Override
     public String getId() {

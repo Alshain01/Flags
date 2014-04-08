@@ -30,6 +30,7 @@ import io.github.alshain01.flags.api.Flag;
 
 import java.util.UUID;
 
+import io.github.alshain01.flags.api.area.Identifiable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -41,7 +42,7 @@ import org.bukkit.permissions.Permissible;
 /**
  * Class for creating areas to manage a AreaWilderness.
   */
-final public class AreaWilderness extends AreaBase {
+final class AreaWilderness extends AreaBase implements Identifiable {
     private final World world;
 
     /**

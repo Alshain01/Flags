@@ -42,7 +42,7 @@ import com.worldcretornica.plotme.PlotManager;
 /**
  * Class for creating areas to manage a PlotMe Plot.
  */
-final public class AreaPlotMe extends AreaRemovable implements Ownable {
+final class AreaPlotMe extends AreaRemovable implements Ownable {
 	private final Plot plot;
 
 	/**
@@ -75,12 +75,6 @@ final public class AreaPlotMe extends AreaRemovable implements Ownable {
 	public static boolean hasPlot(Location location) {
 		return PlotManager.getPlotById(location) != null;
 	}
-
-    @Override
-    public UUID getUniqueId() {
-        if (isArea()) return null;
-        throw new InvalidAreaException();
-    }
 
     @Override
     public String getId() {

@@ -45,7 +45,7 @@ import org.bukkit.World;
 /**
  * Class for creating areas to manage a PreciousStones Field.
  */
-final public class AreaPreciousStones extends AreaRemovable implements Nameable, Ownable, Subdividable {
+final class AreaPreciousStones extends AreaRemovable implements Nameable, Ownable, Subdividable {
 	private Field field;
 
     /**
@@ -114,12 +114,6 @@ final public class AreaPreciousStones extends AreaRemovable implements Nameable,
      */
     public static boolean hasField(Location location) {
         return PreciousStones.API().isFieldProtectingArea(FieldFlag.ALL, location);
-    }
-
-    @Override
-    public UUID getUniqueId() {
-        if (isArea()) return null;
-        throw new InvalidAreaException();
     }
 
     @Override

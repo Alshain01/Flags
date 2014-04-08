@@ -2,6 +2,7 @@ package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.api.CuboidPlugin;
 import io.github.alshain01.flags.api.area.Area;
+import io.github.alshain01.flags.api.area.Identifiable;
 import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
@@ -13,7 +14,7 @@ import org.bukkit.World;
 
 import java.util.UUID;
 
-final public class AreaFlags extends AreaRemovable implements Subdividable {
+final class AreaFlags extends AreaRemovable implements Identifiable, Subdividable {
     private final Sector sector;
 
     /**

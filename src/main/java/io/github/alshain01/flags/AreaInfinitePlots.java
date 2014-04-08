@@ -44,7 +44,7 @@ import uk.co.jacekk.bukkit.infiniteplots.plot.PlotLocation;
 /**
  * Class for creating areas to manage a InfinitePlots Plot.
  */
-final public class AreaInfinitePlots extends AreaRemovable implements Nameable, Ownable {
+final class AreaInfinitePlots extends AreaRemovable implements Nameable, Ownable {
 	private final Plot plot;
 
 	/**
@@ -82,12 +82,6 @@ final public class AreaInfinitePlots extends AreaRemovable implements Nameable, 
 	public static boolean hasPlot(Location location) {
 		return InfinitePlots.getInstance().getPlotManager().getPlotAt(PlotLocation.fromWorldLocation(location)) != null;
 	}
-
-    @Override
-    public UUID getUniqueId() {
-        if (isArea()) return null;
-        throw new InvalidAreaException();
-    }
 
     @Override
     public String getId() {

@@ -43,7 +43,7 @@ import org.bukkit.Location;
 /**
  * Class for creating areas to manage a Residence Claimed Residences.
  */
-final public class AreaResidence extends AreaRemovable implements Nameable, Ownable, Subdividable {
+final class AreaResidence extends AreaRemovable implements Nameable, Ownable, Subdividable {
 	private final ResidenceArea residence;
 
 	/**
@@ -87,12 +87,6 @@ final public class AreaResidence extends AreaRemovable implements Nameable, Owna
 	public static boolean hasResidence(Location location) {
 		return ResidenceAPI.getResidenceManager().getByLocation(location) != null;
 	}
-
-    @Override
-    public UUID getUniqueId() {
-        if (isArea()) return null;
-        throw new InvalidAreaException();
-    }
 
     @Override
     public String getId() {

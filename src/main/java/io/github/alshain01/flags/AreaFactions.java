@@ -45,7 +45,7 @@ import com.massivecraft.mcore.ps.PS;
 /**
  * Class for creating areas to manage a Factions Territory.
  */
-final public class AreaFactions extends AreaRemovable implements Nameable, Ownable {
+final class AreaFactions extends AreaRemovable implements Nameable, Ownable {
 	private final Faction faction;
 	private final World world;
 
@@ -81,12 +81,6 @@ final public class AreaFactions extends AreaRemovable implements Nameable, Ownab
      */
     public static boolean hasTerritory(Location location) {
         return BoardColls.get().getFactionAt(PS.valueOf(location)) != null;
-    }
-
-    @Override
-    public UUID getUniqueId() {
-        if (isArea()) return null;
-        throw new InvalidAreaException();
     }
 
     public String getId() {

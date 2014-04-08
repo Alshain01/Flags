@@ -29,10 +29,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import io.github.alshain01.flags.api.CuboidPlugin;
-import io.github.alshain01.flags.api.area.Area;
-import io.github.alshain01.flags.api.area.Nameable;
-import io.github.alshain01.flags.api.area.Ownable;
-import io.github.alshain01.flags.api.area.Subdividable;
+import io.github.alshain01.flags.api.area.*;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
 
@@ -47,7 +44,7 @@ import org.bukkit.Location;
 /**
  * Class for creating areas to manage a Factoid Land.
  */
-final public class AreaFactoid extends AreaRemovable implements Nameable, Ownable, Subdividable {
+final class AreaFactoid extends AreaRemovable implements Identifiable, Nameable, Ownable, Subdividable {
     private final Land land;
 
     /**
@@ -158,7 +155,7 @@ final public class AreaFactoid extends AreaRemovable implements Nameable, Ownabl
     @Override
     public boolean isParent(Area area) {
         Validate.notNull(area);
-        if (isSubdivision()) return area instanceof AreaFactoid && land.getParent().getUUID().equals(area.getUniqueId());
+        if (isSubdivision()) return area instanceof AreaFactoid && land.getParent().getUUID().equals(((Identifiable)area).getUniqueId());
         throw new InvalidSubdivisionException();
     }
 

@@ -42,7 +42,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 /**
  * Class for creating areas to manage a WorldGuard Region.
  */
-final public class AreaWorldGuard extends AreaRemovable implements Ownable {
+final class AreaWorldGuard extends AreaRemovable implements Ownable {
 	private final ProtectedRegion region;
 	private final World world;
 
@@ -90,12 +90,6 @@ final public class AreaWorldGuard extends AreaRemovable implements Ownable {
 	public static boolean hasRegion(Location location) {
 		return WGBukkit.getRegionManager(location.getWorld()).getApplicableRegions(location).size() != 0;
 	}
-
-    @Override
-    public UUID getUniqueId() {
-        if (isArea()) return null;
-        throw new InvalidAreaException();
-    }
 
     @Override
     public String getId() {

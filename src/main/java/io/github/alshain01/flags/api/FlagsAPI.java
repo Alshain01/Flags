@@ -1,9 +1,8 @@
 package io.github.alshain01.flags.api;
 
+import io.github.alshain01.flags.AreaFactory;
 import io.github.alshain01.flags.DataStore;
 import io.github.alshain01.flags.api.area.Area;
-import io.github.alshain01.flags.AreaDefault;
-import io.github.alshain01.flags.AreaWilderness;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
@@ -11,6 +10,9 @@ import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 
+/**
+ * Primary class for hooking into the API.
+ */
 final public class FlagsAPI {
     private static Registrar registrar = new Registrar();
     private static CuboidPlugin activeSystem;
@@ -23,8 +25,8 @@ final public class FlagsAPI {
     }
 
     /**
-     * Starts the API
-     * Cannot be used externally
+     * Starts the API.
+     * Cannot be used externally.
      *
      * @param cuboidSystem The cuboid system detected
      * @param data The datastore to be used
@@ -40,8 +42,8 @@ final public class FlagsAPI {
     }
 
     /**
-     * Closes the API
-     * Cannot be used externally
+     * Closes the API.
+     * Cannot be used externally.
      *
      * @param data The data store to close
      */
@@ -61,7 +63,7 @@ final public class FlagsAPI {
         return registrar;
     }
 
-    /*
+    /**
      * Gets if the configured cuboid system has an area at a specific location.
      *
      * @param location
@@ -69,42 +71,42 @@ final public class FlagsAPI {
      * @return True if there is an area present at the location.
      */
     public static boolean hasArea(Location location) {
-        return activeSystem.hasArea(location);
+        return AreaFactory.hasArea(activeSystem, location);
     }
 
-    /*
+    /**
      * Gets an area from at a specific location.
      *
      * @param location
-     *            The location to request an area.
+     *            The location for which to request an area.
      * @return An area from the configured cuboid system or the wilderness area if no area is defined.
      */
     public static Area getAreaAt(Location location) {
         Validate.notNull(location);
-        Area area = activeSystem.getCuboidAt(location);
+        Area area = AreaFactory.getAreaAt(activeSystem, location);
         return area.isArea() ? area : getWildernessArea(location.getWorld());
     }
 
-    /*
+    /**
      * Gets the wilderness area for the world.
      *
-     * @param location
-     *            The location to request an area.
+     * @param world
+     *            The world for which to request the wilderness area.
      * @return The area for setting wilderness settings in the world.
      */
     public static Area getWildernessArea(World world) {
-        return new AreaWilderness(world);
+        return AreaFactory.getWildernessArea(world);
     }
 
-    /*
+    /**
      * Gets the default area for the world.
      *
-     * @param location
-     *            The location to request an area.
+     * @param world
+     *            The world for which to request the default area.
      * @return The area for setting default settings for areas in the world.
      */
     public static Area getDefaultArea(World world) {
-        return new AreaDefault(world);
+        return AreaFactory.getDefaultArea(world);
     }
 
     /**

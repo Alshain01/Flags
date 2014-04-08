@@ -28,6 +28,7 @@ import java.util.UUID;
 
 import io.github.alshain01.flags.api.CuboidPlugin;
 import io.github.alshain01.flags.api.Flag;
+import io.github.alshain01.flags.api.area.Identifiable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -38,7 +39,7 @@ import org.bukkit.permissions.Permissible;
 /**
  * Class for creating areas to manage server defaults.
  */
-final public class AreaDefault extends AreaBase {
+final class AreaDefault extends AreaBase implements Identifiable {
 	private final World world;
 
 	/**
