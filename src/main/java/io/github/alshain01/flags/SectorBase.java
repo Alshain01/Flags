@@ -4,6 +4,7 @@ import io.github.alshain01.flags.api.sector.Sector;
 import io.github.alshain01.flags.api.sector.SectorLocation;
 import org.bukkit.World;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -60,8 +61,8 @@ final class SectorBase implements Sector {
 
     public SectorBase(UUID id, Map<String, Object> sector) {
         this.id = id;
-        greater = new SectorLocationBase((String)sector.get("GreaterCorner"));
-        lesser = new SectorLocationBase((String)sector.get("LesserCorner"));
+        greater = new SectorLocationBase(((ConfigurationSection)sector.get("GreaterCorner")).getValues(false));
+        lesser = new SectorLocationBase(((ConfigurationSection)sector.get("LesserCorner")).getValues(false));
         parent = String.valueOf(sector.get("Parent")).equals("null") ? null : UUID.fromString((String)sector.get("Parent"));
         depth = (Integer)sector.get("Depth");
     }

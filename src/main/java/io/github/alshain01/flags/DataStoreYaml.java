@@ -260,26 +260,23 @@ final class DataStoreYaml extends DataStore {
 
             // Convert Sectors
             if(sectors != null) {
+                // Convert old sector location to serialized form.
+                for (String s : sectors.getConfigurationSection("Sectors").getKeys(true)) {
+                    Logger.debug("Checking SectorLocation " + s);
+                    if (s.contains("Corner")) {
+                        Logger.debug("Converting SectorLocation " + s);
+                        sectors.set("Sectors." + s, new SectorLocationBase(sectors.getString("Sectors." + s)).serialize());
+                    }
+                }
+
                 Logger.debug("Converting Sectors");
                 // Remove old header
                 if (sectors.isConfigurationSection("Sectors")) {
                     for(String s : sectors.getConfigurationSection("Sectors").getKeys(false)) {
                         Logger.debug("Converting Sector " + s);
-                        sectors.set(s, sectors.getConfigurationSection("Sectors." + s).getValues(false));
+                        sectors.set(s, sectors.getConfigurationSection("Sectors." + s).getValues(true));
                     }
                     sectors.set("Sectors", null);
-                }
-
-                // Convert old sector location to serialized form.
-                for (String s : sectors.getKeys(true)) {
-                    Logger.debug("Checking SectorLocation " + s);
-                    //for(String c : sectors.getConfigurationSection(s).getKeys(false)) {
-                        //Logger.debug("Checking SectorLocation " + s + ":" + c);
-                        if (s.contains("Corner")) {
-                            Logger.debug("Converting SectorLocation " + s);
-                            sectors.set(s, new SectorLocationBase(sectors.getString(s)).serialize());
-                        }
-                   // }
                 }
             }
 
@@ -419,7 +416,7 @@ final class DataStoreYaml extends DataStore {
     public Map<UUID, Sector> readSectors() {
         Map<UUID, Sector> sectorMap = new HashMap<UUID, Sector>();
 
-        for(String s : this.sectors.getKeys(false)) {
+        for(String s : sectors.getKeys(false)) {
             UUID sID = UUID.fromString(s);
             sectorMap.put(sID, new SectorBase(sID, sectors.getConfigurationSection(s).getValues(false)));
         }
