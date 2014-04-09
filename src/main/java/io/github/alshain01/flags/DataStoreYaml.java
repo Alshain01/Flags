@@ -364,12 +364,12 @@ final class DataStoreYaml extends DataStore {
     }
 
     @Override
-    public final Set<String> readBundles() {
+    public final Collection<String> readBundles() {
             return bundle.getKeys(false);
     }
 
     @Override
-	public final Set<Flag> readBundle(String bundleName) {
+	public final Collection<Flag> readBundle(String bundleName) {
 		final HashSet<Flag> flags = new HashSet<Flag>();
 		final List<?> list = bundle.getList(bundleName, new ArrayList<String>());
 
@@ -504,7 +504,7 @@ final class DataStoreYaml extends DataStore {
     }
 
     @Override
-    public Set<Permission> readPermissionTrust(Area area, Flag flag) {
+    public Collection<Permission> readPermissionTrust(Area area, Flag flag) {
         final String path = getAreaPath(area) + DELIMETER + flag.getName() + DELIMETER + PERM_TRUST_PATH;
         final Set<Permission> permData = new HashSet<Permission>();
         if(getYml(path).isList(path)) {
@@ -518,7 +518,7 @@ final class DataStoreYaml extends DataStore {
     }
 
     @Override
-    public void writePermissionTrust(Area area, Flag flag, Set<Permission> permissions) {
+    public void writePermissionTrust(Area area, Flag flag, Collection<Permission> permissions) {
         final String path = getAreaPath(area) + DELIMETER + flag.getName();
         ConfigurationSection permConfig = getCreatedSection(getYml(path), path);
 

@@ -204,7 +204,7 @@ final class DataStoreMySQL extends DataStore {
     }
 
     @Override
-    public Set<String> readBundles() {
+    public Collection<String> readBundles() {
         final ResultSet results = executeQuery("SELECT DISTINCT BundleName FROM Bundle;");
         Set<String> bundles = new HashSet<String>();
 
@@ -220,7 +220,7 @@ final class DataStoreMySQL extends DataStore {
     }
 
     @Override
-    public Set<Flag> readBundle(String name) {
+    public Collection<Flag> readBundle(String name) {
         final ResultSet results = executeQuery("SELECT * FROM Bundle WHERE BundleName='" + name + "';");
         HashSet<Flag> flags = new HashSet<Flag>();
 
@@ -387,7 +387,7 @@ final class DataStoreMySQL extends DataStore {
     }
 
     @Override
-    public Set<Permission> readPermissionTrust(Area area, Flag flag) {
+    public Collection<Permission> readPermissionTrust(Area area, Flag flag) {
         String selectString = "SELECT * FROM PermissionTrust WHERE CuboidPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%';";
 
         ResultSet results = executeQuery(areaBuilder(selectString, area)
@@ -424,7 +424,7 @@ final class DataStoreMySQL extends DataStore {
     }
 
     @Override
-    public void writePermissionTrust(Area area, Flag flag, Set<Permission> permissions) {
+    public void writePermissionTrust(Area area, Flag flag, Collection<Permission> permissions) {
         // Delete the old list to be replaced
         String deleteString = "DELETE FROM PermissionTrust WHERE CuboidPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%';";
 
@@ -532,7 +532,7 @@ final class DataStoreMySQL extends DataStore {
     }
 
     @Override
-    Set<String> getAllAreaIds(World world) {
+    Collection<String> getAllAreaIds(World world) {
         Set<String> areas = new HashSet<String>();
         ResultSet results = executeQuery("SELECT DISTINCT AreaId FROM Flags;");
         try {

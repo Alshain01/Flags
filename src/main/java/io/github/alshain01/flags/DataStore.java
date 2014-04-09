@@ -91,9 +91,9 @@ public abstract class DataStore {
 
     public abstract void update(JavaPlugin plugin);
 
-    public abstract Set<String> readBundles();
+    public abstract Collection<String> readBundles();
 
-	public abstract Set<Flag> readBundle(String bundleName);
+	public abstract Collection<Flag> readBundle(String bundleName);
 
     public abstract void writeBundle(String bundleName, Collection<Flag> flags);
 
@@ -111,11 +111,11 @@ public abstract class DataStore {
 
     public abstract Map<UUID, String> readPlayerTrust(Area area, Flag flag);
 
-    public abstract Set<Permission> readPermissionTrust(Area area, Flag flag);
+    public abstract Collection<Permission> readPermissionTrust(Area area, Flag flag);
 
     public abstract void writePlayerTrust(Area area, Flag flag, Map<UUID, String> players);
 
-    public abstract void writePermissionTrust(Area area, Flag flag, Set<Permission> permissions);
+    public abstract void writePermissionTrust(Area area, Flag flag, Collection<Permission> permissions);
 
     public abstract boolean readInheritance(Area area);
 
@@ -133,7 +133,7 @@ public abstract class DataStore {
         migrate(source, this);
     }
 
-    abstract Set<String> getAllAreaIds(World world);
+    abstract Collection<String> getAllAreaIds(World world);
 
     private static void migrate(DataStore source, DataStore target) {
         Logger.info("Beginning data migration from " + source.getType().getName() + " to " + target.getType().getName() + ".");
@@ -194,7 +194,7 @@ public abstract class DataStore {
                 }
 
                 //Permission Trust Lists
-                Set<Permission> permtrust = source.readPermissionTrust(a, f);
+                Collection<Permission> permtrust = source.readPermissionTrust(a, f);
                 if(!trust.isEmpty()) {
                     target.writePermissionTrust(a, f, permtrust);
                 }
