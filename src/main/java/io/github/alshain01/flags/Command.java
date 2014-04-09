@@ -1,6 +1,5 @@
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.api.Bundle;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
@@ -56,7 +55,7 @@ abstract class Command {
         }
 
         static boolean notPermittedFlag(Permissible p, Area a) {
-            if (a.hasPermission(p)) { return false; }
+            if (a.hasFlagPermission(p)) { return false; }
             if(p instanceof CommandSender) {
                 String message = a instanceof AreaWilderness || a instanceof AreaDefault
                         ? Message.WildernessPermError.get() : Message.AreaPermError.get()
@@ -89,7 +88,7 @@ abstract class Command {
         }
 
         static boolean notBundle(CommandSender sender, String bundle) {
-            if (Bundle.isBundle(bundle)) { return false; }
+            if (FlagsAPI.isBundle(bundle)) { return false; }
             sender.sendMessage(Message.InvalidFlagError.get()
                     .replace("{RequestedName}", bundle)
                     .replace("{Type}", Message.Bundle.get().toLowerCase()));

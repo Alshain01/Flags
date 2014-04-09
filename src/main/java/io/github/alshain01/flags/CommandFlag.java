@@ -221,12 +221,12 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         //usage: /flag <get|set|remove|trust|distrust|viewtrust|message|presentmessage|erasemessage|charge|inherit|help>
         // We can assume if we get this far, the player has read access to the command.
         StringBuilder usage = new StringBuilder("/flag <get");
-        if(player.hasPermission("flags.command.flag.set") && area.hasPermission(player)) {
+        if(player.hasPermission("flags.command.flag.set") && area.hasFlagPermission(player)) {
             usage.append("|set|remove|trust|distrust");
         }
         usage.append("|viewtrust"); //read access
 
-        if(player.hasPermission("flags.command.flag.set") && area.hasPermission(player)) {
+        if(player.hasPermission("flags.command.flag.set") && area.hasFlagPermission(player)) {
             usage.append("|message|erasemessage");
         }
         usage.append("|presentmessage");
@@ -235,7 +235,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
             usage.append("|charge");
         }
 
-        if(player.hasPermission("flags.command.flag.set") && area.hasPermission(player) && FlagsAPI.getCuboidPlugin().hasSubdivisions()) {
+        if(player.hasPermission("flags.command.flag.set") && area.hasFlagPermission(player) && FlagsAPI.getCuboidPlugin().hasSubdivisions()) {
             usage.append("|inherit");
         }
 
@@ -581,7 +581,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
             flags = registrar.getPermittedFlags(sender);
             groupNames = registrar.getPermittedFlagGroups(sender);
         } else {
-            flags = registrar.getPermittedGroup(sender, group);
+            flags = registrar.getPermittedFlagGroup(sender, group);
         }
 
         // Sort the flags
@@ -611,7 +611,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
 
         String indexType = Message.Index.get();
         if(group != null) {
-            indexType = registrar.getFlag(topics.get(0)).getGroup();
+            indexType = registrar.getFlag(topics.get(0)).getFlagGroup();
         }
 
         sender.sendMessage(Message.HelpHeader.get()
@@ -630,7 +630,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
                         .replace("{Type}", Message.Flag.get().toLowerCase()));
             } else {
                 sender.sendMessage(Message.GroupHelpInfo.get()
-                        .replace("{Type}", registrar.getFlag(flagNames.get(0)).getGroup()));
+                        .replace("{Type}", registrar.getFlag(flagNames.get(0)).getFlagGroup()));
             }
             lineCount++;
         }

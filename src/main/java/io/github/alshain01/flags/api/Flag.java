@@ -167,7 +167,7 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
 	 * 
 	 * @return The group this flag is assigned to.
 	 */
-	public String getGroup() {
+	public String getFlagGroup() {
 		return plugin;
 	}
 

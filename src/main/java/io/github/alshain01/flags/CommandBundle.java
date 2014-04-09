@@ -1,6 +1,5 @@
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.api.Bundle;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
@@ -164,7 +163,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         final Area area = getArea(player, location);
 
         if(Validate.notPermittedBundle(player, area, bundleName)) { return; }
-        final Collection<Flag> bundle = Bundle.getBundle(bundleName);
+        final Collection<Flag> bundle = FlagsAPI.getBundle(bundleName);
 
         for(Flag flag : bundle) {
             player.sendMessage(Message.GetBundle.get()
@@ -178,7 +177,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         final Area area = getArea(player, location);
 
         if(Validate.notPermittedBundle(player, area, bundleName)) { return; }
-        final Collection<Flag> bundle = Bundle.getBundle(bundleName);
+        final Collection<Flag> bundle = FlagsAPI.getBundle(bundleName);
 
         for(Flag flag : bundle) {
             if(!area.setState(flag, value, player)) { success = false; }
@@ -195,7 +194,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         final Area area = getArea(player, location);
 
         if(Validate.notPermittedBundle(player, area, bundleName)) { return; }
-        final Collection<Flag> bundle = Bundle.getBundle(bundleName);
+        final Collection<Flag> bundle = FlagsAPI.getBundle(bundleName);
 
         for (Flag flag : bundle) {
             if (!area.setState(flag, null, player)) { success = false; }
@@ -214,7 +213,7 @@ final class CommandBundle extends Command implements CommandExecutor {
 
         if(Validate.notPermittedBundle(player, area, bundleName)) { return true; }
 
-        for(Flag f : Bundle.getBundle(bundleName)) {
+        for(Flag f : FlagsAPI.getBundle(bundleName)) {
             if(!f.isPlayerFlag()) { continue; }
 
             Set<String> permissions = new HashSet<String>();
@@ -249,7 +248,7 @@ final class CommandBundle extends Command implements CommandExecutor {
 
         if(Validate.notPermittedBundle(player, area, bundleName)) { return; }
 
-        for(Flag f : Bundle.getBundle(bundleName)) {
+        for(Flag f : FlagsAPI.getBundle(bundleName)) {
             Set<String> permissions = new HashSet<String>();
             Set<String> playerList = new HashSet<String>();
             for(String t : trustees) {
@@ -286,8 +285,8 @@ final class CommandBundle extends Command implements CommandExecutor {
         Flag flag;
         Collection<Flag> bundle;
 
-        if(Bundle.isBundle(bundleName)) {
-            bundle = Bundle.getBundle(bundleName);
+        if(FlagsAPI.isBundle(bundleName)) {
+            bundle = FlagsAPI.getBundle(bundleName);
         } else {
             bundle = new HashSet<Flag>();
         }
@@ -301,7 +300,7 @@ final class CommandBundle extends Command implements CommandExecutor {
             bundle.add(flag);
         }
 
-        Bundle.setBundle(bundleName, bundle);
+        FlagsAPI.setBundle(bundleName, bundle);
         sender.sendMessage(Message.UpdateBundle.get()
                 .replace("{Bundle}", bundleName));
     }
@@ -311,14 +310,14 @@ final class CommandBundle extends Command implements CommandExecutor {
         if(Validate.notBundle(sender, bundleName)) { return; }
 
         boolean success = true;
-        Collection<Flag> bundle = Bundle.getBundle(bundleName.toLowerCase());
+        Collection<Flag> bundle = FlagsAPI.getBundle(bundleName.toLowerCase());
 
         for(String s : flags) {
             Flag flag = FlagsAPI.getRegistrar().getFlag(s);
             if (flag == null || !bundle.remove(flag)) {
                 success = false; }
         }
-        Bundle.setBundle(bundleName, bundle);
+        FlagsAPI.setBundle(bundleName, bundle);
 
         sender.sendMessage((success ? Message.UpdateBundle.get() : Message.RemoveAllFlagsError.get())
                 .replace("{Bundle}", bundleName));
@@ -327,19 +326,19 @@ final class CommandBundle extends Command implements CommandExecutor {
     private static void erase(CommandSender sender, String bundleName) {
         if(Validate.notPermittedEditBundle(sender)){ return; }
 
-        Collection<String> bundles = Bundle.getBundleNames();
+        Collection<String> bundles = FlagsAPI.getBundleNames();
         if (bundles == null || bundles.size() == 0 || !bundles.contains(bundleName)) {
             sender.sendMessage(Message.EraseBundleError.get());
             return;
         }
 
-        Bundle.setBundle(bundleName, null);
+        FlagsAPI.setBundle(bundleName, null);
         sender.sendMessage(Message.EraseBundle.get().replace("{Bundle}", bundleName));
     }
 
     private static void help (CommandSender sender, int page) {
         int startIndex, endIndex, totalPages;
-        List<String> bundles = new ArrayList<String>(Bundle.getBundleNames());
+        List<String> bundles = new ArrayList<String>(FlagsAPI.getBundleNames());
 
         if (Validate.isNullOrEmpty(sender, bundles, Message.Bundle)) { return; }
         Collections.sort(bundles);
@@ -378,7 +377,7 @@ final class CommandBundle extends Command implements CommandExecutor {
 
         // Send the help lines
         for(String b : bundles) {
-            Collection<Flag> flags = Bundle.getBundle(b);
+            Collection<Flag> flags = FlagsAPI.getBundle(b);
             if (flags == null || flags.size() == 0) { continue; }
 
             // Build the help line

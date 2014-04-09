@@ -375,7 +375,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
     }
 
     @Override
-    public boolean hasPermission(Permissible p) {
+    public boolean hasFlagPermission(Permissible p) {
         Validate.notNull(p);
 
         if (this instanceof Ownable && p instanceof HumanEntity

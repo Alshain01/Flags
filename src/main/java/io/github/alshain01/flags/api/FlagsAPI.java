@@ -2,6 +2,7 @@ package io.github.alshain01.flags.api;
 
 import io.github.alshain01.flags.AreaFactory;
 import io.github.alshain01.flags.DataStore;
+import io.github.alshain01.flags.Logger;
 import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.sector.SectorManager;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
@@ -11,8 +12,12 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.Collection;
 
 /**
  * Primary class for hooking into the API.
@@ -49,6 +54,99 @@ final public class FlagsAPI {
 
     }
 
+    /**
+     * Gets a bundle from the data store.
+     *
+     * @param bundle
+     *            The bundle name to retrieve
+     * @return A list containing the bundle. Null if it doesn't exist.
+     * @throws IllegalArgumentException
+     */
+    public static Collection<Flag> getBundle(String bundle) {
+        Validate.notNull(bundle);
+        if(!isBundle(bundle)) { throw new IllegalArgumentException("The provided bundle name does not exist."); }
+        return getDataStore().readBundle(bundle.toLowerCase());
+    }
+
+    /**
+     * Gets a set of bundle names created on the server.
+     *
+     * @return A set of bundles names configured on the server.
+     */
+    public static Collection<String> getBundleNames() {
+        return getDataStore().readBundles();
+    }
+
+    /**
+     * Checks if a bundle name exists in the data store.
+     *
+     * @param bundle
+     *            A string bundle name.
+     * @return True if the string is a valid bundle name.
+     */
+    public static boolean isBundle(String bundle) {
+        Validate.notNull(bundle);
+        return getBundleNames().contains(bundle.toLowerCase());
+    }
+
+    /**
+     * Gets the total number of bundles defined on the server
+     *
+     * @return A count of the bundles on the server
+     */
+    public static int count() {
+return getBundleNames().size();
+}
+
+    /**
+     * Sets a bundle to the data file.
+     *
+     * @param name
+     *            The bundle name
+     * @param flags
+     *            A list of flags in the bundle.
+     */
+    public static void setBundle(String name, Collection<Flag> flags) {
+        Validate.notNull(name);
+
+        if(flags != null) {
+            // The main variable may be null to remove
+            // but not the elements
+            Validate.noNullElements(flags);
+        }
+
+        getDataStore().writeBundle(name, flags);
+        String permName = "flags.bundle." + name.toLowerCase();
+        if(flags == null || flags.size() == 0) {
+            if(Bukkit.getPluginManager().getPermission(permName) != null) {
+                Bukkit.getPluginManager().removePermission(permName);
+            }
+        } else {
+            if(Bukkit.getPluginManager().getPermission(permName) == null) {
+                addPermission(name);
+            }
+        }
+    }
+
+    // Used only on plugin enable
+    static void registerPermissions() {
+        for(String b : getDataStore().readBundles()) {
+            if (Bukkit.getPluginManager().getPermission(b) == null) {
+                addPermission(b);
+            }
+        }
+    }
+
+    private static void addPermission(String name) {
+        Validate.notNull(name);
+
+        Logger.debug("Registering Bundle Permissions: " + name);
+        final Permission perm = new Permission("flags.bundle." + name.toLowerCase(),
+        "Grants ability to use the bundle " + name, PermissionDefault.FALSE);
+        perm.addParent("flags.bundle", true);
+        Bukkit.getPluginManager().addPermission(perm);
+    }
+
     /*
      * Tasks that must be run only after the entire sever has loaded.
      * Runs on first server tick.
@@ -56,7 +154,7 @@ final public class FlagsAPI {
     private static class onServerEnabledTask extends BukkitRunnable {
         @Override
         public void run() {
-            Bundle.registerPermissions();
+            registerPermissions();
         }
     }
 

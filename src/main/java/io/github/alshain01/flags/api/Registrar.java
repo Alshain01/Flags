@@ -26,7 +26,6 @@ package io.github.alshain01.flags.api;
 
 import java.util.*;
 
-import io.github.alshain01.flags.Flags;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -62,8 +61,8 @@ public final class Registrar {
 		final Set<String> groups = new HashSet<String>();
 
 		for (final Flag flag : flagStore.values()) {
-			if (!groups.contains(flag.getGroup())) {
-				groups.add(flag.getGroup());
+			if (!groups.contains(flag.getFlagGroup())) {
+				groups.add(flag.getFlagGroup());
 			}
 		}
 		return groups;
@@ -79,8 +78,8 @@ public final class Registrar {
         final Set<String> groups = new HashSet<String>();
 
         for (final Flag flag : flagStore.values()) {
-            if(p.hasPermission(flag.getPermission()) && !groups.contains(flag.getGroup())) {
-                groups.add(flag.getGroup());
+            if(p.hasPermission(flag.getPermission()) && !groups.contains(flag.getFlagGroup())) {
+                groups.add(flag.getFlagGroup());
             }
         }
         return groups;
@@ -133,7 +132,7 @@ public final class Registrar {
         final Set<Flag> flags = new HashSet<Flag>();
 
         for (final Flag flag : flagStore.values()) {
-            if (group.equalsIgnoreCase(flag.getGroup())) {
+            if (group.equalsIgnoreCase(flag.getFlagGroup())) {
                 flags.add(flag.clone());
             }
         }
@@ -146,7 +145,7 @@ public final class Registrar {
      *
      * @return A set of all the flags in the group.
      */
-    public Collection<Flag> getPermittedGroup(Permissible p, String group) {
+    public Collection<Flag> getPermittedFlagGroup(Permissible p, String group) {
         Validate.notNull(p);
         final Set<Flag> flags = new HashSet<Flag>();
 
@@ -164,15 +163,15 @@ public final class Registrar {
      *
      * @return A map of all the flags for all groups.
      */
-    public Map<String, Set<Flag>> getFlagsByGroup() {
-        Map<String, Set<Flag>> flagMap = new HashMap<String, Set<Flag>>();
+    public Map<String, Collection<Flag>> getFlagsByGroup() {
+        Map<String, Collection<Flag>> flagMap = new HashMap<String, Collection<Flag>>();
         for(Flag f : flagStore.values()) {
-            if(flagMap.containsKey(f.getGroup())) {
-                Set<Flag> flags = flagMap.get(f.getGroup());
+            if(flagMap.containsKey(f.getFlagGroup())) {
+                Collection<Flag> flags = flagMap.get(f.getFlagGroup());
                 flags.add(f.clone());
-                flagMap.put(f.getGroup(), flags);
+                flagMap.put(f.getFlagGroup(), flags);
             } else {
-                flagMap.put(f.getGroup(), new HashSet<Flag>(Arrays.asList(f)));
+                flagMap.put(f.getFlagGroup(), new HashSet<Flag>(Arrays.asList(f)));
             }
         }
         return flagMap;
@@ -188,12 +187,12 @@ public final class Registrar {
         Map<String, Set<Flag>> flagMap = new HashMap<String, Set<Flag>>();
         for(Flag f : flagStore.values()) {
             if(p.hasPermission(f.getPermission())) {
-                if(flagMap.containsKey(f.getGroup())) {
-                    Set<Flag> flags = flagMap.get(f.getGroup());
+                if(flagMap.containsKey(f.getFlagGroup())) {
+                    Set<Flag> flags = flagMap.get(f.getFlagGroup());
                     flags.add(f.clone());
-                    flagMap.put(f.getGroup(), flags);
+                    flagMap.put(f.getFlagGroup(), flags);
                 } else {
-                    flagMap.put(f.getGroup(), new HashSet<Flag>(Arrays.asList(f)));
+                    flagMap.put(f.getFlagGroup(), new HashSet<Flag>(Arrays.asList(f)));
                 }
             }
         }

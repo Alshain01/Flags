@@ -251,7 +251,7 @@ public interface Area extends Comparable<Area> {
      *            The player to check.
      * @return true if the player has permissions.
      */
-    public boolean hasPermission(Permissible p);
+    public boolean hasFlagPermission(Permissible p);
 
     /**
      * Checks the players permission to set bundles at this location

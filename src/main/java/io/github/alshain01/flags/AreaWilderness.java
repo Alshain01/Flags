@@ -100,7 +100,7 @@ final class AreaWilderness extends AreaBase implements Identifiable {
     }
 
     @Override
-    public boolean hasPermission(Permissible p) {
+    public boolean hasFlagPermission(Permissible p) {
         Validate.notNull(p);
         return p.hasPermission("flags.area.flag.wilderness");
     }
