@@ -283,7 +283,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
         Validate.notNull(flag);
         Validate.notNull(permission);
 
-        final Set<Permission> trustList = Flags.getDataStore().readPermissionTrust(this, flag);
+        final Collection<Permission> trustList = Flags.getDataStore().readPermissionTrust(this, flag);
 
         // Set player to trusted.
         if (trustList.contains(permission)) {
@@ -334,7 +334,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
         Validate.notNull(flag);
         Validate.notNull(permission);
 
-        final Set<Permission> trustList = Flags.getDataStore().readPermissionTrust(this, flag);
+        final Collection<Permission> trustList = Flags.getDataStore().readPermissionTrust(this, flag);
 
         // Remove player from trusted.
         if (!trustList.contains(permission)) {
