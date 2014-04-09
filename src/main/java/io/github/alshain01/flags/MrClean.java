@@ -43,7 +43,7 @@ import com.massivecraft.factions.event.FactionsEventDisband;
 /*
  * Class for removing data from areas that are deleted.
  */
-class MrClean {
+final class MrClean {
 	private MrClean() { }
 
     /*

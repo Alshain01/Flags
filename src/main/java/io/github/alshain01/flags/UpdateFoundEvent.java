@@ -3,7 +3,7 @@ package io.github.alshain01.flags;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-class UpdateFoundEvent extends Event {
+final class UpdateFoundEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     public UpdateFoundEvent() {

@@ -50,7 +50,7 @@ import java.util.List;
  * 
  * @author Alshain01
  */
-public class Flags extends JavaPlugin {
+final public class Flags extends JavaPlugin {
     // Made static to access from enumerations and lower hefty method calls
     private static DataStore dataStore;
     private static Economy economy = null;

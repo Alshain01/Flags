@@ -47,16 +47,11 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
-@SuppressWarnings("ALL")
-class Metrics {
+final class Metrics {
 
 /**
  * Start Flags Metrics Code
@@ -341,8 +336,7 @@ static void StartFlagsMetrics(Plugin plugin) {
      */
     public boolean isOptOut() {
         return false;
-        /*
-        synchronized (optOutLock) {
+        /*synchronized (optOutLock) {
             try {
                 // Reload the metrics file
                 configuration.load(getConfigFile());
@@ -358,8 +352,7 @@ static void StartFlagsMetrics(Plugin plugin) {
                 return true;
             }
             return configuration.getBoolean("opt-out", false);
-        }
-        */
+        }*/
     }
 
     /**
@@ -411,7 +404,7 @@ static void StartFlagsMetrics(Plugin plugin) {
      * @return the File object for the config file
      */
     public File getConfigFile() {
-        // I believe the easiest way to getType the base folder (e.g craftbukkit set via -P) for plugins to use
+        // I believe the easiest way to get the base folder (e.g craftbukkit set via -P) for plugins to use
         // is to abuse the plugin object we already have
         // plugin.getDataFolder() => base/plugins/PluginA/
         // pluginsFolder => base/plugins/
@@ -481,25 +474,30 @@ static void StartFlagsMetrics(Plugin plugin) {
 
                 boolean firstGraph = true;
 
+                //final Iterator<Graph> iter = graphs.iterator();
+
                 for(Graph graph : graphs) {
-                    StringBuilder graphJson = new StringBuilder();
-                    graphJson.append('{');
+                /*while (iter.hasNext()) {
+                    Graph graph = iter.next();*/
 
-                    for (Plotter plotter : graph.getPlotters()) {
-                        appendJSONPair(graphJson, plotter.getColumnName(), Integer.toString(plotter.getValue()));
-                    }
+                        StringBuilder graphJson = new StringBuilder();
+                        graphJson.append('{');
 
-                    graphJson.append('}');
+                        for (Plotter plotter : graph.getPlotters()) {
+                            appendJSONPair(graphJson, plotter.getColumnName(), Integer.toString(plotter.getValue()));
+                        }
 
-                    if (!firstGraph) {
-                        json.append(',');
-                    }
+                        graphJson.append('}');
 
-                    json.append(escapeJSON(graph.getName()));
-                    json.append(':');
-                    json.append(graphJson);
+                        if (!firstGraph) {
+                            json.append(',');
+                        }
 
-                    firstGraph = false;
+                        json.append(escapeJSON(graph.getName()));
+                        json.append(':');
+                        json.append(graphJson);
+
+                        firstGraph = false;
                 }
 
                 json.append('}');
@@ -566,7 +564,12 @@ static void StartFlagsMetrics(Plugin plugin) {
             // Is this the first update this hour?
             if (response.equals("1") || response.contains("This is your first update this hour")) {
                 synchronized (graphs) {
-                     for(Graph graph : graphs) {
+                    //final Iterator<Graph> iter = graphs.iterator();
+
+                    for(Graph graph : graphs) {
+                    //while (iter.hasNext()) {
+                        //final Graph graph = iter.next();
+
                         for (Plotter plotter : graph.getPlotters()) {
                             plotter.reset();
                         }
@@ -579,8 +582,8 @@ static void StartFlagsMetrics(Plugin plugin) {
     /**
      * GZip compress a string of bytes
      *
-     * @param input
-     * @return
+     * @param input String to compress
+     * @return Compressed string
      */
     public static byte[] gzip(String input) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -618,9 +621,9 @@ static void StartFlagsMetrics(Plugin plugin) {
     /**
      * Appends a json encoded key/value pair to the given string builder.
      *
-     * @param json
-     * @param key
-     * @param value
+     * @param json StringBuilder to append to
+     * @param key Key to append
+     * @param value Value to append
      * @throws UnsupportedEncodingException
      */
     private static void appendJSONPair(StringBuilder json, String key, String value) throws UnsupportedEncodingException {
@@ -652,8 +655,8 @@ static void StartFlagsMetrics(Plugin plugin) {
     /**
      * Escape a string to create a valid JSON string
      *
-     * @param text
-     * @return
+     * @param text String to escape
+     * @return JSON string
      */
     private static String escapeJSON(String text) {
         StringBuilder builder = new StringBuilder();
@@ -797,7 +800,7 @@ static void StartFlagsMetrics(Plugin plugin) {
          * Construct a plotter with the default plot name
          */
         public Plotter() {
-            this("AreaDefault");
+            this("Default");
         }
 
         /**
