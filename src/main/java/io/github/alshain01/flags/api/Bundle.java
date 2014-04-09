@@ -30,6 +30,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -47,7 +48,7 @@ public final class Bundle {
 	 * @return A list containing the bundle. Null if it doesn't exist.
      * @throws java.lang.IllegalArgumentException
 	 */
-	public static Set<Flag> getBundle(String bundle) {
+	public static Collection<Flag> getBundle(String bundle) {
         Validate.notNull(bundle);
         if(!isBundle(bundle)) { throw new IllegalArgumentException("The provided bundle name does not exist."); }
 		return FlagsAPI.getDataStore().readBundle(bundle.toLowerCase());
@@ -58,7 +59,7 @@ public final class Bundle {
 	 * 
 	 * @return A set of bundles names configured on the server.
 	 */
-	public static Set<String> getBundleNames() {
+	public static Collection<String> getBundleNames() {
 		return FlagsAPI.getDataStore().readBundles();
 	}
 
@@ -91,7 +92,7 @@ public final class Bundle {
 	 * @param flags
 	 *            A list of flags in the bundle.
 	 */
-	public static void setBundle(String name, Set<Flag> flags) {
+	public static void setBundle(String name, Collection<Flag> flags) {
         Validate.notNull(name);
 
         if(flags != null) {

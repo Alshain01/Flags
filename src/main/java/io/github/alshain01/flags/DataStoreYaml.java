@@ -382,7 +382,7 @@ final class DataStoreYaml extends DataStore {
 	}
 
     @Override
-    public final void writeBundle(String name, Set<Flag> flags) {
+    public final void writeBundle(String name, Collection<Flag> flags) {
         if (flags == null || flags.size() == 0) {
             // Delete the bundle
             bundle.set(name, null);

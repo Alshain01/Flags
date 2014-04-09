@@ -243,7 +243,7 @@ final class DataStoreMySQL extends DataStore {
     }
 
     @Override
-    public void writeBundle(String bundleName, Set<Flag> flags) {
+    public void writeBundle(String bundleName, Collection<Flag> flags) {
         StringBuilder values = new StringBuilder();
 
         // Clear out any existing version of this bundle.

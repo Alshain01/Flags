@@ -372,7 +372,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
 
         Set<String> trustList = new HashSet<String>();
         if(player.hasPermission("flags.view.permtrust")) {
-            Set<Permission> perms = area.getPermissionTrustList(flag);
+            Collection<Permission> perms = area.getPermissionTrustList(flag);
             for(Permission p : perms) {
                 trustList.add(p.getName());
             }
@@ -573,10 +573,10 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         Registrar registrar = FlagsAPI.getRegistrar();
 
         //Build the list of help topics
-        Set<String> groupNames = new HashSet<String>();
+        Collection<String> groupNames = new HashSet<String>();
 
         //Get all flags or a group of flags
-        Set<Flag> flags;
+        Collection<Flag> flags;
         if(group == null) {
             flags = registrar.getPermittedFlags(sender);
             groupNames = registrar.getPermittedFlagGroups(sender);

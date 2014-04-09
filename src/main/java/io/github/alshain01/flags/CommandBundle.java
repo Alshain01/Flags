@@ -164,7 +164,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         final Area area = getArea(player, location);
 
         if(Validate.notPermittedBundle(player, area, bundleName)) { return; }
-        final Set<Flag> bundle = Bundle.getBundle(bundleName);
+        final Collection<Flag> bundle = Bundle.getBundle(bundleName);
 
         for(Flag flag : bundle) {
             player.sendMessage(Message.GetBundle.get()
@@ -178,7 +178,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         final Area area = getArea(player, location);
 
         if(Validate.notPermittedBundle(player, area, bundleName)) { return; }
-        final Set<Flag> bundle = Bundle.getBundle(bundleName);
+        final Collection<Flag> bundle = Bundle.getBundle(bundleName);
 
         for(Flag flag : bundle) {
             if(!area.setState(flag, value, player)) { success = false; }
@@ -195,7 +195,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         final Area area = getArea(player, location);
 
         if(Validate.notPermittedBundle(player, area, bundleName)) { return; }
-        final Set<Flag> bundle = Bundle.getBundle(bundleName);
+        final Collection<Flag> bundle = Bundle.getBundle(bundleName);
 
         for (Flag flag : bundle) {
             if (!area.setState(flag, null, player)) { success = false; }
@@ -284,7 +284,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         if(Validate.notPermittedEditBundle(sender)){ return; }
 
         Flag flag;
-        Set<Flag> bundle;
+        Collection<Flag> bundle;
 
         if(Bundle.isBundle(bundleName)) {
             bundle = Bundle.getBundle(bundleName);
@@ -311,7 +311,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         if(Validate.notBundle(sender, bundleName)) { return; }
 
         boolean success = true;
-        Set<Flag> bundle = Bundle.getBundle(bundleName.toLowerCase());
+        Collection<Flag> bundle = Bundle.getBundle(bundleName.toLowerCase());
 
         for(String s : flags) {
             Flag flag = FlagsAPI.getRegistrar().getFlag(s);
@@ -327,7 +327,7 @@ final class CommandBundle extends Command implements CommandExecutor {
     private static void erase(CommandSender sender, String bundleName) {
         if(Validate.notPermittedEditBundle(sender)){ return; }
 
-        Set<String> bundles = Bundle.getBundleNames();
+        Collection<String> bundles = Bundle.getBundleNames();
         if (bundles == null || bundles.size() == 0 || !bundles.contains(bundleName)) {
             sender.sendMessage(Message.EraseBundleError.get());
             return;
@@ -378,7 +378,7 @@ final class CommandBundle extends Command implements CommandExecutor {
 
         // Send the help lines
         for(String b : bundles) {
-            Set<Flag> flags = Bundle.getBundle(b);
+            Collection<Flag> flags = Bundle.getBundle(b);
             if (flags == null || flags.size() == 0) { continue; }
 
             // Build the help line

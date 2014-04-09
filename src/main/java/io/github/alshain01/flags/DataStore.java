@@ -30,10 +30,7 @@ import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import io.github.alshain01.flags.api.sector.Sector;
 import org.bukkit.Bukkit;
@@ -98,7 +95,7 @@ public abstract class DataStore {
 
 	public abstract Set<Flag> readBundle(String bundleName);
 
-    public abstract void writeBundle(String bundleName, Set<Flag> flags);
+    public abstract void writeBundle(String bundleName, Collection<Flag> flags);
 
 	public abstract Boolean readFlag(Area area, Flag flag);
 

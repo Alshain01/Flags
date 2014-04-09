@@ -1,5 +1,6 @@
 package io.github.alshain01.flags.api.area;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ public interface Ownable extends Area {
      * @deprecated NOT READY YET! DO NOT USE!
      */
     @Deprecated
-    public Set<UUID> getOwnerUniqueId();
+    public Collection<UUID> getOwnerUniqueId();
 
     /**
      * Gets a set of owner names for the area.
@@ -26,5 +27,5 @@ public interface Ownable extends Area {
      * @return the player name of the area owners.
      * @throws io.github.alshain01.flags.api.exception.InvalidAreaException
      */
-    public Set<String> getOwnerName();
+    public Collection<String> getOwnerName();
 }

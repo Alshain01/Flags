@@ -9,6 +9,7 @@ import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -146,7 +147,7 @@ public interface Area extends Comparable<Area> {
      *            The flag to retrieve the trust list for.
      * @return The list of permissions
      */
-    public Set<Permission> getPermissionTrustList(Flag flag);
+    public Collection<Permission> getPermissionTrustList(Flag flag);
 
     /**
      * Adds player to a the trust list.

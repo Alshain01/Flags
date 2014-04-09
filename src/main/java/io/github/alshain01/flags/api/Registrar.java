@@ -58,7 +58,7 @@ public final class Registrar {
 	 * 
 	 * @return A list of names of all the flags registered.
 	 */
-	public Set<String> getFlagGroups() {
+	public Collection<String> getFlagGroups() {
 		final Set<String> groups = new HashSet<String>();
 
 		for (final Flag flag : flagStore.values()) {
@@ -75,7 +75,7 @@ public final class Registrar {
      *
      * @return A list of names of all the flags registered.
      */
-    public Set<String> getPermittedFlagGroups(Permissible p) {
+    public Collection<String> getPermittedFlagGroups(Permissible p) {
         final Set<String> groups = new HashSet<String>();
 
         for (final Flag flag : flagStore.values()) {
@@ -110,7 +110,7 @@ public final class Registrar {
 	 * 
 	 * @return A list of names of all the flags registered.
 	 */
-	public Set<String> getFlagNames() {
+	public Collection<String> getFlagNames() {
 		return flagStore.keySet();
 	}
 
@@ -128,7 +128,7 @@ public final class Registrar {
      *
      * @return A set of all the flags in the group.
      */
-    public Set<Flag> getGroup(String group) {
+    public Collection<Flag> getGroup(String group) {
         Validate.notNull(group);
         final Set<Flag> flags = new HashSet<Flag>();
 
@@ -146,7 +146,7 @@ public final class Registrar {
      *
      * @return A set of all the flags in the group.
      */
-    public Set<Flag> getPermittedGroup(Permissible p, String group) {
+    public Collection<Flag> getPermittedGroup(Permissible p, String group) {
         Validate.notNull(p);
         final Set<Flag> flags = new HashSet<Flag>();
 
@@ -205,7 +205,7 @@ public final class Registrar {
      *
      * @return A set of flags that are not player flags
      */
-    public Set<Flag> getStandardFlags() {
+    public Collection<Flag> getStandardFlags() {
         final Set<Flag> flags = new HashSet<Flag>();
 
         for (final Flag flag : flagStore.values()) {
@@ -222,7 +222,7 @@ public final class Registrar {
      *
      * @return A set of flags that are player flags
      */
-    public Set<Flag> getPlayerFlags() {
+    public Collection<Flag> getPlayerFlags() {
         final Set<Flag> flags = new HashSet<Flag>();
 
         for (final Flag flag : flagStore.values()) {
@@ -239,7 +239,7 @@ public final class Registrar {
      *
      * @return A set of all the flags the permissible may change
      */
-    public Set<Flag> getPermittedFlags(Permissible permissible) {
+    public Collection<Flag> getPermittedFlags(Permissible permissible) {
         Validate.notNull(permissible);
         final Set<Flag> flags = new HashSet<Flag>();
         for(final Flag flag : flagStore.values()) {
@@ -255,7 +255,7 @@ public final class Registrar {
      *
      * @return A set of all the flags the permissible may bypass
      */
-    public Set<Flag> getBypassedFlags(Permissible permissible) {
+    public Collection<Flag> getBypassedFlags(Permissible permissible) {
         Validate.notNull(permissible);
         final Set<Flag> flags = new HashSet<Flag>();
         for(final Flag flag : flagStore.values()) {
@@ -351,7 +351,7 @@ public final class Registrar {
      *            The group the flags belong in.
      * @return The set of flags if the flags were successfully registered. May be null or empty.
      */
-    public Set<Flag> register(ConfigurationSection data, String group) {
+    public Collection<Flag> register(ConfigurationSection data, String group) {
         Validate.notNull(data);
         Validate.notNull(group);
 
