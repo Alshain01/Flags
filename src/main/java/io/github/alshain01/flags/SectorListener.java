@@ -37,7 +37,7 @@ final class SectorListener implements Listener {
 
         if(e.getAction() == Action.LEFT_CLICK_BLOCK) {
             //Process the first corner
-            player.sendMessage(Message.SectorStarted.get());
+            player.sendMessage(Message.SECTOR_STARTED.get());
             createQueue.put(player.getUniqueId(), corner1);
             e.setCancelled(true);
         }
@@ -51,15 +51,15 @@ final class SectorListener implements Listener {
                 UUID parent = sectors.isContained(corner1, corner2);
                 if(parent == null || sectors.get(parent).getParentID() != null) {
                     // Sector is only partially inside another or is inside another subdivison
-                    player.sendMessage(Message.SectorOverlapError.get());
+                    player.sendMessage(Message.SECTOR_OVERLAP_ERROR.get());
                     return;
                 }
                 // Create Subdivision
-                player.sendMessage(Message.SubsectorCreated.get());
+                player.sendMessage(Message.SUBSECTOR_CREATED.get());
                 Bukkit.getPluginManager().callEvent(new SectorCreateEvent(sectors.add(corner1, corner2, parent)));
             } else {
                 // Create Parent Sector
-                player.sendMessage(Message.SectorCreated.get());
+                player.sendMessage(Message.SECTOR_CREATED.get());
                 Bukkit.getPluginManager().callEvent(new SectorCreateEvent(sectors.add(corner1, corner2)));
             }
             createQueue.remove(player.getUniqueId());
@@ -76,7 +76,7 @@ final class SectorListener implements Listener {
                 && (newSlot == null || newSlot.getType() != tool)
                 && createQueue.containsKey(player.getUniqueId())) {
                     createQueue.remove(player.getUniqueId());
-                    player.sendMessage(Message.CancelCreateSector.get());
+                    player.sendMessage(Message.CANCEL_CREATE_SECTOR.get());
         }
     }
 

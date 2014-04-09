@@ -93,7 +93,7 @@ final class CommandBundle extends Command implements CommandExecutor {
 
             // Location based commands require the player to be in the world
             if(!(sender instanceof Player)) {
-                sender.sendMessage(Message.NoConsoleError.get());
+                sender.sendMessage(Message.NO_CONSOLE_ERROR.get());
                 return true;
             }
         }
@@ -166,7 +166,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         final Collection<Flag> bundle = FlagsAPI.getBundle(bundleName);
 
         for(Flag flag : bundle) {
-            player.sendMessage(Message.GetBundle.get()
+            player.sendMessage(Message.GET_BUNDLE.get()
                     .replace("{Bundle}", flag.getName())
                     .replace("{Value}", getFormattedValue(area.getState(flag, false))));
         }
@@ -183,7 +183,7 @@ final class CommandBundle extends Command implements CommandExecutor {
             if(!area.setState(flag, value, player)) { success = false; }
         }
 
-        player.sendMessage((success ? Message.SetBundle.get() : Message.SetMultipleFlagsError.get())
+        player.sendMessage((success ? Message.SET_BUNDLE.get() : Message.SET_MULTIPLE_FLAGS_ERROR.get())
                 .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                 .replace("{Bundle}", bundleName)
                 .replace("{Value}", getFormattedValue(value).toLowerCase()));
@@ -200,7 +200,7 @@ final class CommandBundle extends Command implements CommandExecutor {
             if (!area.setState(flag, null, player)) { success = false; }
         }
 
-        player.sendMessage((success ? Message.RemoveBundle.get() : Message.RemoveAllFlags.get())
+        player.sendMessage((success ? Message.REMOVE_BUNDLE.get() : Message.REMOVE_ALL_FLAGS.get())
                 .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                 .replace("{Bundle}", bundleName));
     }
@@ -236,7 +236,7 @@ final class CommandBundle extends Command implements CommandExecutor {
             }
         }
 
-        player.sendMessage((success ? Message.SetTrust.get() : Message.SetTrustError.get())
+        player.sendMessage((success ? Message.SET_TRUST.get() : Message.SET_TRUST_ERROR.get())
                 .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                 .replace("{Flag}", bundleName));
         return true;
@@ -274,7 +274,7 @@ final class CommandBundle extends Command implements CommandExecutor {
             }
         }
 
-        player.sendMessage((success ? Message.RemoveTrust.get() : Message.RemoveTrustError.get())
+        player.sendMessage((success ? Message.REMOVE_TRUST.get() : Message.REMOVE_TRUST_ERROR.get())
                 .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                 .replace("{Flag}", bundleName));
     }
@@ -294,14 +294,14 @@ final class CommandBundle extends Command implements CommandExecutor {
         for(String f : flags) {
             flag = FlagsAPI.getRegistrar().getFlagIgnoreCase(f);
             if (flag == null) {
-                sender.sendMessage(Message.AddBundleError.get());
+                sender.sendMessage(Message.ADD_BUNDLE_ERROR.get());
                 return;
             }
             bundle.add(flag);
         }
 
         FlagsAPI.setBundle(bundleName, bundle);
-        sender.sendMessage(Message.UpdateBundle.get()
+        sender.sendMessage(Message.UPDATE_BUNDLE.get()
                 .replace("{Bundle}", bundleName));
     }
 
@@ -319,7 +319,7 @@ final class CommandBundle extends Command implements CommandExecutor {
         }
         FlagsAPI.setBundle(bundleName, bundle);
 
-        sender.sendMessage((success ? Message.UpdateBundle.get() : Message.RemoveAllFlagsError.get())
+        sender.sendMessage((success ? Message.UPDATE_BUNDLE.get() : Message.REMOVE_ALL_FLAGS_ERROR.get())
                 .replace("{Bundle}", bundleName));
     }
 
@@ -328,19 +328,19 @@ final class CommandBundle extends Command implements CommandExecutor {
 
         Collection<String> bundles = FlagsAPI.getBundleNames();
         if (bundles == null || bundles.size() == 0 || !bundles.contains(bundleName)) {
-            sender.sendMessage(Message.EraseBundleError.get());
+            sender.sendMessage(Message.ERASE_BUNDLE_ERROR.get());
             return;
         }
 
         FlagsAPI.setBundle(bundleName, null);
-        sender.sendMessage(Message.EraseBundle.get().replace("{Bundle}", bundleName));
+        sender.sendMessage(Message.ERASE_BUNDLE.get().replace("{Bundle}", bundleName));
     }
 
     private static void help (CommandSender sender, int page) {
         int startIndex, endIndex, totalPages;
         List<String> bundles = new ArrayList<String>(FlagsAPI.getBundleNames());
 
-        if (Validate.isNullOrEmpty(sender, bundles, Message.Bundle)) { return; }
+        if (Validate.isNullOrEmpty(sender, bundles, Message.BUNDLE)) { return; }
         Collections.sort(bundles);
 
         // Get total pages: 1 header per page
@@ -362,17 +362,17 @@ final class CommandBundle extends Command implements CommandExecutor {
         bundles = bundles.subList(startIndex, endIndex);
 
         // Send the help header
-        sender.sendMessage(Message.HelpHeader.get()
-                .replace("{Type}", Message.Bundle.get())
-                .replace("{Group}", Message.Index.get())
+        sender.sendMessage(Message.HELP_HEADER.get()
+                .replace("{Type}", Message.BUNDLE.get())
+                .replace("{Group}", Message.INDEX.get())
                 .replace("{Page}", String.valueOf(page))
                 .replace("{TotalPages}", String.valueOf(totalPages))
-                .replace("{Type}", Message.Bundle.get()));
+                .replace("{Type}", Message.BUNDLE.get()));
 
         // Send the usage line.  Displays only on the first page.
         if (page == 1) {
-            sender.sendMessage(Message.HelpInfo.get()
-                    .replace("{Type}", Message.Bundle.get().toLowerCase()));
+            sender.sendMessage(Message.HELP_INFO.get()
+                    .replace("{Type}", Message.BUNDLE.get().toLowerCase()));
         }
 
         // Send the help lines
@@ -393,7 +393,7 @@ final class CommandBundle extends Command implements CommandExecutor {
 
                 description.append(flag.getName());
             }
-            sender.sendMessage(Message.HelpTopic.get()
+            sender.sendMessage(Message.HELP_TOPIC.get()
                     .replace("{Topic}", b)
                     .replace("{Description}", description.toString()));
         }

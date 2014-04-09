@@ -30,7 +30,7 @@ import io.github.alshain01.flags.Message;
  * Enumeration for handling withdrawal and deposit
  */
 public enum EconomyTransactionType {
-	Withdraw, Deposit;
+	WITHDRAW, DEPOSIT;
 
 	/**
 	 * @return The localized message of the transaction type.

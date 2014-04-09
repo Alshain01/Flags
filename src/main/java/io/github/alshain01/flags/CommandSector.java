@@ -1,7 +1,5 @@
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.Flags;
-import io.github.alshain01.flags.Message;
 import io.github.alshain01.flags.api.FlagsAPI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -36,7 +34,7 @@ final class CommandSector implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player)) {
-            sender.sendMessage(Message.NoConsoleError.get());
+            sender.sendMessage(Message.NO_CONSOLE_ERROR.get());
             return true;
         }
 
@@ -52,23 +50,23 @@ final class CommandSector implements CommandExecutor {
         }
 
         if(!cType.hasPermission(sender)) {
-            sender.sendMessage(Message.FlagPermError.get().replace("{Type}", Message.Command.get()));
+            sender.sendMessage(Message.FLAG_PERM_ERROR.get().replace("{Type}", Message.COMMAND.get()));
             return true;
         }
 
         switch(cType) {
             case DELETE:
                 sender.sendMessage(FlagsAPI.getSectorManager().delete(((Player)sender).getLocation())
-                    ? Message.DeleteSector.get()
-                    : Message.NoSectorError.get());
+                    ? Message.DELETE_SECTOR.get()
+                    : Message.NO_SECTOR_ERROR.get());
                 return true;
             case DELETETOPLEVEL:
                 sender.sendMessage(FlagsAPI.getSectorManager().deleteTopLevel(((Player)sender).getLocation())
-                        ? Message.DeleteSector.get()
-                        : Message.NoSectorError.get());
+                        ? Message.DELETE_SECTOR.get()
+                        : Message.NO_SECTOR_ERROR.get());
             case DELETEALL:
                 FlagsAPI.getSectorManager().clear();
-                sender.sendMessage(Message.DeleteAllSectors.get());
+                sender.sendMessage(Message.DELETE_ALL_SECTORS.get());
                 return true;
         }
         sender.sendMessage(getUsage(sender));

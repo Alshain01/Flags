@@ -40,7 +40,6 @@ import io.github.alshain01.flags.api.event.FlagPlayerTrustChangedEvent;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -88,7 +87,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
                 && sender instanceof Player // Need a player to charge
                 && value != getState(flag, true) // The flag isn't actually
                 // changing
-                && flag.getPrice(EconomyPurchaseType.Flag) != 0 // No defined price
+                && flag.getPrice(EconomyPurchaseType.FLAG) != 0 // No defined price
                 && !(this instanceof AreaWilderness) // No charge for world flags
                 && !(this instanceof AreaDefault) // No charge for defaults
                 && !(this instanceof Administrator && ((Administrator) this)
@@ -103,17 +102,17 @@ abstract class AreaBase implements Area, Comparable<Area> {
                     ((Player) sender).getLocation().getWorld())
                     .getState(flag, true))) {
                 // The flag is being set, see if the player can afford it.
-                if (isFundingLow(EconomyPurchaseType.Flag, flag,
+                if (isFundingLow(EconomyPurchaseType.FLAG, flag,
                         (Player) sender)) {
                     return false;
                 }
-                transaction = EconomyTransactionType.Withdraw;
+                transaction = EconomyTransactionType.WITHDRAW;
             } else {
                 // Check whether or not to refund the account for setting the
                 // flag value
-                if (EconomyPurchaseType.Flag.isRefundable()
+                if (EconomyPurchaseType.FLAG.isRefundable()
                         && !EconomyBaseValue.ALWAYS.isSet()) {
-                    transaction = EconomyTransactionType.Deposit;
+                    transaction = EconomyTransactionType.DEPOSIT;
                 }
             }
         }
@@ -124,7 +123,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
 
         // Delay making the transaction in case the event is cancelled.
         if (transaction != null) {
-            if (failedTransaction(transaction, EconomyPurchaseType.Flag, flag,
+            if (failedTransaction(transaction, EconomyPurchaseType.FLAG, flag,
                     (Player) sender)) {
                 return true;
             }
@@ -187,7 +186,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
         if (Flags.getEconomy() != null // No economy
                 && sender != null
                 && sender instanceof Player // Need a player to charge
-                && flag.getPrice(EconomyPurchaseType.Message) != 0 // No defined price
+                && flag.getPrice(EconomyPurchaseType.MESSAGE) != 0 // No defined price
                 && !(this instanceof AreaWilderness) // No charge for world flags
                 && !(this instanceof AreaDefault) // No charge for defaults
                 && !(this instanceof Administrator && ((Administrator) this)
@@ -200,19 +199,19 @@ abstract class AreaBase implements Area, Comparable<Area> {
                 // (if they are just correcting caps, don't charge, I hate
                 // discouraging bad spelling & grammar)
                 if (!getMessage(flag, false).equalsIgnoreCase(message)) {
-                    if (isFundingLow(EconomyPurchaseType.Message, flag, (Player) sender)) {
+                    if (isFundingLow(EconomyPurchaseType.MESSAGE, flag, (Player) sender)) {
                         return false;
                     }
-                    transaction = EconomyTransactionType.Withdraw;
+                    transaction = EconomyTransactionType.WITHDRAW;
                 }
             } else {
                 // Check whether or not to refund the account
-                if (EconomyPurchaseType.Message.isRefundable()) {
+                if (EconomyPurchaseType.MESSAGE.isRefundable()) {
                     // Make sure the message we are refunding isn't identical to
                     // the default message
                     if (!getMessage(flag, false).equals(
                             flag.getDefaultAreaMessage())) {
-                        transaction = EconomyTransactionType.Deposit;
+                        transaction = EconomyTransactionType.DEPOSIT;
                     }
                 }
             }
@@ -226,7 +225,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
 
         // Delay making the transaction in case the event is cancelled.
         if (transaction != null) {
-            if (failedTransaction(transaction, EconomyPurchaseType.Message, flag, (Player) sender)) {
+            if (failedTransaction(transaction, EconomyPurchaseType.MESSAGE, flag, (Player) sender)) {
                 return true;
             }
         }
@@ -438,7 +437,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
         final double price = flag.getPrice(product);
 
         if (price > Flags.getEconomy().getBalance(player.getName())) {
-            player.sendMessage(Message.LowFunds.get()
+            player.sendMessage(Message.LOW_FUNDS.get()
                     .replace("{PurchaseType}", product.getLocal().toLowerCase())
                     .replace("{Price}", Flags.getEconomy().format(price))
                     .replace("{Flag}", flag.getName()));
@@ -454,7 +453,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
                                            EconomyPurchaseType product, Flag flag, Player player) {
         final double price = flag.getPrice(product);
 
-        final EconomyResponse r = transaction == EconomyTransactionType.Withdraw ? Flags
+        final EconomyResponse r = transaction == EconomyTransactionType.WITHDRAW ? Flags
                 .getEconomy().withdrawPlayer(player.getName(), price) // Withdrawal
                 : Flags.getEconomy().depositPlayer(player.getName(), price); // Deposit
 
@@ -465,7 +464,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
 
         // Something went wrong if we made it this far.
         Bukkit.getPluginManager().getPlugin("Flags").getLogger().warning(String.format("[Economy Error] %s", r.errorMessage));
-        player.sendMessage(Message.Error.get().replace("{Error}", r.errorMessage));
+        player.sendMessage(Message.ERROR.get().replace("{Error}", r.errorMessage));
         return true;
     }
 }

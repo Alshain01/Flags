@@ -139,7 +139,7 @@ public enum CuboidPlugin {
 
         for (CuboidPlugin t : CuboidPlugin.values()) {
             try {
-                t.cuboidName = ChatColor.translateAlternateColorCodes('&', messages.getString(t.getName()));
+                t.cuboidName = ChatColor.translateAlternateColorCodes('&', messages.getString(t.toString()));
             } catch (NullPointerException ex) {
                 System.out.print("Failed to load message " + t.getName());
             }

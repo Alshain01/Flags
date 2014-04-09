@@ -29,25 +29,23 @@ import org.bukkit.Bukkit;
  * Enumeration for handling the purchasable product type
  */
 public enum EconomyPurchaseType {
-	Flag('f'), Message('m');
+	FLAG, MESSAGE;
 
 	public static EconomyPurchaseType get(String name) {
 		for (final EconomyPurchaseType p : EconomyPurchaseType.values()) {
 			if (name.toLowerCase().equals(p.toString().toLowerCase())
-					|| name.toLowerCase().equals(String.valueOf(p.alias))) {
+					|| name.toLowerCase().equals(String.valueOf(p.toString().substring(0,1).toLowerCase()))) {
 				return p;
 			}
 		}
 		return null;
 	}
 
-    private final char alias;
     private final boolean refundable;
 
-	EconomyPurchaseType(char alias) {
-		this.alias = alias;
+	EconomyPurchaseType() {
         this.refundable = Bukkit.getServer().getPluginManager().getPlugin("Flags").getConfig()
-                .getBoolean("Economy.Refund." + this.toString());
+                .getBoolean("Economy.Refund." + this.toString().substring(0, 1).toUpperCase() + this.toString().substring(1).toLowerCase());
 	}
 
 	/**

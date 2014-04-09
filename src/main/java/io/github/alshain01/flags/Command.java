@@ -41,16 +41,16 @@ abstract class Command {
 
         static boolean notArea(CommandSender cs, Area area) {
             if(area != null && area.isArea()) { return false; }
-            cs.sendMessage(Message.NoAreaError.get()
+            cs.sendMessage(Message.NO_AREA_ERROR.get()
                     .replace("{AreaType}", FlagsAPI.getCuboidPlugin().getCuboidName().toLowerCase()));
             return true;
         }
 
         static boolean notFlag(CommandSender sender, Flag flag, String requestedFlag) {
             if(flag != null) { return false; }
-            sender.sendMessage(Message.InvalidFlagError.get()
+            sender.sendMessage(Message.INVALID_FLAG_ERROR.get()
                     .replace("{RequestedName}", requestedFlag)
-                    .replace("{Type}", Message.Flag.get().toLowerCase()));
+                    .replace("{Type}", Message.FLAG.get().toLowerCase()));
             return true;
         }
 
@@ -58,9 +58,9 @@ abstract class Command {
             if (a.hasFlagPermission(p)) { return false; }
             if(p instanceof CommandSender) {
                 String message = a instanceof AreaWilderness || a instanceof AreaDefault
-                        ? Message.WildernessPermError.get() : Message.AreaPermError.get()
+                        ? Message.WILDERNESS_PERM_ERROR.get() : Message.AREA_PERM_ERROR.get()
                         .replace("{AreaType}", a.getCuboidPlugin().getCuboidName())
-                        .replace("{Type}", Message.Flag.get().toLowerCase());
+                        .replace("{Type}", Message.FLAG.get().toLowerCase());
 
                 if(a instanceof Ownable) {
                     message = message.replace("{OwnerName}", ((Ownable)a).getOwnerName().toArray()[0].toString());
@@ -75,7 +75,7 @@ abstract class Command {
         static boolean notPermittedFlag(Permissible p, Flag f) {
             if(p.hasPermission((f).getPermission())) { return false; }
             if(p instanceof CommandSender) {
-                ((CommandSender)p).sendMessage(Message.FlagPermError.get().replace("{Type}", Message.Flag.get().toLowerCase()));
+                ((CommandSender)p).sendMessage(Message.FLAG_PERM_ERROR.get().replace("{Type}", Message.FLAG.get().toLowerCase()));
             }
             return true;
         }
@@ -89,17 +89,17 @@ abstract class Command {
 
         static boolean notBundle(CommandSender sender, String bundle) {
             if (FlagsAPI.isBundle(bundle)) { return false; }
-            sender.sendMessage(Message.InvalidFlagError.get()
+            sender.sendMessage(Message.INVALID_FLAG_ERROR.get()
                     .replace("{RequestedName}", bundle)
-                    .replace("{Type}", Message.Bundle.get().toLowerCase()));
+                    .replace("{Type}", Message.BUNDLE.get().toLowerCase()));
             return true;
         }
 
         private static boolean notPermittedBundle(Permissible p, String bundleName) {
             if(p.hasPermission("flags.bundle." + bundleName)) { return false; }
             if(p instanceof CommandSender) {
-                ((CommandSender)p).sendMessage(Message.FlagPermError.get()
-                        .replace("{Type}", Message.Bundle.get().toLowerCase()));
+                ((CommandSender)p).sendMessage(Message.FLAG_PERM_ERROR.get()
+                        .replace("{Type}", Message.BUNDLE.get().toLowerCase()));
             }
             return true;
         }
@@ -108,9 +108,9 @@ abstract class Command {
             if (area.hasBundlePermission(p)) { return false; }
             if(p instanceof CommandSender) {
                 String message = ((area instanceof AreaWilderness || area instanceof AreaDefault)
-                        ? Message.WildernessPermError.get() : Message.AreaPermError.get())
+                        ? Message.WILDERNESS_PERM_ERROR.get() : Message.AREA_PERM_ERROR.get())
                         .replace("{AreaType}", area.getCuboidPlugin().getCuboidName())
-                        .replace("{Type}", Message.Bundle.get().toLowerCase());
+                        .replace("{Type}", Message.BUNDLE.get().toLowerCase());
 
                 if(area instanceof Ownable) {
                     message = message.replace("{OwnerName}", ((Ownable)area).getOwnerName().toArray()[0].toString());
@@ -133,27 +133,27 @@ abstract class Command {
         static boolean notPermittedEditBundle(Permissible p) {
             if (p.hasPermission("flags.command.bundle.edit")) { return false; }
             if(p instanceof CommandSender) {
-                ((CommandSender)p).sendMessage(Message.BundlePermError.get());
+                ((CommandSender)p).sendMessage(Message.BUNDLE_PERM_ERROR.get());
             }
             return true;
         }
 
         static boolean notPlayerFlag(CommandSender cs, Flag f) {
             if(f.isPlayerFlag()) { return false; }
-            cs.sendMessage(Message.PlayerFlagError.get()
+            cs.sendMessage(Message.PLAYER_FLAG_ERROR.get()
                     .replace("{Flag}", f.getName()));
             return true;
         }
 
         static boolean notSubdividable(CommandSender cs) {
             if(FlagsAPI.getCuboidPlugin().hasSubdivisions()) { return false; }
-            cs.sendMessage(Message.SubdivisionSupportError.get().replace("{System}", FlagsAPI.getCuboidPlugin().getDisplayName()));
+            cs.sendMessage(Message.SUBDIVISION_SUPPORT_ERROR.get().replace("{System}", FlagsAPI.getCuboidPlugin().getDisplayName()));
             return true;
         }
 
         static boolean notSubdivision(CommandSender cs, Area a) {
             if(!(a instanceof Subdividable) || !((Subdividable)a).isSubdivision()) {
-                cs.sendMessage(Message.SubdivisionError.get());
+                cs.sendMessage(Message.SUBDIVISION_ERROR.get());
                 return true;
             }
             return false;
@@ -161,7 +161,7 @@ abstract class Command {
 
         static boolean notTrustList(CommandSender cs, Set<String> tl, String a, String f) {
             if(notTrustList(tl)) {
-                cs.sendMessage(Message.InvalidTrustError.get()
+                cs.sendMessage(Message.INVALID_TRUST_ERROR.get()
                         .replace("{AreaType}", a.toLowerCase())
                         .replace("{Flag}", f));
                 return true;
@@ -182,7 +182,7 @@ abstract class Command {
 
         static boolean noEconomyInstalled(CommandSender cs) {
             if(Flags.getEconomy() == null) {
-                cs.sendMessage(Message.EconomyError.get());
+                cs.sendMessage(Message.ECONOMY_ERROR.get());
                 return true;
             }
             return false;
@@ -191,14 +191,14 @@ abstract class Command {
         static boolean notPermittedEditPrice(Permissible p) {
             if (p.hasPermission("flags.command.flag.charge")) { return false; }
             if(p instanceof CommandSender) {
-                ((CommandSender)p).sendMessage(Message.PricePermError.get());
+                ((CommandSender)p).sendMessage(Message.PRICE_PERM_ERROR.get());
             }
             return true;
         }
 
         static boolean isNullOrEmpty(CommandSender sender, Collection c, Message m) {
             if (c == null || c.size() == 0) {
-                sender.sendMessage(Message.NoFlagFound.get().replace("{Type}", m.get().toLowerCase()));
+                sender.sendMessage(Message.NO_FLAG_FOUND.get().replace("{Type}", m.get().toLowerCase()));
                 return true;
             }
             return false;
@@ -255,7 +255,7 @@ abstract class Command {
     }
 
     static String getFormattedValue(boolean value) {
-        return (value) ? Message.ValueColorTrue.get() : Message.ValueColorFalse.get();
+        return (value) ? Message.VALUE_COLOR_TRUE.get() : Message.VALUE_COLOR_FALSE.get();
     }
 
     static Area getArea(Location loc, CommandLocation location) {
@@ -301,7 +301,7 @@ abstract class Command {
                 failedList.append(name);
             }
 
-            player.sendMessage(Message.PlayerNotFoundError.get().replace("{Player}", failedList.toString()));
+            player.sendMessage(Message.PLAYER_NOT_FOUND_ERROR.get().replace("{Player}", failedList.toString()));
         }
         return players;
     }

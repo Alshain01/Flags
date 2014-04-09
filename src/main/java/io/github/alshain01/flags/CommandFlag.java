@@ -134,7 +134,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         // Location based commands require the player to be in the world
         // Inherit is a special case, doesn't require a location but assumes one exists
         if((location != null || command == FlagCommandType.INHERIT) && !(sender instanceof Player)) {
-            sender.sendMessage(Message.NoConsoleError.get());
+            sender.sendMessage(Message.NO_CONSOLE_ERROR.get());
             return true;
         }
 
@@ -283,7 +283,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
 
         if (flag != null) {
             // Return the single flag requested
-            player.sendMessage(Message.GetFlag.get()
+            player.sendMessage(Message.GET_FLAG.get()
                     .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                     .replace("{Flag}", flag.getName())
                     .replace("{Value}", getFormattedValue(area.getState(flag, false)).toLowerCase()));
@@ -291,7 +291,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         }
 
         // No flag provided, list all set flags for the area
-        StringBuilder message = new StringBuilder(Message.GetAllFlags.get()
+        StringBuilder message = new StringBuilder(Message.GET_ALL_FLAGS.get()
                 .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase()));
         boolean first = true; // Governs whether we insert a comma or not (true means no)
         Boolean value;
@@ -324,7 +324,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
 
         // Set the flag
         if(area.setState(flag, value, player)) {
-            player.sendMessage(Message.SetFlag.get()
+            player.sendMessage(Message.SET_FLAG.get()
                     .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                     .replace("{Flag}", flag.getName())
                     .replace("{Value}", getFormattedValue(value).toLowerCase()));
@@ -341,7 +341,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
             if (Validate.notPermittedFlag(player, flag)) { return; }
 
             if(area.setState(flag, null, player)) {
-                player.sendMessage(Message.RemoveFlag.get()
+                player.sendMessage(Message.REMOVE_FLAG.get()
                         .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                         .replace("{Flag}", flag.getName()));
             }
@@ -358,7 +358,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
             }
         }
 
-        player.sendMessage((success ? Message.RemoveAllFlags.get() : Message.RemoveAllFlagsError.get())
+        player.sendMessage((success ? Message.REMOVE_ALL_FLAGS.get() : Message.REMOVE_ALL_FLAGS_ERROR.get())
                 .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase()));
     }
 
@@ -384,7 +384,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
                 || Validate.notTrustList(player, trustList, area.getCuboidPlugin().getCuboidName(), flag.getName())) { return; }
 
         // List all set flags
-        message = new StringBuilder(Message.GetTrust.get()
+        message = new StringBuilder(Message.GET_TRUST.get()
                 .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                 .replace("{Flag}", flag.getName()));
 
@@ -425,7 +425,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
             if(!area.setPermissionTrust(flag, p, player)) { success = false; }
         }
 
-        player.sendMessage((success ? Message.SetTrust.get() : Message.SetTrustError.get())
+        player.sendMessage((success ? Message.SET_TRUST.get() : Message.SET_TRUST_ERROR.get())
                 .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                 .replace("{Flag}", flag.getName()));
         return true;
@@ -466,7 +466,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
             if(!area.removePermissionTrust(flag, p, player)) { success = false; }
         }
 
-        player.sendMessage((success ? Message.RemoveTrust.get() : Message.RemoveTrustError.get())
+        player.sendMessage((success ? Message.REMOVE_TRUST.get() : Message.REMOVE_TRUST_ERROR.get())
                 .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
                 .replace("{Flag}", flag.getName()));
     }
@@ -477,7 +477,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
     private static boolean presentMessage(Player player, CommandLocation location, Flag flag) {
         // Acquire the flag
         if(!flag.isPlayerFlag()) {
-            player.sendMessage(Message.PlayerFlagError.get()
+            player.sendMessage(Message.PLAYER_FLAG_ERROR.get()
                     .replace("{Flag}", flag.getName()));
             return true;
         }
@@ -529,7 +529,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         }
 
         ((Subdividable)area).setInherited(value);
-        player.sendMessage(Message.SetInherited.get()
+        player.sendMessage(Message.SET_INHERITED.get()
                 .replace("{Value}", getFormattedValue(((Subdividable) area).isInherited()).toLowerCase()));
     }
 
@@ -539,7 +539,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
     private static void getPrice(CommandSender sender, EconomyPurchaseType type, Flag flag) {
         if(Validate.noEconomyInstalled(sender)) { return; }
 
-        sender.sendMessage(Message.GetPrice.get()
+        sender.sendMessage(Message.GET_PRICE.get()
                 .replace("{PurchaseType}", type.getLocal().toLowerCase())
                 .replace("{Flag}", flag.getName())
                 .replace("{Price}", Flags.getEconomy().format(flag.getPrice(type))));
@@ -554,7 +554,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         catch (NumberFormatException ex) { return false; }
 
         flag.setPrice(type, p);
-        sender.sendMessage(Message.SetPrice.get()
+        sender.sendMessage(Message.SET_PRICE.get()
                 .replace("{PurchaseType}", type.getLocal().toLowerCase())
                 .replace("{Flag}", flag.getName())
                 .replace("{Price}", price));
@@ -595,7 +595,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         topics.addAll(flagNames);
 
         // No flags were found, there should always be flags.
-        if(Validate.isNullOrEmpty(sender, topics, Message.Flag)) { return; }
+        if(Validate.isNullOrEmpty(sender, topics, Message.FLAG)) { return; }
 
         //Get total pages
         //1 header per page
@@ -609,16 +609,16 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         //Check the page number requested
         if (page < 1 || page > total) { page = 1; }
 
-        String indexType = Message.Index.get();
+        String indexType = Message.INDEX.get();
         if(group != null) {
             indexType = registrar.getFlag(topics.get(0)).getFlagGroup();
         }
 
-        sender.sendMessage(Message.HelpHeader.get()
+        sender.sendMessage(Message.HELP_HEADER.get()
                 .replace("{Group}", indexType)
                 .replace("{Page}", String.valueOf(page))
                 .replace("{TotalPages}", String.valueOf(total))
-                .replace("{Type}", Message.Flag.get()));
+                .replace("{Type}", Message.FLAG.get()));
 
         // Setup for only displaying 10 lines at a time (including the header)
         int lineCount = 0;
@@ -626,10 +626,10 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         // Usage line.
         if (page == 1) {
             if(group == null) {
-                sender.sendMessage(Message.HelpInfo.get()
-                        .replace("{Type}", Message.Flag.get().toLowerCase()));
+                sender.sendMessage(Message.HELP_INFO.get()
+                        .replace("{Type}", Message.FLAG.get().toLowerCase()));
             } else {
-                sender.sendMessage(Message.GroupHelpInfo.get()
+                sender.sendMessage(Message.GROUP_HELP_INFO.get()
                         .replace("{Type}", registrar.getFlag(flagNames.get(0)).getFlagGroup()));
             }
             lineCount++;
@@ -645,12 +645,12 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
         while (position < topics.size()) {
             String message;
             if(groupNames.contains(topics.get(position))) {
-                message = Message.HelpTopic.get()
+                message = Message.HELP_TOPIC.get()
                         .replace("{Topic}", topics.get(position))
-                        .replace("{Description}", Message.GroupHelpDescription.get().replace("{Group}", topics.get(position)));
+                        .replace("{Description}", Message.GROUP_HELP_DESCRIPTION.get().replace("{Group}", topics.get(position)));
 
             } else {
-                message = Message.HelpTopic.get()
+                message = Message.HELP_TOPIC.get()
                         .replace("{Topic}", topics.get(position))
                         .replace("{Description}", registrar.getFlag(topics.get(position)).getDescription());
             }
@@ -668,9 +668,9 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
     }
 
     private static void sendFlagHelp(CommandSender sender, Flag flag) {
-        sender.sendMessage(Message.FlagHelpHeader.get()
+        sender.sendMessage(Message.FLAG_HELP_HEADER.get()
                 .replace("{Flag}", flag.getName()));
-        sender.sendMessage(Message.FlagDescription.get()
+        sender.sendMessage(Message.FLAG_DESCRIPTION.get()
                .replace("{Description}", flag.getDescription()));
     }
 }

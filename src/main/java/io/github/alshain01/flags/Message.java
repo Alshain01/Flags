@@ -35,27 +35,27 @@ import java.io.File;
  */
 public enum Message {
     // General Translations
-    ValueColorTrue, ValueColorFalse, Flag, Bundle, Command, Index, Error,
+    VALUE_COLOR_TRUE, VALUE_COLOR_FALSE, FLAG, BUNDLE, COMMAND, INDEX, ERROR,
 
 	// Errors
-	NoConsoleError, SetTrustError, RemoveTrustError, SetMultipleFlagsError, RemoveAllFlagsError, EraseBundleError,
-    AddBundleError, BundlePermError, PricePermError, SubdivisionError, NoFlagFound, NoAreaError,
-    InvalidFlagError, PlayerFlagError, InvalidTrustError, FlagPermError, AreaPermError, WildernessPermError,
-	EconomyError, SQLDatabaseError, SubdivisionSupportError, PlayerNotFoundError,
+	NO_CONSOLE_ERROR, SET_TRUST_ERROR, REMOVE_TRUST_ERROR, SET_MULTIPLE_FLAGS_ERROR, REMOVE_ALL_FLAGS_ERROR, ERASE_BUNDLE_ERROR,
+    ADD_BUNDLE_ERROR, BUNDLE_PERM_ERROR, PRICE_PERM_ERROR, SUBDIVISION_ERROR, NO_FLAG_FOUND, NO_AREA_ERROR,
+    INVALID_FLAG_ERROR, PLAYER_FLAG_ERROR, INVALID_TRUST_ERROR, FLAG_PERM_ERROR, AREA_PERM_ERROR, WILDERNESS_PERM_ERROR,
+    ECONOMY_ERROR, SQL_DATABASE_ERROR, SUBDIVISION_SUPPORT_ERROR, PLAYER_NOT_FOUND_ERROR,
 
 	// Commands
-    GetFlag, GetAllFlags, SetFlag, RemoveFlag, RemoveAllFlags, GetTrust, SetTrust, RemoveTrust,
-    SetInherited, GetBundle, SetBundle, RemoveBundle, UpdateBundle, EraseBundle,
+    GET_FLAG, GET_ALL_FLAGS, SET_FLAG, REMOVE_FLAG, REMOVE_ALL_FLAGS, GET_TRUST, SET_TRUST, REMOVE_TRUST,
+    SET_INHERITED, GET_BUNDLE, SET_BUNDLE, REMOVE_BUNDLE, UPDATE_BUNDLE, ERASE_BUNDLE,
 
     // Economy
-    SetPrice, GetPrice, LowFunds, Withdraw, Deposit,
+    SET_PRICE, GET_PRICE, LOW_FUNDS, WITHDRAW, DEPOSIT,
 
     // Sector
-    DeleteSector, DeleteAllSectors, SectorOverlapError, CancelCreateSector,
-    SectorCreated, SectorStarted, NoSectorError, SubsectorCreated,
+    DELETE_SECTOR, DELETE_ALL_SECTORS, SECTOR_OVERLAP_ERROR, CANCEL_CREATE_SECTOR,
+    SECTOR_CREATED, SECTOR_STARTED, NO_SECTOR_ERROR, SUBSECTOR_CREATED,
 
     // Help
-    HelpHeader, FlagHelpHeader, FlagDescription, HelpInfo, GroupHelpInfo, HelpTopic, GroupHelpDescription;
+    HELP_HEADER, FLAG_HELP_HEADER, FLAG_DESCRIPTION, HELP_INFO, GROUP_HELP_INFO, HELP_TOPIC, GROUP_HELP_DESCRIPTION;
 
     String message;
 
