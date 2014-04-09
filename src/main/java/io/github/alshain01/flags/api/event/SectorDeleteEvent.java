@@ -32,9 +32,8 @@ import org.bukkit.event.HandlerList;
  * Event that occurs when a sector is deleted.
  */
 @SuppressWarnings("unused")
-public class SectorDeleteEvent extends Event {
+public class SectorDeleteEvent extends SectorEvent {
     private static final HandlerList handlers = new HandlerList();
-    private final Sector sector;
 
     /**
      * Creates a new SectorDeleteEvent
@@ -43,16 +42,7 @@ public class SectorDeleteEvent extends Event {
      *            The sector being deleted.
      */
     public SectorDeleteEvent(Sector sector) {
-        this.sector = sector;
-    }
-
-    /**
-     * Gets the sector being deleted
-     *
-     * @return The sector associated with the event.
-     */
-    public Sector getSector() {
-        return sector;
+        super(sector);
     }
 
     /**

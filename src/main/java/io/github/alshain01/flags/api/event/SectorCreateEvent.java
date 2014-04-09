@@ -32,10 +32,8 @@ import org.bukkit.event.HandlerList;
  * Event that occurs when a sector is created.
  */
 @SuppressWarnings("unused")
-public class SectorCreateEvent extends Event {
+public class SectorCreateEvent extends SectorEvent {
     private static final HandlerList handlers = new HandlerList();
-
-    private final Sector sector;
 
     /**
      * Creates a new SectorCreateEvent
@@ -44,16 +42,7 @@ public class SectorCreateEvent extends Event {
      *            The sector being created.
      */
     public SectorCreateEvent(Sector sector) {
-        this.sector = sector;
-    }
-
-    /**
-     * Gets the sector being created
-     *
-     * @return The sector associated with the event.
-     */
-    public Sector getSector() {
-        return sector;
+        super(sector);
     }
 
     /**

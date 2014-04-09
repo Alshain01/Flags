@@ -36,11 +36,9 @@ import org.bukkit.event.HandlerList;
  * Event that occurs when a flag value is set or removed.
  */
 @SuppressWarnings("unused")
-public class FlagChangedEvent extends Event implements Cancellable {
+public class FlagChangedEvent extends FlagEvent implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 
-	private final Area area;
-	private final Flag flag;
 	private final CommandSender sender;
 	private final Boolean value;
 
@@ -58,29 +56,10 @@ public class FlagChangedEvent extends Event implements Cancellable {
 	 * @param value
 	 *            The value the flag is being set to.
 	 */
-	public FlagChangedEvent(Area area, Flag flag, CommandSender sender,	Boolean value) {
-		this.area = area;
-		this.flag = flag;
+	public FlagChangedEvent(Area area, Flag flag, CommandSender sender, Boolean value) {
+        super(area, flag);
 		this.sender = sender;
 		this.value = value;
-	}
-
-	/**
-     * Gets the area where the flag is changing
-     *
-	 * @return The area associated with the event.
-	 */
-	public Area getArea() {
-		return area;
-	}
-
-	/**
-     * Gets the flag that is changing
-     *
-	 * @return The flag associated with the event.
-	 */
-	public Flag getFlag() {
-		return flag;
 	}
 
     /**

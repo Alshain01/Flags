@@ -36,18 +36,16 @@ import org.bukkit.event.HandlerList;
  * Event for that occurs when a message is set, changed or removed.
  */
 @SuppressWarnings("unused")
-public class MessageChangedEvent extends Event implements Cancellable {
+public class FlagMessageChangedEvent extends FlagEvent implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 
-	private final Area area;
-	private final Flag flag;
 	private final String message;
 	private final CommandSender sender;
 
 	private boolean cancel = false;
 
 	/**
-	 * Creates a new MessageChangedEvent
+	 * Creates a new FlagMessageChangedEvent
 	 * 
 	 * @param area
 	 *            The area the message is being set for.
@@ -59,29 +57,10 @@ public class MessageChangedEvent extends Event implements Cancellable {
 	 *            The sender changing the trust.
 	 * 
 	 */
-	public MessageChangedEvent(Area area, Flag flag, String message, CommandSender sender) {
-		this.area = area;
-		this.flag = flag;
+	public FlagMessageChangedEvent(Area area, Flag flag, String message, CommandSender sender) {
+		super(area, flag);
 		this.message = message;
 		this.sender = sender;
-	}
-
-    /**
-     * Gets the area where the flag message is changing
-     *
-     * @return The area associated with the event.
-     */
-	public Area getArea() {
-		return area;
-	}
-
-    /**
-     * Gets the flag the message is changing for
-     *
-     * @return The flag associated with the event.
-     */
-	public Flag getFlag() {
-		return flag;
 	}
 
     /**
@@ -101,7 +80,7 @@ public class MessageChangedEvent extends Event implements Cancellable {
 	}
 
     /**
-     * Static HandlerList for MessageChangedEvent
+     * Static HandlerList for FlagMessageChangedEvent
      *
      * @return A list of event handlers, stored per-event.
      */

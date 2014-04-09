@@ -34,9 +34,9 @@ import io.github.alshain01.flags.api.economy.EconomyBaseValue;
 import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 import io.github.alshain01.flags.api.economy.EconomyTransactionType;
 import io.github.alshain01.flags.api.event.FlagChangedEvent;
-import io.github.alshain01.flags.api.event.MessageChangedEvent;
-import io.github.alshain01.flags.api.event.PermissionTrustChangedEvent;
-import io.github.alshain01.flags.api.event.PlayerTrustChangedEvent;
+import io.github.alshain01.flags.api.event.FlagMessageChangedEvent;
+import io.github.alshain01.flags.api.event.FlagPermissionTrustChangedEvent;
+import io.github.alshain01.flags.api.event.FlagPlayerTrustChangedEvent;
 
 import java.util.Collection;
 import java.util.Map;
@@ -218,7 +218,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
             }
         }
 
-        final MessageChangedEvent event = new MessageChangedEvent(this, flag, message, sender);
+        final FlagMessageChangedEvent event = new FlagMessageChangedEvent(this, flag, message, sender);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return false;
@@ -262,7 +262,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
         }
         trustList.put(trustee.getUniqueId(), trustee.getName());
 
-        final PlayerTrustChangedEvent event = new PlayerTrustChangedEvent(this, flag, trustee.getUniqueId(), true, sender);
+        final FlagPlayerTrustChangedEvent event = new FlagPlayerTrustChangedEvent(this, flag, trustee.getUniqueId(), true, sender);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return false;
@@ -291,7 +291,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
         }
         trustList.add(permission);
 
-        final PermissionTrustChangedEvent event = new PermissionTrustChangedEvent(this, flag, permission, true, sender);
+        final FlagPermissionTrustChangedEvent event = new FlagPermissionTrustChangedEvent(this, flag, permission, true, sender);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return false;
@@ -314,7 +314,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
         }
         trustList.remove(trustee);
 
-        final PlayerTrustChangedEvent event = new PlayerTrustChangedEvent(this, flag, trustee, false, sender);
+        final FlagPlayerTrustChangedEvent event = new FlagPlayerTrustChangedEvent(this, flag, trustee, false, sender);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return false;
@@ -342,7 +342,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
         }
         trustList.remove(permission);
 
-        final PermissionTrustChangedEvent event = new PermissionTrustChangedEvent(this, flag, permission, false, sender);
+        final FlagPermissionTrustChangedEvent event = new FlagPermissionTrustChangedEvent(this, flag, permission, false, sender);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return false;

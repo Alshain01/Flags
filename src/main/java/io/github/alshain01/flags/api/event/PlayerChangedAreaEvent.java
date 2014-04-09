@@ -35,10 +35,9 @@ import org.bukkit.event.HandlerList;
  * Event that occurs when a player first enters a new area.
  */
 @SuppressWarnings("unused")
-public class PlayerChangedAreaEvent extends Event implements Cancellable {
+public class PlayerChangedAreaEvent extends AreaEvent implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 
-	private final Area area;
     private final Player player;
     private final Area exitArea;
 
@@ -55,18 +54,9 @@ public class PlayerChangedAreaEvent extends Event implements Cancellable {
 	 *            The area the player is leaving
 	 */
 	public PlayerChangedAreaEvent(Player player, Area area, Area areaLeft) {
-		this.area = area;
+		super(area);
 		this.player = player;
 		exitArea = areaLeft;
-	}
-
-    /**
-     * Gets the area the player is entering.
-     *
-     * @return The area associated with the event.
-     */
-	public Area getArea() {
-		return area;
 	}
 
     /**
