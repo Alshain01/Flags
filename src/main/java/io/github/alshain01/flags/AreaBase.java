@@ -38,6 +38,7 @@ import io.github.alshain01.flags.api.event.MessageChangedEvent;
 import io.github.alshain01.flags.api.event.PermissionTrustChangedEvent;
 import io.github.alshain01.flags.api.event.PlayerTrustChangedEvent;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -242,7 +243,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
     }
 
     @Override
-    public final Set<Permission> getPermissionTrustList(Flag flag) {
+    public final Collection<Permission> getPermissionTrustList(Flag flag) {
         Validate.notNull(flag);
 
         return Flags.getDataStore().readPermissionTrust(this, flag);
@@ -363,7 +364,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
             return true;
         }
 
-        Set<Permission> pTl = getPermissionTrustList(flag);
+        Collection<Permission> pTl = getPermissionTrustList(flag);
         for(Permission p : pTl) {
             if(player.hasPermission(p)) {
                 return true;
