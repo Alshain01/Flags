@@ -61,8 +61,8 @@ public final class Registrar {
 		final Set<String> groups = new HashSet<String>();
 
 		for (final Flag flag : flagStore.values()) {
-			if (!groups.contains(flag.getFlagGroup())) {
-				groups.add(flag.getFlagGroup());
+			if (!groups.contains(flag.getGroup())) {
+				groups.add(flag.getGroup());
 			}
 		}
 		return groups;
@@ -78,8 +78,8 @@ public final class Registrar {
         final Set<String> groups = new HashSet<String>();
 
         for (final Flag flag : flagStore.values()) {
-            if(p.hasPermission(flag.getPermission()) && !groups.contains(flag.getFlagGroup())) {
-                groups.add(flag.getFlagGroup());
+            if(p.hasPermission(flag.getPermission()) && !groups.contains(flag.getGroup())) {
+                groups.add(flag.getGroup());
             }
         }
         return groups;
@@ -132,7 +132,7 @@ public final class Registrar {
         final Set<Flag> flags = new HashSet<Flag>();
 
         for (final Flag flag : flagStore.values()) {
-            if (group.equalsIgnoreCase(flag.getFlagGroup())) {
+            if (group.equalsIgnoreCase(flag.getGroup())) {
                 flags.add(flag.clone());
             }
         }
@@ -166,12 +166,12 @@ public final class Registrar {
     public Map<String, Collection<Flag>> getFlagsByGroup() {
         Map<String, Collection<Flag>> flagMap = new HashMap<String, Collection<Flag>>();
         for(Flag f : flagStore.values()) {
-            if(flagMap.containsKey(f.getFlagGroup())) {
-                Collection<Flag> flags = flagMap.get(f.getFlagGroup());
+            if(flagMap.containsKey(f.getGroup())) {
+                Collection<Flag> flags = flagMap.get(f.getGroup());
                 flags.add(f.clone());
-                flagMap.put(f.getFlagGroup(), flags);
+                flagMap.put(f.getGroup(), flags);
             } else {
-                flagMap.put(f.getFlagGroup(), new HashSet<Flag>(Arrays.asList(f)));
+                flagMap.put(f.getGroup(), new HashSet<Flag>(Arrays.asList(f)));
             }
         }
         return flagMap;
@@ -187,12 +187,12 @@ public final class Registrar {
         Map<String, Set<Flag>> flagMap = new HashMap<String, Set<Flag>>();
         for(Flag f : flagStore.values()) {
             if(p.hasPermission(f.getPermission())) {
-                if(flagMap.containsKey(f.getFlagGroup())) {
-                    Set<Flag> flags = flagMap.get(f.getFlagGroup());
+                if(flagMap.containsKey(f.getGroup())) {
+                    Set<Flag> flags = flagMap.get(f.getGroup());
                     flags.add(f.clone());
-                    flagMap.put(f.getFlagGroup(), flags);
+                    flagMap.put(f.getGroup(), flags);
                 } else {
-                    flagMap.put(f.getFlagGroup(), new HashSet<Flag>(Arrays.asList(f)));
+                    flagMap.put(f.getGroup(), new HashSet<Flag>(Arrays.asList(f)));
                 }
             }
         }
@@ -290,7 +290,7 @@ public final class Registrar {
 	 *            The group the flag belongs in.
 	 * @return The flag if the flag was successfully registered. Null otherwise.
 	 */
-	public Flag register(String name, String description, boolean def, String group) {
+	public Flag registerFlag(String name, String description, boolean def, String group) {
         Validate.notNull(name);
         Validate.notNull(description);
         Validate.notNull(group);
@@ -321,8 +321,8 @@ public final class Registrar {
 	 *            The default message for wilderness areas.
 	 * @return The flag if the flag was successfully registered. Null otherwise.
 	 */
-	public Flag register(String name, String description, boolean def,
-			String group, String areaMessage, String wildernessMessage) {
+	public Flag registerFlag(String name, String description, boolean def,
+                             String group, String areaMessage, String wildernessMessage) {
         Validate.notNull(name);
         Validate.notNull(description);
         Validate.notNull(group);
@@ -350,7 +350,7 @@ public final class Registrar {
      *            The group the flags belong in.
      * @return The set of flags if the flags were successfully registered. May be null or empty.
      */
-    public Collection<Flag> register(ConfigurationSection data, String group) {
+    public Collection<Flag> registerFlag(ConfigurationSection data, String group) {
         Validate.notNull(data);
         Validate.notNull(group);
 
@@ -392,9 +392,9 @@ public final class Registrar {
             // Be sure to send a plug-in name or group description for the help command!
             // It can be this.getName() or another string.
             if (isPlayer) {
-                flags.add(register(f, desc, def, group, area, wilderness));
+                flags.add(registerFlag(f, desc, def, group, area, wilderness));
             } else {
-                flags.add(register(f, desc, def, group));
+                flags.add(registerFlag(f, desc, def, group));
             }
         }
         return flags;

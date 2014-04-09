@@ -611,7 +611,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
 
         String indexType = Message.INDEX.get();
         if(group != null) {
-            indexType = registrar.getFlag(topics.get(0)).getFlagGroup();
+            indexType = registrar.getFlag(topics.get(0)).getGroup();
         }
 
         sender.sendMessage(Message.HELP_HEADER.get()
@@ -630,7 +630,7 @@ final class CommandFlag extends Command implements CommandExecutor, Listener {
                         .replace("{Type}", Message.FLAG.get().toLowerCase()));
             } else {
                 sender.sendMessage(Message.GROUP_HELP_INFO.get()
-                        .replace("{Type}", registrar.getFlag(flagNames.get(0)).getFlagGroup()));
+                        .replace("{Type}", registrar.getFlag(flagNames.get(0)).getGroup()));
             }
             lineCount++;
         }
