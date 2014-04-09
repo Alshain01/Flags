@@ -396,11 +396,15 @@ public final class Registrar {
             // Register it!
             // Be sure to send a plug-in name or group description for the help command!
             // It can be this.getName() or another string.
+            Flag flag;
             if (isPlayer) {
-                flags.add(registerFlag(f, desc, def, group, area, wilderness));
+                flag = registerFlag(f, desc, def, group, area, wilderness);
             } else {
-                flags.add(registerFlag(f, desc, def, group));
+                flag = registerFlag(f, desc, def, group);
             }
+
+            if(flag != null)
+                flags.add(flag);
         }
         return flags;
     }
