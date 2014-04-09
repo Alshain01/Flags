@@ -24,6 +24,7 @@
 
 package io.github.alshain01.flags.api;
 
+import io.github.alshain01.flags.Logger;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
@@ -115,13 +116,16 @@ public final class Bundle {
     // Used only on plugin enable
     static void registerPermissions() {
         for(String b : FlagsAPI.getDataStore().readBundles()) {
-            addPermission(b);
+            if (Bukkit.getPluginManager().getPermission(b) == null) {
+                addPermission(b);
+            }
         }
     }
 
     private static void addPermission(String name) {
         Validate.notNull(name);
 
+        Logger.debug("Registering Bundle Permissions: " + name);
         final Permission perm = new Permission("flags.bundle." + name.toLowerCase(),
                 "Grants ability to use the bundle " + name, PermissionDefault.FALSE);
         perm.addParent("flags.bundle", true);

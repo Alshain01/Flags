@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.util.*;
 
 import io.github.alshain01.flags.api.sector.Sector;
-import io.github.alshain01.flags.api.sector.SectorLocation;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -85,22 +84,26 @@ final class DataStoreYaml extends DataStore {
     private YamlConfiguration sectors;
 
     private boolean saveData = false;
+    private final CuboidPlugin cuboidPlugin;
 
     /*
      * Constructor
      */
-    DataStoreYaml(Plugin plugin, boolean enableAutoSave) {
+    DataStoreYaml(Plugin plugin, CuboidPlugin cuboidPlugin, boolean enableAutoSave) {
+        this.cuboidPlugin = cuboidPlugin;
         this.dataFolder = plugin.getDataFolder();
         this.plugin = plugin;
         updateWorldFile();
         reload(enableAutoSave);
     }
 
-	DataStoreYaml(Plugin plugin) {
+	DataStoreYaml(Plugin plugin, CuboidPlugin cuboidPlugin) {
+        this.cuboidPlugin = cuboidPlugin;
         this.dataFolder = plugin.getDataFolder();
         this.plugin = plugin;
         updateWorldFile();
         reload();
+
 	}
 
     private void updateWorldFile() {
@@ -168,7 +171,7 @@ final class DataStoreYaml extends DataStore {
         }
         price = YamlConfiguration.loadConfiguration(priceFile);
 
-        if(FlagsAPI.getCuboidPlugin() == CuboidPlugin.FLAGS) {
+        if(cuboidPlugin == CuboidPlugin.FLAGS) {
             sectors = YamlConfiguration.loadConfiguration(new File(dataFolder, SECTOR_FILE));
         }
 
@@ -192,7 +195,7 @@ final class DataStoreYaml extends DataStore {
             data.save(new File(dataFolder, DATA_FILE));
             bundle.save(new File(dataFolder, BUNDLE_FILE));
             price.save(new File(dataFolder, PRICE_FILE));
-            if(FlagsAPI.getCuboidPlugin() == CuboidPlugin.FLAGS) {
+            if(sectors != null) {
                 sectors.save(new File(dataFolder, SECTOR_FILE));
             }
             saveData = false;
@@ -232,7 +235,7 @@ final class DataStoreYaml extends DataStore {
             Bukkit.getPluginManager().disablePlugin(Bukkit.getServer().getPluginManager().getPlugin("Flags"));
             return;
         }
-        if (ver.getMajor() <= 2) {
+        if (ver.getMajor() < 2) {
             // Rename World to Wilderness
             if (wilderness.isConfigurationSection("World")) {
                 wilderness.set("Wilderness", wilderness.getConfigurationSection("World").getValues(true));
@@ -241,46 +244,53 @@ final class DataStoreYaml extends DataStore {
 
             // Convert Bundles
             if (bundle.isConfigurationSection("Bundle")) {
-                if (bundle.isConfigurationSection("Bundle")) {
-                    bundle.set("", price.getConfigurationSection("Bundle").getValues(true));
-                    bundle.set("Bundle", null);
+                for(String s : bundle.getConfigurationSection("Bundle").getKeys(false)) {
+                    bundle.set(s, bundle.getList("Bundle." + s));
                 }
                 bundle.set("Bundle", null);
             }
 
             // Convert Prices
             if (price.isConfigurationSection("Price")) {
-                if (price.isConfigurationSection("Price")) {
-                    price.set("", price.getConfigurationSection("Price").getValues(true));
-                    price.set("Price", null);
+                for(String s : price.getConfigurationSection("Price").getKeys(true)) {
+                    price.set(s, price.getDouble("Price." + s));
                 }
                 price.set("Price", null);
             }
 
             // Convert Sectors
-            if(FlagsAPI.getCuboidPlugin() == CuboidPlugin.FLAGS) {
+            if(sectors != null) {
+                Logger.debug("Converting Sectors");
                 // Remove old header
                 if (sectors.isConfigurationSection("Sectors")) {
-                    sectors.set("", sectors.getConfigurationSection("Sectors").getValues(true));
+                    for(String s : sectors.getConfigurationSection("Sectors").getKeys(false)) {
+                        Logger.debug("Converting Sector " + s);
+                        sectors.set(s, sectors.getConfigurationSection("Sectors." + s).getValues(false));
+                    }
                     sectors.set("Sectors", null);
                 }
 
                 // Convert old sector location to serialized form.
                 for (String s : sectors.getKeys(true)) {
-                    if(s.contains("Corner") && sectors.isString(s)) {
-                        sectors.set(s, new SectorLocationBase(sectors.getString(s)).serialize());
-                    }
+                    Logger.debug("Checking SectorLocation " + s);
+                    //for(String c : sectors.getConfigurationSection(s).getKeys(false)) {
+                        //Logger.debug("Checking SectorLocation " + s + ":" + c);
+                        if (s.contains("Corner")) {
+                            Logger.debug("Converting SectorLocation " + s);
+                            sectors.set(s, new SectorLocationBase(sectors.getString(s)).serialize());
+                        }
+                   // }
                 }
             }
 
             // Convert Subdivision Data To the upper level.
             for(World w : Bukkit.getWorlds()) {
-                if (data.isConfigurationSection(w.getName() + DELIMETER + FlagsAPI.getCuboidPlugin().getName())) {
-                    ConfigurationSection config = data.getConfigurationSection(w.getName() + DELIMETER + FlagsAPI.getCuboidPlugin().getName());
+                if (data.isConfigurationSection(cuboidPlugin.getName() + DELIMETER + w.getName())) {
+                    ConfigurationSection config = data.getConfigurationSection(cuboidPlugin.getName() + DELIMETER + w.getName());
                     for (String p : config.getKeys(false)) { // Parent claims
                         for (String s : config.getConfigurationSection(p).getKeys(false)) { // Subdivision Claims
                             if (config.isBoolean(p + "." + s + ".InheritParent")) { // If it's a subdivision, it will have an InheritParent key
-                                if(FlagsAPI.getCuboidPlugin() == CuboidPlugin.RESIDENCE) { // Residence uses the nested format by design, we will string replace it with a "_"
+                                if(cuboidPlugin == CuboidPlugin.RESIDENCE) { // Residence uses the nested format by design, we will string replace it with a "_"
                                     config.set(p + "_" + s, config.getConfigurationSection(p + "." + s).getValues(true)); // Move the whole thing up one level
                                 } else {
                                     config.set(s, config.getConfigurationSection(p + "." + s).getValues(true)); // Move the whole thing up one level
@@ -293,12 +303,14 @@ final class DataStoreYaml extends DataStore {
             }
 
             //Convert World Names to UUID
-            for(String s : data.getConfigurationSection(FlagsAPI.getCuboidPlugin().getName()).getKeys(false)) {
-                World world = Bukkit.getWorld(s);
-                if(world != null) {
-                    data.set(FlagsAPI.getCuboidPlugin().getName() + world.getUID().toString(),
-                            data.getConfigurationSection(FlagsAPI.getCuboidPlugin().getName() + DELIMETER + s).getValues(true));
-                    data.set(FlagsAPI.getCuboidPlugin().getName() + DELIMETER + s, null);
+            if(data.isConfigurationSection(cuboidPlugin.getName())) {
+                for (String s : data.getConfigurationSection(cuboidPlugin.getName()).getKeys(false)) {
+                    World world = Bukkit.getWorld(s);
+                    if (world != null) {
+                        data.set(cuboidPlugin.getName() + DELIMETER + world.getUID().toString(),
+                                data.getConfigurationSection(cuboidPlugin.getName() + DELIMETER + s).getValues(true));
+                        data.set(cuboidPlugin.getName() + DELIMETER + s, null);
+                    }
                 }
             }
 
@@ -306,21 +318,25 @@ final class DataStoreYaml extends DataStore {
             // AreaWilderness and AreaDefault will be converted to use world id and system id
             // In order to be universal.  This will result in the same key twice, nested.
             // But it's necessary to reuse code later in the class.
-            for(String s : wilderness.getConfigurationSection("Wilderness").getKeys(false)) {
-                World world = Bukkit.getWorld(s);
-                if(world != null) {
-                    wilderness.set("Wilderness." + world.getUID().toString() + world.getUID().toString(),
-                            wilderness.getConfigurationSection("Wilderness." + s).getValues(true));
-                    wilderness.set("Wilderness." + s, null);
+            if(wilderness.isConfigurationSection("Wilderness")) {
+                for (String s : wilderness.getConfigurationSection("Wilderness").getKeys(false)) {
+                    World world = Bukkit.getWorld(s);
+                    if (world != null) {
+                        wilderness.set("Wilderness." + world.getUID().toString() + world.getUID().toString(),
+                                wilderness.getConfigurationSection("Wilderness." + s).getValues(true));
+                        wilderness.set("Wilderness." + s, null);
+                    }
                 }
             }
 
-            for(String s : def.getConfigurationSection("Default").getKeys(false)) {
-                World world = Bukkit.getWorld(s);
-                if(world != null) {
-                    def.set("Default." + world.getUID().toString() + world.getUID().toString(),
-                            def.getConfigurationSection("Default." + s).getValues(true));
-                    def.set("Default." + s, null);
+            if(def.isConfigurationSection("Default")) {
+                for (String s : def.getConfigurationSection("Default").getKeys(false)) {
+                    World world = Bukkit.getWorld(s);
+                    if (world != null) {
+                        def.set("Default." + world.getUID().toString() + world.getUID().toString(),
+                                def.getConfigurationSection("Default." + s).getValues(true));
+                        def.set("Default." + s, null);
+                    }
                 }
             }
 
@@ -346,6 +362,7 @@ final class DataStoreYaml extends DataStore {
 
             writeVersion(new DataStoreVersion(2, 0, 0));
             saveData = true;
+            save();
         }
     }
 
@@ -550,8 +567,8 @@ final class DataStoreYaml extends DataStore {
     Set<String> getAllAreaIds(World world) {
         Set<String> areas = new HashSet<String>();
         Set<String> preformattedAreas = new HashSet<String>();
-        if(data.isConfigurationSection(FlagsAPI.getCuboidPlugin().getName() + DELIMETER + world.getUID().toString())) {
-            preformattedAreas = data.getConfigurationSection(FlagsAPI.getCuboidPlugin().getName() + DELIMETER + world.getUID().toString()).getKeys(false);
+        if(data.isConfigurationSection(cuboidPlugin.getName() + DELIMETER + world.getUID().toString())) {
+            preformattedAreas = data.getConfigurationSection(cuboidPlugin.getName() + DELIMETER + world.getUID().toString()).getKeys(false);
         }
         for(String s : preformattedAreas) {
             areas.add(s.replace("_", "."));

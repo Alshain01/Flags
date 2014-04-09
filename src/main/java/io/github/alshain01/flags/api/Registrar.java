@@ -362,7 +362,7 @@ public final class Registrar {
             // It would just muck up the help menu.
             // Null value is assumed to support all versions.
             final String api = flagSection.getString("MinimumAPI");
-            if (api != null && !Flags.checkAPI(api)) {
+            if (api != null && !FlagsAPI.checkAPI(api)) {
                 continue;
             }
 

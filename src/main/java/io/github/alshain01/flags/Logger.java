@@ -5,9 +5,9 @@ import org.bukkit.Bukkit;
 /**
  * Defines the Data Storage for Flags.  Not meant to be used externally.
  */
-class Logger {
+public class Logger {
     private static java.util.logging.Logger logger = Bukkit.getServer().getPluginManager().getPlugin("Flags").getLogger();
-    final private static boolean debugEnabled = Bukkit.getServer().getPluginManager().getPlugin("Flags").getConfig().getBoolean("Flags.Debug");
+    final private static boolean debugEnabled = Bukkit.getServer().getPluginManager().getPlugin("Flags").getConfig().getBoolean("Debug");
 
     /*public enum DebugCategory {
         SQL, Area, Flag

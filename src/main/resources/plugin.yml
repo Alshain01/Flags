@@ -33,7 +33,7 @@ permissions:
     default: false
     children:
       flags.command.flag.set: true
-      flags.bundle.flag.set: true      
+      flags.command.bundle.set: true
 
   flags.command.flag:
     descriptions: Grants access to the flag command and read actions.

@@ -11,6 +11,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * Primary class for hooking into the API.
@@ -35,7 +37,7 @@ final public class FlagsAPI {
      * @param cuboidSystem The cuboid system detected
      * @param data The datastore to be used
      */
-    public static void initialize(CuboidPlugin cuboidSystem, SectorManager sectors, DataStore data) {
+    public static void initialize(Plugin plugin, CuboidPlugin cuboidSystem, SectorManager sectors, DataStore data) {
         Validate.notNull(data); // Prevents plugins from using this method.
         activeSystem = cuboidSystem;
         dataStore = data;
@@ -43,7 +45,19 @@ final public class FlagsAPI {
         CuboidPlugin.loadNames();
 
         ConfigurationSerialization.registerClass(Flag.class);
-        Bundle.registerPermissions();
+        new onServerEnabledTask().runTask(plugin);
+
+    }
+
+    /*
+     * Tasks that must be run only after the entire sever has loaded.
+     * Runs on first server tick.
+     */
+    private static class onServerEnabledTask extends BukkitRunnable {
+        @Override
+        public void run() {
+            Bundle.registerPermissions();
+        }
     }
 
     /**

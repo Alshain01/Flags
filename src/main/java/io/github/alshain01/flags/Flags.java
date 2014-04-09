@@ -54,7 +54,6 @@ public class Flags extends JavaPlugin {
     // Made static to access from enumerations and lower hefty method calls
     private static DataStore dataStore;
     private static Economy economy = null;
-    private static boolean debugOn = false;
 
     // Made static for use by API
     private static boolean borderPatrol = false;
@@ -70,23 +69,33 @@ public class Flags extends JavaPlugin {
         // Set up the plugin's configuration file
         saveDefaultConfig();
 
-        // Initialize the static variables
-        debugOn = getConfig().getBoolean("Debug.Enabled");
-
         // Acquire the messages from configuration
         Message.load(this);
 
         economy = setupEconomy();
         EconomyBaseValue.valueOf(getConfig().getString("Economy.BaseValue")).set();
 
-        // Activate the API
+        // Create the database
         CuboidPlugin cuboidPlugin = findCuboidPlugin(pm, getConfig().getList("AreaPlugins"));
-        dataStore = findDataStore();
+        dataStore = findDataStore(cuboidPlugin);
         dataStore.create(this);
         dataStore.update(this);
 
+        // Load Sectors
+        SectorManager sectors = null;
+        if(cuboidPlugin == CuboidPlugin.FLAGS) {
+            sectors = new SectorManagerBase(this, dataStore, getConfig().getConfigurationSection("Sector").getInt("DefaultDepth"));
+        }
+
+        // Start the API
+        FlagsAPI.initialize(this, cuboidPlugin, sectors, dataStore);
+
+        if(cuboidPlugin == CuboidPlugin.FLAGS) {
+            ((SectorManagerBase)sectors).loadSectors();
+        }
+
         // Load Mr. Clean
-        MrClean.enable(this, getConfig().getBoolean("MrClean"));
+        MrClean.enable(this, getConfig().getBoolean("MrClean"), cuboidPlugin);
 
         // Configure the updater
 		if (getConfig().getBoolean("Update.Enabled")) {
@@ -101,14 +110,9 @@ public class Flags extends JavaPlugin {
 			pm.registerEvents(bp, this);
 		}
 
-        // Load Sectors
-        SectorManager sectors = null;
-        if(FlagsAPI.getCuboidPlugin() == CuboidPlugin.FLAGS) {
-            sectors = new SectorManagerBase(this, dataStore, getConfig().getConfigurationSection("Sector").getInt("DefaultDepth"));
-        }
 
-        // Start the API
-        FlagsAPI.initialize(cuboidPlugin, sectors, dataStore);
+
+
 
         // Set Command Executors
         CommandFlag executor = new CommandFlag(Material.valueOf(getConfig().getString("Tools.FlagQuery")));
@@ -126,8 +130,8 @@ public class Flags extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        dataStore.close();
         FlagsAPI.close(dataStore);
+        dataStore.close();
         Logger.close();
 
         // Static cleanup
@@ -151,7 +155,7 @@ public class Flags extends JavaPlugin {
 
         if(args[0].equalsIgnoreCase("import")) {
             if(dataStore instanceof DataStoreMySQL) {
-                dataStore.importDataStore(new DataStoreYaml(this, false));
+                dataStore.importDataStore(new DataStoreYaml(this, FlagsAPI.getCuboidPlugin(), false));
                 return true;
             } else {
                 dataStore.importDataStore(new DataStoreMySQL(this));
@@ -172,7 +176,6 @@ public class Flags extends JavaPlugin {
 
         EconomyBaseValue.valueOf(this.getConfig().getString("Economy.BaseValue")).set();
 
-        debugOn = getConfig().getBoolean("Debug");
         dataStore.reload();
         Logger.info("Flag Database Reloaded");
     }
@@ -190,13 +193,13 @@ public class Flags extends JavaPlugin {
         return CuboidPlugin.FLAGS;
     }
 
-    private DataStore findDataStore() {
+    private DataStore findDataStore(CuboidPlugin cuboidPlugin) {
         DataStoreType dbType = DataStoreType.valueOf(getConfig().getString("Database"));
         switch(dbType) {
             case MYSQL:
                 return new DataStoreMySQL(this);
             default:
-                return new DataStoreYaml(this);
+                return new DataStoreYaml(this, cuboidPlugin);
         }
     }
 

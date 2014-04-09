@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.*;
 
 final class SectorManagerBase implements SectorManager {
-    private final Map<UUID, Sector> sectors;
+    private Map<UUID, Sector> sectors;
     private final int defaultDepth;
     private final DataStore dataStore;
 
@@ -21,8 +21,11 @@ final class SectorManagerBase implements SectorManager {
         ConfigurationSerialization.registerClass(SectorLocation.class);
         plugin.getCommand("sector").setExecutor(new CommandSector());
         this.defaultDepth = defaultDepth;
-        this.sectors = data.readSectors();
         this.dataStore = data;
+    }
+
+    void loadSectors() {
+        this.sectors = dataStore.readSectors();
     }
 
     @Override

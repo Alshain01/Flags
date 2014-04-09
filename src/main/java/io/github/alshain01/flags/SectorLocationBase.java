@@ -40,7 +40,7 @@ final class SectorLocationBase implements SectorLocation {
     public SectorLocationBase(String location) {
         String[] arg = location.split(",");
 
-        world = Bukkit.getWorld(arg[0]).getUID();
+        world = UUID.fromString(arg[0]);
         for (int a = 0; a < 3; a++) {
             coords[a] = Integer.parseInt(arg[a+1]);
         }
