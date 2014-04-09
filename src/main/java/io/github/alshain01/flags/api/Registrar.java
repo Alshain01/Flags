@@ -294,6 +294,9 @@ public final class Registrar {
         Validate.notNull(name);
         Validate.notNull(description);
         Validate.notNull(group);
+
+        if(name.length() > 36) { name = name.substring(0, 35); }
+
 		if (flagStore.containsKey(name)) {
 			return null;
 		}
@@ -328,6 +331,8 @@ public final class Registrar {
         Validate.notNull(group);
         Validate.notNull(areaMessage);
         Validate.notNull(wildernessMessage);
+
+        if(name.length() > 36) { name = name.substring(0, 35); }
 
 		if (flagStore.containsKey(name)) {
 			return null;

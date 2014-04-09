@@ -115,6 +115,8 @@ return getBundleNames().size();
             Validate.noNullElements(flags);
         }
 
+        if(name.length() > 36) { name = name.substring(0, 35); }
+
         getDataStore().writeBundle(name, flags);
         String permName = "flags.bundle." + name.toLowerCase();
         if(flags == null || flags.size() == 0) {
