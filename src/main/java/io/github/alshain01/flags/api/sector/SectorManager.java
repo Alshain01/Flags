@@ -1,13 +1,11 @@
 package io.github.alshain01.flags.api.sector;
 
-import io.github.alshain01.flags.api.event.SectorDeleteEvent;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.util.Collection;
 import java.util.UUID;
 
-
+@SuppressWarnings("unused")
 public interface SectorManager {
     public void clear();
 

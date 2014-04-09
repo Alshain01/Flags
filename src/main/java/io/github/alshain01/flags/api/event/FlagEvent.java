@@ -4,6 +4,7 @@ import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.area.Area;
 import org.bukkit.event.HandlerList;
 
+@SuppressWarnings("unused")
 public class FlagEvent extends AreaEvent {
     private static final HandlerList handlers = new HandlerList();
     private final Flag flag;

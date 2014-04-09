@@ -7,6 +7,7 @@ import org.bukkit.event.HandlerList;
 /**
  * All Sector Events.
  */
+@SuppressWarnings("unused")
 public class SectorEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final Sector sector;

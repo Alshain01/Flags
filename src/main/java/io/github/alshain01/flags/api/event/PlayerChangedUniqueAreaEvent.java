@@ -7,6 +7,7 @@ import org.bukkit.event.HandlerList;
 /**
  * Event that occurs when a player first enters a new area that is not an inheriting subdivision.
  */
+@SuppressWarnings("unused")
 public class PlayerChangedUniqueAreaEvent extends PlayerChangedAreaEvent{
     private static final HandlerList handlers = new HandlerList();
 

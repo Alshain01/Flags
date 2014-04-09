@@ -9,6 +9,7 @@ import java.util.UUID;
 /**
  * Defines a Sector cuboid.
  */
+@SuppressWarnings("unused")
 public interface Sector extends ConfigurationSerializable, Comparable<Sector> {
     /**
      * Returns a unique identifier for this sector

@@ -37,6 +37,7 @@ import java.util.UUID;
  * Class for acquiring areas from a cuboid system.
  * Flag extension plugins should consider using FlagsAPI instead of this class.
  */
+@SuppressWarnings("unused") // They are used, just through valueOf()
 public enum AreaFactory {
     DEFAULT{
         Area getCuboidAt(Location location) { return new AreaDefault(location); }
