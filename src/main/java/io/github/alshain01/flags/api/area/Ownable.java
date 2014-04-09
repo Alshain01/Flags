@@ -1,7 +1,6 @@
 package io.github.alshain01.flags.api.area;
 
 import java.util.Collection;
-import java.util.Set;
 import java.util.UUID;
 
 /**

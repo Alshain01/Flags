@@ -29,7 +29,6 @@ import io.github.alshain01.flags.api.area.Area;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.permissions.Permission;
 

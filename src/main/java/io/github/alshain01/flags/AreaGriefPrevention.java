@@ -39,7 +39,6 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 
 /**
  * Class for creating areas to manage a Grief Prevention Claim.

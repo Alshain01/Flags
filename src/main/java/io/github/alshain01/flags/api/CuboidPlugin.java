@@ -24,17 +24,12 @@
 
 package io.github.alshain01.flags.api;
 
-import io.github.alshain01.flags.*;
-import io.github.alshain01.flags.api.area.Area;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
-import java.util.UUID;
 
 /**
  * Class for acquiring data from the active cuboid system
