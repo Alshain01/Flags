@@ -54,18 +54,117 @@ final public class FlagsAPI {
 
     }
 
-    /**
-     * Gets a bundle from the data store.
-     *
-     * @param bundle
-     *            The bundle name to retrieve
-     * @return A list containing the bundle. Null if it doesn't exist.
-     * @throws IllegalArgumentException
+    /*
+     * Tasks that must be run only after the entire sever has loaded.
+     * Runs on first server tick.
      */
-    public static Collection<Flag> getBundle(String bundle) {
-        Validate.notNull(bundle);
-        if(!isBundle(bundle)) { throw new IllegalArgumentException("The provided bundle name does not exist."); }
-        return getDataStore().readBundle(bundle.toLowerCase());
+    private static class onServerEnabledTask extends BukkitRunnable {
+        @Override
+        public void run() {
+            // Needs to run after server starts to prevent
+            // plugin.yml from attempting to register flags.bundle twice.
+            registerPermissions();
+        }
+    }
+
+    /**
+     * Closes the API.
+     * Cannot be used externally.
+     *
+     * @param data The data store to close
+     */
+    public static void close(DataStore data) {
+        Validate.notNull(data); // Prevents plugins from using this method.
+        registrar = null;
+        activeSystem = null;
+        dataStore = null;
+        sectorManager = null;
+    }
+
+    /**
+     * Gets the currently active cuboid system.
+     *
+     * @return The Cuboid System in use by Flags.
+     */
+    public static CuboidPlugin getCuboidPlugin() {
+        return activeSystem;
+    }
+
+    /**
+     * Gets the registrar for this instance of Flags.
+     *
+     * @return The flag registrar.
+     */
+    public static Registrar getRegistrar() {
+        return registrar;
+    }
+
+    /**
+     * Gets the sector manager for this instance of Flags.
+     * Null if Flags is not configured to use sectors.
+     *
+     * @return The sector manager for Flags
+     */
+    public static SectorManager getSectorManager() {
+        return sectorManager;
+    }
+
+    /**
+     * Gets the default area for the world.
+     *
+     * @param world
+     *            The world for which to request the default area.
+     * @return The area for setting default settings for areas in the world.
+     */
+    public static Area getDefaultArea(World world) {
+        return AreaFactory.getDefaultArea(world);
+    }
+
+    /**
+     * Gets the wilderness area for the world.
+     *
+     * @param world
+     *            The world for which to request the wilderness area.
+     * @return The area for setting wilderness settings in the world.
+     */
+    public static Area getWildernessArea(World world) {
+        return AreaFactory.getWildernessArea(world);
+    }
+
+    /**
+     * Gets if the configured cuboid system has an area at a specific location.
+     *
+     * @param location
+     *            The location to request an area.
+     * @return True if there is an area present at the location.
+     */
+    public static boolean hasArea(Location location) {
+        return AreaFactory.hasArea(activeSystem, location);
+    }
+
+    /**
+     * Gets an area from at a specific location.
+     *
+     * @param id
+     *            The identification of a cuboid as provided by the cuboid system
+     * @return An area from the configured cuboid system, provided area may fail isArea() test.
+     */
+    public static Area getArea(String id) {
+        Validate.notNull(id);
+        return AreaFactory.getArea(activeSystem, id);
+    }
+
+    /**
+     * Gets an area from at a specific location.
+     *
+     * @param location
+     *            The location for which to request an area.
+     * @return An area from the configured cuboid system or the wilderness area if no area is defined.
+     */
+    public static Area getAreaAt(Location location) {
+        Validate.notNull(location);
+        Area area = AreaFactory.getAreaAt(activeSystem, location);
+        return area.isArea() ? area : getWildernessArea(location.getWorld());
     }
 
     /**
@@ -75,6 +174,15 @@ final public class FlagsAPI {
      */
     public static Collection<String> getBundleNames() {
         return getDataStore().readBundles();
+    }
+
+    /**
+     * Gets the total number of bundles defined on the server
+     *
+     * @return A count of the bundles on the server
+     */
+    public static int bundleCount() {
+        return getBundleNames().size();
     }
 
     /**
@@ -90,13 +198,18 @@ final public class FlagsAPI {
     }
 
     /**
-     * Gets the total number of bundles defined on the server
+     * Gets a bundle from the data store.
      *
-     * @return A count of the bundles on the server
+     * @param bundle
+     *            The bundle name to retrieve
+     * @return A list containing the bundle. Null if it doesn't exist.
+     * @throws IllegalArgumentException
      */
-    public static int count() {
-return getBundleNames().size();
-}
+    public static Collection<Flag> getBundle(String bundle) {
+        Validate.notNull(bundle);
+        if(!isBundle(bundle)) { throw new IllegalArgumentException("The provided bundle name does not exist."); }
+        return getDataStore().readBundle(bundle.toLowerCase());
+    }
 
     /**
      * Sets a bundle to the data file.
@@ -130,111 +243,23 @@ return getBundleNames().size();
         }
     }
 
-    // Used only on plugin enable
-    static void registerPermissions() {
-        for(String b : getDataStore().readBundles()) {
-            if (Bukkit.getPluginManager().getPermission(b) == null) {
-                addPermission(b);
-            }
-        }
-    }
-
     private static void addPermission(String name) {
         Validate.notNull(name);
 
         Logger.debug("Registering Bundle Permissions: " + name);
         final Permission perm = new Permission("flags.bundle." + name.toLowerCase(),
-        "Grants ability to use the bundle " + name, PermissionDefault.FALSE);
+                "Grants ability to use the bundle " + name, PermissionDefault.FALSE);
         perm.addParent("flags.bundle", true);
         Bukkit.getPluginManager().addPermission(perm);
     }
 
-    /*
-     * Tasks that must be run only after the entire sever has loaded.
-     * Runs on first server tick.
-     */
-    private static class onServerEnabledTask extends BukkitRunnable {
-        @Override
-        public void run() {
-            registerPermissions();
+    // Used only on plugin enable
+    private static void registerPermissions() {
+        for(String b : getDataStore().readBundles()) {
+            if (Bukkit.getPluginManager().getPermission(b) == null) {
+                addPermission(b);
+            }
         }
-    }
-
-    /**
-     * Closes the API.
-     * Cannot be used externally.
-     *
-     * @param data The data store to close
-     */
-    public static void close(DataStore data) {
-        Validate.notNull(data); // Prevents plugins from using this method.
-        registrar = null;
-        activeSystem = null;
-        dataStore = null;
-        sectorManager = null;
-    }
-
-    /**
-     * Gets the registrar for this instance of Flags.
-     *
-     * @return The flag registrar.
-     */
-    public static Registrar getRegistrar() {
-        return registrar;
-    }
-
-    /**
-     * Gets the sector manager for this instance of Flags.
-     * Null if Flags is not configured to use sectors.
-     *
-     * @return The sector manager for Flags
-     */
-    public static SectorManager getSectorManager() { return sectorManager; }
-
-    /**
-     * Gets if the configured cuboid system has an area at a specific location.
-     *
-     * @param location
-     *            The location to request an area.
-     * @return True if there is an area present at the location.
-     */
-    public static boolean hasArea(Location location) {
-        return AreaFactory.hasArea(activeSystem, location);
-    }
-
-    /**
-     * Gets an area from at a specific location.
-     *
-     * @param location
-     *            The location for which to request an area.
-     * @return An area from the configured cuboid system or the wilderness area if no area is defined.
-     */
-    public static Area getAreaAt(Location location) {
-        Validate.notNull(location);
-        Area area = AreaFactory.getAreaAt(activeSystem, location);
-        return area.isArea() ? area : getWildernessArea(location.getWorld());
-    }
-
-    /**
-     * Gets the wilderness area for the world.
-     *
-     * @param world
-     *            The world for which to request the wilderness area.
-     * @return The area for setting wilderness settings in the world.
-     */
-    public static Area getWildernessArea(World world) {
-        return AreaFactory.getWildernessArea(world);
-    }
-
-    /**
-     * Gets the default area for the world.
-     *
-     * @param world
-     *            The world for which to request the default area.
-     * @return The area for setting default settings for areas in the world.
-     */
-    public static Area getDefaultArea(World world) {
-        return AreaFactory.getDefaultArea(world);
     }
 
     /**
@@ -249,15 +274,6 @@ return getBundleNames().size();
         Validate.notNull(player);
         return activeSystem == CuboidPlugin.GRIEF_PREVENTION
                 && GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
-    }
-
-    /**
-     * Gets the currently active cuboid system.
-     *
-     * @return The Cuboid System in use by Flags.
-     */
-    public static CuboidPlugin getCuboidPlugin() {
-        return activeSystem;
     }
 
     /**
@@ -282,4 +298,6 @@ return getBundleNames().size();
             return false;
         }
     }
+
+
 }

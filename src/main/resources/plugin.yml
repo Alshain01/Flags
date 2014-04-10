@@ -160,6 +160,12 @@ permissions:
     description: Grants the ability to use the sector command.
     default: false
 
+  flags.command.sector.name:
+    description: Grants the ability to name a sector.
+    default: op
+    children:
+      flags.command.sector: true
+
   flags.command.sector.delete:
     description: Grants the ability to delete a sector.
     default: op

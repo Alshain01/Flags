@@ -84,6 +84,7 @@ SECTOR_CREATED: '&bSector Created'
 SECTOR_STARTED: '&bSector corner set the second point.'
 NO_SECTOR_ERROR: '&cStand in the Sector you wish to delete.'
 SUBSECTOR_CREATED: '&bSubsector Created.'
+SECTOR_NAME_CHANGED: '&bChanged sector name to &e{Name}&b.'
   
 # Help Messages
 HELP_HEADER: '&e---------&f {Type}: {Group} ({Page}/{TotalPages})&e--------------------'

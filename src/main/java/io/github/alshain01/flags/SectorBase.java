@@ -17,6 +17,7 @@ import java.util.UUID;
 final class SectorBase implements Sector {
     private final UUID id;
     private final UUID parent;
+    private String name;
     private final SectorLocation greater, lesser;
     private int depth;
 
@@ -71,6 +72,7 @@ final class SectorBase implements Sector {
     public Map<String, Object> serialize() {
         Map<String, Object> sector = new HashMap<String, Object>();
         sector.put("Parent", parent != null ? parent.toString() : "null");
+        sector.put("Name", name);
         sector.put("GreaterCorner", greater);
         sector.put("LesserCorner", lesser);
         sector.put("Depth", depth);
@@ -82,12 +84,19 @@ final class SectorBase implements Sector {
      *
      * @return The id of the sector
      */
+    @Override
     public UUID getID() {
         return id;
     }
 
+    @Override
     public String getName() {
-        return id.toString();
+        return name != null ? name : "unnamed sector";
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -105,6 +114,7 @@ final class SectorBase implements Sector {
      *
      * @return The location of the corner block
      */
+    @Override
     public SectorLocation getGreaterXCorner() {
         return new SectorLocationBase(greater.getWorld(), greater.getX(), greater.getY(), lesser.getZ());
     }
@@ -114,6 +124,7 @@ final class SectorBase implements Sector {
      *
      * @return The location of the corner block
      */
+    @Override
     public SectorLocation getGreaterZCorner() {
         return new SectorLocationBase(greater.getWorld(), lesser.getX(), greater.getY(), greater.getZ());
     }

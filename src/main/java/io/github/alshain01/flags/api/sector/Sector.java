@@ -19,6 +19,20 @@ public interface Sector extends ConfigurationSerializable, Comparable<Sector> {
     public UUID getID();
 
     /**
+     * Gets the name of this sector.
+     *
+     * @return the name of the sector.
+     */
+    public String getName();
+
+    /**
+     * Sets the name of the sector.
+     *
+     * @param name the name of the sector.
+     */
+    public void setName(String name);
+
+    /**
      * Gets the corner where X and Z are greater.
      *
      * @return The location of the corner block

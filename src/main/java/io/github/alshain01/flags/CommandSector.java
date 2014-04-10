@@ -1,6 +1,7 @@
 package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.api.FlagsAPI;
+import io.github.alshain01.flags.api.sector.Sector;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -9,7 +10,7 @@ import org.bukkit.permissions.Permissible;
 
 final class CommandSector implements CommandExecutor {
     private enum SectorCommandType {
-        DELETE('d'), DELETEALL('a'), DELETETOPLEVEL('t');
+        DELETE('d'), DELETEALL('a'), DELETETOPLEVEL('t'), NAME('n');
 
         final char alias;
 
@@ -49,6 +50,11 @@ final class CommandSector implements CommandExecutor {
             return true;
         }
 
+        if(cType == SectorCommandType.NAME && args.length < 2) {
+            sender.sendMessage(getUsage(sender));
+            return true;
+        }
+
         if(!cType.hasPermission(sender)) {
             sender.sendMessage(Message.FLAG_PERM_ERROR.get().replace("{Type}", Message.COMMAND.get()));
             return true;
@@ -68,6 +74,14 @@ final class CommandSector implements CommandExecutor {
                 FlagsAPI.getSectorManager().clear();
                 sender.sendMessage(Message.DELETE_ALL_SECTORS.get());
                 return true;
+            case NAME:
+                Sector sector = FlagsAPI.getSectorManager().getAt(((Player)sender).getLocation());
+                if(sector == null) {
+                    sender.sendMessage(Message.NO_SECTOR_ERROR.get());
+                    return true;
+                }
+                sector.setName(args[1]);
+                sender.sendMessage(Message.SECTOR_NAME_CHANGED.get().replace("{Name}", args[1]));
         }
         sender.sendMessage(getUsage(sender));
         return true;
