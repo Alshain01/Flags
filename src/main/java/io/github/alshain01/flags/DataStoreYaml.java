@@ -61,9 +61,9 @@ final class DataStoreYaml extends DataStore {
     private final static String BUNDLE_FILE = "bundle.yml";
     private final static String PRICE_FILE = "price.yml";
     private final static String SECTOR_FILE = "sector.yml";
-    private final static String CONFIG_FILE = "yamlConfig.yml";
+    private final static String CONFIG_FILE = "dataConfig.yml";
 
-    private final static String AUTO_SAVE_PATH = "AutoSaveInterval";
+    private final static String AUTO_SAVE_PATH = "YAML.AutoSaveInterval";
     private final static String DATABASE_VERSION_PATH = "Default.Database.Version";
     private final static String PLAYER_TRUST_PATH = "FlagPlayerTrust";
     private final static String PERM_TRUST_PATH = "FlagPermissionTrust";

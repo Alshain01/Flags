@@ -50,12 +50,12 @@ final class DataStoreMySQL extends DataStore {
     private final String url, user, password;
 
     DataStoreMySQL(Plugin plugin) {
-        File sqlConfigFile = new File(plugin.getDataFolder(), "mysqlConfig.yml");
+        File sqlConfigFile = new File(plugin.getDataFolder(), "dataConfig.yml");
         YamlConfiguration sqlConfig =YamlConfiguration.loadConfiguration(sqlConfigFile);
-        if(!sqlConfig.isString("Url") || !sqlConfig.isString("User") || !sqlConfig.isString("Password")) {
-            sqlConfig.set("Url", "jdbc:mysql://localhost/flags");
-            sqlConfig.set("User", "MyUserName");
-            sqlConfig.set("Password", "MyPassword");
+        if(!sqlConfig.isString("MYSQL.Url") || !sqlConfig.isString("MYSQL.User") || !sqlConfig.isString("MYSQL.Password")) {
+            sqlConfig.set("MYSQL.Url", "jdbc:mysql://localhost/flags");
+            sqlConfig.set("MYSQL.User", "MyUserName");
+            sqlConfig.set("MYSQL.Password", "MyPassword");
             try {
                 sqlConfig.save(sqlConfigFile);
             } catch (IOException ex) {
@@ -63,9 +63,9 @@ final class DataStoreMySQL extends DataStore {
             }
         }
 
-        this.url = sqlConfig.getString("Url");
-        this.user = sqlConfig.getString("User");
-        this.password = sqlConfig.getString("Password");
+        this.url = sqlConfig.getString("MYSQL.Url");
+        this.user = sqlConfig.getString("MYSQL.User");
+        this.password = sqlConfig.getString("MYSQL.Password");
 
         connect(url, user, password);
     }
@@ -199,8 +199,9 @@ final class DataStoreMySQL extends DataStore {
     }
 
     @Override
-    public void update(JavaPlugin plugin) {
+    public boolean update(JavaPlugin plugin) {
         Logger.info("No Database Updates Necessary.");
+        return true;
     }
 
     @Override
