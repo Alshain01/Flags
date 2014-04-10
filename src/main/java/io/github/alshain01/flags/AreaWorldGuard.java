@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.area.Nameable;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import org.bukkit.Location;
@@ -42,7 +43,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 /**
  * Class for creating areas to manage a WorldGuard Region.
  */
-final class AreaWorldGuard extends AreaRemovable implements Ownable {
+final class AreaWorldGuard extends AreaRemovable implements Nameable, Ownable {
 	private final ProtectedRegion region;
 	private final World world;
 
@@ -95,6 +96,12 @@ final class AreaWorldGuard extends AreaRemovable implements Ownable {
     public String getId() {
         if (isArea()) return region.getId();
         throw new InvalidAreaException();
+    }
+
+    @Override
+    public String getName() {
+        // WorldGuard's ID is a name
+        return getId();
     }
 
     @Override
