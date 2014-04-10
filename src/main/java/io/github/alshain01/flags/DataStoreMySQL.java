@@ -172,7 +172,7 @@ final class DataStoreMySQL extends DataStore {
         if (notExists()) {
             executeStatement("CREATE TABLE IF NOT EXISTS Version (Major INT, Minor INT, Build INT);");
             executeStatement("INSERT INTO Version (Major, Minor, Build) VALUES (2,0,0);");
-            executeStatement("CREATE TABLE IF NOT EXISTS Sectors (Id CHAR(36), GreaterCorner VARCHAR(255), LesserCorner VARCHAR(255), INTEGER Depth, PRIMARY KEY (Id));");
+            executeStatement("CREATE TABLE IF NOT EXISTS Sectors (Id CHAR(36), Name VARCHAR(255), GreaterCorner VARCHAR(255), LesserCorner VARCHAR(255), INTEGER Depth, PRIMARY KEY (Id));");
             executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(36), FlagName VARCHAR(36), CONSTRAINT pk_BundleEntry PRIMARY KEY (BundleName, FlagName));");
             executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(36), ProductType VARCHAR(36), Cost DOUBLE, CONSTRAINT pk_FlagType PRIMARY KEY (FlagName, ProductType));");
             executeStatement("CREATE TABLE IF NOT EXISTS Flags (CuboidPlugin VARCHAR(255), WorldId CHAR(36), AreaId CHAR(36), FlagName VARCHAR(36), Setting BOOLEAN, Message VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (CuboidPlugin, WorldId, AreaId, FlagName));");
@@ -482,12 +482,15 @@ final class DataStoreMySQL extends DataStore {
                 if (!results.getString("ParentId").equals("null")) {
                     parent = UUID.fromString(results.getString("ParentId"));
                 }
+                String name = results.getString("Name");
 
-                SectorLocation greater = new SectorLocationBase(results.getString("GreaterCorner"));
-                SectorLocation lesser = new SectorLocationBase(results.getString("LesserCorner"));
+                SectorLocation greater = new SectorLocationBase(UUID.fromString(results.getString("World")),
+                                results.getInt("GX"), results.getInt("GY"), results.getInt("GZ"));
+                SectorLocation lesser = new SectorLocationBase(UUID.fromString(results.getString("World")),
+                        results.getInt("LX"), results.getInt("LY"), results.getInt("LZ"));
                 int depth = results.getInt("Depth");
 
-                sectors.put(id, new SectorBase(id, greater, lesser, depth, parent));
+                sectors.put(id, new SectorBase(id, name, greater, lesser, depth, parent));
             }
         } catch (SQLException ex) {
             Logger.error("Failed to read sectors from MySQL.");
@@ -497,18 +500,22 @@ final class DataStoreMySQL extends DataStore {
 
     @Override
     public void writeSector(Sector sector) {
-        String insertString = "INSERT INTO Sectors (Id, ParentId, GreaterCorner, LesserCorner, Depth) "
-                + "VALUES ('%id%', '%parent%', '%greater%', '%lesser%', %depth%) " +
+        String insertString = "INSERT INTO Sectors (Id, Name, ParentId, World, GX, GY, GZ, LX, LY, LZ, Depth) "
+                + "VALUES ('%id%', %name%, '%parent%', '%world%', '%gx%', '%gy%', '%gz%', '%lx%', '%ly%', '%lz%', %depth%) " +
                 "ON DUPLICATE KEY UPDATE GreaterCorner=%greater%, LesserCorner=%lesser%, Depth=%depth%;";
 
-        insertString = insertString.replace("%id%", sector.getID().toString()).replace("%depth%", String.valueOf(sector.getDepth()));
-        insertString = insertString.replace("%greater%", sector.getGreaterCorner().toString()).replace("%lesser%", sector.getLesserCorner().toString());
-        if (sector.getParentID() != null) {
-            insertString = insertString.replace("%parent%", sector.getParentID().toString());
-        } else {
-            insertString = insertString.replace("%parent%", "null");
-        }
-
+        insertString = insertString
+                .replace("%id%", sector.getID().toString())
+                .replace("%name%", sector.getName().toString())
+                .replace("%depth%", String.valueOf(sector.getDepth()))
+                .replace("%world%", sector.getWorld().getUID().toString())
+                .replace("%gx%", String.valueOf(sector.getGreaterCorner().getX()))
+                .replace("%gy%", String.valueOf(sector.getGreaterCorner().getY()))
+                .replace("%gz%", String.valueOf(sector.getGreaterCorner().getZ()))
+                .replace("%lx%", String.valueOf(sector.getLesserCorner().getX()))
+                .replace("%ly%", String.valueOf(sector.getLesserCorner().getY()))
+                .replace("%lz%", String.valueOf(sector.getLesserCorner().getZ()))
+                .replace("%parent%", sector.getParentID() != null ? sector.getParentID().toString() : "null");
         executeStatement(insertString);
     }
 

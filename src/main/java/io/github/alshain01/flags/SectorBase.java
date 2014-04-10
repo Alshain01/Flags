@@ -52,8 +52,9 @@ final class SectorBase implements Sector {
     }
 
     // For loading from SQL
-    public SectorBase(UUID id, SectorLocation greater, SectorLocation lesser, int depth, UUID parentID) {
+    public SectorBase(UUID id, String name, SectorLocation greater, SectorLocation lesser, int depth, UUID parentID) {
         this.id = id;
+        this.name = name;
         parent = parentID;
         this.depth = depth;
         this.greater = greater;
