@@ -628,25 +628,34 @@ final class DataStoreYaml extends DataStore {
         Logger.info("Migrating Subdivisions");
         Logger.debug("Converting for " + cuboidPlugin.getName());
         ConfigurationSection config = data.getConfigurationSection(cuboidPlugin.getName());
-        for (World w : Bukkit.getWorlds()) {
-            if (config.isConfigurationSection(w.getName())) {
-                Logger.debug("Converting for " + w.getName());
-                ConfigurationSection wConfig = config.getConfigurationSection(w.getName());
-                for (String p : wConfig.getKeys(false)) { // Parent claims
-                    Logger.debug("Converting for Parent " + p);
-                    for (String s : wConfig.getConfigurationSection(p).getKeys(false)) { // Subdivision Claims
-                        Logger.debug("Converting for Possible Subdivision " + s);
-                        if (wConfig.isBoolean(p + DELIMETER + s + ".InheritParent")) { // If it's a subdivision, it will have an InheritParent key
+        for (World world : Bukkit.getWorlds()) {
+            if (config.isConfigurationSection(world.getName())) {
+                Logger.debug("Converting for " + world.getName());
+                ConfigurationSection worldConfig = config.getConfigurationSection(world.getName());
+                for (String parent : worldConfig.getKeys(false)) { // Parent claims
+                    Logger.debug("Converting for Parent " + parent);
+                    for (String subdivision : worldConfig.getConfigurationSection(parent).getKeys(false)) { // Subdivision Claims
+                        Logger.debug("Converting for Possible Subdivision " + subdivision);
+                        if (worldConfig.isBoolean(parent + DELIMETER + subdivision + ".InheritParent")) { // If it's a subdivision, it will have an InheritParent key
                             Logger.debug("Subdivision Found!");
                             if (cuboidPlugin == CuboidPlugin.RESIDENCE) { // Residence has a new UUID system to convert to
-                                ResidenceArea residence = ResidenceAPI.getResidenceManager().getByName(p + "." + s);
+                                ResidenceArea residence = ResidenceAPI.getResidenceManager().getByName(parent + "." + subdivision);
                                 if(residence != null) {
-                                    wConfig.set(residence.getResidenceUUID().toString(), wConfig.getConfigurationSection(p + "." + s).getValues(true)); // Move the whole thing up one level
+                                    worldConfig.set(residence.getResidenceUUID().toString() + ".InheritParent", worldConfig.getBoolean(parent + DELIMETER + subdivision + ".InheritParent"));
+                                    worldConfig.set(parent + DELIMETER + subdivision + ".InheritParent", null); // Remove it to avoid conflict
+                                    for(String key : worldConfig.getConfigurationSection(parent + DELIMETER + subdivision).getKeys(false)) {
+                                        worldConfig.set(residence.getResidenceUUID().toString(), worldConfig.getConfigurationSection(parent + DELIMETER + subdivision + DELIMETER + key).getValues(true)); // Move the whole thing up one level
+                                    }
+                                    worldConfig.set(parent + DELIMETER + subdivision, null);
                                 }
                             } else {
-                                wConfig.set(s, wConfig.getConfigurationSection(p + DELIMETER + s).getValues(true)); // Move the whole thing up one level
+                                worldConfig.set(subdivision + ".InheritParent", worldConfig.getBoolean(parent + DELIMETER + subdivision + ".InheritParent"));
+                                worldConfig.set(parent + DELIMETER + subdivision + ".InheritParent", null); // Remove it to avoid conflict
+                                for(String key : worldConfig.getConfigurationSection(parent + DELIMETER + subdivision).getKeys(false)) {
+                                    worldConfig.set(subdivision, worldConfig.getConfigurationSection(parent + DELIMETER + subdivision + DELIMETER + key).getValues(true)); // Move the whole thing up one level
+                                }
+                                worldConfig.set(parent + DELIMETER + subdivision, null);
                             }
-                            wConfig.set(p + DELIMETER + s, null); // Erase it
                         }
                     }
                 }
@@ -703,6 +712,7 @@ final class DataStoreYaml extends DataStore {
     }
 
     private void updateConvertPlayers(ConfigurationSection[] dataconfigs){
+        Map<String, UUID> playerCache = new HashMap<String, UUID>(); // Prevents fetching the same player twice.
         Logger.info("Converting Player Names to UUID.");
         for(ConfigurationSection config : dataconfigs) {
             for (String k : config.getKeys(true)) {
@@ -713,7 +723,10 @@ final class DataStoreYaml extends DataStore {
                         if (((String) o).contains(".")) {
                             permissionTrustList.add((String) o);
                         } else {
-                            config.set(k.replace("Trust", "FlagPlayerTrust." + Bukkit.getOfflinePlayer((String) o).getUniqueId()), o);
+                            if (!playerCache.containsKey((String) o)){
+                                playerCache.put((String) o, Bukkit.getOfflinePlayer((String) o).getUniqueId());
+                            }
+                            config.set(k.replace("Trust", "FlagPlayerTrust") + playerCache.get(o), o);
                         }
                     }
                     config.set(k.replace("Trust", "FlagPermissionTrust"), permissionTrustList);
