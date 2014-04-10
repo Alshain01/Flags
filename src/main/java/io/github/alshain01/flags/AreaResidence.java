@@ -30,10 +30,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import io.github.alshain01.flags.api.CuboidPlugin;
-import io.github.alshain01.flags.api.area.Area;
-import io.github.alshain01.flags.api.area.Nameable;
-import io.github.alshain01.flags.api.area.Ownable;
-import io.github.alshain01.flags.api.area.Subdividable;
+import io.github.alshain01.flags.api.area.*;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
 import net.t00thpick1.residence.api.ResidenceAPI;
@@ -43,7 +40,7 @@ import org.bukkit.Location;
 /**
  * Class for creating areas to manage a Residence Claimed Residences.
  */
-final class AreaResidence extends AreaRemovable implements Nameable, Ownable, Subdividable {
+final class AreaResidence extends AreaRemovable implements Identifiable, Nameable, Ownable, Subdividable {
 	private final ResidenceArea residence;
 
 	/**
@@ -62,11 +59,11 @@ final class AreaResidence extends AreaRemovable implements Nameable, Ownable, Su
 	 * Creates an instance of AreaResidence based on a residence
 	 * name
 	 * 
-	 * @param name
-	 *            The residence name
+	 * @param id
+	 *            The residence UUID as a string
 	 */
-	public AreaResidence(String name) {
-		residence = ResidenceAPI.getResidenceManager().getByName(name);
+	public AreaResidence(String id) {
+		residence = ResidenceAPI.getResidenceManager().getByUUID(UUID.fromString(id));
 	}
 
     /**
@@ -89,8 +86,14 @@ final class AreaResidence extends AreaRemovable implements Nameable, Ownable, Su
 	}
 
     @Override
+    public UUID getUniqueId() {
+        if (isArea()) return residence.getResidenceUUID();
+        throw new InvalidAreaException();
+    }
+
+    @Override
     public String getId() {
-        if (isArea()) return residence.getName();
+        if (isArea()) return residence.getResidenceUUID().toString();
         throw new InvalidAreaException();
     }
 
