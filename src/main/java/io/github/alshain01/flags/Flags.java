@@ -79,7 +79,10 @@ final public class Flags extends JavaPlugin {
         CuboidPlugin cuboidPlugin = findCuboidPlugin(pm, getConfig().getList("AreaPlugins"));
         dataStore = findDataStore(cuboidPlugin);
         dataStore.create(this);
-        dataStore.update(this);
+        if(!dataStore.update(this)) {
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
 
         // Load Sectors
         SectorManager sectors = null;

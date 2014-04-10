@@ -89,7 +89,7 @@ public abstract class DataStore {
 
     public abstract DataStoreType getType();
 
-    public abstract void update(JavaPlugin plugin);
+    public abstract boolean update(JavaPlugin plugin);
 
     public abstract Collection<String> readBundles();
 

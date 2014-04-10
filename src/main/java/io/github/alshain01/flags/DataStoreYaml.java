@@ -38,6 +38,8 @@ import java.util.*;
 
 import io.github.alshain01.flags.api.sector.Sector;
 
+import net.t00thpick1.residence.api.ResidenceAPI;
+import net.t00thpick1.residence.api.areas.ResidenceArea;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -63,10 +65,10 @@ final class DataStoreYaml extends DataStore {
 
     private final static String AUTO_SAVE_PATH = "AutoSaveInterval";
     private final static String DATABASE_VERSION_PATH = "Default.Database.Version";
-    private final static String PLAYER_TRUST_PATH = "PlayerTrust";
-    private final static String PERM_TRUST_PATH = "PermissionTrust";
-    private final static String VALUE_PATH = "Value";
-    private final static String MESSAGE_PATH = "Message";
+    private final static String PLAYER_TRUST_PATH = "FlagPlayerTrust";
+    private final static String PERM_TRUST_PATH = "FlagPermissionTrust";
+    private final static String VALUE_PATH = "FlagValue";
+    private final static String MESSAGE_PATH = "FlagMessage";
     private final static String INHERIT_PATH = "InheritParent";
     private final static String DELIMETER = ".";
 
@@ -105,17 +107,6 @@ final class DataStoreYaml extends DataStore {
         reload();
 
 	}
-
-    private void updateWorldFile() {
-        // Upgrade sequence from older versions
-        File worldFile = new File(dataFolder, "world.yml");
-        File wildFile = new File(dataFolder, WILDERNESS_FILE);
-        if(worldFile.exists() && !wildFile.exists()) {
-            if(!worldFile.renameTo(wildFile)) {
-                Logger.error("Failed to rename world.yml to wilderness.yml");
-            }
-        }
-    }
 
     private class AutoSave extends BukkitRunnable {
         @Override
@@ -228,208 +219,55 @@ final class DataStoreYaml extends DataStore {
 
 
     @Override
-    public void update(JavaPlugin plugin) {
+    public boolean update(JavaPlugin plugin) {
         final DataStoreVersion ver = readVersion();
-        if (ver.getMajor() == 1 && ver.getMajor() <= 4 && ver.getBuild() < 1) {
-            Logger.error("FAILED TO UPDATE DATABASE SCHEMA.  DATABASE VERSIONS PRIOR TO 1.4 CANNOT BE UPGRADED.");
+        if (ver.getMajor() == 1 && ver.getMinor() <= 4) {
+            Logger.error("FAILED TO UPDATE DATABASE SCHEMA. DATABASE VERSIONS PRIOR TO 1.4 CANNOT BE UPGRADED.");
             Bukkit.getPluginManager().disablePlugin(Bukkit.getServer().getPluginManager().getPlugin("Flags"));
-            return;
+            return false;
         }
+
         if (ver.getMajor() < 2) {
             Logger.info("Beginning YAML Database Update");
-            // Rename World to Wilderness
-            Logger.info("Converting World to Wilderness");
-            if (wilderness.isConfigurationSection("World")) {
-                wilderness.set("Wilderness", wilderness.getConfigurationSection("World").getValues(true));
-            }
-            wilderness.set("World", null);
+            updateWorld2Wilderness();
+            updateMigrateBundles();
+            updateMigratePrices();
 
             ConfigurationSection[] dataconfigs = { data, def, wilderness };
             // Remove old trust lists for offline servers (there is no way to update them)
             if(!Bukkit.getServer().getOnlineMode()) {
-                Logger.info("Removing Trust Lists for Offline Server");
-                for(ConfigurationSection data : dataconfigs) {
-                    for(String s : data.getKeys(true)) {
-                        if(s.contains("Trust")) {
-                            data.set(s, null);
-                        }
-                    }
-                }
+                updateRemoveOfflineTrust(dataconfigs);
             }
 
-            Logger.info("Scrubbing the Database");
-            for(ConfigurationSection data : dataconfigs) {
-                // Condition the data
-                // Remove excess cuboid systems
-                for (String s : data.getKeys(false)) {
-                    if (!cuboidPlugin.getName().equals(s)) {
-                        data.set(s, null);
-                    }
-                }
-
-                //Remove invalid data and empty lists
-                for (String s : data.getKeys(true)) {
-                    if (((s.contains("Value") || s.contains("InheritParent")) && !data.isBoolean(s))
-                            || (s.contains("Trust") && (!data.isList(s) || data.getList(s).isEmpty()))
-                            || (s.contains("Message") && !data.isString(s))) {
-                        data.set(s, null);
-                    }
-                }
-
-                // Rmove empty configuration sections
-                for (String s : data.getKeys(true)) {
-                    if (data.isConfigurationSection(s) && data.getConfigurationSection(s).getKeys(false).isEmpty()) {
-                        data.set(s, null);
-                    }
-                }
-            }
-
-
-
-            // Convert Bundles
-            if (bundle.isConfigurationSection("Bundle")) {
-                Logger.info("Scrubbing the Databse");
-                for(String s : bundle.getConfigurationSection("Bundle").getKeys(false)) {
-                    bundle.set(s, bundle.getList("Bundle." + s));
-                }
-                bundle.set("Bundle", null);
-            }
-
-            // Convert Prices
-            if (price.isConfigurationSection("Price")) {
-                Logger.info("Converting Prices");
-                for(String s : price.getConfigurationSection("Price").getKeys(true)) {
-                    price.set(s, price.getDouble("Price." + s));
-                }
-                price.set("Price", null);
-            }
+            updateScrubDatabase(dataconfigs);
 
             // Convert Sectors
             if(sectors != null) {
                 // Convert old sector location to serialized form.
-                Logger.info("Serializing Sector Location Coordinates");
-                for (String s : sectors.getConfigurationSection("Sectors").getKeys(true)) {
-                        Logger.debug("Checking SectorLocation " + s);
-                    if (s.contains("Corner")) {
-                        Logger.debug("Converting SectorLocation " + s);
-                        sectors.set("Sectors." + s, new SectorLocationBase(sectors.getString("Sectors." + s)).serialize());
-                    }
-                }
-
-                // Remove old header
-                if (sectors.isConfigurationSection("Sectors")) {
-                    Logger.info("Converting Sectors");
-                    for(String s : sectors.getConfigurationSection("Sectors").getKeys(false)) {
-                        Logger.debug("Converting Sector " + s);
-                        sectors.set(s, sectors.getConfigurationSection("Sectors." + s).getValues(true));
-                    }
-                    sectors.set("Sectors", null);
-                    Logger.debug("Sectors Converted");
-                }
+                updateSerializeSectorLocations();
+                updateMigrateSectors();
             }
 
             // Convert Subdivision Data To the upper level.
             if(data.isConfigurationSection(cuboidPlugin.getName())) {
-                Logger.info("Converting Subdivisions");
-                Logger.debug("Converting for " + cuboidPlugin.getName());
-                ConfigurationSection config = data.getConfigurationSection(cuboidPlugin.getName());
-                for (World w : Bukkit.getWorlds()) {
-                    if (config.isConfigurationSection(w.getName())) {
-                        Logger.debug("Converting for " + w.getName());
-                        ConfigurationSection wConfig = config.getConfigurationSection(w.getName());
-                        for (String p : wConfig.getKeys(false)) { // Parent claims
-                            Logger.debug("Converting for Parent " + p);
-                            for (String s : wConfig.getConfigurationSection(p).getKeys(false)) { // Subdivision Claims
-                                Logger.debug("Converting for Possible Subdivision " + s);
-                                if (wConfig.isBoolean(p + DELIMETER + s + ".InheritParent")) { // If it's a subdivision, it will have an InheritParent key
-                                    Logger.debug("Subdivision Found!");
-                                    if (cuboidPlugin == CuboidPlugin.RESIDENCE) { // Residence uses the nested format by design, we will string replace it with a "_"
-                                        wConfig.set(p + "_" + s, wConfig.getConfigurationSection(p + "." + s).getValues(true)); // Move the whole thing up one level
-                                    } else {
-                                        wConfig.set(s, wConfig.getConfigurationSection(p + DELIMETER + s).getValues(true)); // Move the whole thing up one level
-                                    }
-                                    wConfig.set(p + "." + s, null); // Erase it
-                                }
-                            }
-                        }
-                    }
-                }
+                updateMigratSubdivisions();
             }
 
             saveData = true;
             save();
 
-            //Convert World Names to UUID
-            Logger.info("Converting World Names to UUID.");
-            if(data.isConfigurationSection(cuboidPlugin.getName())) {
-                ConfigurationSection config = data.getConfigurationSection(cuboidPlugin.getName());
-                for (String w : config.getKeys(false)) {
-                    Logger.debug("Converting for World " + w);
-                    ConfigurationSection wConfig = config.getConfigurationSection(w);
-                    World world = Bukkit.getWorld(w);
-                    if (world != null) {
-                        for(String k : wConfig.getKeys(false)) {
-                            Logger.debug("Converting for Key " + k);
-                            ConfigurationSection kConfig = wConfig.getConfigurationSection(k);
-                            config.set(world.getUID().toString() + DELIMETER + k, kConfig.getValues(true));
-                        }
-                    }
-                    Logger.debug("Deleting old world data");
-                    data.set(cuboidPlugin.getName() + DELIMETER + w, null);
-                }
-            }
-
-            // Because the CuboidSystems sometimes need a world id,
-            // AreaWilderness and AreaDefault will be converted to use world id and system id
-            // In order to be universal.  This will result in the same key twice, nested.
-            // But it's necessary to reuse code later in the class.
-            if(wilderness.isConfigurationSection("Wilderness")) {
-                for (String s : wilderness.getConfigurationSection("Wilderness").getKeys(false)) {
-                    World world = Bukkit.getWorld(s);
-                    if (world != null) {
-                        wilderness.set("Wilderness." + world.getUID().toString() + DELIMETER + world.getUID().toString(),
-                                wilderness.getConfigurationSection("Wilderness." + s).getValues(true));
-                        wilderness.set("Wilderness." + s, null);
-                    }
-                }
-            }
-
-            if(def.isConfigurationSection("Default")) {
-                for (String s : def.getConfigurationSection("Default").getKeys(false)) {
-                    World world = Bukkit.getWorld(s);
-                    if (world != null) {
-                        def.set("Default." + world.getUID().toString() + DELIMETER + world.getUID().toString(),
-                                def.getConfigurationSection("Default." + s).getValues(true));
-                        def.set("Default." + s, null);
-                    }
-                }
-            }
+            updateConvertWorlds();
 
             // Convert Trust List to UUID
-            Logger.info("Converting Player Names to UUID.");
-            for(ConfigurationSection config : dataconfigs) {
-                for (String k : config.getKeys(true)) {
-                    if (k.contains("Trust") && config.isList(k)) {
-                        List<?> trustList = config.getList(k);
-                        List<String> permissionTrustList = new ArrayList<String>();
-                        for (Object o : trustList) {
-                            if (((String) o).contains(".")) {
-                                permissionTrustList.add((String) o);
-                            } else {
-                                config.set(k.replace("Trust", "PlayerTrust." + Bukkit.getOfflinePlayer((String) o).getUniqueId()), o);
-                            }
-                        }
-                        config.set(k.replace("Trust", "PermissionTrust"), permissionTrustList);
-                        config.set(k, null);
-                    }
-                }
-            }
+            updateConvertPlayers(dataconfigs);
+
             Logger.info("Writing Updated Database.");
-            //writeVersion(new DataStoreVersion(2, 0, 0));
+            writeVersion(new DataStoreVersion(2, 0, 0));
             //saveData = true;
             //save();
             Logger.info("Database Update Complete.");
         }
+        return true;
     }
 
     @Override
@@ -676,6 +514,212 @@ final class DataStoreYaml extends DataStore {
             return def;
         } else {
             return data;
+        }
+    }
+
+    private void updateWorldFile() {
+        // Upgrade sequence from older versions
+        File worldFile = new File(dataFolder, "world.yml");
+        File wildFile = new File(dataFolder, WILDERNESS_FILE);
+        if(worldFile.exists() && !wildFile.exists()) {
+            Logger.info("Converting world.yml to wilderness.yml");
+            if(!worldFile.renameTo(wildFile)) {
+                Logger.error("Failed to rename world.yml to wilderness.yml");
+            }
+        }
+    }
+
+    private void updateWorld2Wilderness() {
+        // Rename World to Wilderness
+        Logger.info("Converting World to Wilderness");
+        if (wilderness.isConfigurationSection("World")) {
+            wilderness.set("Wilderness", wilderness.getConfigurationSection("World").getValues(true));
+        }
+        wilderness.set("World", null);
+    }
+
+    private void updateRemoveOfflineTrust(ConfigurationSection[] dataconfigs) {
+        Logger.info("Removing Trust Lists for Offline Server");
+        for(ConfigurationSection data : dataconfigs) {
+            for(String s : data.getKeys(true)) {
+                if(s.contains("Trust")) {
+                    data.set(s, null);
+                }
+            }
+        }
+    }
+
+    private void updateScrubDatabase(ConfigurationSection[] dataconfigs) {
+        Logger.info("Scrubbing the Database");
+        for(ConfigurationSection data : dataconfigs) {
+            // Condition the data
+            // Remove excess cuboid systems
+            for (String s : data.getKeys(false)) {
+                if (!cuboidPlugin.getName().equals(s)) {
+                    data.set(s, null);
+                }
+            }
+
+            //Remove invalid data and empty lists
+            for (String s : data.getKeys(true)) {
+                if (((s.contains("Value") || s.contains("InheritParent")) && !data.isBoolean(s))
+                        || (s.contains("Trust") && (!data.isList(s) || data.getList(s).isEmpty()))
+                        || (s.contains("Message") && !data.isString(s))) {
+                    data.set(s, null);
+                }
+            }
+
+            // Rmove empty configuration sections
+            for (String s : data.getKeys(true)) {
+                if (data.isConfigurationSection(s) && data.getConfigurationSection(s).getKeys(false).isEmpty()) {
+                    data.set(s, null);
+                }
+            }
+        }
+    }
+
+    private void updateMigrateBundles(){
+        // Convert Bundles
+        if (bundle.isConfigurationSection("Bundle")) {
+            Logger.info("Migrating Bundles");
+            for(String s : bundle.getConfigurationSection("Bundle").getKeys(false)) {
+                bundle.set(s, bundle.getList("Bundle." + s));
+            }
+            bundle.set("Bundle", null);
+        }
+    }
+
+    private void updateMigratePrices() {
+        // Convert Prices
+        if (price.isConfigurationSection("Price")) {
+            Logger.info("Migrating Prices");
+            for(String s : price.getConfigurationSection("Price").getKeys(true)) {
+                price.set(s, price.getDouble("Price." + s));
+            }
+            price.set("Price", null);
+        }
+    }
+
+    private void updateSerializeSectorLocations() {
+        Logger.info("Serializing Sector Location Coordinates");
+        for (String s : sectors.getConfigurationSection("Sectors").getKeys(true)) {
+            Logger.debug("Checking SectorLocation " + s);
+            if (s.contains("Corner")) {
+                Logger.debug("Converting SectorLocation " + s);
+                sectors.set("Sectors." + s, new SectorLocationBase(sectors.getString("Sectors." + s)).serialize());
+            }
+        }
+    }
+
+    private void updateMigrateSectors() {
+        // Remove old header
+        if (sectors.isConfigurationSection("Sectors")) {
+            Logger.info("Migrating Sectors");
+            for(String s : sectors.getConfigurationSection("Sectors").getKeys(false)) {
+                Logger.debug("Converting Sector " + s);
+                sectors.set(s, sectors.getConfigurationSection("Sectors." + s).getValues(true));
+            }
+            sectors.set("Sectors", null);
+            Logger.debug("Sectors Converted");
+        }
+    }
+
+    private void updateMigratSubdivisions() {
+        Logger.info("Migrating Subdivisions");
+        Logger.debug("Converting for " + cuboidPlugin.getName());
+        ConfigurationSection config = data.getConfigurationSection(cuboidPlugin.getName());
+        for (World w : Bukkit.getWorlds()) {
+            if (config.isConfigurationSection(w.getName())) {
+                Logger.debug("Converting for " + w.getName());
+                ConfigurationSection wConfig = config.getConfigurationSection(w.getName());
+                for (String p : wConfig.getKeys(false)) { // Parent claims
+                    Logger.debug("Converting for Parent " + p);
+                    for (String s : wConfig.getConfigurationSection(p).getKeys(false)) { // Subdivision Claims
+                        Logger.debug("Converting for Possible Subdivision " + s);
+                        if (wConfig.isBoolean(p + DELIMETER + s + ".InheritParent")) { // If it's a subdivision, it will have an InheritParent key
+                            Logger.debug("Subdivision Found!");
+                            if (cuboidPlugin == CuboidPlugin.RESIDENCE) { // Residence has a new UUID system to convert to
+                                ResidenceArea residence = ResidenceAPI.getResidenceManager().getByName(p + "." + s);
+                                if(residence != null) {
+                                    wConfig.set(residence.getResidenceUUID().toString(), wConfig.getConfigurationSection(p + "." + s).getValues(true)); // Move the whole thing up one level
+                                }
+                            } else {
+                                wConfig.set(s, wConfig.getConfigurationSection(p + DELIMETER + s).getValues(true)); // Move the whole thing up one level
+                            }
+                            wConfig.set(p + DELIMETER + s, null); // Erase it
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void updateConvertWorlds() {
+        //Convert World Names to UUID
+        Logger.info("Converting World Names to UUID.");
+        if(data.isConfigurationSection(cuboidPlugin.getName())) {
+            ConfigurationSection config = data.getConfigurationSection(cuboidPlugin.getName());
+            for (String w : config.getKeys(false)) {
+                Logger.debug("Converting for World " + w);
+                ConfigurationSection wConfig = config.getConfigurationSection(w);
+                World world = Bukkit.getWorld(w);
+                if (world != null) {
+                    for(String k : wConfig.getKeys(false)) {
+                        Logger.debug("Converting for Key " + k);
+                        ConfigurationSection kConfig = wConfig.getConfigurationSection(k);
+                        config.set(world.getUID().toString() + DELIMETER + k, kConfig.getValues(true));
+                    }
+                }
+                Logger.debug("Deleting old world data");
+                data.set(cuboidPlugin.getName() + DELIMETER + w, null);
+            }
+        }
+
+        // Because the CuboidSystems sometimes need a world id,
+        // AreaWilderness and AreaDefault will be converted to use world id and system id
+        // In order to be universal.  This will result in the same key twice, nested.
+        // But it's necessary to reuse code later in the class.
+        if(wilderness.isConfigurationSection("Wilderness")) {
+            for (String s : wilderness.getConfigurationSection("Wilderness").getKeys(false)) {
+                World world = Bukkit.getWorld(s);
+                if (world != null) {
+                    wilderness.set("Wilderness." + world.getUID().toString() + DELIMETER + world.getUID().toString(),
+                            wilderness.getConfigurationSection("Wilderness." + s).getValues(true));
+                    wilderness.set("Wilderness." + s, null);
+                }
+            }
+        }
+
+        if(def.isConfigurationSection("Default")) {
+            for (String s : def.getConfigurationSection("Default").getKeys(false)) {
+                World world = Bukkit.getWorld(s);
+                if (world != null) {
+                    def.set("Default." + world.getUID().toString() + DELIMETER + world.getUID().toString(),
+                            def.getConfigurationSection("Default." + s).getValues(true));
+                    def.set("Default." + s, null);
+                }
+            }
+        }
+    }
+
+    private void updateConvertPlayers(ConfigurationSection[] dataconfigs){
+        Logger.info("Converting Player Names to UUID.");
+        for(ConfigurationSection config : dataconfigs) {
+            for (String k : config.getKeys(true)) {
+                if (k.contains("Trust") && config.isList(k)) {
+                    List<?> trustList = config.getList(k);
+                    List<String> permissionTrustList = new ArrayList<String>();
+                    for (Object o : trustList) {
+                        if (((String) o).contains(".")) {
+                            permissionTrustList.add((String) o);
+                        } else {
+                            config.set(k.replace("Trust", "FlagPlayerTrust." + Bukkit.getOfflinePlayer((String) o).getUniqueId()), o);
+                        }
+                    }
+                    config.set(k.replace("Trust", "FlagPermissionTrust"), permissionTrustList);
+                    config.set(k, null);
+                }
+            }
         }
     }
 }
