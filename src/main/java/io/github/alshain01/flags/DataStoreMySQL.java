@@ -172,7 +172,7 @@ final class DataStoreMySQL extends DataStore {
         if (notExists()) {
             executeStatement("CREATE TABLE IF NOT EXISTS Version (Major INT, Minor INT, Build INT);");
             executeStatement("INSERT INTO Version (Major, Minor, Build) VALUES (2,0,0);");
-            executeStatement("CREATE TABLE IF NOT EXISTS Sectors (Id CHAR(36), Name VARCHAR(255), GreaterCorner VARCHAR(255), LesserCorner VARCHAR(255), INTEGER Depth, PRIMARY KEY (Id));");
+            executeStatement("CREATE TABLE IF NOT EXISTS Sectors (Id CHAR(36), Name VARCHAR(255), World CHAR(36), GX INT, GY INT, GZ INT, LX INT, LY INT, LZ INT, Depth INT, PRIMARY KEY (Id));");
             executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(36), FlagName VARCHAR(36), CONSTRAINT pk_BundleEntry PRIMARY KEY (BundleName, FlagName));");
             executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(36), ProductType VARCHAR(36), Cost DOUBLE, CONSTRAINT pk_FlagType PRIMARY KEY (FlagName, ProductType));");
             executeStatement("CREATE TABLE IF NOT EXISTS Flags (CuboidPlugin VARCHAR(255), WorldId CHAR(36), AreaId CHAR(36), FlagName VARCHAR(36), Setting BOOLEAN, Message VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (CuboidPlugin, WorldId, AreaId, FlagName));");
