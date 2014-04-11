@@ -22,7 +22,7 @@ import org.bukkit.permissions.Permission;
 
 import java.util.*;
 
-final class CommandFlag extends Command implements CommandExecutor, Listener {
+final class CommandFlag extends CommandBase implements CommandExecutor, Listener {
     private final Material tool;
 
     public CommandFlag(Material tool) {

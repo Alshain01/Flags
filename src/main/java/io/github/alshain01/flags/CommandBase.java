@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-abstract class Command {
+abstract class CommandBase {
     protected enum CommandLocation {
         AREA('a'), WILDERNESS('w'), DEFAULT('d');
 

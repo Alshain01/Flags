@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
-final class CommandBundle extends Command implements CommandExecutor {
+final class CommandBundle extends CommandBase implements CommandExecutor {
     private enum BundleCommandType {
         SET('S', 4, 0, true, true, "Set <area|wilderness|default> <bundle> <true|false>"),
         GET('G', 3, 0, true, true, "Get <area|wilderness|default> <bundle>"),
