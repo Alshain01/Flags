@@ -140,8 +140,7 @@ public enum CuboidPlugin {
      * @return true if the cuboid plugin supports siegeable areas.
      */
     public boolean isSiegeable() {
-        final Class<? extends Area> clazz = AreaFactory.getAreaClass(this);
-        return clazz.isAssignableFrom(Siegeable.class);
+        return AreaFactory.getAreaClass(this).isAssignableFrom(Siegeable.class);
     }
 
     /**
