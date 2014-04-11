@@ -108,7 +108,8 @@ public enum CuboidPlugin {
      * @return true if the cuboid plugin supports subdivisions.
      */
     public boolean isSubdividable() {
-        return AreaFactory.getAreaClass(this).isAssignableFrom(Subdividable.class);
+        final Class<?> clazz = AreaFactory.getAreaClass(this);
+        return clazz.isAssignableFrom(Subdividable.class);
     }
 
     /**
@@ -116,7 +117,8 @@ public enum CuboidPlugin {
      * @return true if the cuboid plugin supports nameable areas.
      */
     public boolean isNameable() {
-        return AreaFactory.getAreaClass(this).isAssignableFrom(Nameable.class);
+        final Class<?> clazz = AreaFactory.getAreaClass(this);
+        return clazz.isAssignableFrom(Nameable.class);
     }
 
     /**
@@ -124,7 +126,8 @@ public enum CuboidPlugin {
      * @return true if the cuboid plugin supports administrator areas.
      */
     public boolean isAdministrator() {
-        return AreaFactory.getAreaClass(this).isAssignableFrom(Administrator.class);
+        final Class<?> clazz = AreaFactory.getAreaClass(this);
+        return clazz.isAssignableFrom(Administrator.class);
     }
 
     /**
@@ -132,7 +135,8 @@ public enum CuboidPlugin {
      * @return true if the cuboid plugin supports players owning areas.
      */
     public boolean isOwnable() {
-        return AreaFactory.getAreaClass(this).isAssignableFrom(Ownable.class);
+        final Class<?> clazz = AreaFactory.getAreaClass(this);
+        return clazz.isAssignableFrom(Ownable.class);
     }
 
     /**
@@ -140,7 +144,8 @@ public enum CuboidPlugin {
      * @return true if the cuboid plugin supports siegeable areas.
      */
     public boolean isSiegeable() {
-        return AreaFactory.getAreaClass(this).isAssignableFrom(Siegeable.class);
+        final Class<?> clazz = AreaFactory.getAreaClass(this);
+        return clazz.isAssignableFrom(Siegeable.class);
     }
 
     /**
@@ -148,7 +153,8 @@ public enum CuboidPlugin {
      * @return true if the cuboid plugin identifies areas by UUID.
      */
     public boolean isIdentifiable() {
-        return AreaFactory.getAreaClass(this).isAssignableFrom(Identifiable.class);
+        final Class<?> clazz = AreaFactory.getAreaClass(this);
+        return clazz.isAssignableFrom(Identifiable.class);
     }
 
     /**

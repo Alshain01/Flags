@@ -27,7 +27,6 @@ package io.github.alshain01.flags;
 import io.github.alshain01.flags.api.CuboidPlugin;
 import io.github.alshain01.flags.api.area.Area;
 
-import io.github.alshain01.flags.api.area.Identifiable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
