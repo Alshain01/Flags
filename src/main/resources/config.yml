@@ -63,10 +63,10 @@ Tools:
   FlagQuery: 'FEATHER'
   Sector: 'GOLD_HOE'
 #
-# For supported land system plugins, Mr. Clean is a module that will remove data from the Flags database for
+# For supported cuboid plugins, Area Cleaner is a module that will remove data from the Flags database for
 # areas that are unclaimed, abandoned, or deleted by the respective system.
 #
-MrClean: true
+AreaCleaner: true
 #
 # Enable to check for updates and notify the console and permitted players of an existing update
 # Interval defines the amount of time between checks in approximate minutes. 0 = Startup only
@@ -74,14 +74,13 @@ MrClean: true
 # DO NOT SHARE WITH ANYONE!  The API key will only be uploaded to BukkitDev, not the author of this plugin.
 #
 Update:
-  Enabled: true
+  Enable: true
   Interval: 1440
   ServerModsAPIKey: null
 #
 # Enable or Disable MCStats metrics logging
 #
-Metrics:
-  Enabled: true
+Metrics: true
 #
 # Puts the plugin in debug mode.
 #

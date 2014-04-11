@@ -98,10 +98,12 @@ final public class Flags extends JavaPlugin {
         }
 
         // Load Cleanable Listener
-        AreaFactory.registerCleaner(cuboidPlugin, this);
+        if(getConfig().getBoolean("AreaCleaner")) {
+            AreaFactory.registerCleaner(cuboidPlugin, this);
+        }
 
         // Configure the updater
-		if (getConfig().getBoolean("Update.Enabled")) {
+		if (getConfig().getBoolean("Update.Enable")) {
             new Updater(this);
 		}
 
@@ -113,10 +115,6 @@ final public class Flags extends JavaPlugin {
 			pm.registerEvents(bp, this);
 		}
 
-
-
-
-
         // Set Command Executors
         CommandFlag executor = new CommandFlag(Material.valueOf(getConfig().getString("Tools.FlagQuery")));
         getCommand("flag").setExecutor(executor);
@@ -124,7 +122,7 @@ final public class Flags extends JavaPlugin {
         getCommand("bundle").setExecutor(new CommandBundle());
 
  		// Schedule tasks to perform after server is running
-		new onServerEnabledTask(this, getConfig().getBoolean("Metrics.Enabled")).runTask(this);
+		new onServerEnabledTask(this, getConfig().getBoolean("Metrics")).runTask(this);
 		Logger.info("Flags Has Been Enabled.");
 	}
 
@@ -250,7 +248,9 @@ final public class Flags extends JavaPlugin {
                 PlayerMoveEvent.getHandlerList().unregister(Bukkit.getPluginManager().getPlugin("Flags"));
 				Logger.info("No plugins have registered for Flags' Border Patrol listener. Unregistering PlayerMoveEvent.");
 			}
-            Metrics.StartFlagsMetrics(plugin);
+            if(mcStats) {
+                Metrics.StartFlagsMetrics(plugin);
+            }
 		}
 	}
 
