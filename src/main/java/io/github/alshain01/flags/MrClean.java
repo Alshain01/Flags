@@ -55,10 +55,10 @@ final class MrClean {
         switch (cuboidPlugin) {
             case GRIEF_PREVENTION:
                 pm.registerEvents(new GriefPreventionCleaner(),	plugin);
-                break;/*
+                break;
             case RESIDENCE:
                 pm.registerEvents(new ResidenceCleaner(), plugin);
-                break;*/
+                break;
             case FACTIONS:
                 pm.registerEvents(new FactionsCleaner(), plugin);
                 break;
