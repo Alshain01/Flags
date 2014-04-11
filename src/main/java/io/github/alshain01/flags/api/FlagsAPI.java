@@ -143,11 +143,22 @@ final public class FlagsAPI {
     }
 
     /**
-     * Gets an area from at a specific location.
+     * Gets an area by cuboid system specific ID. The name is formatted based on the
+     * cuboid system. Warning, there is little data type validation in this method.
+     * Incorrect usage may result in exceptions.
+     *
+     * ID Data Format:
+     * WorldGuard = WorldName.RegionName
+     * Regios = Region name
+     * GriefPrevention = ClaimID (Long)
+     * PreciousStones = WorldUUID.FieldID  (Long)
+     * InfinitePlots, PlotMe = WorldUUID.PlotID (X;Z)
+     * Factiod, Flags, Residence = UUID
      *
      * @param id
-     *            The identification of a cuboid as provided by the cuboid system
-     * @return An area from the configured cuboid system, provided area may fail isArea() test.
+     *            The cuboid system specific name of the area or world name
+     * @return The Area requested, may be null in cases of invalid cuboid system
+     *         selection.
      */
     public static Area getArea(String id) {
         Validate.notNull(id);
@@ -163,8 +174,8 @@ final public class FlagsAPI {
      */
     public static Area getAreaAt(Location location) {
         Validate.notNull(location);
-        Area area = AreaFactory.getAreaAt(activeSystem, location);
-        return area.isArea() ? area : getWildernessArea(location.getWorld());
+        if(!AreaFactory.hasArea(activeSystem, location)) return getWildernessArea(location.getWorld());
+        return AreaFactory.getAreaAt(activeSystem, location);
     }
 
     /**

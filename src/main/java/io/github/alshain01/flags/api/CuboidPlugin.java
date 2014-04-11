@@ -40,19 +40,18 @@ import java.io.File;
 @SuppressWarnings("unused")
 public enum CuboidPlugin {
 
-    // Name, Administrator, Nameable, Ownable, Siegeable, Subdividable, Identifiable
     DEFAULT("Default"),
     WILDERNESS("Wilderness"),
-    FLAGS("Flags"),
-    GRIEF_PREVENTION("Grief Prevention"),
-    WORLDGUARD("WorldGuard"),
-    RESIDENCE("Residence"),
-    INFINITEPLOTS("InfinitePlots"),
     FACTIONS("Factions"),
     FACTOID("Factoid"),
+    FLAGS("Flags"),
+    GRIEF_PREVENTION("Grief Prevention"),
+    INFINITEPLOTS("InfinitePlots"),
     PLOTME("PlotMe"),
+    PRECIOUSSTONES("PreciousStones"),
     REGIOS("Regios"),
-    PRECIOUSSTONES("PreciousStones");
+    RESIDENCE("Residence"),
+    WORLDGUARD("WorldGuard");
 
     private String cuboidName;
     private String displayName = null;

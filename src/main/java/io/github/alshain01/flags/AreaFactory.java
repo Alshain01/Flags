@@ -42,92 +42,49 @@ import java.util.UUID;
 @SuppressWarnings("unused") // They are used, just through valueOf()
 public enum AreaFactory {
     DEFAULT{
-        Class<? extends Area> getAreaClass() { return AreaDefault.class; }
-        Area getCuboidAt(Location location) { return new AreaDefault(location); }
-        Area getCuboidByName(String name) { return new AreaDefault(name); }
-        boolean hasCuboid(Location location) { return true; }
+        Class<? extends Area> getAreaClass() {
+            return AreaDefault.class;
+        }
+
+        Area getCuboidAt(Location location) {
+            return new AreaDefault(location);
+        }
+
+        Area getCuboidByName(String name) {
+            return new AreaDefault(name);
+        }
+        boolean hasCuboid(Location location) {
+            return true;
+        }
+
         void registerCleaner(Plugin plugin) { }
     },
 
     WILDERNESS {
-        Class<? extends Area> getAreaClass() { return AreaWilderness.class; }
-        Area getCuboidAt(Location location) { return new AreaWilderness(location); }
-        Area getCuboidByName(String name) { return new AreaWilderness(name); }
-        boolean hasCuboid(Location location) { return true; }
-        void registerCleaner(Plugin plugin) { }
-    },
-
-    FLAGS {
-        Class<? extends Area> getAreaClass() { return AreaFlags.class; }
-        Area getCuboidAt(Location location) { return new AreaFlags(location); }
-        Area getCuboidByName(String name) { return new AreaFlags(UUID.fromString(name)); }
-        boolean hasCuboid(Location location) { return AreaFlags.hasSector(location); }
-        void registerCleaner(Plugin plugin) { Bukkit.getPluginManager().registerEvents(new AreaFlags.Cleaner(), plugin);}
-    },
-
-    GRIEF_PREVENTION {
-        Class<? extends Area> getAreaClass() { return AreaGriefPrevention.class; }
-        Area getCuboidAt(Location location) {
-            if(!hasCuboid(location)) { return new AreaWilderness(location); }
-            return new AreaGriefPrevention(location);
+        Class<? extends Area> getAreaClass() {
+            return AreaWilderness.class;
         }
 
-        Area getCuboidByName(String name) { return new AreaGriefPrevention(Long.parseLong(name)); }
-        boolean hasCuboid(Location location) { return AreaGriefPrevention.hasClaim(location); }
-        void registerCleaner(Plugin plugin) { Bukkit.getPluginManager().registerEvents(new AreaGriefPrevention.Cleaner(), plugin);}
-    },
-
-    WORLDGUARD {
-        Class<? extends Area> getAreaClass() { return AreaWorldGuard.class; }
         Area getCuboidAt(Location location) {
-            if(!hasCuboid(location)) { return new AreaWilderness(location); }
-            return new AreaWorldGuard(location);
+            return new AreaWilderness(location);
         }
 
         Area getCuboidByName(String name) {
-            String path[] = name.split("\\.");
-            return new AreaWorldGuard(Bukkit.getWorld(path[0]), path[1]);
+            return new AreaWilderness(name);
         }
-
-        boolean hasCuboid(Location location) { return AreaWorldGuard.hasRegion(location); }
-
-        void registerCleaner(Plugin plugin) { }
-    },
-
-    RESIDENCE {
-        Class<? extends Area> getAreaClass() { return AreaResidence.class; }
-        Area getCuboidAt(Location location) {
-            if(!hasCuboid(location)) { return new AreaWilderness(location); }
-            return new AreaResidence(location);
+        boolean hasCuboid(Location location) {
+            return true;
         }
-
-        Area getCuboidByName(String id) { return new AreaResidence(id); }
-        boolean hasCuboid(Location location) { return AreaResidence.hasResidence(location); }
-        void registerCleaner(Plugin plugin) { Bukkit.getPluginManager().registerEvents(new AreaResidence.Cleaner(), plugin);}
-    },
-
-    INFINITEPLOTS {
-        Class<? extends Area> getAreaClass() { return AreaInfinitePlots.class; }
-        Area getCuboidAt(Location location) {
-            if(!hasCuboid(location)) { return new AreaWilderness(location); }
-            return new AreaInfinitePlots(location);
-        }
-
-        Area getCuboidByName(String name) {
-            String path[] = name.split("\\.");
-            final String[] coordinates = path[1].split(";");
-            return new AreaInfinitePlots(Bukkit.getWorld(path[0]), Integer.valueOf(coordinates[0]), Integer.valueOf(coordinates[1]));
-        }
-
-        boolean hasCuboid(Location location) { return AreaInfinitePlots.hasPlot(location); }
 
         void registerCleaner(Plugin plugin) { }
     },
 
     FACTIONS {
-        Class<? extends Area> getAreaClass() { return AreaFactions.class; }
+        Class<? extends Area> getAreaClass() {
+            return AreaFactions.class;
+        }
+
         Area getCuboidAt(Location location) {
-            if(!hasCuboid(location)) { return new AreaWilderness(location); }
             return new AreaFactions(location);
         }
 
@@ -136,15 +93,19 @@ public enum AreaFactory {
             return new AreaFactions(Bukkit.getWorld(path[0]), path[1]);
         }
 
-        boolean hasCuboid(Location location) { return AreaFactions.hasTerritory(location); }
+        boolean hasCuboid(Location location) {
+            return AreaFactions.hasTerritory(location);
+        }
 
         void registerCleaner(Plugin plugin) { }
     },
 
     FACTOID {
-        Class<? extends Area> getAreaClass() { return AreaFactoid.class; }
+        Class<? extends Area> getAreaClass() {
+            return AreaFactoid.class;
+        }
+
         Area getCuboidAt(Location location) {
-            if(!hasCuboid(location)) { return new AreaWilderness(location); }
             return new AreaFactoid(location);
         }
 
@@ -152,44 +113,108 @@ public enum AreaFactory {
             return new AreaFactoid(UUID.fromString(id));
         }
 
-        public boolean hasCuboid(Location location) { return AreaFactoid.hasLand(location); }
-        void registerCleaner(Plugin plugin) { Bukkit.getPluginManager().registerEvents(new AreaFactoid.Cleaner(), plugin);}
+        public boolean hasCuboid(Location location) {
+            return AreaFactoid.hasLand(location);
+        }
+
+        void registerCleaner(Plugin plugin) {
+            Bukkit.getPluginManager().registerEvents(new AreaFactoid.Cleaner(), plugin);
+        }
+    },
+
+    FLAGS {
+        Class<? extends Area> getAreaClass() {
+            return AreaFlags.class;
+        }
+
+        Area getCuboidAt(Location location) {
+            return new AreaFlags(location);
+        }
+
+        Area getCuboidByName(String name) {
+            return new AreaFlags(UUID.fromString(name));
+        }
+
+        boolean hasCuboid(Location location) {
+            return AreaFlags.hasSector(location);
+        }
+
+        void registerCleaner(Plugin plugin) {
+            Bukkit.getPluginManager().registerEvents(new AreaFlags.Cleaner(), plugin);
+        }
+    },
+
+    GRIEF_PREVENTION {
+        Class<? extends Area> getAreaClass() {
+            return AreaGriefPrevention.class;
+        }
+
+        Area getCuboidAt(Location location) {
+            return new AreaGriefPrevention(location);
+        }
+
+        Area getCuboidByName(String name) {
+            return new AreaGriefPrevention(Long.parseLong(name));
+        }
+
+        boolean hasCuboid(Location location) {
+            return AreaGriefPrevention.hasClaim(location);
+        }
+
+        void registerCleaner(Plugin plugin) {
+            Bukkit.getPluginManager().registerEvents(new AreaGriefPrevention.Cleaner(), plugin);
+        }
+    },
+
+    INFINITEPLOTS {
+        Class<? extends Area> getAreaClass() {
+            return AreaInfinitePlots.class;
+        }
+
+        Area getCuboidAt(Location location) {
+            return new AreaInfinitePlots(location);
+        }
+
+        Area getCuboidByName(String name) {
+            String path[] = name.split("\\.");
+            final String[] coordinates = path[1].split(";");
+            return new AreaInfinitePlots(Bukkit.getWorld(UUID.fromString(path[0])), Integer.valueOf(coordinates[0]), Integer.valueOf(coordinates[1]));
+        }
+
+        boolean hasCuboid(Location location) {
+            return AreaInfinitePlots.hasPlot(location);
+        }
+
+        void registerCleaner(Plugin plugin) { }
     },
 
     PLOTME {
-        Class<? extends Area> getAreaClass() { return AreaPlotMe.class; }
+        Class<? extends Area> getAreaClass() {
+            return AreaPlotMe.class;
+        }
+
         Area getCuboidAt(Location location) {
-            if(!hasCuboid(location)) { return new AreaWilderness(location); }
             return new AreaPlotMe(location);
         }
 
         Area getCuboidByName(String name) {
             String path[] = name.split("\\.");
-            return new AreaPlotMe(Bukkit.getWorld(path[0]), path[1]);
+            return new AreaPlotMe(Bukkit.getWorld(UUID.fromString(path[0])), path[1]);
         }
 
-        boolean hasCuboid(Location location) { return AreaPlotMe.hasPlot(location); }
-
-        void registerCleaner(Plugin plugin) { }
-    },
-
-    REGIOS {
-        Class<? extends Area> getAreaClass() { return AreaRegios.class; }
-        Area getCuboidAt(Location location) {
-            if(!hasCuboid(location)) { return new AreaWilderness(location); }
-            return new AreaRegios(location);
+        boolean hasCuboid(Location location) {
+            return AreaPlotMe.hasPlot(location);
         }
-        Area getCuboidByName(String name) { return new AreaRegios(name); }
-        boolean hasCuboid(Location location) { return AreaRegios.hasRegion(location); }
-        void registerListener(JavaPlugin plugin) { Bukkit.getPluginManager().registerEvents(new AreaRegios.Cleaner(), plugin);}
 
         void registerCleaner(Plugin plugin) { }
     },
 
     PRECIOUSSTONES {
-        Class<? extends Area> getAreaClass() { return AreaPreciousStones.class; }
+        Class<? extends Area> getAreaClass() {
+            return AreaPreciousStones.class;
+        }
+
         Area getCuboidAt(Location location) {
-            if(!hasCuboid(location)) { return new AreaWilderness(location); }
             return new AreaPreciousStones(location);
         }
 
@@ -198,7 +223,76 @@ public enum AreaFactory {
             return new AreaPreciousStones(Bukkit.getWorld(path[0]), Long.valueOf(path[1]));
         }
 
-        boolean hasCuboid(Location location) { return AreaPreciousStones.hasField(location); }
+        boolean hasCuboid(Location location) {
+            return AreaPreciousStones.hasField(location);
+        }
+
+        void registerCleaner(Plugin plugin) { }
+    },
+
+    REGIOS {
+        Class<? extends Area> getAreaClass() {
+            return AreaRegios.class;
+        }
+
+        Area getCuboidAt(Location location) {
+            return new AreaRegios(location);
+        }
+
+        Area getCuboidByName(String name) {
+            return new AreaRegios(name);
+        }
+
+        boolean hasCuboid(Location location) {
+            return AreaRegios.hasRegion(location);
+        }
+
+        void registerListener(JavaPlugin plugin) {
+            Bukkit.getPluginManager().registerEvents(new AreaRegios.Cleaner(), plugin);
+        }
+
+        void registerCleaner(Plugin plugin) { }
+    },
+
+    RESIDENCE {
+        Class<? extends Area> getAreaClass() {
+            return AreaResidence.class;
+        }
+
+        Area getCuboidAt(Location location) {
+            return new AreaResidence(location);
+        }
+
+        Area getCuboidByName(String id) {
+            return new AreaResidence(id);
+        }
+
+        boolean hasCuboid(Location location) {
+            return AreaResidence.hasResidence(location);
+        }
+
+        void registerCleaner(Plugin plugin) {
+            Bukkit.getPluginManager().registerEvents(new AreaResidence.Cleaner(), plugin);
+        }
+    },
+
+    WORLDGUARD {
+        Class<? extends Area> getAreaClass() {
+            return AreaWorldGuard.class;
+        }
+
+        Area getCuboidAt(Location location) {
+            return new AreaWorldGuard(location);
+        }
+
+        Area getCuboidByName(String name) {
+            String path[] = name.split("\\.");
+            return new AreaWorldGuard(Bukkit.getWorld(path[0]), path[1]);
+        }
+
+        boolean hasCuboid(Location location) {
+            return AreaWorldGuard.hasRegion(location);
+        }
 
         void registerCleaner(Plugin plugin) { }
     };
@@ -209,47 +303,14 @@ public enum AreaFactory {
     abstract boolean hasCuboid(Location location);
     abstract void registerCleaner(Plugin plugin);
 
-    /*
-     * Gets an area from the data store at a specific location.
-     *
-     * @param location
-     *            The location to request an area.
-     * @return An Area from the configured cuboid system which may fail isArea()
-     */
     public static Area getAreaAt(CuboidPlugin type, Location location){
         return valueOf(type.toString()).getCuboidAt(location);
     }
 
-    /*
-     * Gets an area by cuboid system specific name. The name is formatted based on the
-     * cuboid system.
-     *
-     * GriefPrevention = ID number
-     * WorldGuard = WorldName.RegionName
-     * Regios = Region name
-     * Residence = Residence name OR ResidenceName.Sub-zoneName
-     * PreciousStones = WorldName.ID
-     * InfinitePlots = WorldName.PlotLoc (X;Z)
-     * Factoid = Land UUID
-     * Factions = WorldName.FactionID
-     * PlotMe = WorldName.PlotID
-     * Flags = Sector UUID
-     *
-     * @param name
-     *            The cuboid system specific name of the area or world name
-     * @return The Area requested, may be null in cases of invalid cuboid system
-     *         selection.
-     */
     public static Area getArea(CuboidPlugin type, String name) {
         return valueOf(type.toString()).getCuboidByName(name);
     }
 
-    /*
-     * Gets whether there is an area for this cuboid system that Flags can use at the location
-     *
-     * @param location The location to check for an area
-     * @return True if there is an area
-     */
     public static boolean hasArea(CuboidPlugin type, Location location) {
         return valueOf(type.toString()).hasCuboid(location);
     }
