@@ -24,6 +24,9 @@
 
 package io.github.alshain01.flags.api;
 
+import io.github.alshain01.flags.AreaFactory;
+import io.github.alshain01.flags.Logger;
+import io.github.alshain01.flags.api.area.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -36,28 +39,26 @@ import java.io.File;
  */
 @SuppressWarnings("unused")
 public enum CuboidPlugin {
-    DEFAULT("Default", false, true),
-    WILDERNESS("Wilderness", false, true),
-    FLAGS("Flags", true, true),
-    GRIEF_PREVENTION("Grief Prevention", true, false),
-    WORLDGUARD("WorldGuard", false, false),
-    RESIDENCE("Residence", true, false),
-    INFINITEPLOTS("InfinitePlots", false, false),
-    FACTIONS("Factions", false, false),
-    FACTOID("Factoid", true, true),
-    PLOTME("PlotMe",false, false),
-    REGIOS("Regios", false, false),
-    PRECIOUSSTONES("PreciousStones", true, false);
+
+    // Name, Administrator, Nameable, Ownable, Siegeable, Subdividable, Identifiable
+    DEFAULT("Default"),
+    WILDERNESS("Wilderness"),
+    FLAGS("Flags"),
+    GRIEF_PREVENTION("Grief Prevention"),
+    WORLDGUARD("WorldGuard"),
+    RESIDENCE("Residence"),
+    INFINITEPLOTS("InfinitePlots"),
+    FACTIONS("Factions"),
+    FACTOID("Factoid"),
+    PLOTME("PlotMe"),
+    REGIOS("Regios"),
+    PRECIOUSSTONES("PreciousStones");
 
     private String cuboidName;
     private String displayName = null;
-    private final boolean subdivisions;
-    private final boolean uniqueIdSupport;
 
-    private CuboidPlugin(String displayName, boolean hasSubivisions, boolean uniqueIdSupport) {
+    private CuboidPlugin(String displayName) {
         this.displayName = displayName;
-        this.subdivisions = hasSubivisions;
-        this.uniqueIdSupport = uniqueIdSupport;
     }
 
     /**
@@ -106,16 +107,48 @@ public enum CuboidPlugin {
      * Gets if the cuboid plugin supports subdivisions
      * @return true if the cuboid plugin supports subdivisions.
      */
-    public boolean hasSubdivisions() {
-        return subdivisions;
+    public boolean isSubdividable() {
+        return AreaFactory.getAreaClass(this).isAssignableFrom(Subdividable.class);
+    }
+
+    /**
+     * Gets if the cuboid plugin supports nameable areas
+     * @return true if the cuboid plugin supports nameable areas.
+     */
+    public boolean isNameable() {
+        return AreaFactory.getAreaClass(this).isAssignableFrom(Nameable.class);
+    }
+
+    /**
+     * Gets if the cuboid plugin supports administrator areas
+     * @return true if the cuboid plugin supports administrator areas.
+     */
+    public boolean isAdministrator() {
+        return AreaFactory.getAreaClass(this).isAssignableFrom(Administrator.class);
+    }
+
+    /**
+     * Gets if the cuboid plugin supports players owning areas
+     * @return true if the cuboid plugin supports players owning areas.
+     */
+    public boolean isOwnable() {
+        return AreaFactory.getAreaClass(this).isAssignableFrom(Ownable.class);
+    }
+
+    /**
+     * Gets if the cuboid plugin supports siegeable areas
+     * @return true if the cuboid plugin supports siegeable areas.
+     */
+    public boolean isSiegeable() {
+        return AreaFactory.getAreaClass(this).isAssignableFrom(Siegeable.class);
     }
 
     /**
      * Gets if the cuboid plugin identifies areas by UUID
      * @return true if the cuboid plugin identifies areas by UUID.
      */
-    public boolean hasUniqueId() {
-        return uniqueIdSupport;
+    public boolean isIdentifiable() {
+        return AreaFactory.getAreaClass(this).isAssignableFrom(Identifiable.class);
     }
 
     /**
@@ -136,7 +169,7 @@ public enum CuboidPlugin {
             try {
                 t.cuboidName = ChatColor.translateAlternateColorCodes('&', messages.getString(t.toString()));
             } catch (NullPointerException ex) {
-                System.out.print("Failed to load message " + t.getName());
+                Logger.warning("Failed to load message " + t.getName());
             }
         }
     }

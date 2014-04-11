@@ -24,6 +24,7 @@
 
 package io.github.alshain01.flags.api;
 
+import io.github.alshain01.flags.Logger;
 import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 
 import org.apache.commons.lang.Validate;
@@ -109,7 +110,7 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
         try {
             return (Flag) super.clone();
         } catch (CloneNotSupportedException ex) {
-            System.out.print("Illegal Clone Attempt");
+            Logger.warning("Illegal Clone Attempt");
         }
         return null;
     }
