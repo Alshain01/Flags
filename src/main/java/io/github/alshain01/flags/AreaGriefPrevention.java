@@ -36,9 +36,13 @@ import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
+import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 
 /**
  * Class for creating areas to manage a Grief Prevention Claim.
@@ -164,5 +168,13 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
             Flags.getDataStore().writeInheritance(this, value);
         }
         throw new InvalidSubdivisionException();
+    }
+
+    static class Cleaner implements Listener {
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        private static void onClaimDeleted(ClaimDeletedEvent e) {
+            // Cleanup the database, keep the file from growing too large.
+            new AreaGriefPrevention(e.getClaim().getID()).remove();
+        }
     }
 }

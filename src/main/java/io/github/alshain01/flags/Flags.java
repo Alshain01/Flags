@@ -97,8 +97,8 @@ final public class Flags extends JavaPlugin {
             ((SectorManagerBase)sectors).loadSectors();
         }
 
-        // Load Mr. Clean
-        MrClean.enable(this, getConfig().getBoolean("MrClean"), cuboidPlugin);
+        // Load Cleanable Listener
+        AreaFactory.registerCleaner(cuboidPlugin, this);
 
         // Configure the updater
 		if (getConfig().getBoolean("Update.Enabled")) {

@@ -34,11 +34,15 @@ import io.github.alshain01.flags.api.area.Nameable;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import net.jzx7.regiosapi.RegiosAPI;
+import net.jzx7.regiosapi.events.RegionDeleteEvent;
 import net.jzx7.regiosapi.regions.Region;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -126,4 +130,13 @@ final class AreaRegios extends AreaRemovable implements Nameable, Ownable {
 	public boolean isArea() {
         return region != null;
     }
+
+    static class Cleaner implements Listener {
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        private static void onRegionDelete(RegionDeleteEvent e) {
+            // Cleanup the database, keep the file from growing too large.
+            new AreaRegios(e.getRegion().getName()).remove();
+        }
+    }
+
 }

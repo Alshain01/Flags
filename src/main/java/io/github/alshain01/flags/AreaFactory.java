@@ -30,6 +30,8 @@ import io.github.alshain01.flags.api.area.Area;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.UUID;
 
@@ -43,18 +45,21 @@ public enum AreaFactory {
         Area getCuboidAt(Location location) { return new AreaDefault(location); }
         Area getCuboidByName(String name) { return new AreaDefault(name); }
         boolean hasCuboid(Location location) { return true; }
+        void registerCleaner(Plugin plugin) { }
     },
 
     WILDERNESS {
         Area getCuboidAt(Location location) { return new AreaWilderness(location); }
         Area getCuboidByName(String name) { return new AreaWilderness(name); }
         boolean hasCuboid(Location location) { return true; }
+        void registerCleaner(Plugin plugin) { }
     },
 
     FLAGS {
         Area getCuboidAt(Location location) { return new AreaFlags(location); }
         Area getCuboidByName(String name) { return new AreaFlags(UUID.fromString(name)); }
         boolean hasCuboid(Location location) { return AreaFlags.hasSector(location); }
+        void registerCleaner(Plugin plugin) { Bukkit.getPluginManager().registerEvents(new AreaFlags.Cleaner(), plugin);}
     },
 
     GRIEF_PREVENTION {
@@ -65,6 +70,7 @@ public enum AreaFactory {
 
         Area getCuboidByName(String name) { return new AreaGriefPrevention(Long.parseLong(name)); }
         boolean hasCuboid(Location location) { return AreaGriefPrevention.hasClaim(location); }
+        void registerCleaner(Plugin plugin) { Bukkit.getPluginManager().registerEvents(new AreaGriefPrevention.Cleaner(), plugin);}
     },
 
     WORLDGUARD {
@@ -79,6 +85,8 @@ public enum AreaFactory {
         }
 
         boolean hasCuboid(Location location) { return AreaWorldGuard.hasRegion(location); }
+
+        void registerCleaner(Plugin plugin) { }
     },
 
     RESIDENCE {
@@ -87,8 +95,9 @@ public enum AreaFactory {
             return new AreaResidence(location);
         }
 
-        Area getCuboidByName(String name) { return new AreaResidence(name); }
+        Area getCuboidByName(String id) { return new AreaResidence(id); }
         boolean hasCuboid(Location location) { return AreaResidence.hasResidence(location); }
+        void registerCleaner(Plugin plugin) { Bukkit.getPluginManager().registerEvents(new AreaResidence.Cleaner(), plugin);}
     },
 
     INFINITEPLOTS {
@@ -104,6 +113,8 @@ public enum AreaFactory {
         }
 
         boolean hasCuboid(Location location) { return AreaInfinitePlots.hasPlot(location); }
+
+        void registerCleaner(Plugin plugin) { }
     },
 
     FACTIONS {
@@ -118,6 +129,8 @@ public enum AreaFactory {
         }
 
         boolean hasCuboid(Location location) { return AreaFactions.hasTerritory(location); }
+
+        void registerCleaner(Plugin plugin) { }
     },
 
     FACTOID {
@@ -131,6 +144,7 @@ public enum AreaFactory {
         }
 
         public boolean hasCuboid(Location location) { return AreaFactoid.hasLand(location); }
+        void registerCleaner(Plugin plugin) { Bukkit.getPluginManager().registerEvents(new AreaFactoid.Cleaner(), plugin);}
     },
 
     PLOTME {
@@ -145,6 +159,8 @@ public enum AreaFactory {
         }
 
         boolean hasCuboid(Location location) { return AreaPlotMe.hasPlot(location); }
+
+        void registerCleaner(Plugin plugin) { }
     },
 
     REGIOS {
@@ -154,6 +170,9 @@ public enum AreaFactory {
         }
         Area getCuboidByName(String name) { return new AreaRegios(name); }
         boolean hasCuboid(Location location) { return AreaRegios.hasRegion(location); }
+        void registerListener(JavaPlugin plugin) { Bukkit.getPluginManager().registerEvents(new AreaRegios.Cleaner(), plugin);}
+
+        void registerCleaner(Plugin plugin) { }
     },
 
     PRECIOUSSTONES {
@@ -168,11 +187,14 @@ public enum AreaFactory {
         }
 
         boolean hasCuboid(Location location) { return AreaPreciousStones.hasField(location); }
+
+        void registerCleaner(Plugin plugin) { }
     };
 
     abstract Area getCuboidAt(Location location);
     abstract Area getCuboidByName(String name);
     abstract boolean hasCuboid(Location location);
+    abstract void registerCleaner(Plugin plugin);
 
     /*
      * Gets an area from the data store at a specific location.
@@ -219,7 +241,6 @@ public enum AreaFactory {
         return valueOf(type.toString()).hasCuboid(location);
     }
 
-
     public static Area getWildernessArea(World world) {
         return new AreaWilderness(world);
     }
@@ -228,5 +249,8 @@ public enum AreaFactory {
         return new AreaDefault(world);
     }
 
+    static void registerCleaner(CuboidPlugin type, Plugin plugin) {
+        valueOf(type.toString()).registerCleaner(plugin);
+    }
 }
 

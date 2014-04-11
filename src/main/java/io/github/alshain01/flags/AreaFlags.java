@@ -6,6 +6,7 @@ import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.area.Identifiable;
 import io.github.alshain01.flags.api.area.Nameable;
 import io.github.alshain01.flags.api.area.Subdividable;
+import io.github.alshain01.flags.api.event.SectorDeleteEvent;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
 
@@ -13,6 +14,9 @@ import io.github.alshain01.flags.api.sector.Sector;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 
 import java.util.UUID;
 
@@ -113,5 +117,12 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Nameable, S
             Flags.getDataStore().writeInheritance(this, value);
         }
         throw new InvalidSubdivisionException();
+    }
+
+    static class Cleaner implements Listener {
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        private static void onSectorDelete(SectorDeleteEvent e) {
+            new AreaFlags(e.getSector().getID()).remove();
+        }
     }
 }

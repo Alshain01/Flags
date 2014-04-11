@@ -35,7 +35,11 @@ import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
 import net.t00thpick1.residence.api.ResidenceAPI;
 import net.t00thpick1.residence.api.areas.ResidenceArea;
+import net.t00thpick1.residence.api.events.ResidenceAreaDeletedEvent;
 import org.bukkit.Location;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 
 /**
  * Class for creating areas to manage a Residence Claimed Residences.
@@ -162,5 +166,13 @@ final class AreaResidence extends AreaRemovable implements Identifiable, Nameabl
             Flags.getDataStore().writeInheritance(this, value);
         }
         throw new InvalidSubdivisionException();
+    }
+
+    static class Cleaner implements Listener {
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        private static void onResidenceDelete(ResidenceAreaDeletedEvent e) {
+            // Cleanup the database, keep the file from growing too large.
+            new AreaResidence(e.getResidenceArea().getName()).remove();
+        }
     }
 }

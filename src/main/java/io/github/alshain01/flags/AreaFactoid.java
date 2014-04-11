@@ -34,12 +34,16 @@ import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
 
 import me.tabinol.factoid.Factoid;
+import me.tabinol.factoid.event.LandDeleteEvent;
 import me.tabinol.factoid.lands.Land;
 import me.tabinol.factoid.playercontainer.PlayerContainerPlayer;
 import me.tabinol.factoid.playercontainer.PlayerContainerType;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 
 /**
  * Class for creating areas to manage a Factoid Land.
@@ -177,5 +181,13 @@ final class AreaFactoid extends AreaRemovable implements Identifiable, Nameable,
             Flags.getDataStore().writeInheritance(this, value);
         }
         throw new InvalidSubdivisionException();
+    }
+
+    static class Cleaner implements Listener {
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        private static void onRegionDelete(LandDeleteEvent e) {
+            // Cleanup the database, keep the file from growing too large.
+            new AreaFactoid(e.getLand().getUUID()).remove();
+        }
     }
 }
