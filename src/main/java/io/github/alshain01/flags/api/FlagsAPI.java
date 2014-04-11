@@ -148,12 +148,12 @@ final public class FlagsAPI {
      * Incorrect usage may result in exceptions.
      *
      * ID Data Format:
-     * WorldGuard = WorldName.RegionName
-     * Regios = Region name
+     * Factiod, Flags, Residence = UUID as String
      * GriefPrevention = ClaimID (Long)
-     * PreciousStones = WorldUUID.FieldID  (Long)
+     * PreciousStones = WorldUUID.FieldID (Long)
+     * Regios = Region name
      * InfinitePlots, PlotMe = WorldUUID.PlotID (X;Z)
-     * Factiod, Flags, Residence = UUID
+     * WorldGuard = WorldName.RegionName
      *
      * @param id
      *            The cuboid system specific name of the area or world name
