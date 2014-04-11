@@ -42,7 +42,7 @@ import java.util.UUID;
 @SuppressWarnings("unused") // They are used, just through valueOf()
 public enum AreaFactory {
     DEFAULT{
-        Class getAreaClass() { return AreaDefault.class; }
+        Class<? extends Area> getAreaClass() { return AreaDefault.class; }
         Area getCuboidAt(Location location) { return new AreaDefault(location); }
         Area getCuboidByName(String name) { return new AreaDefault(name); }
         boolean hasCuboid(Location location) { return true; }
@@ -50,7 +50,7 @@ public enum AreaFactory {
     },
 
     WILDERNESS {
-        Class getAreaClass() { return AreaWilderness.class; }
+        Class<? extends Area> getAreaClass() { return AreaWilderness.class; }
         Area getCuboidAt(Location location) { return new AreaWilderness(location); }
         Area getCuboidByName(String name) { return new AreaWilderness(name); }
         boolean hasCuboid(Location location) { return true; }
@@ -58,7 +58,7 @@ public enum AreaFactory {
     },
 
     FLAGS {
-        Class getAreaClass() { return AreaFlags.class; }
+        Class<? extends Area> getAreaClass() { return AreaFlags.class; }
         Area getCuboidAt(Location location) { return new AreaFlags(location); }
         Area getCuboidByName(String name) { return new AreaFlags(UUID.fromString(name)); }
         boolean hasCuboid(Location location) { return AreaFlags.hasSector(location); }
@@ -66,7 +66,7 @@ public enum AreaFactory {
     },
 
     GRIEF_PREVENTION {
-        Class getAreaClass() { return AreaGriefPrevention.class; }
+        Class<? extends Area> getAreaClass() { return AreaGriefPrevention.class; }
         Area getCuboidAt(Location location) {
             if(!hasCuboid(location)) { return new AreaWilderness(location); }
             return new AreaGriefPrevention(location);
@@ -78,7 +78,7 @@ public enum AreaFactory {
     },
 
     WORLDGUARD {
-        Class getAreaClass() { return AreaWorldGuard.class; }
+        Class<? extends Area> getAreaClass() { return AreaWorldGuard.class; }
         Area getCuboidAt(Location location) {
             if(!hasCuboid(location)) { return new AreaWilderness(location); }
             return new AreaWorldGuard(location);
@@ -95,7 +95,7 @@ public enum AreaFactory {
     },
 
     RESIDENCE {
-        Class getAreaClass() { return AreaResidence.class; }
+        Class<? extends Area> getAreaClass() { return AreaResidence.class; }
         Area getCuboidAt(Location location) {
             if(!hasCuboid(location)) { return new AreaWilderness(location); }
             return new AreaResidence(location);
@@ -107,7 +107,7 @@ public enum AreaFactory {
     },
 
     INFINITEPLOTS {
-        Class getAreaClass() { return AreaInfinitePlots.class; }
+        Class<? extends Area> getAreaClass() { return AreaInfinitePlots.class; }
         Area getCuboidAt(Location location) {
             if(!hasCuboid(location)) { return new AreaWilderness(location); }
             return new AreaInfinitePlots(location);
@@ -125,7 +125,7 @@ public enum AreaFactory {
     },
 
     FACTIONS {
-        Class getAreaClass() { return AreaFactions.class; }
+        Class<? extends Area> getAreaClass() { return AreaFactions.class; }
         Area getCuboidAt(Location location) {
             if(!hasCuboid(location)) { return new AreaWilderness(location); }
             return new AreaFactions(location);
@@ -142,7 +142,7 @@ public enum AreaFactory {
     },
 
     FACTOID {
-        Class getAreaClass() { return AreaFactoid.class; }
+        Class<? extends Area> getAreaClass() { return AreaFactoid.class; }
         Area getCuboidAt(Location location) {
             if(!hasCuboid(location)) { return new AreaWilderness(location); }
             return new AreaFactoid(location);
@@ -157,7 +157,7 @@ public enum AreaFactory {
     },
 
     PLOTME {
-        Class getAreaClass() { return AreaPlotMe.class; }
+        Class<? extends Area> getAreaClass() { return AreaPlotMe.class; }
         Area getCuboidAt(Location location) {
             if(!hasCuboid(location)) { return new AreaWilderness(location); }
             return new AreaPlotMe(location);
@@ -174,7 +174,7 @@ public enum AreaFactory {
     },
 
     REGIOS {
-        Class getAreaClass() { return AreaRegios.class; }
+        Class<? extends Area> getAreaClass() { return AreaRegios.class; }
         Area getCuboidAt(Location location) {
             if(!hasCuboid(location)) { return new AreaWilderness(location); }
             return new AreaRegios(location);
@@ -187,7 +187,7 @@ public enum AreaFactory {
     },
 
     PRECIOUSSTONES {
-        Class getAreaClass() { return AreaPreciousStones.class; }
+        Class<? extends Area> getAreaClass() { return AreaPreciousStones.class; }
         Area getCuboidAt(Location location) {
             if(!hasCuboid(location)) { return new AreaWilderness(location); }
             return new AreaPreciousStones(location);
@@ -203,7 +203,7 @@ public enum AreaFactory {
         void registerCleaner(Plugin plugin) { }
     };
 
-    abstract Class getAreaClass();
+    abstract Class<? extends Area> getAreaClass();
     abstract Area getCuboidAt(Location location);
     abstract Area getCuboidByName(String name);
     abstract boolean hasCuboid(Location location);
@@ -262,7 +262,7 @@ public enum AreaFactory {
         return new AreaDefault(world);
     }
 
-    public static Class getAreaClass(CuboidPlugin type) {
+    public static Class<? extends Area> getAreaClass(CuboidPlugin type) {
         return valueOf(type.toString()).getAreaClass();
     }
 
