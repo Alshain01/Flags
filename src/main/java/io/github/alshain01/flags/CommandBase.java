@@ -146,7 +146,7 @@ abstract class CommandBase {
         }
 
         static boolean notSubdividable(CommandSender cs) {
-            if(FlagsAPI.getCuboidPlugin().hasSubdivisions()) { return false; }
+            if(FlagsAPI.getCuboidPlugin().isSubdividable()) { return false; }
             cs.sendMessage(Message.SUBDIVISION_SUPPORT_ERROR.get().replace("{System}", FlagsAPI.getCuboidPlugin().getDisplayName()));
             return true;
         }
