@@ -30,6 +30,7 @@ import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
 import me.tabinol.factoid.event.LandDeleteEvent;
 import net.jzx7.regiosapi.events.RegionDeleteEvent;
 
+import net.t00thpick1.residence.api.events.ResidenceAreaDeletedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -110,14 +111,15 @@ final class MrClean {
 
     /*
      * Residence Cleaner
-     *
+     */
 	private static class ResidenceCleaner implements Listener {
-		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-		private void onResidenceDelete(ResidenceDeleteEvent e) {
-			// Cleanup the database, keep the file from growing too large.
-			new AreaResidence(e.getResidence().getName()).remove();
-		}
-	}*/
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        private void onResidenceDelete(ResidenceAreaDeletedEvent e) {
+            // Cleanup the database, keep the file from growing too large.
+            new AreaResidence(e.getResidenceArea().getName()).remove();
+        }
+    }
+
 
     /*
      * Regios Cleaner
