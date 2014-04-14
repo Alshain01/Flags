@@ -31,8 +31,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import io.github.alshain01.flags.api.area.Nameable;
 import io.github.alshain01.flags.api.area.Ownable;
+import io.github.alshain01.flags.api.area.Renameable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -45,7 +45,7 @@ import com.massivecraft.mcore.ps.PS;
 /**
  * Class for creating areas to manage a Factions Territory.
  */
-final class AreaFactions extends AreaRemovable implements Nameable, Ownable {
+final class AreaFactions extends AreaRemovable implements Renameable, Ownable {
 	private final Faction faction;
 	private final World world;
 
@@ -97,6 +97,14 @@ final class AreaFactions extends AreaRemovable implements Nameable, Ownable {
     public String getName() {
         if (isArea()) return faction.getName();
         throw new InvalidAreaException();
+    }
+
+    @Override
+    public void setName(String name) {
+        if (isArea())
+            faction.setName(name);
+        else
+            throw new InvalidAreaException();
     }
 
     @Override

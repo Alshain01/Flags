@@ -27,10 +27,7 @@ package io.github.alshain01.flags;
 import java.util.*;
 
 import io.github.alshain01.flags.api.CuboidPlugin;
-import io.github.alshain01.flags.api.area.Area;
-import io.github.alshain01.flags.api.area.Nameable;
-import io.github.alshain01.flags.api.area.Ownable;
-import io.github.alshain01.flags.api.area.Subdividable;
+import io.github.alshain01.flags.api.area.*;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
@@ -45,7 +42,7 @@ import org.bukkit.World;
 /**
  * Class for creating areas to manage a PreciousStones Field.
  */
-final class AreaPreciousStones extends AreaRemovable implements Nameable, Ownable, Subdividable {
+final class AreaPreciousStones extends AreaRemovable implements Renameable, Ownable, Subdividable {
 	private Field field;
 
     /**
@@ -131,6 +128,14 @@ final class AreaPreciousStones extends AreaRemovable implements Nameable, Ownabl
     public String getName() {
         if (isArea()) return field.getName();
         throw new InvalidAreaException();
+    }
+
+    @Override
+    public void setName(String name) {
+        if (isArea())
+            field.setName(name);
+        else
+            throw new InvalidAreaException();
     }
 
     @Override

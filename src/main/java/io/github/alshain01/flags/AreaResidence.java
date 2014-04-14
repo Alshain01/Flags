@@ -44,7 +44,7 @@ import org.bukkit.event.Listener;
 /**
  * Class for creating areas to manage a Residence Claimed Residences.
  */
-final class AreaResidence extends AreaRemovable implements Identifiable, Nameable, Ownable, Subdividable {
+final class AreaResidence extends AreaRemovable implements Identifiable, Renameable, Ownable, Subdividable {
 	private final ResidenceArea residence;
 
 	/**
@@ -110,6 +110,14 @@ final class AreaResidence extends AreaRemovable implements Identifiable, Nameabl
     public String getName() {
         if (isArea()) return residence.getName();
         throw new InvalidAreaException();
+    }
+
+    @Override
+    public void setName(String name) {
+        if (isArea())
+            residence.rename(name);
+        else
+            throw new InvalidAreaException();
     }
 
     @Override
