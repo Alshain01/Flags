@@ -673,14 +673,14 @@ final class DataStoreYaml extends DataStore {
 
                 if (cuboidPlugin == CuboidPlugin.RESIDENCE) {
                     for(int x = 1; x < nodes.length; x++) {
-                        if(x==2) {
+                        if (x == 2) {
                             newKey.append(ResidenceAPI.getResidenceManager().getByName(nodes[2] + "." + nodes[3]).getResidenceUUID());
                             continue;
                         }
-                        if(x==3) continue;
+                        if (x == 3) continue;
                         newKey.append(nodes[x]);
-
-                }
+                    }
+                } else {
                     for (int x = 1; x < nodes.length; x++) {
                         if (x == 2) continue; // Location of parent ID
                         newKey.append(nodes[x]);
