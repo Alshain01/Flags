@@ -221,7 +221,7 @@ final class DataStoreYaml extends DataStore {
     @Override
     public boolean update(JavaPlugin plugin) {
         final DataStoreVersion ver = readVersion();
-        if (ver.getMajor() == 1 && ver.getMinor() <= 4) {
+        if (ver.getMajor() == 1 && ver.getMinor() < 4) {
             Logger.error("FAILED TO UPDATE DATABASE SCHEMA. DATABASE VERSIONS PRIOR TO 1.4 CANNOT BE UPGRADED.");
             Bukkit.getPluginManager().disablePlugin(Bukkit.getServer().getPluginManager().getPlugin("Flags"));
             return false;
@@ -253,18 +253,15 @@ final class DataStoreYaml extends DataStore {
                 updateMigratSubdivisions();
             }
 
-            saveData = true;
-            save();
-
-            updateConvertWorlds();
+            updateConvertWorlds(dataconfigs);
 
             // Convert Trust List to UUID
-            updateConvertPlayers(dataconfigs);
+            //updateConvertPlayers(dataconfigs);
 
             Logger.info("Writing Updated Database.");
-            writeVersion(new DataStoreVersion(2, 0, 0));
-            //saveData = true;
-            //save();
+            //writeVersion(new DataStoreVersion(2, 0, 0));
+            saveData = true;
+            save();
             Logger.info("Database Update Complete.");
         }
         return true;
@@ -644,15 +641,15 @@ final class DataStoreYaml extends DataStore {
                                     worldConfig.set(residence.getResidenceUUID().toString() + ".InheritParent", worldConfig.getBoolean(parent + DELIMETER + subdivision + ".InheritParent"));
                                     worldConfig.set(parent + DELIMETER + subdivision + ".InheritParent", null); // Remove it to avoid conflict
                                     for(String key : worldConfig.getConfigurationSection(parent + DELIMETER + subdivision).getKeys(false)) {
-                                        worldConfig.set(residence.getResidenceUUID().toString(), worldConfig.getConfigurationSection(parent + DELIMETER + subdivision + DELIMETER + key).getValues(true)); // Move the whole thing up one level
+                                        worldConfig.set(residence.getResidenceUUID().toString() + DELIMETER + key, worldConfig.getConfigurationSection(parent + DELIMETER + subdivision + DELIMETER + key).getValues(false)); // Move the whole thing up one level
                                     }
                                     worldConfig.set(parent + DELIMETER + subdivision, null);
                                 }
                             } else {
-                                worldConfig.set(subdivision + ".InheritParent", worldConfig.getBoolean(parent + DELIMETER + subdivision + ".InheritParent"));
+                                worldConfig.set(subdivision + DELIMETER + INHERIT_PATH, worldConfig.getBoolean(parent + DELIMETER + subdivision + ".InheritParent"));
                                 worldConfig.set(parent + DELIMETER + subdivision + ".InheritParent", null); // Remove it to avoid conflict
-                                for(String key : worldConfig.getConfigurationSection(parent + DELIMETER + subdivision).getKeys(false)) {
-                                    worldConfig.set(subdivision, worldConfig.getConfigurationSection(parent + DELIMETER + subdivision + DELIMETER + key).getValues(true)); // Move the whole thing up one level
+                                for(String flag : worldConfig.getConfigurationSection(parent + DELIMETER + subdivision).getKeys(false)) {
+                                    worldConfig.set(subdivision + DELIMETER + flag, worldConfig.getConfigurationSection(parent + DELIMETER + subdivision + DELIMETER + flag).getValues(false)); // Move the whole thing up one level
                                 }
                                 worldConfig.set(parent + DELIMETER + subdivision, null);
                             }
@@ -663,31 +660,69 @@ final class DataStoreYaml extends DataStore {
         }
     }
 
-    private void updateConvertWorlds() {
+    private void updateConvertWorlds(ConfigurationSection[] dataConfigs) {
         //Convert World Names to UUID
-        Logger.info("Converting World Names to UUID.");
-        if(data.isConfigurationSection(cuboidPlugin.getName())) {
-            ConfigurationSection config = data.getConfigurationSection(cuboidPlugin.getName());
-            for (String w : config.getKeys(false)) {
-                Logger.debug("Converting for World " + w);
-                ConfigurationSection wConfig = config.getConfigurationSection(w);
-                World world = Bukkit.getWorld(w);
-                if (world != null) {
-                    for(String k : wConfig.getKeys(false)) {
-                        Logger.debug("Converting for Key " + k);
-                        ConfigurationSection kConfig = wConfig.getConfigurationSection(k);
-                        config.set(world.getUID().toString() + DELIMETER + k, kConfig.getValues(true));
-                    }
-                }
-                Logger.debug("Deleting old world data");
-                data.set(cuboidPlugin.getName() + DELIMETER + w, null);
-            }
-        }
 
         // Because the CuboidSystems sometimes need a world id,
         // AreaWilderness and AreaDefault will be converted to use world id and system id
         // In order to be universal.  This will result in the same key twice, nested.
-        // But it's necessary to reuse code later in the class.
+        // But it's necessary to reuse code and have a unified architecture.
+        Logger.info("Converting World Names to UUID.");
+        for (ConfigurationSection config : dataConfigs)
+            for (String path : config.getKeys(true)) {
+                if (path.contains("Trust") || path.contains("Value") || path.contains("Message") || path.contains("InheritParent")) {
+                    String[] paths = path.split("\\.");
+                    World world = Bukkit.getWorld(paths[1]);
+                    if (world != null) {
+                        paths[1] = world.getUID().toString();
+                    }
+                    StringBuilder newPath = new StringBuilder(paths[0]);
+                    for (int x = 1; x < paths.length; x++) {
+                        newPath.append(".").append(paths[x]);
+                    }
+                    config.set(newPath.toString(), config.get(path));
+                    config.set(path, null);
+                }
+            }
+
+            // Remove keys based on names, UUID's will return null
+            for (String path : data.getKeys(false)) {
+                if (Bukkit.getWorld(path) != null) {
+                    data.set(path, null);
+                }
+            }
+        }
+/*
+        if(data.isConfigurationSection(cuboidPlugin.getName())) {
+            ConfigurationSection config = data.getConfigurationSection(cuboidPlugin.getName());
+            for (String worldName : config.getKeys(false)) {
+                Logger.debug("Converting for World " + worldName);
+                ConfigurationSection worldConfig = config.getConfigurationSection(worldName);
+                World world = Bukkit.getWorld(worldName);
+                if (world != null) {
+                    for(String area : worldConfig.getKeys(false)) {
+                        Logger.debug("Converting for Area " + area);
+                        ConfigurationSection areaConfig = worldConfig.getConfigurationSection(area);
+                        if(areaConfig.isBoolean("InheritParent")) {
+                            config.set(world.getUID().toString() + DELIMETER + area + DELIMETER + INHERIT_PATH, areaConfig.getBoolean("InheritParent"));
+                            areaConfig.set("InheritParent", null);
+                        }
+                        saveData = true;
+                        save();
+                        for(String flag : areaConfig.getKeys(false)) {
+                            Logger.debug("Converting for Flag " + flag);
+                            String target = world.getUID().toString() + DELIMETER + area + DELIMETER + flag;
+                            Logger.debug(target);
+                            config.set(target, areaConfig.getConfigurationSection(flag).getValues(false));
+                        }
+                    }
+                }
+                Logger.debug("Deleting old world data");
+                data.set(cuboidPlugin.getName() + DELIMETER + worldName, null);
+            }
+        }
+
+
         if(wilderness.isConfigurationSection("Wilderness")) {
             for (String s : wilderness.getConfigurationSection("Wilderness").getKeys(false)) {
                 World world = Bukkit.getWorld(s);
@@ -709,7 +744,7 @@ final class DataStoreYaml extends DataStore {
                 }
             }
         }
-    }
+    }*/
 
     private void updateConvertPlayers(ConfigurationSection[] dataconfigs){
         Map<String, UUID> playerCache = new HashMap<String, UUID>(); // Prevents fetching the same player twice.
