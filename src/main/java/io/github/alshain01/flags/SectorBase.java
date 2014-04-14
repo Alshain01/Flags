@@ -22,23 +22,11 @@ final class SectorBase implements Sector {
     private int depth;
 
     SectorBase(UUID id, Location corner1, Location corner2, int depth) {
-        this.id = id;
-        parent = null;
-        this.depth = depth;
-
-        //Find the lesser/greater corners
-        greater = getGreaterCorner(corner1, corner2);
-        lesser = getLesserCorner(corner1, corner2);
+        this(id, corner1, corner2, depth, null);
     }
 
     private SectorBase(Location corner1, Location corner2, int depth) {
-        id = UUID.randomUUID();
-        parent = null;
-        this.depth = depth;
-
-        //Find the lesser/greater corners
-        greater = getGreaterCorner(corner1, corner2);
-        lesser = getLesserCorner(corner1, corner2);
+        this(UUID.randomUUID(), corner1, corner2, depth);
     }
 
     SectorBase(UUID id, Location corner1, Location corner2, int depth, UUID parentID) {
@@ -51,22 +39,13 @@ final class SectorBase implements Sector {
         lesser = getLesserCorner(corner1, corner2);
     }
 
-    // For loading from SQL
-    public SectorBase(UUID id, String name, SectorLocation greater, SectorLocation lesser, int depth, UUID parentID) {
-        this.id = id;
-        this.name = name;
-        parent = parentID;
-        this.depth = depth;
-        this.greater = greater;
-        this.lesser = lesser;
-    }
-
     public SectorBase(UUID id, Map<String, Object> sector) {
         this.id = id;
-        greater = new SectorLocationBase(((ConfigurationSection)sector.get("GreaterCorner")).getValues(false));
+        greater = (SectorLocation)sector.get("GreaterCorner");
         lesser = new SectorLocationBase(((ConfigurationSection)sector.get("LesserCorner")).getValues(false));
         parent = String.valueOf(sector.get("Parent")).equals("null") ? null : UUID.fromString((String)sector.get("Parent"));
         depth = (Integer)sector.get("Depth");
+        name = (String)sector.get("Name");
     }
 
     @Override
@@ -74,8 +53,8 @@ final class SectorBase implements Sector {
         Map<String, Object> sector = new HashMap<String, Object>();
         sector.put("Parent", parent != null ? parent.toString() : "null");
         sector.put("Name", name);
-        sector.put("GreaterCorner", greater);
-        sector.put("LesserCorner", lesser);
+        sector.put("GreaterCorner", greater.serialize());
+        sector.put("LesserCorner", lesser.serialize());
         sector.put("Depth", depth);
         return sector;
     }

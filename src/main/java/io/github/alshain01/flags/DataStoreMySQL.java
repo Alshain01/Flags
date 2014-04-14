@@ -479,19 +479,26 @@ final class DataStoreMySQL extends DataStore {
         try {
             while (results.next()) {
                 UUID id = UUID.fromString(results.getString("Id"));
-                UUID parent = null;
-                if (!results.getString("ParentId").equals("null")) {
-                    parent = UUID.fromString(results.getString("ParentId"));
-                }
-                String name = results.getString("Name");
+                HashMap<String, Object> sector = new HashMap<String, Object>();
+                sector.put("Parent", results.getString("ParentId"));
+                sector.put("Name", results.getString("Name"));
+                sector.put("Depth", results.getInt("Depth"));
 
-                SectorLocation greater = new SectorLocationBase(UUID.fromString(results.getString("World")),
-                                results.getInt("GX"), results.getInt("GY"), results.getInt("GZ"));
-                SectorLocation lesser = new SectorLocationBase(UUID.fromString(results.getString("World")),
-                        results.getInt("LX"), results.getInt("LY"), results.getInt("LZ"));
-                int depth = results.getInt("Depth");
+                HashMap<String, Object> greater = new HashMap<String, Object>();
+                greater.put("World", results.getString("World"));
+                greater.put("X", results.getString("GX"));
+                greater.put("Y", results.getString("GY"));
+                greater.put("Z", results.getString("GZ"));
+                sector.put("GreaterCorner", greater);
 
-                sectors.put(id, new SectorBase(id, name, greater, lesser, depth, parent));
+                HashMap<String, Object> lesser = new HashMap<String, Object>();
+                greater.put("World", results.getString("World"));
+                greater.put("X", results.getString("LX"));
+                greater.put("Y", results.getString("LY"));
+                greater.put("Z", results.getString("LZ"));
+                sector.put("LesserCorner", lesser);
+
+                sectors.put(id, new SectorBase(id, sector));
             }
         } catch (SQLException ex) {
             Logger.error("Failed to read sectors from MySQL.");

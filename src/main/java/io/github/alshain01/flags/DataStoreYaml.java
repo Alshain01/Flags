@@ -28,7 +28,6 @@ import io.github.alshain01.flags.api.CuboidPlugin;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
-//import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 
@@ -38,6 +37,7 @@ import java.util.*;
 
 import io.github.alshain01.flags.api.sector.Sector;
 
+import io.github.alshain01.flags.api.sector.SectorLocation;
 import net.t00thpick1.residence.api.ResidenceAPI;
 import net.t00thpick1.residence.api.areas.ResidenceArea;
 import org.bukkit.Bukkit;
@@ -240,6 +240,7 @@ final class DataStoreYaml extends DataStore {
             }
 
             updateScrubDatabase(dataconfigs);
+            updateConvertWorlds(dataconfigs);
 
             // Convert Sectors
             if(sectors != null) {
@@ -252,8 +253,6 @@ final class DataStoreYaml extends DataStore {
             if(data.isConfigurationSection(cuboidPlugin.getName())) {
                 updateMigratSubdivisions();
             }
-
-            updateConvertWorlds(dataconfigs);
 
             // Convert Trust List to UUID
             //updateConvertPlayers(dataconfigs);
@@ -321,8 +320,16 @@ final class DataStoreYaml extends DataStore {
         Map<UUID, Sector> sectorMap = new HashMap<UUID, Sector>();
 
         for(String s : sectors.getKeys(false)) {
+            String key = s + DELIMETER;
+            Map<String, Object> sector = new HashMap<String, Object>();
             UUID sID = UUID.fromString(s);
-            sectorMap.put(sID, new SectorBase(sID, sectors.getConfigurationSection(s).getValues(false)));
+
+            sector.put("Depth", sectors.getInt(key + "Depth"));
+            sector.put("Parent", sectors.getString(key + "Parent"));
+            sector.put("Name", sectors.getString(key + "Name"));
+            sector.put("GreaterCorner", sectors.getConfigurationSection(key + "GreaterCorner").getValues(false));
+            sector.put("LesserCorner", sectors.getConfigurationSection(key + "LesserCorner").getValues(false));
+            sectorMap.put(sID, new SectorBase(sID, sector));
         }
 
         return sectorMap;
@@ -591,20 +598,11 @@ final class DataStoreYaml extends DataStore {
         if (price.isConfigurationSection("Price")) {
             Logger.info("Migrating Prices");
             for(String s : price.getConfigurationSection("Price").getKeys(true)) {
-                price.set(s, price.getDouble("Price." + s));
+                if(s.contains("Flag") || s.contains("Message")) {
+                    price.set(s, price.getDouble("Price." + s));
+                }
             }
             price.set("Price", null);
-        }
-    }
-
-    private void updateSerializeSectorLocations() {
-        Logger.info("Serializing Sector Location Coordinates");
-        for (String s : sectors.getConfigurationSection("Sectors").getKeys(true)) {
-            Logger.debug("Checking SectorLocation " + s);
-            if (s.contains("Corner")) {
-                Logger.debug("Converting SectorLocation " + s);
-                sectors.set("Sectors." + s, new SectorLocationBase(sectors.getString("Sectors." + s)).serialize());
-            }
         }
     }
 
@@ -612,12 +610,52 @@ final class DataStoreYaml extends DataStore {
         // Remove old header
         if (sectors.isConfigurationSection("Sectors")) {
             Logger.info("Migrating Sectors");
-            for(String s : sectors.getConfigurationSection("Sectors").getKeys(false)) {
-                Logger.debug("Converting Sector " + s);
-                sectors.set(s, sectors.getConfigurationSection("Sectors." + s).getValues(true));
+            for(String s : sectors.getConfigurationSection("Sectors").getKeys(true)) {
+                sectors.set(s, sectors.getConfigurationSection("Sectors." + s).getValues(false));
             }
             sectors.set("Sectors", null);
-            Logger.debug("Sectors Converted");
+        }
+    }
+
+    private void updateSerializeSectorLocations() {
+        Logger.info("Serializing Sector Location Coordinates");
+        for (String s : sectors.getKeys(true)) {
+            if (s.contains("Corner")) {
+                sectors.set(s, new SectorLocationBase(sectors.getString(s)).serialize());
+            }
+        }
+    }
+
+    private void updateConvertWorlds(ConfigurationSection[] dataConfigs) {
+        //Convert World Names to UUID
+
+        // Because the CuboidSystems sometimes need a world id,
+        // AreaWilderness and AreaDefault will be converted to use world id and system id
+        // In order to be universal.  This will result in the same key twice, nested.
+        // But it's necessary to reuse code and have a unified architecture.
+        Logger.info("Converting World Names to UUID.");
+        for (ConfigurationSection config : dataConfigs)
+            for (String path : config.getKeys(true)) {
+                if (path.contains("Trust") || path.contains("Value") || path.contains("Message") || path.contains("InheritParent")) {
+                    String[] paths = path.split("\\.");
+                    World world = Bukkit.getWorld(paths[1]);
+                    if (world != null) {
+                        paths[1] = world.getUID().toString();
+                    }
+                    StringBuilder newPath = new StringBuilder(paths[0]);
+                    for (int x = 1; x < paths.length; x++) {
+                        newPath.append(".").append(paths[x]);
+                    }
+                    config.set(newPath.toString(), config.get(path));
+                    config.set(path, null);
+                }
+            }
+
+        // Remove keys based on names, UUID's will return null
+        for (String path : data.getKeys(false)) {
+            if (Bukkit.getWorld(path) != null) {
+                data.set(path, null);
+            }
         }
     }
 
@@ -660,92 +698,6 @@ final class DataStoreYaml extends DataStore {
         }
     }
 
-    private void updateConvertWorlds(ConfigurationSection[] dataConfigs) {
-        //Convert World Names to UUID
-
-        // Because the CuboidSystems sometimes need a world id,
-        // AreaWilderness and AreaDefault will be converted to use world id and system id
-        // In order to be universal.  This will result in the same key twice, nested.
-        // But it's necessary to reuse code and have a unified architecture.
-        Logger.info("Converting World Names to UUID.");
-        for (ConfigurationSection config : dataConfigs)
-            for (String path : config.getKeys(true)) {
-                if (path.contains("Trust") || path.contains("Value") || path.contains("Message") || path.contains("InheritParent")) {
-                    String[] paths = path.split("\\.");
-                    World world = Bukkit.getWorld(paths[1]);
-                    if (world != null) {
-                        paths[1] = world.getUID().toString();
-                    }
-                    StringBuilder newPath = new StringBuilder(paths[0]);
-                    for (int x = 1; x < paths.length; x++) {
-                        newPath.append(".").append(paths[x]);
-                    }
-                    config.set(newPath.toString(), config.get(path));
-                    config.set(path, null);
-                }
-            }
-
-            // Remove keys based on names, UUID's will return null
-            for (String path : data.getKeys(false)) {
-                if (Bukkit.getWorld(path) != null) {
-                    data.set(path, null);
-                }
-            }
-        }
-/*
-        if(data.isConfigurationSection(cuboidPlugin.getName())) {
-            ConfigurationSection config = data.getConfigurationSection(cuboidPlugin.getName());
-            for (String worldName : config.getKeys(false)) {
-                Logger.debug("Converting for World " + worldName);
-                ConfigurationSection worldConfig = config.getConfigurationSection(worldName);
-                World world = Bukkit.getWorld(worldName);
-                if (world != null) {
-                    for(String area : worldConfig.getKeys(false)) {
-                        Logger.debug("Converting for Area " + area);
-                        ConfigurationSection areaConfig = worldConfig.getConfigurationSection(area);
-                        if(areaConfig.isBoolean("InheritParent")) {
-                            config.set(world.getUID().toString() + DELIMETER + area + DELIMETER + INHERIT_PATH, areaConfig.getBoolean("InheritParent"));
-                            areaConfig.set("InheritParent", null);
-                        }
-                        saveData = true;
-                        save();
-                        for(String flag : areaConfig.getKeys(false)) {
-                            Logger.debug("Converting for Flag " + flag);
-                            String target = world.getUID().toString() + DELIMETER + area + DELIMETER + flag;
-                            Logger.debug(target);
-                            config.set(target, areaConfig.getConfigurationSection(flag).getValues(false));
-                        }
-                    }
-                }
-                Logger.debug("Deleting old world data");
-                data.set(cuboidPlugin.getName() + DELIMETER + worldName, null);
-            }
-        }
-
-
-        if(wilderness.isConfigurationSection("Wilderness")) {
-            for (String s : wilderness.getConfigurationSection("Wilderness").getKeys(false)) {
-                World world = Bukkit.getWorld(s);
-                if (world != null) {
-                    wilderness.set("Wilderness." + world.getUID().toString() + DELIMETER + world.getUID().toString(),
-                            wilderness.getConfigurationSection("Wilderness." + s).getValues(true));
-                    wilderness.set("Wilderness." + s, null);
-                }
-            }
-        }
-
-        if(def.isConfigurationSection("Default")) {
-            for (String s : def.getConfigurationSection("Default").getKeys(false)) {
-                World world = Bukkit.getWorld(s);
-                if (world != null) {
-                    def.set("Default." + world.getUID().toString() + DELIMETER + world.getUID().toString(),
-                            def.getConfigurationSection("Default." + s).getValues(true));
-                    def.set("Default." + s, null);
-                }
-            }
-        }
-    }*/
-
     private void updateConvertPlayers(ConfigurationSection[] dataconfigs){
         Map<String, UUID> playerCache = new HashMap<String, UUID>(); // Prevents fetching the same player twice.
         Logger.info("Converting Player Names to UUID.");
@@ -758,7 +710,7 @@ final class DataStoreYaml extends DataStore {
                         if (((String) o).contains(".")) {
                             permissionTrustList.add((String) o);
                         } else {
-                            if (!playerCache.containsKey((String) o)){
+                            if (!playerCache.containsKey(o)){
                                 playerCache.put((String) o, Bukkit.getOfflinePlayer((String) o).getUniqueId());
                             }
                             config.set(k.replace("Trust", "FlagPlayerTrust") + playerCache.get(o), o);
