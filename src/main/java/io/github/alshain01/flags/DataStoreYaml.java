@@ -41,6 +41,7 @@ import io.github.alshain01.flags.api.sector.SectorLocation;
 import net.t00thpick1.residence.api.ResidenceAPI;
 import net.t00thpick1.residence.api.areas.ResidenceArea;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -698,28 +699,70 @@ final class DataStoreYaml extends DataStore {
         }
     }
 
-    private void updateConvertPlayers(ConfigurationSection[] dataconfigs){
-        Map<String, UUID> playerCache = new HashMap<String, UUID>(); // Prevents fetching the same player twice.
-        Logger.info("Converting Player Names to UUID.");
+    private void updateMigratePermissions(ConfigurationSection[] dataconfigs) {
+        Logger.info("Migrating Permission Trusts.");
         for(ConfigurationSection config : dataconfigs) {
-            for (String k : config.getKeys(true)) {
-                if (k.contains("Trust") && config.isList(k)) {
-                    List<?> trustList = config.getList(k);
-                    List<String> permissionTrustList = new ArrayList<String>();
-                    for (Object o : trustList) {
-                        if (((String) o).contains(".")) {
-                            permissionTrustList.add((String) o);
+            for (String key : config.getKeys(true)) {
+                if (key.contains("Trust") && config.isList(key)) {
+                    List<String> permissions = new ArrayList<String>();
+                    List<String> players = new ArrayList<String>();
+                    for(String trust : config.getStringList(key)) {
+                        if(trust.contains(".")) {
+                            permissions.add(trust);
                         } else {
-                            if (!playerCache.containsKey(o)){
-                                playerCache.put((String) o, Bukkit.getOfflinePlayer((String) o).getUniqueId());
-                            }
-                            config.set(k.replace("Trust", "FlagPlayerTrust") + playerCache.get(o), o);
+                            players.add(trust);
                         }
                     }
-                    config.set(k.replace("Trust", "FlagPermissionTrust"), permissionTrustList);
-                    config.set(k, null);
+                    config.set(key.replace("Trust", "FlagPermissionTrust"), permissions);
+                    config.set(key, players);
                 }
             }
         }
+    }
+
+    private boolean updateConvertPlayers(ConfigurationSection[] dataconfigs) {
+        Logger.info("Converting Player Names to UUID.");
+        Set<String> players = new HashSet<String>(); // Use a set to prevent duplicates
+        for (ConfigurationSection config : dataconfigs) {
+            for (String key : config.getKeys(true)) {
+                if (key.contains("Trust") && config.isList(key)) {
+                    for (String p : config.getStringList(key)) {
+                        OfflinePlayer player = Bukkit.getOfflinePlayer(p);
+                        players.add(player.getName()); // Restores original casing
+                    }
+                }
+            }
+        }
+
+        Map<String, UUID> playerMap = new HashMap<String, UUID>();
+        boolean imported = false;
+        int count = 0;
+        while (!imported && count < 5) {
+            try {
+                playerMap = new UUIDFetcher(new ArrayList<String>(players)).call();
+                imported = true;
+            } catch (Exception ex) {
+                count++;
+                if (count < 5)
+                    Logger.warning("Failed to import UUID list for player trust. Retrying.");
+                else {
+                    Logger.error("Failed to import UUID list after 5 attempts." + ex.getMessage());
+                    return false;
+                }
+            }
+        }
+
+        for (ConfigurationSection config : dataconfigs) {
+            for (String key : config.getKeys(true)) {
+                if (key.contains("Trust") && config.isList(key)) {
+                    for (String p : config.getStringList(key)) {
+                        UUID u = playerMap.get(p);
+                        config.set(key.replace("Trust", "FlagPlayerTrust"), u.toString());
+                    }
+                    config.set(key, null);
+                }
+            }
+        }
+        return true;
     }
 }
