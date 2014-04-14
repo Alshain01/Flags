@@ -666,39 +666,28 @@ final class DataStoreYaml extends DataStore {
 
     private void updateMigratSubdivisions() {
         Logger.info("Migrating Subdivisions");
-        Logger.debug("Converting for " + cuboidPlugin.getName());
-        ConfigurationSection config = data.getConfigurationSection(cuboidPlugin.getName());
-        for (World world : Bukkit.getWorlds()) {
-            if (config.isConfigurationSection(world.getName())) {
-                Logger.debug("Converting for " + world.getName());
-                ConfigurationSection worldConfig = config.getConfigurationSection(world.getName());
-                for (String parent : worldConfig.getKeys(false)) { // Parent claims
-                    Logger.debug("Converting for Parent " + parent);
-                    for (String subdivision : worldConfig.getConfigurationSection(parent).getKeys(false)) { // Subdivision Claims
-                        Logger.debug("Converting for Possible Subdivision " + subdivision);
-                        if (worldConfig.isBoolean(parent + DELIMETER + subdivision + ".InheritParent")) { // If it's a subdivision, it will have an InheritParent key
-                            Logger.debug("Subdivision Found!");
-                            if (cuboidPlugin == CuboidPlugin.RESIDENCE) { // Residence has a new UUID system to convert to
-                                ResidenceArea residence = ResidenceAPI.getResidenceManager().getByName(parent + "." + subdivision);
-                                if(residence != null) {
-                                    worldConfig.set(residence.getResidenceUUID().toString() + ".InheritParent", worldConfig.getBoolean(parent + DELIMETER + subdivision + ".InheritParent"));
-                                    worldConfig.set(parent + DELIMETER + subdivision + ".InheritParent", null); // Remove it to avoid conflict
-                                    for(String key : worldConfig.getConfigurationSection(parent + DELIMETER + subdivision).getKeys(false)) {
-                                        worldConfig.set(residence.getResidenceUUID().toString() + DELIMETER + key, worldConfig.getConfigurationSection(parent + DELIMETER + subdivision + DELIMETER + key).getValues(false)); // Move the whole thing up one level
-                                    }
-                                    worldConfig.set(parent + DELIMETER + subdivision, null);
-                                }
-                            } else {
-                                worldConfig.set(subdivision + DELIMETER + INHERIT_PATH, worldConfig.getBoolean(parent + DELIMETER + subdivision + ".InheritParent"));
-                                worldConfig.set(parent + DELIMETER + subdivision + ".InheritParent", null); // Remove it to avoid conflict
-                                for(String flag : worldConfig.getConfigurationSection(parent + DELIMETER + subdivision).getKeys(false)) {
-                                    worldConfig.set(subdivision + DELIMETER + flag, worldConfig.getConfigurationSection(parent + DELIMETER + subdivision + DELIMETER + flag).getValues(false)); // Move the whole thing up one level
-                                }
-                                worldConfig.set(parent + DELIMETER + subdivision, null);
-                            }
+        for(String key : data.getKeys(true)) {
+            String[] nodes = key.split("\\.");
+            if(nodes.length > 5 || key.contains("InheritParent")) {
+                StringBuilder newKey = new StringBuilder(nodes[0]);
+
+                if (cuboidPlugin == CuboidPlugin.RESIDENCE) {
+                    for(int x = 1; x < nodes.length; x++) {
+                        if(x==2) {
+                            newKey.append(ResidenceAPI.getResidenceManager().getByName(nodes[2] + "." + nodes[3]).getResidenceUUID());
+                            continue;
                         }
+                        if(x==3) continue;
+                        newKey.append(nodes[x]);
+
+                }
+                    for (int x = 1; x < nodes.length; x++) {
+                        if (x == 2) continue; // Location of parent ID
+                        newKey.append(nodes[x]);
                     }
                 }
+                data.set(newKey.toString(), data.get(key));
+                data.set(key, null);
             }
         }
     }
