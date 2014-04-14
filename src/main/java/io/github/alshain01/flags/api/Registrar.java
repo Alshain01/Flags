@@ -183,12 +183,12 @@ public final class Registrar {
      * @param p The permissibile to check
      * @return A map of all the flags for all groups.
      */
-    public Map<String, Set<Flag>> getPermittedFlagsByGroup(Permissible p) {
-        Map<String, Set<Flag>> flagMap = new HashMap<String, Set<Flag>>();
+    public Map<String, Collection<Flag>> getPermittedFlagsByGroup(Permissible p) {
+        Map<String, Collection<Flag>> flagMap = new HashMap<String, Collection<Flag>>();
         for(Flag f : flagStore.values()) {
             if(p.hasPermission(f.getPermission())) {
                 if(flagMap.containsKey(f.getGroup())) {
-                    Set<Flag> flags = flagMap.get(f.getGroup());
+                    Collection<Flag> flags = flagMap.get(f.getGroup());
                     flags.add(f.clone());
                     flagMap.put(f.getGroup(), flags);
                 } else {
