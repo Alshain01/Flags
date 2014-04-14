@@ -256,10 +256,14 @@ final class DataStoreYaml extends DataStore {
             }
 
             // Convert Trust List to UUID
-            //updateConvertPlayers(dataconfigs);
+            updateMigratePermissions(dataconfigs);
+            if(!updateConvertPlayers(dataconfigs)) {
+                Bukkit.getPluginManager().disablePlugin(Bukkit.getServer().getPluginManager().getPlugin("Flags"));
+                return false;
+            }
 
             Logger.info("Writing Updated Database.");
-            //writeVersion(new DataStoreVersion(2, 0, 0));
+            writeVersion(new DataStoreVersion(2, 0, 0));
             saveData = true;
             save();
             Logger.info("Database Update Complete.");
