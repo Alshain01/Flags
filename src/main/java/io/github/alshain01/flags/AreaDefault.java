@@ -63,15 +63,15 @@ final class AreaDefault extends AreaBase implements Nameable, Identifiable {
 		this.world = world;
 	}
 	
-	/**
-	 * Creates an instance of AreaDefault based on a Bukkit World name
-	 * 
-	 * @param worldName
-	 *            The Bukkit world
-	 */
-	public AreaDefault(String worldName) {
-        this.world = Bukkit.getWorld(worldName);
-	}
+    /**
+     * Creates an instance of AreaDefault based on a world UUID
+     *
+     * @param worldId
+     *            The world UUID
+     */
+    public AreaDefault(UUID worldId) {
+        this.world = Bukkit.getWorld(worldId);
+    }
 
     @Override
     public UUID getUniqueId() {

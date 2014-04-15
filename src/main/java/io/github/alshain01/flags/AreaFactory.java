@@ -51,7 +51,7 @@ public enum AreaFactory {
         }
 
         Area getCuboidByName(String name) {
-            return new AreaDefault(name);
+            return new AreaDefault(UUID.fromString(name));
         }
         boolean hasCuboid(Location location) {
             return true;
@@ -70,7 +70,7 @@ public enum AreaFactory {
         }
 
         Area getCuboidByName(String name) {
-            return new AreaWilderness(name);
+            return new AreaWilderness(UUID.fromString(name));
         }
         boolean hasCuboid(Location location) {
             return true;

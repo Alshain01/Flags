@@ -67,12 +67,12 @@ final class AreaWilderness extends AreaBase implements Nameable, Identifiable {
     }
 
     /**
-     * Creates an instance of AreaWilderness based on a Bukkit World name
+     * Creates an instance of AreaWilderness based on the world UUID
      *
-     * @param worldName
-     *            The Bukkit world
+     * @param worldId
+     *            The Bukkit world UUID
      */
-    public AreaWilderness(String worldName) { this(Bukkit.getWorld(worldName)); }
+    public AreaWilderness(UUID worldId) { this(Bukkit.getWorld(worldId)); }
 
     @Override
     public UUID getUniqueId() {
