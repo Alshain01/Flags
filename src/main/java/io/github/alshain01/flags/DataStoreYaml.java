@@ -37,9 +37,7 @@ import java.util.*;
 
 import io.github.alshain01.flags.api.sector.Sector;
 
-import io.github.alshain01.flags.api.sector.SectorLocation;
 import net.t00thpick1.residence.api.ResidenceAPI;
-import net.t00thpick1.residence.api.areas.ResidenceArea;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -65,7 +63,7 @@ final class DataStoreYaml extends DataStore {
     private final static String CONFIG_FILE = "dataConfig.yml";
 
     private final static String AUTO_SAVE_PATH = "YAML.AutoSaveInterval";
-    private final static String DATABASE_VERSION_PATH = "Default.Database.Version";
+    private final static String DATABASE_VERSION_PATH = "YAML.DatabaseVersion";
     private final static String PLAYER_TRUST_PATH = "FlagPlayerTrust";
     private final static String PERM_TRUST_PATH = "FlagPermissionTrust";
     private final static String VALUE_PATH = "FlagValue";
@@ -203,12 +201,25 @@ final class DataStoreYaml extends DataStore {
 
     @Override
     public DataStoreVersion readVersion() {
-        final YamlConfiguration versionConfig = getYml(DATABASE_VERSION_PATH);
-        if (!versionConfig.isSet(DATABASE_VERSION_PATH)) {
+        File yamlConfigFile = new File(dataFolder, CONFIG_FILE);
+        YamlConfiguration yamlConfig = YamlConfiguration.loadConfiguration(yamlConfigFile);
+
+
+        if (!yamlConfig.isConfigurationSection(DATABASE_VERSION_PATH)) {
+            return new DataStoreVersion(0, 0, 0);
+        }
+        ConfigurationSection versionConfig = yamlConfig.getConfigurationSection(DATABASE_VERSION_PATH);
+        return new DataStoreVersion(versionConfig.getInt("Major"), versionConfig.getInt("Minor"),
+                versionConfig.getInt("Build"));
+    }
+
+    private DataStoreVersion readOldVersion() {
+        final YamlConfiguration versionConfig = getYml("Default.Database.Version");
+        if (!versionConfig.isSet("Default.Database.Version")) {
             return new DataStoreVersion(0, 0, 0);
         }
 
-        final String[] ver = versionConfig.getString(DATABASE_VERSION_PATH).split("\\.");
+        final String[] ver = versionConfig.getString("Default.Database.Version").split("\\.");
         return new DataStoreVersion(Integer.valueOf(ver[0]), Integer.valueOf(ver[1]),
                 Integer.valueOf(ver[2]));
     }
@@ -221,20 +232,30 @@ final class DataStoreYaml extends DataStore {
 
     @Override
     public boolean update(JavaPlugin plugin) {
-        final DataStoreVersion ver = readVersion();
+        DataStoreVersion ver = readOldVersion();
         if (ver.getMajor() == 1 && ver.getMinor() < 4) {
             Logger.error("FAILED TO UPDATE DATABASE SCHEMA. DATABASE VERSIONS PRIOR TO 1.4 CANNOT BE UPGRADED.");
             Bukkit.getPluginManager().disablePlugin(Bukkit.getServer().getPluginManager().getPlugin("Flags"));
             return false;
         }
 
+        ver = readVersion();
         if (ver.getMajor() < 2) {
+            def.set("Default.Database.Version", null);
             Logger.info("Beginning YAML Database Update");
             updateWorld2Wilderness();
             updateMigrateBundles();
             updateMigratePrices();
 
+           // Convert Sectors
+            if(sectors != null) {
+                // Convert old sector location to serialized form.
+                updateSerializeSectorLocations();
+                updateMigrateSectors();
+            }
+
             ConfigurationSection[] dataconfigs = { data, def, wilderness };
+
             // Remove old trust lists for offline servers (there is no way to update them)
             if(!Bukkit.getServer().getOnlineMode()) {
                 updateRemoveOfflineTrust(dataconfigs);
@@ -243,16 +264,9 @@ final class DataStoreYaml extends DataStore {
             updateScrubDatabase(dataconfigs);
             updateConvertWorlds(dataconfigs);
 
-            // Convert Sectors
-            if(sectors != null) {
-                // Convert old sector location to serialized form.
-                updateSerializeSectorLocations();
-                updateMigrateSectors();
-            }
-
             // Convert Subdivision Data To the upper level.
             if(data.isConfigurationSection(cuboidPlugin.getName())) {
-                updateMigratSubdivisions();
+                updateMigrateSubdivisions();
             }
 
             // Convert Trust List to UUID
@@ -498,8 +512,16 @@ final class DataStoreYaml extends DataStore {
      * Private
      */
     private void writeVersion(DataStoreVersion version) {
-        final YamlConfiguration cYml = getYml(DATABASE_VERSION_PATH);
-        cYml.set(DATABASE_VERSION_PATH, version.getMajor() + "." + version.getMinor() + "." + version.getBuild());
+        File yamlConfigFile = new File(dataFolder, CONFIG_FILE);
+        YamlConfiguration yamlConfig = YamlConfiguration.loadConfiguration(yamlConfigFile);
+        yamlConfig.set(DATABASE_VERSION_PATH + DELIMETER + "Major", version.getMajor());
+        yamlConfig.set(DATABASE_VERSION_PATH + DELIMETER + "Minor", version.getMinor());
+        yamlConfig.set(DATABASE_VERSION_PATH + DELIMETER + "Build", version.getBuild());
+        try {
+            yamlConfig.save(yamlConfigFile);
+        } catch (IOException ex) {
+            Logger.error("Failed to write new DataStore version.");
+        }
     }
 
     private boolean notExists(JavaPlugin plugin) {
@@ -569,7 +591,7 @@ final class DataStoreYaml extends DataStore {
             // Condition the data
             // Remove excess cuboid systems
             for (String s : data.getKeys(false)) {
-                if (!cuboidPlugin.getName().equals(s)) {
+                if (!cuboidPlugin.getName().equals(s)  && !"Wilderness".equals(s) && !"Default".equals(s)) {
                     data.set(s, null);
                 }
             }
@@ -667,7 +689,7 @@ final class DataStoreYaml extends DataStore {
         }
     }
 
-    private void updateMigratSubdivisions() {
+    private void updateMigrateSubdivisions() {
         Logger.info("Migrating Subdivisions");
         for(String key : data.getKeys(true)) {
             String[] nodes = key.split("\\.");
@@ -758,6 +780,7 @@ final class DataStoreYaml extends DataStore {
                     for (String p : config.getStringList(key)) {
                         Logger.debug("Writing Player UUID for " + p);
                         UUID u = playerMap.get(p);
+                        if(u == null) continue;
                         Logger.debug("UUID: " + u.toString());
                         Logger.debug("Writing To: " + key.replace("Trust", "FlagPlayerTrust") + DELIMETER + u.toString());
                         config.set(key.replace("Trust", "FlagPlayerTrust") + DELIMETER + u.toString(), p);
