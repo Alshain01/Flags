@@ -276,10 +276,10 @@ final class DataStoreYaml extends DataStore {
                 return false;
             }
 
-            updateConvertFlags(dataconfigs);
-
             updateScrubDatabase(dataconfigs);
             updateScrubDatabase(dataconfigs); // Double pass to make sure we catch them all
+
+            updateConvertFlags(dataconfigs);
 
             Logger.info("Writing Updated Database.");
             writeVersion(new DataStoreVersion(2, 0, 0));
@@ -534,9 +534,10 @@ final class DataStoreYaml extends DataStore {
     private void cleanConfigurationSection(ConfigurationSection config) {
         boolean finished = false;
         while(config.getParent() != null && !finished) {
+            ConfigurationSection parent = config.getParent();
             if(config.getKeys(true).isEmpty()) {
-                config.getParent().set(config.getCurrentPath(), null);
-                config = config.getParent();
+                parent.set(config.getCurrentPath(), null);
+                config = parent;
             } else {
                 finished = true;
             }
@@ -829,8 +830,10 @@ final class DataStoreYaml extends DataStore {
             for(String key : config.getKeys(true)) {
                 if(key.contains("Value")) {
                     config.set(key.replace("Value", "FlagState"), config.get(key));
+                    config.set(key, null);
                 } else if (key.contains("Message")) {
                     config.set(key.replace("Message", "FlagMessage"), config.get(key));
+                    config.set(key, null);
                 }
             }
         }
