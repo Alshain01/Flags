@@ -387,8 +387,12 @@ final class DataStoreYaml extends DataStore {
     @Override
     public void writeFlag(Area area, Flag flag, Boolean value) {
         final String path = getAreaPath(area) + DELIMETER + flag.getName();
-        final ConfigurationSection flagConfig = getCreatedSection(getYml(path), path);
+        ConfigurationSection flagConfig = getCreatedSection(getYml(path), path);
         flagConfig.set(VALUE_PATH, value);
+
+        if(value == null) {
+            cleanConfigurationSection(flagConfig);
+        }
         saveData = true;
     }
 
@@ -406,6 +410,10 @@ final class DataStoreYaml extends DataStore {
         final String path = getAreaPath(area) + DELIMETER + flag.getName();
         final ConfigurationSection dataConfig = getCreatedSection(getYml(path), path);
         dataConfig.set(MESSAGE_PATH, message);
+
+        if(message == null) {
+            cleanConfigurationSection(dataConfig);
+        }
         saveData = true;
     }
 
@@ -437,6 +445,10 @@ final class DataStoreYaml extends DataStore {
         for(UUID player : players.keySet()) {
             trustConfig.set(player.toString(), players.get(player));
         }
+
+        if(players.isEmpty()) {
+            cleanConfigurationSection(trustConfig);
+        }
         saveData = true;
     }
 
@@ -463,8 +475,14 @@ final class DataStoreYaml extends DataStore {
         for(Permission p : permissions) {
             permList.add(p.getName());
         }
+        if(permList.isEmpty()) { permList = null; }
 
         permConfig.set(PERM_TRUST_PATH, permList);
+
+        if(permList == null) {
+            cleanConfigurationSection(permConfig);
+        }
+        saveData = true;
     }
 
     @Override
@@ -513,6 +531,18 @@ final class DataStoreYaml extends DataStore {
     /*
      * Private
      */
+    private void cleanConfigurationSection(ConfigurationSection config) {
+        boolean finished = false;
+        while(config.getParent() != null && !finished) {
+            if(config.getKeys(true).isEmpty()) {
+                config.getParent().set(config.getCurrentPath(), null);
+                config = config.getParent();
+            } else {
+                finished = true;
+            }
+        }
+    }
+
     private void writeVersion(DataStoreVersion version) {
         File yamlConfigFile = new File(dataFolder, CONFIG_FILE);
         YamlConfiguration yamlConfig = YamlConfiguration.loadConfiguration(yamlConfigFile);
