@@ -41,8 +41,8 @@ final class SectorBase implements Sector {
 
     public SectorBase(UUID id, Map<String, Object> sector) {
         this.id = id;
-        greater = (SectorLocation)sector.get("GreaterCorner");
-        lesser = new SectorLocationBase(((ConfigurationSection)sector.get("LesserCorner")).getValues(false));
+        greater = new SectorLocationBase((Map<String, Object>)sector.get("GreaterCorner"));
+        lesser = new SectorLocationBase((Map<String, Object>)sector.get("LesserCorner"));
         parent = String.valueOf(sector.get("Parent")).equals("null") ? null : UUID.fromString((String)sector.get("Parent"));
         depth = (Integer)sector.get("Depth");
         name = (String)sector.get("Name");

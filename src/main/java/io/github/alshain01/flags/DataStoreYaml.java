@@ -262,10 +262,14 @@ final class DataStoreYaml extends DataStore {
                 return false;
             }
 
+            updateScrubDatabase(dataconfigs);
+            updateScrubDatabase(dataconfigs); // Double pass to make sure we catch them all
+
             Logger.info("Writing Updated Database.");
             writeVersion(new DataStoreVersion(2, 0, 0));
             saveData = true;
             save();
+            reload();
             Logger.info("Database Update Complete.");
         }
         return true;
@@ -326,6 +330,7 @@ final class DataStoreYaml extends DataStore {
 
         for(String s : sectors.getKeys(false)) {
             String key = s + DELIMETER;
+            Logger.debug("Read Sectors: " + key);
             Map<String, Object> sector = new HashMap<String, Object>();
             UUID sID = UUID.fromString(s);
 
@@ -572,7 +577,7 @@ final class DataStoreYaml extends DataStore {
             //Remove invalid data and empty lists
             for (String s : data.getKeys(true)) {
                 if (((s.contains("Value") || s.contains("InheritParent")) && !data.isBoolean(s))
-                        || (s.contains("Trust") && (!data.isList(s) || data.getList(s).isEmpty()))
+                        || ((s.contains("Trust") && !s.contains("FlagPlayer") && !s.contains("FlagPermission")) && (!data.isList(s) || data.getList(s).isEmpty()))
                         || (s.contains("Message") && !data.isString(s))) {
                     data.set(s, null);
                 }
@@ -616,7 +621,7 @@ final class DataStoreYaml extends DataStore {
         if (sectors.isConfigurationSection("Sectors")) {
             Logger.info("Migrating Sectors");
             for(String s : sectors.getConfigurationSection("Sectors").getKeys(true)) {
-                sectors.set(s, sectors.getConfigurationSection("Sectors." + s).getValues(false));
+                sectors.set(s, sectors.get("Sectors." + s));
             }
             sectors.set("Sectors", null);
         }
@@ -657,10 +662,8 @@ final class DataStoreYaml extends DataStore {
             }
 
         // Remove keys based on names, UUID's will return null
-        for (String path : data.getKeys(false)) {
-            if (Bukkit.getWorld(path) != null) {
-                data.set(path, null);
-            }
+        for (World w : Bukkit.getWorlds()) {
+            data.set(cuboidPlugin.getName() + DELIMETER + w.getName(), null);
         }
     }
 
@@ -683,7 +686,7 @@ final class DataStoreYaml extends DataStore {
                 } else {
                     for (int x = 1; x < nodes.length; x++) {
                         if (x == 2) continue; // Location of parent ID
-                        newKey.append(nodes[x]);
+                        newKey.append(DELIMETER).append(nodes[x]);
                     }
                 }
                 data.set(newKey.toString(), data.get(key));
@@ -697,12 +700,15 @@ final class DataStoreYaml extends DataStore {
         for(ConfigurationSection config : dataconfigs) {
             for (String key : config.getKeys(true)) {
                 if (key.contains("Trust") && config.isList(key)) {
+                    Logger.debug("Converting Trust List for " + key);
                     List<String> permissions = new ArrayList<String>();
                     List<String> players = new ArrayList<String>();
                     for(String trust : config.getStringList(key)) {
                         if(trust.contains(".")) {
+                            Logger.debug("Converting Permission " + trust);
                             permissions.add(trust);
                         } else {
+                            Logger.debug("Ignoring Player " + trust);
                             players.add(trust);
                         }
                     }
@@ -718,7 +724,7 @@ final class DataStoreYaml extends DataStore {
         Set<String> players = new HashSet<String>(); // Use a set to prevent duplicates
         for (ConfigurationSection config : dataconfigs) {
             for (String key : config.getKeys(true)) {
-                if (key.contains("Trust") && config.isList(key)) {
+                if (key.contains("Trust") && !key.contains("FlagPermissionTrust") && config.isList(key)) {
                     for (String p : config.getStringList(key)) {
                         OfflinePlayer player = Bukkit.getOfflinePlayer(p);
                         players.add(player.getName()); // Restores original casing
@@ -732,6 +738,7 @@ final class DataStoreYaml extends DataStore {
         int count = 0;
         while (!imported && count < 5) {
             try {
+                Logger.debug("Fetching Player UUID");
                 playerMap = new UUIDFetcher(new ArrayList<String>(players)).call();
                 imported = true;
             } catch (Exception ex) {
@@ -747,10 +754,13 @@ final class DataStoreYaml extends DataStore {
 
         for (ConfigurationSection config : dataconfigs) {
             for (String key : config.getKeys(true)) {
-                if (key.contains("Trust") && config.isList(key)) {
+                if (key.contains("Trust") && !key.contains("FlagPermissionTrust") && config.isList(key)) {
                     for (String p : config.getStringList(key)) {
+                        Logger.debug("Writing Player UUID for " + p);
                         UUID u = playerMap.get(p);
-                        config.set(key.replace("Trust", "FlagPlayerTrust"), u.toString());
+                        Logger.debug("UUID: " + u.toString());
+                        Logger.debug("Writing To: " + key.replace("Trust", "FlagPlayerTrust") + DELIMETER + u.toString());
+                        config.set(key.replace("Trust", "FlagPlayerTrust") + DELIMETER + u.toString(), p);
                     }
                     config.set(key, null);
                 }
