@@ -68,7 +68,7 @@ final class DataStoreYaml extends DataStore {
     private final static String DATABASE_VERSION_PATH = "Default.Database.Version";
     private final static String PLAYER_TRUST_PATH = "FlagPlayerTrust";
     private final static String PERM_TRUST_PATH = "FlagPermissionTrust";
-    private final static String VALUE_PATH = "FlagValue";
+    private final static String VALUE_PATH = "FlagState";
     private final static String MESSAGE_PATH = "FlagMessage";
     private final static String INHERIT_PATH = "InheritParent";
     private final static String DELIMETER = ".";
@@ -261,6 +261,8 @@ final class DataStoreYaml extends DataStore {
                 Bukkit.getPluginManager().disablePlugin(Bukkit.getServer().getPluginManager().getPlugin("Flags"));
                 return false;
             }
+
+            updateConvertFlags(dataconfigs);
 
             Logger.info("Writing Updated Database.");
             writeVersion(new DataStoreVersion(2, 0, 0));
@@ -758,4 +760,17 @@ final class DataStoreYaml extends DataStore {
         }
         return true;
     }
+
+    private void updateConvertFlags(ConfigurationSection[] dataconfigs) {
+        for(ConfigurationSection config : dataconfigs) {
+            for(String key : config.getKeys(true)) {
+                if(key.contains("Value")) {
+                    config.set(key.replace("Value", "FlagState"), config.get(key));
+                } else if (key.contains("Message")) {
+                    config.set(key.replace("Message", "FlagMessage"), config.get(key));
+                }
+            }
+        }
+    }
+
 }
