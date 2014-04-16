@@ -120,6 +120,7 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Renameable,
     public void setInherited(boolean value) {
         if (isSubdivision()) {
             Flags.getDataStore().writeInheritance(this, value);
+            return;
         }
         throw new InvalidSubdivisionException();
     }

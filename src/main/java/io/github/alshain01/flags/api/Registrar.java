@@ -376,7 +376,7 @@ public final class Registrar {
                 continue;
             }
 
-            final boolean def = !flagSection.isSet("AreaDefault") || flagSection.getBoolean("AreaDefault");
+            final boolean def = !flagSection.isSet("Default") || flagSection.getBoolean("Default");
             final boolean isPlayer = flagSection.isSet("Player") && flagSection.getBoolean("Player");
 
             // The default message players getType while in the area.

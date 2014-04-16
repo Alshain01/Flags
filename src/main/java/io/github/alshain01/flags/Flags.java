@@ -29,6 +29,7 @@ import io.github.alshain01.flags.api.economy.EconomyBaseValue;
 import io.github.alshain01.flags.DataStore.DataStoreType;
 import io.github.alshain01.flags.api.event.PlayerChangedAreaEvent;
 
+import io.github.alshain01.flags.api.event.PlayerChangedUniqueAreaEvent;
 import io.github.alshain01.flags.api.sector.SectorManager;
 import net.milkbowl.vault.economy.Economy;
 
@@ -243,7 +244,8 @@ final public class Flags extends JavaPlugin {
 		public void run() {
 			// Check the handlers to see if anything is registered for Border Patrol
 			final RegisteredListener[] listeners = PlayerChangedAreaEvent.getHandlerList().getRegisteredListeners();
-			if (borderPatrol && (listeners == null || listeners.length == 0)) {
+            final RegisteredListener[] ulisteners = PlayerChangedUniqueAreaEvent.getHandlerList().getRegisteredListeners();
+			if (borderPatrol && (listeners.length == 0 && ulisteners.length == 0)) {
                 borderPatrol = false;
                 PlayerMoveEvent.getHandlerList().unregister(Bukkit.getPluginManager().getPlugin("Flags"));
 				Logger.info("No plugins have registered for Flags' Border Patrol listener. Unregistering PlayerMoveEvent.");

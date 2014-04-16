@@ -443,8 +443,8 @@ final class DataStoreMySQL extends DataStore {
     }
 
     @Override
-    public boolean readInheritance(Area area) {
-        if (!(area instanceof Subdividable) || !((Subdividable) area).isSubdivision()) {
+    public boolean readInheritance(Subdividable area) {
+        if (!area.isSubdivision()) {
             return false;
         }
 
@@ -461,8 +461,8 @@ final class DataStoreMySQL extends DataStore {
     }
 
     @Override
-    public void writeInheritance(Area area, boolean setting) {
-        if (!(area instanceof Subdividable) || !((Subdividable) area).isSubdivision()) {
+    public void writeInheritance(Subdividable area, boolean setting) {
+        if (!area.isSubdivision()) {
             return;
         }
 
@@ -534,7 +534,7 @@ final class DataStoreMySQL extends DataStore {
     }
 
     @Override
-    public void remove(Area area) {
+    public void remove(AreaRemovable area) {
         String deleteString = "DELETE FROM %table% WHERE CuboidPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%';";
         executeStatement(areaBuilder(deleteString, area)
                 .replace("%table%", "Flags"));

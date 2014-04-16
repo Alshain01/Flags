@@ -193,6 +193,7 @@ final class AreaPreciousStones extends AreaRemovable implements Renameable, Owna
 	public void setInherited(boolean value) {
         if (isSubdivision()) {
             Flags.getDataStore().writeInheritance(this, value);
+            return;
         }
         throw new InvalidSubdivisionException();
 	}

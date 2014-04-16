@@ -51,7 +51,7 @@ final class SectorBase implements Sector {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> sector = new HashMap<String, Object>();
-        sector.put("Parent", parent != null ? parent.toString() : "null");
+        sector.put("Parent", parent == null ? "null" : parent.toString());
         sector.put("Name", name);
         sector.put("GreaterCorner", greater.serialize());
         sector.put("LesserCorner", lesser.serialize());

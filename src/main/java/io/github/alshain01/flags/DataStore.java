@@ -28,6 +28,7 @@ import io.github.alshain01.flags.api.CuboidPlugin;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
+import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 
 import java.util.*;
@@ -117,9 +118,9 @@ public abstract class DataStore {
 
     public abstract void writePermissionTrust(Area area, Flag flag, Collection<Permission> permissions);
 
-    public abstract boolean readInheritance(Area area);
+    public abstract boolean readInheritance(Subdividable area);
 
-	public abstract void writeInheritance(Area area, boolean value);
+	public abstract void writeInheritance(Subdividable area, boolean value);
 
     public abstract Map<UUID, Sector> readSectors();
 
@@ -127,7 +128,7 @@ public abstract class DataStore {
 
     public abstract void deleteSector(UUID sID);
 
-    public abstract void remove(Area area);
+    public abstract void remove(AreaRemovable area);
 
     public void importDataStore(DataStore source) {
         migrate(source, this);

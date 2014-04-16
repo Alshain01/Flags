@@ -166,6 +166,7 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
     public void setInherited(boolean value) {
         if (isSubdivision()) {
             Flags.getDataStore().writeInheritance(this, value);
+            return;
         }
         throw new InvalidSubdivisionException();
     }

@@ -179,6 +179,7 @@ final class AreaFactoid extends AreaRemovable implements Identifiable, Nameable,
     public void setInherited(boolean value) {
         if (isSubdivision()) {
             Flags.getDataStore().writeInheritance(this, value);
+            return;
         }
         throw new InvalidSubdivisionException();
     }

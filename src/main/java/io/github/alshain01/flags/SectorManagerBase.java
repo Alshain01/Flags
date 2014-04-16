@@ -6,6 +6,7 @@ import io.github.alshain01.flags.api.sector.SectorLocation;
 import io.github.alshain01.flags.api.sector.SectorManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,10 +17,11 @@ final class SectorManagerBase implements SectorManager {
     private final int defaultDepth;
     private final DataStore dataStore;
 
-    public SectorManagerBase(JavaPlugin plugin, DataStore data, int defaultDepth) {
+    public SectorManagerBase(Flags plugin, DataStore data, int defaultDepth) {
         ConfigurationSerialization.registerClass(Sector.class);
         ConfigurationSerialization.registerClass(SectorLocation.class);
         plugin.getCommand("sector").setExecutor(new CommandSector());
+        Bukkit.getPluginManager().registerEvents(new SectorListener(Material.valueOf(plugin.getConfig().getString("Tools.Sector"))), plugin);
         this.defaultDepth = defaultDepth;
         this.dataStore = data;
     }

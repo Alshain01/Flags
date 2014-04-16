@@ -486,12 +486,12 @@ final class DataStoreYaml extends DataStore {
     }
 
     @Override
-    public boolean readInheritance(Area area) {
-        if (!(area instanceof Subdividable) || !((Subdividable)area).isSubdivision()) {
-            return true;
+    public boolean readInheritance(Subdividable area) {
+        if (!area.isSubdivision()) {
+            return false;
         }
 
-        String path = area.getCuboidPlugin().getName() + DELIMETER + area.getWorld().getUID().toString() + DELIMETER + area.getId().replace('.', '_');
+        String path = area.getCuboidPlugin().getName() + DELIMETER + area.getWorld().getUID().toString() + DELIMETER + area.getId();
 
         if(!getYml(path).isConfigurationSection(path)) { return true; }
         ConfigurationSection inheritConfig = getYml(path).getConfigurationSection(path);
@@ -499,9 +499,9 @@ final class DataStoreYaml extends DataStore {
     }
 
     @Override
-    public void writeInheritance(Area area, boolean value) {
-        if ((area instanceof Subdividable) && ((Subdividable) area).isSubdivision()) {
-            String path = area.getCuboidPlugin().getName() + DELIMETER + area.getWorld().getUID().toString() + DELIMETER + area.getId().replace('.', '_');
+    public void writeInheritance(Subdividable area, boolean value) {
+        if (area.isSubdivision()) {
+            String path = area.getCuboidPlugin().getName() + DELIMETER + area.getWorld().getUID().toString() + DELIMETER + area.getId();
 
             ConfigurationSection inheritConfig = getCreatedSection(getYml(path), path);
             inheritConfig.set(path, value);
@@ -510,7 +510,7 @@ final class DataStoreYaml extends DataStore {
     }
 
 	@Override
-	public void remove(Area area) {
+	public void remove(AreaRemovable area) {
         String path = getAreaPath(area);
         getYml(path).set(path, null);
 	}
@@ -523,7 +523,7 @@ final class DataStoreYaml extends DataStore {
             preformattedAreas = data.getConfigurationSection(cuboidPlugin.getName() + DELIMETER + world.getUID().toString()).getKeys(false);
         }
         for(String s : preformattedAreas) {
-            areas.add(s.replace("_", "."));
+            areas.add(s);
         }
         return areas;
     }
@@ -563,7 +563,7 @@ final class DataStoreYaml extends DataStore {
     }
 
     private String getAreaPath(Area area) {
-        return area.getCuboidPlugin().getName() + "." + area.getWorld().getUID().toString() + "." + area.getId().replace('.', '_');
+        return area.getCuboidPlugin().getName() + "." + area.getWorld().getUID().toString() + "." + area.getId();
     }
 
     private ConfigurationSection getCreatedSection(YamlConfiguration config, String path) {
@@ -632,7 +632,7 @@ final class DataStoreYaml extends DataStore {
             //Remove invalid data and empty lists
             for (String s : data.getKeys(true)) {
                 if (((s.contains("Value") || s.contains("InheritParent")) && !data.isBoolean(s))
-                        || ((s.contains("Trust") && !s.contains("FlagPlayer") && !s.contains("FlagPermission")) && (!data.isList(s) || data.getList(s).isEmpty()))
+                        || ((s.contains("Trust") || s.contains("FlagPlayerTrust") || s.contains("FlagPermissionTrust")) && (!data.isList(s) || data.getList(s).isEmpty()))
                         || (s.contains("Message") && !data.isString(s))) {
                     data.set(s, null);
                 }
