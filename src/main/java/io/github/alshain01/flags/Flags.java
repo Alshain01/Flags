@@ -196,7 +196,7 @@ final public class Flags extends JavaPlugin {
     }
 
     private DataStore findDataStore(CuboidPlugin cuboidPlugin) {
-        DataStoreType dbType = DataStoreType.valueOf(getConfig().getString("Database"));
+        DataStoreType dbType = DataStoreType.fromString(getConfig().getString("Database"));
         switch(dbType) {
             case MYSQL:
                 return new DataStoreMySQL(this);

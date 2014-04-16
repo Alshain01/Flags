@@ -78,6 +78,10 @@ public abstract class DataStore {
         public String getName() {
             return niceName;
         }
+
+        public static DataStoreType fromString(String value) {
+            return valueOf(value.toUpperCase());
+        }
     }
 
     public abstract void create(JavaPlugin plugin);
