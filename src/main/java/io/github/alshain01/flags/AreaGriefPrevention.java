@@ -47,7 +47,7 @@ import org.bukkit.event.Listener;
 /**
  * Class for creating areas to manage a Grief Prevention Claim.
  */
-final class AreaGriefPrevention extends AreaRemovable implements Administrator, Ownable, Siegeable, Subdividable  {
+final class AreaGriefPrevention extends AreaRemovable implements Administrator, Identifiable, Ownable, Siegeable, Subdividable  {
 	private final Claim claim;
 
 	/**
@@ -73,11 +73,11 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
     /**
      * Creates an instance of AreaGriefPrevention based on a claim ID
      *
-     * @param ID
-     *            The claim ID
+     * @param uniqueId
+     *            The claim UUID
      */
-    public AreaGriefPrevention(long ID) {
-        claim = GriefPrevention.instance.dataStore.getClaim(ID);
+    public AreaGriefPrevention(UUID uniqueId) {
+        claim = GriefPrevention.instance.dataStore.getClaim(uniqueId);
     }
 
 	/**
@@ -91,9 +91,16 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
 
     @Override
     public String getId() {
-        if (isArea()) return String.valueOf(claim.getID());
+        if (isArea()) return String.valueOf(claim.getUUID());
         throw new InvalidAreaException();
     }
+
+    @Override
+    public UUID getUniqueId() {
+        if (isArea()) return claim.getUUID();
+        throw new InvalidAreaException();
+    }
+
 
     @Override
     public CuboidPlugin getCuboidPlugin() {
@@ -175,7 +182,7 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         private static void onClaimDeleted(ClaimDeletedEvent e) {
             // Cleanup the database, keep the file from growing too large.
-            new AreaGriefPrevention(e.getClaim().getID()).remove();
+            new AreaGriefPrevention(e.getClaim().getUUID()).remove();
         }
     }
 }

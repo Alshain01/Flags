@@ -156,6 +156,11 @@
                     <groupId>net.milkbowl.vault</groupId>
                     <artifactId>Vault</artifactId>
                 </exclusion>
+
+                <exclusion>
+                    <groupId>uk.co.jacekk.bukkit</groupId>
+                    <artifactId>baseplugin</artifactId>
+                </exclusion>
 			</exclusions>
 		</dependency>
 
