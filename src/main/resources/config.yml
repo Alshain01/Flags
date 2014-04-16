@@ -1,5 +1,5 @@
 # Sets the database type, valid types are YAML and MYSQL
-# Url, user, and password must be set for SQL Connections in sqlConfig.yml.
+# Url, user, and password must be set for SQL Connections in dataConfig.yml.
 Database: YAML
 
 # This sets the search order for land allocation systems
