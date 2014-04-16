@@ -37,6 +37,7 @@ import java.util.*;
 
 import io.github.alshain01.flags.api.sector.Sector;
 
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import net.t00thpick1.residence.api.ResidenceAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -718,7 +719,7 @@ final class DataStoreYaml extends DataStore {
     }
 
     private void updateMigrateSubdivisions() {
-        Logger.info("Migrating Subdivisions");
+        Logger.info("Migrating Subdivisions & New Cuboid Idenficiations");
         for(String key : data.getKeys(true)) {
             String[] nodes = key.split("\\.");
             if(nodes.length > 5 || key.contains("InheritParent")) {
@@ -727,10 +728,19 @@ final class DataStoreYaml extends DataStore {
                 if (cuboidPlugin == CuboidPlugin.RESIDENCE) {
                     for(int x = 1; x < nodes.length; x++) {
                         if (x == 2) {
-                            newKey.append(ResidenceAPI.getResidenceManager().getByName(nodes[2] + "." + nodes[3]).getResidenceUUID());
+                            newKey.append(ResidenceAPI.getResidenceManager().getByName(nodes[2] + "." + nodes[3]).getResidenceUUID().toString());
                             continue;
                         }
                         if (x == 3) continue;
+                        newKey.append(nodes[x]);
+                    }
+                } else if (cuboidPlugin == CuboidPlugin.GRIEF_PREVENTION) {
+                    for (int x = 1; x < nodes.length; x++) {
+                        if (x == 2) continue;
+                        if (x == 3) {
+                            newKey.append(GriefPrevention.instance.dataStore.getClaim(Long.valueOf(nodes[3])).getUUID().toString());
+                            continue;
+                        }
                         newKey.append(nodes[x]);
                     }
                 } else {
@@ -739,6 +749,17 @@ final class DataStoreYaml extends DataStore {
                         newKey.append(DELIMETER).append(nodes[x]);
                     }
                 }
+                data.set(newKey.toString(), data.get(key));
+                data.set(key, null);
+            } else if (nodes.length == 5) {
+                // Convert new data identification types for NON -subdivisions
+                StringBuilder newKey = new StringBuilder(nodes[0]).append(DELIMETER).append(nodes[1]);
+                if (cuboidPlugin == CuboidPlugin.RESIDENCE) {
+                    newKey.append(ResidenceAPI.getResidenceManager().getByName(nodes[2]).getResidenceUUID().toString());
+                } else if (cuboidPlugin == CuboidPlugin.GRIEF_PREVENTION) {
+                    newKey.append(GriefPrevention.instance.dataStore.getClaim(Long.valueOf(nodes[2])).getUUID().toString());
+                }
+                newKey.append(DELIMETER).append(nodes[3]).append(DELIMETER).append(nodes[4]).append(DELIMETER).append(nodes[5]);
                 data.set(newKey.toString(), data.get(key));
                 data.set(key, null);
             }
