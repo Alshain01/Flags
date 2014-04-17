@@ -29,7 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.area.*;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
@@ -102,8 +102,8 @@ final class AreaResidence extends AreaRemovable implements Identifiable, Cuboid,
     }
 
     @Override
-    public CuboidPlugin getCuboidPlugin() {
-        return CuboidPlugin.RESIDENCE;
+    public AreaPlugin getCuboidPlugin() {
+        return AreaPlugin.RESIDENCE;
     }
 
     @Override

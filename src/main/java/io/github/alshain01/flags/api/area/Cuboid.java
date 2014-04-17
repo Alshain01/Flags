@@ -3,8 +3,8 @@ package io.github.alshain01.flags.api.area;
 import org.bukkit.Location;
 
 /**
- * Interface that defines if the cuboid plugin uses "true"
- * cubical cuboids and it's corners can be identified.
+ * Interface that defines if the area plugin uses "true"
+ * cuboids and it's corners can be identified.
  */
 public interface Cuboid extends Area{
     /**

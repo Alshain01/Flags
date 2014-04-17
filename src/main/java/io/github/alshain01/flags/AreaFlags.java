@@ -1,6 +1,6 @@
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.*;
 import io.github.alshain01.flags.api.event.SectorDeleteEvent;
@@ -50,8 +50,8 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Ren
     }
 
     @Override
-    public CuboidPlugin getCuboidPlugin() {
-        return CuboidPlugin.FLAGS;
+    public AreaPlugin getCuboidPlugin() {
+        return AreaPlugin.FLAGS;
     }
 
     @Override

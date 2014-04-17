@@ -26,7 +26,7 @@ package io.github.alshain01.flags;
 
 import java.util.*;
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.area.*;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
@@ -121,8 +121,8 @@ final class AreaPreciousStones extends AreaRemovable implements Cuboid, Renameab
     }
 
     @Override
-    public CuboidPlugin getCuboidPlugin() {
-        return CuboidPlugin.PRECIOUSSTONES;
+    public AreaPlugin getCuboidPlugin() {
+        return AreaPlugin.PRECIOUSSTONES;
     }
 
     @Override

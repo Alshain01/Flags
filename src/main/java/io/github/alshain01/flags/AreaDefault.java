@@ -26,7 +26,7 @@ package io.github.alshain01.flags;
 
 import java.util.UUID;
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.area.Identifiable;
 import io.github.alshain01.flags.api.area.Nameable;
@@ -92,8 +92,8 @@ final class AreaDefault extends AreaBase implements Nameable, Identifiable {
     }
 
     @Override
-    public CuboidPlugin getCuboidPlugin() {
-        return CuboidPlugin.DEFAULT;
+    public AreaPlugin getCuboidPlugin() {
+        return AreaPlugin.DEFAULT;
     }
 
     @Override

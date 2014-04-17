@@ -24,7 +24,7 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
@@ -86,21 +86,21 @@ final class DataStoreYaml extends DataStore {
     private YamlConfiguration sectors;
 
     private boolean saveData = false;
-    private final CuboidPlugin cuboidPlugin;
+    private final AreaPlugin areaPlugin;
 
     /*
      * Constructor
      */
-    DataStoreYaml(Plugin plugin, CuboidPlugin cuboidPlugin, boolean enableAutoSave) {
-        this.cuboidPlugin = cuboidPlugin;
+    DataStoreYaml(Plugin plugin, AreaPlugin areaPlugin, boolean enableAutoSave) {
+        this.areaPlugin = areaPlugin;
         this.dataFolder = plugin.getDataFolder();
         this.plugin = plugin;
         updateWorldFile();
         reload(enableAutoSave);
     }
 
-	DataStoreYaml(Plugin plugin, CuboidPlugin cuboidPlugin) {
-        this.cuboidPlugin = cuboidPlugin;
+	DataStoreYaml(Plugin plugin, AreaPlugin areaPlugin) {
+        this.areaPlugin = areaPlugin;
         this.dataFolder = plugin.getDataFolder();
         this.plugin = plugin;
         updateWorldFile();
@@ -162,7 +162,7 @@ final class DataStoreYaml extends DataStore {
         }
         price = YamlConfiguration.loadConfiguration(priceFile);
 
-        if(cuboidPlugin == CuboidPlugin.FLAGS) {
+        if(areaPlugin == AreaPlugin.FLAGS) {
             sectors = YamlConfiguration.loadConfiguration(new File(dataFolder, SECTOR_FILE));
         }
 
@@ -266,7 +266,7 @@ final class DataStoreYaml extends DataStore {
             updateConvertWorlds(dataconfigs);
 
             // Convert Subdivision Data To the upper level.
-            if(data.isConfigurationSection(cuboidPlugin.getName())) {
+            if(data.isConfigurationSection(areaPlugin.getName())) {
                 updateMigrateSubdivisions();
             }
 
@@ -515,8 +515,8 @@ final class DataStoreYaml extends DataStore {
     Set<String> getAllAreaIds(World world) {
         Set<String> areas = new HashSet<String>();
         Set<String> preformattedAreas = new HashSet<String>();
-        if(data.isConfigurationSection(cuboidPlugin.getName() + DELIMETER + world.getUID().toString())) {
-            preformattedAreas = data.getConfigurationSection(cuboidPlugin.getName() + DELIMETER + world.getUID().toString()).getKeys(false);
+        if(data.isConfigurationSection(areaPlugin.getName() + DELIMETER + world.getUID().toString())) {
+            preformattedAreas = data.getConfigurationSection(areaPlugin.getName() + DELIMETER + world.getUID().toString()).getKeys(false);
         }
         for(String s : preformattedAreas) {
             areas.add(s);
@@ -620,7 +620,7 @@ final class DataStoreYaml extends DataStore {
             // Condition the data
             // Remove excess cuboid systems
             for (String s : data.getKeys(false)) {
-                if (!cuboidPlugin.getName().equals(s)  && !"Wilderness".equals(s) && !"Default".equals(s)) {
+                if (!areaPlugin.getName().equals(s)  && !"Wilderness".equals(s) && !"Default".equals(s)) {
                     data.set(s, null);
                 }
             }
@@ -714,7 +714,7 @@ final class DataStoreYaml extends DataStore {
 
         // Remove keys based on names, UUID's will return null
         for (World w : Bukkit.getWorlds()) {
-            data.set(cuboidPlugin.getName() + DELIMETER + w.getName(), null);
+            data.set(areaPlugin.getName() + DELIMETER + w.getName(), null);
         }
     }
 
@@ -725,7 +725,7 @@ final class DataStoreYaml extends DataStore {
             if(nodes.length > 5 || key.contains("InheritParent")) {
                 StringBuilder newKey = new StringBuilder(nodes[0]);
 
-                if (cuboidPlugin == CuboidPlugin.RESIDENCE) {
+                if (areaPlugin == AreaPlugin.RESIDENCE) {
                     for(int x = 1; x < nodes.length; x++) {
                         if (x == 2) {
                             newKey.append(ResidenceAPI.getResidenceManager().getByName(nodes[2] + "." + nodes[3]).getResidenceUUID().toString());
@@ -734,7 +734,7 @@ final class DataStoreYaml extends DataStore {
                         if (x == 3) continue;
                         newKey.append(nodes[x]);
                     }
-                } else if (cuboidPlugin == CuboidPlugin.GRIEF_PREVENTION) {
+                } else if (areaPlugin == AreaPlugin.GRIEF_PREVENTION) {
                     for (int x = 1; x < nodes.length; x++) {
                         if (x == 2) continue;
                         if (x == 3) {
@@ -754,12 +754,12 @@ final class DataStoreYaml extends DataStore {
             } else if (nodes.length == 5) {
                 // Convert new data identification types for NON -subdivisions
                 StringBuilder newKey = new StringBuilder(nodes[0]).append(DELIMETER).append(nodes[1]);
-                if (cuboidPlugin == CuboidPlugin.RESIDENCE) {
+                if (areaPlugin == AreaPlugin.RESIDENCE) {
                     newKey.append(ResidenceAPI.getResidenceManager().getByName(nodes[2]).getResidenceUUID().toString());
                     newKey.append(DELIMETER).append(nodes[3]).append(DELIMETER).append(nodes[4]);
                     data.set(newKey.toString(), data.get(key));
                     data.set(key, null);
-                } else if (cuboidPlugin == CuboidPlugin.GRIEF_PREVENTION) {
+                } else if (areaPlugin == AreaPlugin.GRIEF_PREVENTION) {
                     newKey.append(GriefPrevention.instance.dataStore.getClaim(Long.valueOf(nodes[2])).getUUID().toString());
                     newKey.append(DELIMETER).append(nodes[3]).append(DELIMETER).append(nodes[4]);
                     data.set(newKey.toString(), data.get(key));

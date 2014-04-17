@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.area.*;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
@@ -93,8 +93,8 @@ final class AreaFactoid extends AreaRemovable implements Identifiable, Nameable,
     }
 
     @Override
-    public CuboidPlugin getCuboidPlugin() {
-        return CuboidPlugin.FACTOID;
+    public AreaPlugin getCuboidPlugin() {
+        return AreaPlugin.FACTOID;
     }
 
     @Override

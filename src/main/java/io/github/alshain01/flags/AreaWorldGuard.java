@@ -30,7 +30,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.sk89q.worldedit.BlockVector;
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.area.Cuboid;
 import io.github.alshain01.flags.api.area.Nameable;
 import io.github.alshain01.flags.api.area.Ownable;
@@ -107,8 +107,8 @@ final class AreaWorldGuard extends AreaRemovable implements Nameable, Ownable, C
     }
 
     @Override
-    public CuboidPlugin getCuboidPlugin() {
-        return CuboidPlugin.WORLDGUARD;
+    public AreaPlugin getCuboidPlugin() {
+        return AreaPlugin.WORLDGUARD;
     }
 
     @Override

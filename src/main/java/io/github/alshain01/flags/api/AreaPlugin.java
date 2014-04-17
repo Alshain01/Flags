@@ -38,7 +38,7 @@ import java.io.File;
  * Class for acquiring data from the active cuboid system
  */
 @SuppressWarnings("unused")
-public enum CuboidPlugin {
+public enum AreaPlugin {
 
     DEFAULT("Default"),
     WILDERNESS("Wilderness"),
@@ -56,7 +56,7 @@ public enum CuboidPlugin {
     private String cuboidName;
     private String displayName = null;
 
-    private CuboidPlugin(String displayName) {
+    private AreaPlugin(String displayName) {
         this.displayName = displayName;
     }
 
@@ -91,15 +91,15 @@ public enum CuboidPlugin {
     /**
      * Gets the enumeration that matches the case sensitive plugin.yml name.
      *
-     * @return The enumeration. CuboidPlugin.FLAGS if no matches found.
+     * @return The enumeration. AreaPlugin.FLAGS if no matches found.
      */
-    public static CuboidPlugin getByName(String name) {
-        for (final CuboidPlugin p : CuboidPlugin.values()) {
+    public static AreaPlugin getByName(String name) {
+        for (final AreaPlugin p : AreaPlugin.values()) {
             if (name.equalsIgnoreCase(p.getName())) {
                 return p;
             }
         }
-        return CuboidPlugin.FLAGS;
+        return AreaPlugin.FLAGS;
     }
 
     /**
@@ -180,7 +180,7 @@ public enum CuboidPlugin {
         YamlConfiguration messages = YamlConfiguration.loadConfiguration(messageFile);
         messages.setDefaults(defaults);
 
-        for (CuboidPlugin t : CuboidPlugin.values()) {
+        for (AreaPlugin t : AreaPlugin.values()) {
             try {
                 t.cuboidName = ChatColor.translateAlternateColorCodes('&', messages.getString(t.toString()));
             } catch (NullPointerException ex) {

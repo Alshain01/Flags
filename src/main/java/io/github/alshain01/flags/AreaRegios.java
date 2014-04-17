@@ -29,7 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.area.Nameable;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
@@ -104,8 +104,8 @@ final class AreaRegios extends AreaRemovable implements Nameable, Ownable {
     }
 
     @Override
-    public CuboidPlugin getCuboidPlugin() {
-        return CuboidPlugin.REGIOS;
+    public AreaPlugin getCuboidPlugin() {
+        return AreaPlugin.REGIOS;
     }
 
     @Override

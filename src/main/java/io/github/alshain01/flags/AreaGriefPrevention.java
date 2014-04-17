@@ -29,7 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.area.*;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
@@ -103,8 +103,8 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
     }
 
     @Override
-    public CuboidPlugin getCuboidPlugin() {
-        return CuboidPlugin.GRIEF_PREVENTION;
+    public AreaPlugin getCuboidPlugin() {
+        return AreaPlugin.GRIEF_PREVENTION;
     }
 
     @Override

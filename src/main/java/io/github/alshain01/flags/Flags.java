@@ -77,8 +77,8 @@ final public class Flags extends JavaPlugin {
         EconomyBaseValue.valueOf(getConfig().getString("Economy.BaseValue")).set();
 
         // Create the database
-        CuboidPlugin cuboidPlugin = findCuboidPlugin(pm, getConfig().getList("AreaPlugins"));
-        dataStore = findDataStore(cuboidPlugin);
+        AreaPlugin areaPlugin = findCuboidPlugin(pm, getConfig().getList("AreaPlugins"));
+        dataStore = findDataStore(areaPlugin);
         dataStore.create(this);
         if(!dataStore.update(this)) {
             Bukkit.getPluginManager().disablePlugin(this);
@@ -87,20 +87,20 @@ final public class Flags extends JavaPlugin {
 
         // Load Sectors
         SectorManager sectors = null;
-        if(cuboidPlugin == CuboidPlugin.FLAGS) {
+        if(areaPlugin == AreaPlugin.FLAGS) {
             sectors = new SectorManagerBase(this, dataStore, getConfig().getConfigurationSection("Sector").getInt("DefaultDepth"));
         }
 
         // Start the API
-        FlagsAPI.initialize(this, cuboidPlugin, sectors, dataStore);
+        FlagsAPI.initialize(this, areaPlugin, sectors, dataStore);
 
-        if(cuboidPlugin == CuboidPlugin.FLAGS) {
+        if(areaPlugin == AreaPlugin.FLAGS) {
             ((SectorManagerBase)sectors).loadSectors();
         }
 
         // Load Cleanable Listener
         if(getConfig().getBoolean("AreaCleaner")) {
-            AreaFactory.registerCleaner(cuboidPlugin, this);
+            AreaFactory.registerCleaner(areaPlugin, this);
         }
 
         // Configure the updater
@@ -182,26 +182,26 @@ final public class Flags extends JavaPlugin {
         Logger.info("Flag Database Reloaded");
     }
 
-    private CuboidPlugin findCuboidPlugin(PluginManager pm, List<?> plugins) {
+    private AreaPlugin findCuboidPlugin(PluginManager pm, List<?> plugins) {
         if(plugins != null && plugins.size() > 0) {
             for(Object o : plugins) {
                 if (pm.isPluginEnabled((String) o)) {
                     Logger.info(o + " detected. Enabling integrated support.");
-                    return CuboidPlugin.getByName((String) o);
+                    return AreaPlugin.getByName((String) o);
                 }
             }
         }
         Logger.info("No cuboid system detected. Flags Sectors Enabled.");
-        return CuboidPlugin.FLAGS;
+        return AreaPlugin.FLAGS;
     }
 
-    private DataStore findDataStore(CuboidPlugin cuboidPlugin) {
+    private DataStore findDataStore(AreaPlugin areaPlugin) {
         DataStoreType dbType = DataStoreType.fromString(getConfig().getString("Database"));
         switch(dbType) {
             case MYSQL:
                 return new DataStoreMySQL(this);
             default:
-                return new DataStoreYaml(this, cuboidPlugin);
+                return new DataStoreYaml(this, areaPlugin);
         }
     }
 

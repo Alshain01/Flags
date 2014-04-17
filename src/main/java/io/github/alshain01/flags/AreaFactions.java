@@ -24,7 +24,7 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -89,8 +89,8 @@ final class AreaFactions extends AreaRemovable implements Renameable, Ownable {
     }
 
     @Override
-    public CuboidPlugin getCuboidPlugin() {
-        return CuboidPlugin.FACTIONS;
+    public AreaPlugin getCuboidPlugin() {
+        return AreaPlugin.FACTIONS;
     }
 
     @Override
