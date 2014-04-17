@@ -157,7 +157,7 @@ final public class Flags extends JavaPlugin {
 
         if(args[0].equalsIgnoreCase("import")) {
             if(dataStore instanceof DataStoreMySQL) {
-                dataStore.importDataStore(new DataStoreYaml(this, FlagsAPI.getCuboidPlugin(), false));
+                dataStore.importDataStore(new DataStoreYaml(this, FlagsAPI.getAreaPlugin(), false));
                 return true;
             } else {
                 dataStore.importDataStore(new DataStoreMySQL(this));

@@ -64,7 +64,7 @@ static void StartFlagsMetrics(Plugin plugin) {
              * Land System Graph
              */
         final Graph systemGraph = metrics.createGraph("Land System");
-        systemGraph.addPlotter(new Metrics.Plotter(FlagsAPI.getCuboidPlugin().getDisplayName()) {
+        systemGraph.addPlotter(new Metrics.Plotter(FlagsAPI.getAreaPlugin().getDisplayName()) {
             @Override
             public int getValue() {
                 return 1;
@@ -75,7 +75,7 @@ static void StartFlagsMetrics(Plugin plugin) {
 			 * Land System by PlayersGraph
 			 */
         final Graph systemPlayersGraph = metrics.createGraph("Land System by Players");
-        systemPlayersGraph.addPlotter(new Metrics.Plotter(FlagsAPI.getCuboidPlugin().getDisplayName()) {
+        systemPlayersGraph.addPlotter(new Metrics.Plotter(FlagsAPI.getAreaPlugin().getDisplayName()) {
             @Override
             public int getValue() {
                 return Bukkit.getOnlinePlayers().length;

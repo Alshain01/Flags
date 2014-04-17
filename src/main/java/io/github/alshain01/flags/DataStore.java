@@ -158,7 +158,7 @@ public abstract class DataStore {
         }
 
         //Convert the sectors
-        if(FlagsAPI.getCuboidPlugin() == AreaPlugin.FLAGS) {
+        if(FlagsAPI.getAreaPlugin() == AreaPlugin.FLAGS) {
             for(Sector s : source.readSectors().values()) {
                 target.writeSector(s);
             }
@@ -170,7 +170,7 @@ public abstract class DataStore {
             areas.add(new AreaWilderness(w));
             areas.add(new AreaDefault(w));
             for(String id : source.getAllAreaIds(w)) {
-                Area area = AreaFactory.getArea(FlagsAPI.getCuboidPlugin(), id);
+                Area area = AreaFactory.getArea(FlagsAPI.getAreaPlugin(), id);
                 if(area != null && area.isArea()) {
                     areas.add(area);
                 }

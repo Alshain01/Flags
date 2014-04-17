@@ -42,7 +42,7 @@ abstract class CommandBase {
         static boolean notArea(CommandSender cs, Area area) {
             if(area != null && area.isArea()) { return false; }
             cs.sendMessage(Message.NO_AREA_ERROR.get()
-                    .replace("{AreaType}", FlagsAPI.getCuboidPlugin().getCuboidName().toLowerCase()));
+                    .replace("{AreaType}", FlagsAPI.getAreaPlugin().getCuboidName().toLowerCase()));
             return true;
         }
 
@@ -146,8 +146,8 @@ abstract class CommandBase {
         }
 
         static boolean notSubdividable(CommandSender cs) {
-            if(FlagsAPI.getCuboidPlugin().isSubdividable()) { return false; }
-            cs.sendMessage(Message.SUBDIVISION_SUPPORT_ERROR.get().replace("{System}", FlagsAPI.getCuboidPlugin().getDisplayName()));
+            if(FlagsAPI.getAreaPlugin().isSubdividable()) { return false; }
+            cs.sendMessage(Message.SUBDIVISION_SUPPORT_ERROR.get().replace("{System}", FlagsAPI.getAreaPlugin().getDisplayName()));
             return true;
         }
 
