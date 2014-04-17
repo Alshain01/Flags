@@ -86,7 +86,7 @@ final public class FlagsAPI {
      *
      * @return The Cuboid System in use by Flags.
      */
-    public static AreaPlugin getCuboidPlugin() {
+    public static AreaPlugin getAreaPlugin() {
         return activeSystem;
     }
 
