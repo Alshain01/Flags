@@ -258,7 +258,7 @@ abstract class CommandBase {
         return (value) ? Message.VALUE_COLOR_TRUE.get() : Message.VALUE_COLOR_FALSE.get();
     }
 
-    static Area getArea(Location loc, CommandLocation location, boolean adjustInheritance) {
+    private static Area getArea(Location loc, CommandLocation location, boolean adjustInheritance) {
         if (location == CommandLocation.DEFAULT) {
             return new AreaDefault(loc.getWorld());
         } else if (location == CommandLocation.WILDERNESS) {

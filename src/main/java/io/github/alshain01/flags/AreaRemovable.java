@@ -35,7 +35,7 @@ abstract class AreaRemovable extends AreaBase {
 	 * Permanently removes the area from the data store USE CAUTION!
      * @throws InvalidAreaException
 	 */
-    final public void remove() {
+    final void remove() {
         if (isArea()) {
             Flags.getDataStore().remove(this);
         }

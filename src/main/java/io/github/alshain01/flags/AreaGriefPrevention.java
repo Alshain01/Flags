@@ -40,6 +40,7 @@ import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -47,7 +48,7 @@ import org.bukkit.event.Listener;
 /**
  * Class for creating areas to manage a Grief Prevention Claim.
  */
-final class AreaGriefPrevention extends AreaRemovable implements Administrator, Identifiable, Ownable, Siegeable, Subdividable  {
+final class AreaGriefPrevention extends AreaRemovable implements Administrator, Identifiable, Ownable, Cuboid, Siegeable, Subdividable  {
 	private final Claim claim;
 
 	/**
@@ -101,10 +102,26 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
         throw new InvalidAreaException();
     }
 
-
     @Override
     public CuboidPlugin getCuboidPlugin() {
         return CuboidPlugin.GRIEF_PREVENTION;
+    }
+
+    @Override
+    public boolean isArea() {
+        return claim != null;
+    }
+
+    @Override
+    public Location getGreaterCorner() {
+        if (isArea()) return claim.getGreaterBoundaryCorner();
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public Location getLesserCorner() {
+        if (isArea()) return claim.getGreaterBoundaryCorner();
+        throw new InvalidAreaException();
     }
 
     @Override
@@ -119,10 +136,7 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
         return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
     }
 
-    @Override
-    public boolean isArea() {
-        return claim != null;
-    }
+
 
 	@Override
 	public boolean isAdminArea() {
@@ -133,6 +147,12 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
 	@Override
 	public boolean isUnderSiege() {
         if (isArea()) return claim.siegeData != null;
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public boolean canSiege(Player player) {
+        if (isArea()) return claim.canSiege(player);
         throw new InvalidAreaException();
     }
 

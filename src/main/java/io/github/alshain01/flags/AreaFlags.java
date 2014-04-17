@@ -17,7 +17,7 @@ import org.bukkit.event.Listener;
 
 import java.util.UUID;
 
-final class AreaFlags extends AreaRemovable implements Identifiable, Renameable, Subdividable {
+final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Renameable, Subdividable {
     private final Sector sector;
 
     /**
@@ -89,6 +89,18 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Renameable,
     @Override
     public boolean isArea() {
         return sector != null;
+    }
+
+    @Override
+    public Location getGreaterCorner() {
+        if (isArea()) return sector.getGreaterCorner().getLocation();
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public Location getLesserCorner() {
+        if (isArea()) return sector.getLesserCorner().getLocation();
+        throw new InvalidAreaException();
     }
 
     @Override

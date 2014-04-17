@@ -30,7 +30,6 @@ import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 import io.github.alshain01.flags.api.sector.Sector;
-import io.github.alshain01.flags.api.sector.SectorLocation;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.permissions.Permission;
@@ -514,7 +513,7 @@ final class DataStoreMySQL extends DataStore {
 
         insertString = insertString
                 .replace("%id%", sector.getID().toString())
-                .replace("%name%", sector.getName().toString())
+                .replace("%name%", sector.getName())
                 .replace("%depth%", String.valueOf(sector.getDepth()))
                 .replace("%world%", sector.getWorld().getUID().toString())
                 .replace("%gx%", String.valueOf(sector.getGreaterCorner().getX()))

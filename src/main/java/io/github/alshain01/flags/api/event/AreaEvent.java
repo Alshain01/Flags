@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
 /**
  * Event that handles all area events.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings("unused, WeakerAccess")
 public class AreaEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final Area area;

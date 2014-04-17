@@ -44,7 +44,7 @@ import org.bukkit.event.Listener;
 /**
  * Class for creating areas to manage a Residence Claimed Residences.
  */
-final class AreaResidence extends AreaRemovable implements Identifiable, Renameable, Ownable, Subdividable {
+final class AreaResidence extends AreaRemovable implements Identifiable, Cuboid, Renameable, Ownable, Subdividable {
 	private final ResidenceArea residence;
 
 	/**
@@ -175,6 +175,18 @@ final class AreaResidence extends AreaRemovable implements Identifiable, Renamea
             return;
         }
         throw new InvalidSubdivisionException();
+    }
+
+    @Override
+    public Location getGreaterCorner() {
+        if (isArea()) return residence.getHighLocation();
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public Location getLesserCorner() {
+        if (isArea()) return residence.getLowLocation();
+        throw new InvalidAreaException();
     }
 
     static class Cleaner implements Listener {

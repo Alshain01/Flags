@@ -159,6 +159,14 @@ public enum CuboidPlugin {
     }
 
     /**
+     * Gets if the cuboid plugin uses only rectangle based cuboids
+     * @return true if the cuboid plugin uses rectangle based cuboids.
+     */
+    public boolean isRectangular() {
+        return Cuboid.class.isAssignableFrom(AreaFactory.getAreaClass(this));
+    }
+
+    /**
      * Instruct the enum to reload the cuboid names from the yaml file.
      */
     public static void loadNames() {

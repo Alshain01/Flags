@@ -1,11 +1,8 @@
 package io.github.alshain01.flags.api.sector;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
