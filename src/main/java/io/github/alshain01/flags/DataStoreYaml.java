@@ -756,12 +756,15 @@ final class DataStoreYaml extends DataStore {
                 StringBuilder newKey = new StringBuilder(nodes[0]).append(DELIMETER).append(nodes[1]);
                 if (cuboidPlugin == CuboidPlugin.RESIDENCE) {
                     newKey.append(ResidenceAPI.getResidenceManager().getByName(nodes[2]).getResidenceUUID().toString());
+                    newKey.append(DELIMETER).append(nodes[3]).append(DELIMETER).append(nodes[4]);
+                    data.set(newKey.toString(), data.get(key));
+                    data.set(key, null);
                 } else if (cuboidPlugin == CuboidPlugin.GRIEF_PREVENTION) {
                     newKey.append(GriefPrevention.instance.dataStore.getClaim(Long.valueOf(nodes[2])).getUUID().toString());
+                    newKey.append(DELIMETER).append(nodes[3]).append(DELIMETER).append(nodes[4]);
+                    data.set(newKey.toString(), data.get(key));
+                    data.set(key, null);
                 }
-                newKey.append(DELIMETER).append(nodes[3]).append(DELIMETER).append(nodes[4]).append(DELIMETER).append(nodes[5]);
-                data.set(newKey.toString(), data.get(key));
-                data.set(key, null);
             }
         }
     }

@@ -154,7 +154,7 @@ public enum AreaFactory {
         }
 
         Area getCuboidByName(String name) {
-            return new AreaGriefPrevention(Long.parseLong(name));
+            return new AreaGriefPrevention(UUID.fromString(name));
         }
 
         boolean hasCuboid(Location location) {

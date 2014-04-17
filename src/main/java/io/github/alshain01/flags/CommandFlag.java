@@ -517,7 +517,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
      * Inheritance Command Handlers
      */
     private static void inherit(Player player, Boolean value) {
-        Area area = getArea(player, CommandLocation.AREA);
+        Area area = getAbsoluteArea(player, CommandLocation.AREA);
         if(Validate.notSubdividable(player)
                 || Validate.notArea(player, area)
                 || Validate.notSubdivision(player, area)) {

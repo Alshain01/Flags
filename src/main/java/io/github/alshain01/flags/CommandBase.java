@@ -258,21 +258,36 @@ abstract class CommandBase {
         return (value) ? Message.VALUE_COLOR_TRUE.get() : Message.VALUE_COLOR_FALSE.get();
     }
 
-    static Area getArea(Location loc, CommandLocation location) {
+    static Area getArea(Location loc, CommandLocation location, boolean adjustInheritance) {
         if (location == CommandLocation.DEFAULT) {
             return new AreaDefault(loc.getWorld());
         } else if (location == CommandLocation.WILDERNESS) {
             return new AreaWilderness(loc.getWorld());
         } else if (location == CommandLocation.AREA) {
             Area area = FlagsAPI.getAreaAt(loc);
-            return (area instanceof AreaWilderness) ? null : area;
+            if (area instanceof AreaWilderness) return null;
+            if(adjustInheritance && area instanceof Subdividable) {
+                Subdividable sub = (Subdividable) area;
+                if (sub.isSubdivision() && sub.isInherited())
+                    area = ((Subdividable) area).getParent();
+            }
+
+            return area;
         }
         // Invalid location selection
         return null;
     }
 
+    static Area getArea(Location loc, CommandLocation location) {
+        return getArea(loc, location, true);
+    }
+
+    static Area getAbsoluteArea(Player player, CommandLocation location) {
+        return getArea(player.getLocation(), location, false);
+    }
+
     static Area getArea(Player player, CommandLocation location) {
-        return getArea(player.getLocation(), location);
+        return getArea(player.getLocation(), location, true);
     }
 
     static Set<Player> getPlayerList(Player player, Set<String> playerNames) {

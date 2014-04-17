@@ -148,7 +148,7 @@ final public class FlagsAPI {
      * Incorrect usage may result in exceptions.
      *
      * ID Data Format:
-     * Factiod, Flags, Residence = UUID as String
+     * Factiod, Flags, Grief Prevention, Residence = UUID as String
      * GriefPrevention = ClaimID (Long)
      * PreciousStones = WorldUUID.FieldID (Long)
      * Regios = Region name
