@@ -49,7 +49,7 @@ import org.bukkit.event.Listener;
  * Class for creating areas to manage a Grief Prevention Claim.
  */
 final class AreaGriefPrevention extends AreaRemovable implements Administrator, Identifiable, Ownable, Cuboid, Siegeable, Subdividable  {
-	private final Claim claim;
+	private Claim claim;
 
 	/**
 	 * Creates an instance of AreaGriefPrevention based on a Bukkit Location
@@ -179,7 +179,16 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
 
     @Override
     public Area getParent() {
-        if (isSubdivision()) return new AreaGriefPrevention(claim);
+        if (isSubdivision()) return new AreaGriefPrevention(claim.parent);
+        throw new InvalidSubdivisionException();
+    }
+
+    @Override
+    public void transformParent() {
+        if (isSubdivision()) {
+            this.claim = claim.parent;
+            return;
+        }
         throw new InvalidSubdivisionException();
     }
 

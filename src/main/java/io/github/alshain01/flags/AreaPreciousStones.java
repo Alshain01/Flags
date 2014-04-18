@@ -184,6 +184,15 @@ final class AreaPreciousStones extends AreaRemovable implements Cuboid, Renameab
         throw new InvalidSubdivisionException();
     }
 
+    @Override
+    public void transformParent() {
+        if (isSubdivision()) {
+            this.field = field.getParent();
+            return;
+        }
+        throw new InvalidSubdivisionException();
+    }
+
 	@Override
 	public boolean isInherited() {
         if (isSubdivision()) return Flags.getDataStore().readInheritance(this);

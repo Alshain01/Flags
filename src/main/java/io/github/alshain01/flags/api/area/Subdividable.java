@@ -61,6 +61,17 @@ public interface Subdividable extends Area {
     public Area getParent();
 
     /**
+     * Transforms this Area instance into it's own parent
+     * This does not construct a new Area object resulting in
+     * a slight performance increase over getParent() but the
+     * access to the child area is sacrificed.
+     *
+     * @throws InvalidAreaException
+     * @throws InvalidSubdivisionException
+     */
+    public void transformParent();
+
+    /**
      * Checks if the subdivision is inheriting flags from it's parent
      *
      * @return True if the area is inheriting.

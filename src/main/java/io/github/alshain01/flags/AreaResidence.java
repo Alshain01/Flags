@@ -45,7 +45,7 @@ import org.bukkit.event.Listener;
  * Class for creating areas to manage a Residence Claimed Residences.
  */
 final class AreaResidence extends AreaRemovable implements Identifiable, Cuboid, Renameable, Ownable, Subdividable {
-	private final ResidenceArea residence;
+	private ResidenceArea residence;
 
 	/**
 	 * Creates an instance of AreaResidence based on a Bukkit
@@ -159,6 +159,15 @@ final class AreaResidence extends AreaRemovable implements Identifiable, Cuboid,
     @Override
     public Area getParent() {
         if (isSubdivision()) return new AreaResidence(residence.getParent());
+        throw new InvalidSubdivisionException();
+    }
+
+    @Override
+    public void transformParent() {
+        if (isSubdivision()) {
+            this.residence = residence.getParent();
+            return;
+        }
         throw new InvalidSubdivisionException();
     }
 

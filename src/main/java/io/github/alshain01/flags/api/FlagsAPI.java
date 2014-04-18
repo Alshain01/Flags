@@ -4,6 +4,7 @@ import io.github.alshain01.flags.AreaFactory;
 import io.github.alshain01.flags.DataStore;
 import io.github.alshain01.flags.Logger;
 import io.github.alshain01.flags.api.area.Area;
+import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.sector.SectorManager;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.apache.commons.lang.Validate;
@@ -167,12 +168,29 @@ final public class FlagsAPI {
 
     /**
      * Gets an area from at a specific location.
+     * If an area is an inheriting subdivision, the parent is returned.
      *
      * @param location
      *            The location for which to request an area.
      * @return An area from the configured cuboid system or the wilderness area if no area is defined.
      */
     public static Area getAreaAt(Location location) {
+        Validate.notNull(location);
+        if(!AreaFactory.hasArea(activeSystem, location)) return getWildernessArea(location.getWorld());
+        Area area = AreaFactory.getAreaAt(activeSystem, location);
+        if(area instanceof Subdividable && ((Subdividable) area).isSubdivision() && ((Subdividable) area).isInherited())
+            ((Subdividable) area).transformParent();
+        return area;
+    }
+
+    /**
+     * Gets an area from at a specific location, ignoring inheritance.
+     *
+     * @param location
+     *            The location for which to request an area.
+     * @return An area from the configured cuboid system or the wilderness area if no area is defined.
+     */
+    public static Area getAbsoluteAreaAt(Location location) {
         Validate.notNull(location);
         if(!AreaFactory.hasArea(activeSystem, location)) return getWildernessArea(location.getWorld());
         return AreaFactory.getAreaAt(activeSystem, location);

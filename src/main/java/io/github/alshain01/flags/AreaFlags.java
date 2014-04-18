@@ -18,7 +18,7 @@ import org.bukkit.event.Listener;
 import java.util.UUID;
 
 final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Renameable, Subdividable {
-    private final Sector sector;
+    private Sector sector;
 
     /**
      * Creates an instance of AreaFlags based on a Bukkit Location
@@ -119,6 +119,15 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Ren
     @Override
     public Area getParent() {
         if (isSubdivision()) return new AreaFlags(sector.getParentID());
+        throw new InvalidSubdivisionException();
+    }
+
+    @Override
+    public void transformParent() {
+        if (isSubdivision()) {
+            this.sector = FlagsAPI.getSectorManager().get(sector.getParentID());
+            return;
+        }
         throw new InvalidSubdivisionException();
     }
 

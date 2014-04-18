@@ -49,7 +49,7 @@ import org.bukkit.event.Listener;
  * Class for creating areas to manage a Factoid Land.
  */
 final class AreaFactoid extends AreaRemovable implements Identifiable, Nameable, Ownable, Subdividable {
-    private final Land land;
+    private Land land;
 
     /**
      * Creates an instance of AreaFactoid based on a Bukkit
@@ -166,6 +166,15 @@ final class AreaFactoid extends AreaRemovable implements Identifiable, Nameable,
     @Override
     public Area getParent() {
         if (isSubdivision()) return new AreaFactoid(land.getParent());
+        throw new InvalidSubdivisionException();
+    }
+
+    @Override
+    public void transformParent() {
+        if (isSubdivision()) {
+            this.land = land.getParent();
+            return;
+        }
         throw new InvalidSubdivisionException();
     }
 
