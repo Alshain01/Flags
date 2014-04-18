@@ -24,7 +24,7 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
@@ -158,7 +158,7 @@ public abstract class DataStore {
         }
 
         //Convert the sectors
-        if(FlagsAPI.getCuboidPlugin() == CuboidPlugin.FLAGS) {
+        if(FlagsAPI.getAreaPlugin() == AreaPlugin.FLAGS) {
             for(Sector s : source.readSectors().values()) {
                 target.writeSector(s);
             }
@@ -170,7 +170,7 @@ public abstract class DataStore {
             areas.add(new AreaWilderness(w));
             areas.add(new AreaDefault(w));
             for(String id : source.getAllAreaIds(w)) {
-                Area area = AreaFactory.getArea(FlagsAPI.getCuboidPlugin(), id);
+                Area area = AreaFactory.getArea(FlagsAPI.getAreaPlugin(), id);
                 if(area != null && area.isArea()) {
                     areas.add(area);
                 }

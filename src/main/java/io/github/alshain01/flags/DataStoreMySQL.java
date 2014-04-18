@@ -30,7 +30,6 @@ import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 import io.github.alshain01.flags.api.sector.Sector;
-import io.github.alshain01.flags.api.sector.SectorLocation;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.permissions.Permission;
@@ -175,9 +174,9 @@ final class DataStoreMySQL extends DataStore {
             executeStatement("CREATE TABLE IF NOT EXISTS Sectors (Id CHAR(36), Name VARCHAR(255), World CHAR(36), GX INT, GY INT, GZ INT, LX INT, LY INT, LZ INT, Depth INT, PRIMARY KEY (Id));");
             executeStatement("CREATE TABLE IF NOT EXISTS Bundle (BundleName VARCHAR(36), FlagName VARCHAR(36), CONSTRAINT pk_BundleEntry PRIMARY KEY (BundleName, FlagName));");
             executeStatement("CREATE TABLE IF NOT EXISTS Price (FlagName VARCHAR(36), ProductType VARCHAR(36), Cost DOUBLE, CONSTRAINT pk_FlagType PRIMARY KEY (FlagName, ProductType));");
-            executeStatement("CREATE TABLE IF NOT EXISTS Flags (CuboidPlugin VARCHAR(255), WorldId CHAR(36), AreaId CHAR(36), FlagName VARCHAR(36), Setting BOOLEAN, Message VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (CuboidPlugin, WorldId, AreaId, FlagName));");
-            executeStatement("CREATE TABLE IF NOT EXISTS Trust (CuboidPlugin VARCHAR(255), WorldId CHAR(36), AreaId CHAR(36), FlagName VARCHAR(36), TrusteeId VARCHAR(36), TrusteeName VARCHAR(255) CONSTRAINT pk_WorldFlag PRIMARY KEY (CuboidPlugin, WorldId, AreaId, FlagName, TrusteeId));");
-            executeStatement("CREATE TABLE IF NOT EXISTS PermissionTrust (CuboidPlugin VARCHAR(255), WorldId CHAR(36), AreaId CHAR(36), FlagName VARCHAR(36), Permission VARCHAR(36) CONSTRAINT pk_WorldFlag PRIMARY KEY (CuboidPlugin, WorldId, AreaId, FlagName, Permission));");
+            executeStatement("CREATE TABLE IF NOT EXISTS Flags (AreaPlugin VARCHAR(255), WorldId CHAR(36), AreaId CHAR(36), FlagName VARCHAR(36), Setting BOOLEAN, Message VARCHAR(255), CONSTRAINT pk_WorldFlag PRIMARY KEY (AreaPlugin, WorldId, AreaId, FlagName));");
+            executeStatement("CREATE TABLE IF NOT EXISTS Trust (AreaPlugin VARCHAR(255), WorldId CHAR(36), AreaId CHAR(36), FlagName VARCHAR(36), TrusteeId VARCHAR(36), TrusteeName VARCHAR(255) CONSTRAINT pk_WorldFlag PRIMARY KEY (AreaPlugin, WorldId, AreaId, FlagName, TrusteeId));");
+            executeStatement("CREATE TABLE IF NOT EXISTS PermissionTrust (AreaPlugin VARCHAR(255), WorldId CHAR(36), AreaId CHAR(36), FlagName VARCHAR(36), Permission VARCHAR(36) CONSTRAINT pk_WorldFlag PRIMARY KEY (AreaPlugin, WorldId, AreaId, FlagName, Permission));");
         }
     }
 
@@ -269,7 +268,7 @@ final class DataStoreMySQL extends DataStore {
     @Override
     public Boolean readFlag(Area area, Flag flag) {
         String selectString = "SELECT * FROM Flags"
-                + " WHERE CuboidPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%';";
+                + " WHERE AreaPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%';";
 
         ResultSet results = executeQuery(areaBuilder(selectString, area)
                 .replace("%flag%", flag.getName()));
@@ -291,7 +290,7 @@ final class DataStoreMySQL extends DataStore {
 
     @Override
     public void writeFlag(Area area, Flag flag, Boolean setting) {
-        String insertString = "INSERT INTO Flags (CuboidPlugin, WorldId, AreaId, FlagName, Setting)"
+        String insertString = "INSERT INTO Flags (AreaPlugin, WorldId, AreaId, FlagName, Setting)"
                 + " VALUES ('%cuboid%', '%world%', '%area%', '%flag%', %setting%)"
                 + " ON DUPLICATE KEY UPDATE Setting=%setting%;";
 
@@ -303,7 +302,7 @@ final class DataStoreMySQL extends DataStore {
     @Override
     public String readMessage(Area area, Flag flag) {
         String selectString = "SELECT * FROM Flags"
-                + "WHERE CuboidPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%'";
+                + "WHERE AreaPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%'";
 
         ResultSet results = executeQuery(areaBuilder(selectString, area)
                 .replace("%flag%", flag.getName()));
@@ -334,7 +333,7 @@ final class DataStoreMySQL extends DataStore {
             message = "'" + message.replace("'", "''") + "'";
         }
 
-        insertString = "INSERT INTO Flags (CuboidPlugin, WorldId, AreaId, FlagName, Message)" +
+        insertString = "INSERT INTO Flags (AreaPlugin, WorldId, AreaId, FlagName, Message)" +
                 " VALUES ('%cuboid%', '%world%', '%area%', '%flag%', %message%) ON DUPLICATE KEY UPDATE FlagMessage=%message%;";
 
         executeStatement(areaBuilder(insertString, area)
@@ -371,7 +370,7 @@ final class DataStoreMySQL extends DataStore {
 
     @Override
     public Map<UUID, String> readPlayerTrust(Area area, Flag flag) {
-        String selectString = "SELECT * FROM Trust WHERE CuboidPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%';";
+        String selectString = "SELECT * FROM Trust WHERE AreaPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%';";
 
         ResultSet results = executeQuery(areaBuilder(selectString, area)
                 .replace("%flag%", flag.getName()));
@@ -389,7 +388,7 @@ final class DataStoreMySQL extends DataStore {
 
     @Override
     public Collection<Permission> readPermissionTrust(Area area, Flag flag) {
-        String selectString = "SELECT * FROM PermissionTrust WHERE CuboidPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%';";
+        String selectString = "SELECT * FROM PermissionTrust WHERE AreaPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%';";
 
         ResultSet results = executeQuery(areaBuilder(selectString, area)
                 .replace("%flag%", flag.getName()));
@@ -408,12 +407,12 @@ final class DataStoreMySQL extends DataStore {
     @Override
     public void writePlayerTrust(Area area, Flag flag, Map<UUID, String> players) {
         // Delete the old list to be replaced
-        String deleteString = "DELETE FROM Trust WHERE CuboidPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%';";
+        String deleteString = "DELETE FROM Trust WHERE AreaPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%';";
 
         executeStatement(areaBuilder(deleteString, area)
                 .replace("%flag%", flag.getName()));
 
-        String insertString = "INSERT INTO Trust (CuboidPlugin, WorldId, AreaId, FlagName, TrusteeId, TrusteeName)"
+        String insertString = "INSERT INTO Trust (AreaPlugin, WorldId, AreaId, FlagName, TrusteeId, TrusteeName)"
                 + "VALUES('%cuboid%', '%world%', '%area%', '%flag%', '%player%', '%playername%');";
 
         for (UUID u : players.keySet()) {
@@ -427,12 +426,12 @@ final class DataStoreMySQL extends DataStore {
     @Override
     public void writePermissionTrust(Area area, Flag flag, Collection<Permission> permissions) {
         // Delete the old list to be replaced
-        String deleteString = "DELETE FROM PermissionTrust WHERE CuboidPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%';";
+        String deleteString = "DELETE FROM PermissionTrust WHERE AreaPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%';";
 
         executeStatement(areaBuilder(deleteString, area)
                 .replace("%flag%", flag.getName()));
 
-        String insertString = "INSERT INTO Trust (CuboidPlugin, WorldId, AreaId, FlagName, TrustId, TrustName)"
+        String insertString = "INSERT INTO Trust (AreaPlugin, WorldId, AreaId, FlagName, TrustId, TrustName)"
                 + "VALUES('%cuboid%', '%world%', '%area%', '%flag%', '%player%', '%playername%');";
 
         for (Permission p : permissions) {
@@ -448,7 +447,7 @@ final class DataStoreMySQL extends DataStore {
             return false;
         }
 
-        String selectString = "SELECT * FROM Flags WHERE CuboidPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='InheritParent';";
+        String selectString = "SELECT * FROM Flags WHERE AreaPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='InheritParent';";
 
         ResultSet results = executeQuery(areaBuilder(selectString, area));
 
@@ -466,7 +465,7 @@ final class DataStoreMySQL extends DataStore {
             return;
         }
 
-        String insertString = "INSERT INTO Flags (CuboidPlugin, WorldId, AreaId, FlagName, Setting) "
+        String insertString = "INSERT INTO Flags (AreaPlugin, WorldId, AreaId, FlagName, Setting) "
                 + "VALUES ('%cuboid%', '%world%', '%area%', '%sub%', 'InheritParent', %setting%) ON DUPLICATE KEY UPDATE FlagValue=%setting%;";
 
         executeStatement(areaBuilder(insertString, area)
@@ -514,7 +513,7 @@ final class DataStoreMySQL extends DataStore {
 
         insertString = insertString
                 .replace("%id%", sector.getID().toString())
-                .replace("%name%", sector.getName().toString())
+                .replace("%name%", sector.getName())
                 .replace("%depth%", String.valueOf(sector.getDepth()))
                 .replace("%world%", sector.getWorld().getUID().toString())
                 .replace("%gx%", String.valueOf(sector.getGreaterCorner().getX()))
@@ -535,7 +534,7 @@ final class DataStoreMySQL extends DataStore {
 
     @Override
     public void remove(AreaRemovable area) {
-        String deleteString = "DELETE FROM %table% WHERE CuboidPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%';";
+        String deleteString = "DELETE FROM %table% WHERE AreaPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%';";
         executeStatement(areaBuilder(deleteString, area)
                 .replace("%table%", "Flags"));
 

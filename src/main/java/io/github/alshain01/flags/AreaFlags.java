@@ -1,6 +1,6 @@
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.*;
 import io.github.alshain01.flags.api.event.SectorDeleteEvent;
@@ -17,7 +17,7 @@ import org.bukkit.event.Listener;
 
 import java.util.UUID;
 
-final class AreaFlags extends AreaRemovable implements Identifiable, Renameable, Subdividable {
+final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Renameable, Subdividable {
     private final Sector sector;
 
     /**
@@ -50,8 +50,8 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Renameable,
     }
 
     @Override
-    public CuboidPlugin getCuboidPlugin() {
-        return CuboidPlugin.FLAGS;
+    public AreaPlugin getCuboidPlugin() {
+        return AreaPlugin.FLAGS;
     }
 
     @Override
@@ -89,6 +89,18 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Renameable,
     @Override
     public boolean isArea() {
         return sector != null;
+    }
+
+    @Override
+    public Location getGreaterCorner() {
+        if (isArea()) return sector.getGreaterCorner().getLocation();
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public Location getLesserCorner() {
+        if (isArea()) return sector.getLesserCorner().getLocation();
+        throw new InvalidAreaException();
     }
 
     @Override

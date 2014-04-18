@@ -25,7 +25,7 @@ import java.util.Collection;
 @SuppressWarnings("unused")
 final public class FlagsAPI {
     private static Registrar registrar = new Registrar();
-    private static CuboidPlugin activeSystem;
+    private static AreaPlugin activeSystem;
     private static DataStore dataStore;
     private static SectorManager sectorManager;
 
@@ -42,12 +42,12 @@ final public class FlagsAPI {
      * @param cuboidSystem The cuboid system detected
      * @param data The datastore to be used
      */
-    public static void initialize(Plugin plugin, CuboidPlugin cuboidSystem, SectorManager sectors, DataStore data) {
+    public static void initialize(Plugin plugin, AreaPlugin cuboidSystem, SectorManager sectors, DataStore data) {
         Validate.notNull(data); // Prevents plugins from using this method.
         activeSystem = cuboidSystem;
         dataStore = data;
         sectorManager = sectors;
-        CuboidPlugin.loadNames();
+        AreaPlugin.loadNames();
 
         ConfigurationSerialization.registerClass(Flag.class);
         new onServerEnabledTask().runTask(plugin);
@@ -86,7 +86,7 @@ final public class FlagsAPI {
      *
      * @return The Cuboid System in use by Flags.
      */
-    public static CuboidPlugin getCuboidPlugin() {
+    public static AreaPlugin getAreaPlugin() {
         return activeSystem;
     }
 
@@ -283,7 +283,7 @@ final public class FlagsAPI {
      */
     public static boolean inPvpCombat(Player player) {
         Validate.notNull(player);
-        return activeSystem == CuboidPlugin.GRIEF_PREVENTION
+        return activeSystem == AreaPlugin.GRIEF_PREVENTION
                 && GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
     }
 

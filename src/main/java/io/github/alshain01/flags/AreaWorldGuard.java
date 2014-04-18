@@ -29,7 +29,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import com.sk89q.worldedit.BlockVector;
+import io.github.alshain01.flags.api.AreaPlugin;
+import io.github.alshain01.flags.api.area.Cuboid;
 import io.github.alshain01.flags.api.area.Nameable;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
@@ -43,7 +45,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 /**
  * Class for creating areas to manage a WorldGuard Region.
  */
-final class AreaWorldGuard extends AreaRemovable implements Nameable, Ownable {
+final class AreaWorldGuard extends AreaRemovable implements Nameable, Ownable, Cuboid {
 	private final ProtectedRegion region;
 	private final World world;
 
@@ -105,8 +107,8 @@ final class AreaWorldGuard extends AreaRemovable implements Nameable, Ownable {
     }
 
     @Override
-    public CuboidPlugin getCuboidPlugin() {
-        return CuboidPlugin.WORLDGUARD;
+    public AreaPlugin getCuboidPlugin() {
+        return AreaPlugin.WORLDGUARD;
     }
 
     @Override
@@ -130,5 +132,23 @@ final class AreaWorldGuard extends AreaRemovable implements Nameable, Ownable {
 	@Override
 	public boolean isArea() {
         return region != null && world != null;
+    }
+
+    @Override
+    public Location getGreaterCorner() {
+        if (isArea()) {
+            BlockVector point = region.getMaximumPoint();
+            return new Location(getWorld(), point.getBlockX(), point.getBlockY(), point.getBlockZ());
+        }
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public Location getLesserCorner() {
+        if (isArea()) {
+            BlockVector point = region.getMinimumPoint();
+            return new Location(getWorld(), point.getBlockX(), point.getBlockY(), point.getBlockZ());
+        }
+        throw new InvalidAreaException();
     }
 }

@@ -4,7 +4,6 @@ import io.github.alshain01.flags.api.sector.Sector;
 import io.github.alshain01.flags.api.sector.SectorLocation;
 import org.bukkit.World;
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;

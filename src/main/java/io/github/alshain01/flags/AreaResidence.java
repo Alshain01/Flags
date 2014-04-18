@@ -29,7 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.area.*;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
@@ -44,7 +44,7 @@ import org.bukkit.event.Listener;
 /**
  * Class for creating areas to manage a Residence Claimed Residences.
  */
-final class AreaResidence extends AreaRemovable implements Identifiable, Renameable, Ownable, Subdividable {
+final class AreaResidence extends AreaRemovable implements Identifiable, Cuboid, Renameable, Ownable, Subdividable {
 	private final ResidenceArea residence;
 
 	/**
@@ -102,8 +102,8 @@ final class AreaResidence extends AreaRemovable implements Identifiable, Renamea
     }
 
     @Override
-    public CuboidPlugin getCuboidPlugin() {
-        return CuboidPlugin.RESIDENCE;
+    public AreaPlugin getCuboidPlugin() {
+        return AreaPlugin.RESIDENCE;
     }
 
     @Override
@@ -175,6 +175,18 @@ final class AreaResidence extends AreaRemovable implements Identifiable, Renamea
             return;
         }
         throw new InvalidSubdivisionException();
+    }
+
+    @Override
+    public Location getGreaterCorner() {
+        if (isArea()) return residence.getHighLocation();
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public Location getLesserCorner() {
+        if (isArea()) return residence.getLowLocation();
+        throw new InvalidAreaException();
     }
 
     static class Cleaner implements Listener {

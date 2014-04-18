@@ -25,7 +25,7 @@
 package io.github.alshain01.flags;
 
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.Flag;
 
 import java.util.UUID;
@@ -93,7 +93,7 @@ final class AreaWilderness extends AreaBase implements Nameable, Identifiable {
     }
 
     @Override
-    public CuboidPlugin getCuboidPlugin() { return CuboidPlugin.WILDERNESS; }
+    public AreaPlugin getCuboidPlugin() { return AreaPlugin.WILDERNESS; }
 
     @Override
     public org.bukkit.World getWorld() {
@@ -139,7 +139,7 @@ final class AreaWilderness extends AreaBase implements Nameable, Identifiable {
 
         if (parse) {
             message = message
-                    .replace("{AreaType}", CuboidPlugin.WILDERNESS.getCuboidName().toLowerCase())
+                    .replace("{AreaType}", AreaPlugin.WILDERNESS.getCuboidName().toLowerCase())
                     .replace("{World}", getWorld().getName())
                     .replace("{AreaName}", getWorld().getName());
             message = ChatColor.translateAlternateColorCodes('&', message);

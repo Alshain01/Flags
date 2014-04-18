@@ -24,7 +24,7 @@
 
 package io.github.alshain01.flags;
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.area.Area;
 
 import org.bukkit.Bukkit;
@@ -303,15 +303,15 @@ public enum AreaFactory {
     abstract boolean hasCuboid(Location location);
     abstract void registerCleaner(Plugin plugin);
 
-    public static Area getAreaAt(CuboidPlugin type, Location location){
+    public static Area getAreaAt(AreaPlugin type, Location location){
         return valueOf(type.toString()).getCuboidAt(location);
     }
 
-    public static Area getArea(CuboidPlugin type, String name) {
+    public static Area getArea(AreaPlugin type, String name) {
         return valueOf(type.toString()).getCuboidByName(name);
     }
 
-    public static boolean hasArea(CuboidPlugin type, Location location) {
+    public static boolean hasArea(AreaPlugin type, Location location) {
         return valueOf(type.toString()).hasCuboid(location);
     }
 
@@ -323,11 +323,11 @@ public enum AreaFactory {
         return new AreaDefault(world);
     }
 
-    public static Class<? extends Area> getAreaClass(CuboidPlugin type) {
+    public static Class<? extends Area> getAreaClass(AreaPlugin type) {
         return valueOf(type.toString()).getAreaClass();
     }
 
-    static void registerCleaner(CuboidPlugin type, Plugin plugin) {
+    static void registerCleaner(AreaPlugin type, Plugin plugin) {
         valueOf(type.toString()).registerCleaner(plugin);
     }
 }

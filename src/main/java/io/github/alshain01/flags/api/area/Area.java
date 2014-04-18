@@ -1,6 +1,6 @@
 package io.github.alshain01.flags.api.area;
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.Flag;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -19,7 +19,7 @@ public interface Area extends Comparable<Area> {
      *
      * @return The Cuboid System that created this object
      */
-    public CuboidPlugin getCuboidPlugin();
+    public AreaPlugin getCuboidPlugin();
 
     /**
      * Checks if the underlying object from the cuboid system is null.

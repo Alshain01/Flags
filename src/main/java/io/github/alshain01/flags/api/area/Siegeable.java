@@ -25,6 +25,7 @@
 package io.github.alshain01.flags.api.area;
 
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
+import org.bukkit.entity.Player;
 
 /**
  * Interface that defines area types that can be placed under siege by the land
@@ -39,4 +40,12 @@ public interface Siegeable extends Area {
      * @throws InvalidAreaException
 	 */
 	public boolean isUnderSiege();
+
+    /**
+     * Checks if the area can be sieged by a specific player.
+     *
+     * @return true if the area can be sieged by the player
+     * @throws InvalidAreaException
+     */
+    public boolean canSiege(Player player);
 }

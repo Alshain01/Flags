@@ -42,7 +42,7 @@ abstract class CommandBase {
         static boolean notArea(CommandSender cs, Area area) {
             if(area != null && area.isArea()) { return false; }
             cs.sendMessage(Message.NO_AREA_ERROR.get()
-                    .replace("{AreaType}", FlagsAPI.getCuboidPlugin().getCuboidName().toLowerCase()));
+                    .replace("{AreaType}", FlagsAPI.getAreaPlugin().getCuboidName().toLowerCase()));
             return true;
         }
 
@@ -146,8 +146,8 @@ abstract class CommandBase {
         }
 
         static boolean notSubdividable(CommandSender cs) {
-            if(FlagsAPI.getCuboidPlugin().isSubdividable()) { return false; }
-            cs.sendMessage(Message.SUBDIVISION_SUPPORT_ERROR.get().replace("{System}", FlagsAPI.getCuboidPlugin().getDisplayName()));
+            if(FlagsAPI.getAreaPlugin().isSubdividable()) { return false; }
+            cs.sendMessage(Message.SUBDIVISION_SUPPORT_ERROR.get().replace("{System}", FlagsAPI.getAreaPlugin().getDisplayName()));
             return true;
         }
 
@@ -258,7 +258,7 @@ abstract class CommandBase {
         return (value) ? Message.VALUE_COLOR_TRUE.get() : Message.VALUE_COLOR_FALSE.get();
     }
 
-    static Area getArea(Location loc, CommandLocation location, boolean adjustInheritance) {
+    private static Area getArea(Location loc, CommandLocation location, boolean adjustInheritance) {
         if (location == CommandLocation.DEFAULT) {
             return new AreaDefault(loc.getWorld());
         } else if (location == CommandLocation.WILDERNESS) {

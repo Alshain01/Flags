@@ -235,7 +235,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
             usage.append("|charge");
         }
 
-        if(player.hasPermission("flags.command.flag.set") && area.hasFlagPermission(player) && FlagsAPI.getCuboidPlugin().isSubdividable()) {
+        if(player.hasPermission("flags.command.flag.set") && area.hasFlagPermission(player) && FlagsAPI.getAreaPlugin().isSubdividable()) {
             usage.append("|inherit");
         }
 

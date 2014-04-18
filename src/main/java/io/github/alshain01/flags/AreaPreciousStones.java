@@ -26,7 +26,7 @@ package io.github.alshain01.flags;
 
 import java.util.*;
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.area.*;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
@@ -35,6 +35,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.util.Vector;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -42,7 +43,7 @@ import org.bukkit.World;
 /**
  * Class for creating areas to manage a PreciousStones Field.
  */
-final class AreaPreciousStones extends AreaRemovable implements Renameable, Ownable, Subdividable {
+final class AreaPreciousStones extends AreaRemovable implements Cuboid, Renameable, Ownable, Subdividable {
 	private Field field;
 
     /**
@@ -120,8 +121,8 @@ final class AreaPreciousStones extends AreaRemovable implements Renameable, Owna
     }
 
     @Override
-    public CuboidPlugin getCuboidPlugin() {
-        return CuboidPlugin.PRECIOUSSTONES;
+    public AreaPlugin getCuboidPlugin() {
+        return AreaPlugin.PRECIOUSSTONES;
     }
 
     @Override
@@ -197,4 +198,32 @@ final class AreaPreciousStones extends AreaRemovable implements Renameable, Owna
         }
         throw new InvalidSubdivisionException();
 	}
+
+    @Override
+    public Location getGreaterCorner() {
+        if (isArea()) {
+            Vector maxVector = field.getCorners().get(0);
+            for(Vector v : field.getCorners()) {
+                if(v.getBlockX() >= maxVector.getBlockX() && v.getBlockY() >= maxVector.getBlockY() && v.getBlockZ() >= maxVector.getBlockZ()) {
+                    maxVector = v;
+                }
+            }
+            return new Location(getWorld(), maxVector.getBlockX(), maxVector.getBlockY(), maxVector.getBlockZ());
+        }
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public Location getLesserCorner() {
+        if (isArea()) {
+            Vector minVector = field.getCorners().get(0);
+            for(Vector v : field.getCorners()) {
+                if(v.getBlockX() <= minVector.getBlockX() && v.getBlockY() <= minVector.getBlockY() && v.getBlockZ() <= minVector.getBlockZ()) {
+                    minVector = v;
+                }
+            }
+            return new Location(getWorld(), minVector.getBlockX(), minVector.getBlockY(), minVector.getBlockZ());
+        }
+        throw new InvalidAreaException();
+    }
 }

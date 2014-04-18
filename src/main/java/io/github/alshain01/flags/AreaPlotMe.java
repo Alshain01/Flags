@@ -29,7 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import org.bukkit.Bukkit;
@@ -83,8 +83,8 @@ final class AreaPlotMe extends AreaRemovable implements Ownable {
     }
 
     @Override
-    public CuboidPlugin getCuboidPlugin() {
-        return CuboidPlugin.PLOTME;
+    public AreaPlugin getCuboidPlugin() {
+        return AreaPlugin.PLOTME;
     }
 
     @Override
