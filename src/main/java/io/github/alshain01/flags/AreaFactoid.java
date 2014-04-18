@@ -197,7 +197,7 @@ final class AreaFactoid extends AreaRemovable implements Identifiable, Nameable,
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         private static void onRegionDelete(LandDeleteEvent e) {
             // Cleanup the database, keep the file from growing too large.
-            new AreaFactoid(e.getLand().getUUID()).remove();
+            AreaFactoid area = new AreaFactoid(e.getLand());
         }
     }
 }
