@@ -234,8 +234,8 @@ final class DataStoreYaml extends DataStore {
     @Override
     public boolean update(JavaPlugin plugin) {
         DataStoreVersion ver = readOldVersion();
-        if (ver.getMajor() == 1 && ver.getMinor() < 4) {
-            Logger.error("FAILED TO UPDATE DATABASE SCHEMA. DATABASE VERSIONS PRIOR TO 1.4 CANNOT BE UPGRADED.");
+        if (ver.getMajor() == 1 && (ver.getMinor() < 2 || (ver.getMinor() == 2 && ver.getBuild() < 2))) {
+            Logger.error("FAILED TO UPDATE DATABASE SCHEMA. DATABASE VERSIONS PRIOR TO 1.2.2 CANNOT BE UPGRADED.");
             Bukkit.getPluginManager().disablePlugin(Bukkit.getServer().getPluginManager().getPlugin("Flags"));
             return false;
         }
