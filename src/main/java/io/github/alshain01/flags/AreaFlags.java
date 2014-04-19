@@ -41,6 +41,16 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Ren
     }
 
     /**
+     * Creates an instance of AreaFlags using an exiting sector
+     *
+     * @param sector
+     *            The sector to create the area for
+     */
+    public AreaFlags(Sector sector) {
+        this.sector = sector;
+    }
+
+    /**
      * Gets if there is a sector at the location.
      *
      * @return True if a claim exists at the location.
@@ -149,7 +159,7 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Ren
     static class Cleaner implements Listener {
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         private static void onSectorDelete(SectorDeleteEvent e) {
-            new AreaFlags(e.getSector().getID()).remove();
+            new AreaFlags(e.getSector()).remove();
         }
     }
 }

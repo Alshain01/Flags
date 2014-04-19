@@ -80,6 +80,16 @@ final class AreaRegios extends AreaRemovable implements Nameable, Ownable {
 		}
 		region = ((RegiosAPI)plugin).getRegion(name);
 	}
+
+    /**
+     * Creates an instance of AreaRegios based on a region
+     *
+     * @param region
+     *            The region
+     */
+    public AreaRegios(Region region) {
+        this.region = region;
+    }
 	
 	/**
 	 * Gets if there is a region at the location.
@@ -135,7 +145,7 @@ final class AreaRegios extends AreaRemovable implements Nameable, Ownable {
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         private static void onRegionDelete(RegionDeleteEvent e) {
             // Cleanup the database, keep the file from growing too large.
-            new AreaRegios(e.getRegion().getName()).remove();
+            new AreaRegios(e.getRegion()).remove();
         }
     }
 

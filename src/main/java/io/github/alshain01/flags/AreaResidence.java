@@ -202,7 +202,7 @@ final class AreaResidence extends AreaRemovable implements Identifiable, Cuboid,
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         private static void onResidenceDelete(ResidenceAreaDeletedEvent e) {
             // Cleanup the database, keep the file from growing too large.
-            new AreaResidence(e.getResidenceArea().getName()).remove();
+            new AreaResidence(e.getResidenceArea()).remove();
         }
     }
 }

@@ -211,7 +211,7 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         private static void onClaimDeleted(ClaimDeletedEvent e) {
             // Cleanup the database, keep the file from growing too large.
-            new AreaGriefPrevention(e.getClaim().getUUID()).remove();
+            new AreaGriefPrevention(e.getClaim()).remove();
         }
     }
 }
