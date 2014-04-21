@@ -6,6 +6,7 @@ import org.bukkit.Location;
  * Interface that defines if the area plugin uses "true"
  * cuboids and it's corners can be identified.
  */
+@SuppressWarnings("unused")
 public interface Cuboid extends Area{
     /**
      * Returns the location of the cuboid where x and z are greatest.

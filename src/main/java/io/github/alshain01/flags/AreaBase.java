@@ -233,10 +233,18 @@ abstract class AreaBase implements Area, Comparable<Area> {
     }
 
     @Override
-    public final Map<UUID, String> getPlayerTrustList(Flag flag) {
+    public final Collection<OfflinePlayer> getPlayerTrustList(Flag flag) {
         Validate.notNull(flag);
 
-        return Flags.getDataStore().readPlayerTrust(this, flag);
+        Map<UUID, String> players = Flags.getDataStore().readPlayerTrust(this, flag);
+        Set<OfflinePlayer> trusted = new HashSet<OfflinePlayer>();
+        for(UUID u : players.keySet()) {
+            OfflinePlayer player = Bukkit.getOfflinePlayer(u);
+            if(player != null) {
+                trusted.add(player);
+            }
+        }
+        return trusted;
     }
 
     @Override
@@ -355,8 +363,8 @@ abstract class AreaBase implements Area, Comparable<Area> {
         Validate.notNull(player);
         if (this instanceof Ownable && (((Ownable)this).getOwners().contains(Bukkit.getOfflinePlayer(player.getUniqueId())))) { return true; }
 
-        Map<UUID, String> tl = getPlayerTrustList(flag);
-        if(tl.containsKey(player.getUniqueId())) {
+        Collection<OfflinePlayer> tl = getPlayerTrustList(flag);
+        if(tl.contains(Bukkit.getOfflinePlayer(player.getUniqueId()))) {
             return true;
         }
 

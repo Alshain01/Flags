@@ -2,6 +2,7 @@ package io.github.alshain01.flags.api.area;
 
 import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.Flag;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -137,7 +138,7 @@ public interface Area extends Comparable<Area> {
      *            The flag to retrieve the trust list for.
      * @return The list of players
      */
-    public Map<UUID, String> getPlayerTrustList(Flag flag);
+    public Collection<OfflinePlayer> getPlayerTrustList(Flag flag);
 
     /**
      * Gets a list of trusted permissions
