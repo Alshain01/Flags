@@ -50,7 +50,7 @@ WILDERNESS_PERM_ERROR: '&cYou do not have permission to set a {Type} in the {Are
 ECONOMY_ERROR: '&cThere is no economy installed on this server.'
 SQL_DATABASE_ERROR: '&cThis action can only be performed on a SQL database.'
 SUBDIVISION_SUPPORT_ERROR: '&c{System} does not support subdivisions.'
-PLAYER_NOT_FOUND_ERROR: '&cUnable to find online player(s): {Player}.'
+PLAYER_NOT_FOUND_ERROR: '&cUnable to find player(s): {Player}.'
 
 # Command Messages
 GET_FLAG: '&bThe {AreaType} flag &e{Flag} &bis {Value}.'

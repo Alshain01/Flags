@@ -138,7 +138,7 @@ public interface Area extends Comparable<Area> {
      *            The flag to retrieve the trust list for.
      * @return The list of players
      */
-    public Collection<OfflinePlayer> getPlayerTrustList(Flag flag);
+    public Collection<OfflinePlayer> getPlayerTrust(Flag flag);
 
     /**
      * Gets a list of trusted permissions
@@ -147,7 +147,7 @@ public interface Area extends Comparable<Area> {
      *            The flag to retrieve the trust list for.
      * @return The list of permissions
      */
-    public Collection<Permission> getPermissionTrustList(Flag flag);
+    public Collection<Permission> getPermissionTrust(Flag flag);
 
     /**
      * Adds player to a the trust list.
@@ -161,7 +161,7 @@ public interface Area extends Comparable<Area> {
      *            or console.
      * @return True if successful.
      */
-    public boolean setPlayerTrust(Flag flag, Player trustee, CommandSender sender);
+    public boolean setTrust(Flag flag, OfflinePlayer trustee, CommandSender sender);
 
     /**
      * Adds permission to a the trust list.
@@ -175,21 +175,7 @@ public interface Area extends Comparable<Area> {
      *            or console.
      * @return True if successful.
      */
-    public boolean setPermissionTrust(Flag flag, String permission, CommandSender sender);
-
-    /**
-     * Adds permission to a the trust list.
-     *
-     * @param flag
-     *            The flag to change trust for.
-     * @param permission
-     *            The permission being trusted
-     * @param sender
-     *            CommandSender for event, may be null if no associated player
-     *            or console.
-     * @return True if successful.
-     */
-    public boolean setPermissionTrust(Flag flag, Permission permission, CommandSender sender);
+    public boolean setTrust(Flag flag, Permission permission, CommandSender sender);
 
     /**
      * Removes a player from the trust list.
@@ -203,7 +189,7 @@ public interface Area extends Comparable<Area> {
      *            or console.
      * @return True if successful.
      */
-    public boolean removePlayerTrust(Flag flag, UUID trustee, CommandSender sender);
+    public boolean removeTrust(Flag flag, OfflinePlayer trustee, CommandSender sender);
 
     /**
      * Removes a permission from the trust list.
@@ -217,21 +203,7 @@ public interface Area extends Comparable<Area> {
      *            or console.
      * @return True if successful.
      */
-    public boolean removePermissionTrust(Flag flag, String permission, CommandSender sender);
-
-    /**
-     * Removes a permission from the trust list.
-     *
-     * @param flag
-     *            The flag to change trust for.
-     * @param permission
-     *            The permission being distrusted
-     * @param sender
-     *            CommandSender for event, may be null if no associated player
-     *            or console.
-     * @return True if successful.
-     */
-    public boolean removePermissionTrust(Flag flag, Permission permission, CommandSender sender);
+    public boolean removeTrust(Flag flag, Permission permission, CommandSender sender);
 
     /**
      * Returns true if the provided player is the area owner, has explicit trust, or permission trust.

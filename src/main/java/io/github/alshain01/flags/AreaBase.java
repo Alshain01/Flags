@@ -233,7 +233,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
     }
 
     @Override
-    public final Collection<OfflinePlayer> getPlayerTrustList(Flag flag) {
+    public final Collection<OfflinePlayer> getPlayerTrust(Flag flag) {
         Validate.notNull(flag);
 
         Map<UUID, String> players = Flags.getDataStore().readPlayerTrust(this, flag);
@@ -248,14 +248,14 @@ abstract class AreaBase implements Area, Comparable<Area> {
     }
 
     @Override
-    public final Collection<Permission> getPermissionTrustList(Flag flag) {
+    public final Collection<Permission> getPermissionTrust(Flag flag) {
         Validate.notNull(flag);
 
         return Flags.getDataStore().readPermissionTrust(this, flag);
     }
 
     @Override
-    public final boolean setPlayerTrust(Flag flag, Player trustee, CommandSender sender) {
+    public final boolean setTrust(Flag flag, OfflinePlayer trustee, CommandSender sender) {
         Validate.notNull(flag);
         Validate.notNull(trustee);
 
@@ -267,7 +267,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
         }
         trustList.put(trustee.getUniqueId(), trustee.getName());
 
-        final FlagPlayerTrustChangedEvent event = new FlagPlayerTrustChangedEvent(this, flag, trustee.getUniqueId(), true, sender);
+        final FlagPlayerTrustChangedEvent event = new FlagPlayerTrustChangedEvent(this, flag, trustee, true, sender);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return false;
@@ -279,12 +279,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
 
 
     @Override
-    public final boolean setPermissionTrust(Flag flag, String permission, CommandSender sender) {
-        return setPermissionTrust(flag, new Permission(permission), sender);
-    }
-
-    @Override
-    public final boolean setPermissionTrust(Flag flag, Permission permission, CommandSender sender) {
+    public final boolean setTrust(Flag flag, Permission permission, CommandSender sender) {
         Validate.notNull(flag);
         Validate.notNull(permission);
 
@@ -307,17 +302,17 @@ abstract class AreaBase implements Area, Comparable<Area> {
     }
 
     @Override
-    public final boolean removePlayerTrust(Flag flag, UUID trustee, CommandSender sender) {
+    public final boolean removeTrust(Flag flag, OfflinePlayer trustee, CommandSender sender) {
         Validate.notNull(flag);
         Validate.notNull(trustee);
 
         final Map<UUID, String> trustList = Flags.getDataStore().readPlayerTrust(this, flag);
 
         // Remove player from trusted.
-        if (!trustList.containsKey(trustee)) {
+        if (!trustList.containsKey(trustee.getUniqueId())) {
             return false;
         }
-        trustList.remove(trustee);
+        trustList.remove(trustee.getUniqueId());
 
         final FlagPlayerTrustChangedEvent event = new FlagPlayerTrustChangedEvent(this, flag, trustee, false, sender);
         Bukkit.getServer().getPluginManager().callEvent(event);
@@ -330,12 +325,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
     }
 
     @Override
-    public final boolean removePermissionTrust(Flag flag, String permission, CommandSender sender) {
-        return removePermissionTrust(flag, new Permission(permission), sender);
-    }
-
-    @Override
-    public final boolean removePermissionTrust(Flag flag, Permission permission, CommandSender sender) {
+    public final boolean removeTrust(Flag flag, Permission permission, CommandSender sender) {
         Validate.notNull(flag);
         Validate.notNull(permission);
 
@@ -363,12 +353,12 @@ abstract class AreaBase implements Area, Comparable<Area> {
         Validate.notNull(player);
         if (this instanceof Ownable && (((Ownable)this).getOwners().contains(Bukkit.getOfflinePlayer(player.getUniqueId())))) { return true; }
 
-        Collection<OfflinePlayer> tl = getPlayerTrustList(flag);
+        Collection<OfflinePlayer> tl = getPlayerTrust(flag);
         if(tl.contains(Bukkit.getOfflinePlayer(player.getUniqueId()))) {
             return true;
         }
 
-        Collection<Permission> pTl = getPermissionTrustList(flag);
+        Collection<Permission> pTl = getPermissionTrust(flag);
         for(Permission p : pTl) {
             if(player.hasPermission(p)) {
                 return true;

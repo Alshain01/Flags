@@ -27,11 +27,10 @@ package io.github.alshain01.flags.api.event;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.area.Area;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
-
-import java.util.UUID;
 
 /**
  * Event that occurs when a trustee is added or removed.
@@ -41,7 +40,7 @@ public class FlagPlayerTrustChangedEvent extends FlagEvent implements Cancellabl
 
 	private static final HandlerList handlers = new HandlerList();
 
-	private final UUID trustee;
+	private final OfflinePlayer trustee;
 	private final CommandSender sender;
 	private final boolean value;
 
@@ -59,7 +58,7 @@ public class FlagPlayerTrustChangedEvent extends FlagEvent implements Cancellabl
 	 * @param sender
 	 *            The sender changing the trust.
 	 */
-	public FlagPlayerTrustChangedEvent(Area area, Flag flag, UUID trustee, boolean isTrusted, CommandSender sender) {
+	public FlagPlayerTrustChangedEvent(Area area, Flag flag, OfflinePlayer trustee, boolean isTrusted, CommandSender sender) {
 		super(area, flag);
 		this.trustee = trustee;
 		this.sender = sender;
@@ -78,9 +77,9 @@ public class FlagPlayerTrustChangedEvent extends FlagEvent implements Cancellabl
 	/**
      * Gets the player whos trust is changing
      *
-	 * @return The UUID of the player
+	 * @return the player
 	 */
-	public UUID getTrustee() {
+	public OfflinePlayer getTrustee() {
 		return trustee;
 	}
 

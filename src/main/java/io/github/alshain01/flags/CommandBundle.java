@@ -1,11 +1,15 @@
 package io.github.alshain01.flags;
 
+import com.massivecraft.factions.Perm;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 
 import java.util.*;
 
@@ -213,26 +217,30 @@ final class CommandBundle extends CommandBase implements CommandExecutor {
 
         if(Validate.notPermittedBundle(player, area, bundleName)) { return true; }
 
+        Set<Permission> permissions = new HashSet<Permission>();
+        Set<OfflinePlayer> playerList = new HashSet<OfflinePlayer>();
+        for(String t : trustees) {
+            if(t.contains(".")) {
+                permissions.add(new Permission(t));
+            } else {
+                OfflinePlayer p = Bukkit.getOfflinePlayer(t);
+                if (p != null) {
+                    playerList.add(p);
+                } else {
+                    success = false;
+                }
+            }
+        }
+
         for(Flag f : FlagsAPI.getBundle(bundleName)) {
             if(!f.isPlayerFlag()) { continue; }
 
-            Set<String> permissions = new HashSet<String>();
-            Set<String> playerList = new HashSet<String>();
-            for(String t : trustees) {
-                if(t.contains(".")) {
-                    permissions.add(t);
-                }
-                playerList.add(t);
+            for(OfflinePlayer p : playerList) {
+                if(!area.setTrust(f, p, player)) { success = false; }
             }
 
-            Set<Player> players = getPlayerList(player, playerList);
-
-            for(Player p : players) {
-                if(!area.setPlayerTrust(f, p, player)) { success = false; }
-            }
-
-            for(String p : permissions) {
-                if(!area.setPermissionTrust(f, p, player)) { success = false; }
+            for(Permission p : permissions) {
+                if(!area.setTrust(f, p, player)) { success = false; }
             }
         }
 
@@ -248,29 +256,39 @@ final class CommandBundle extends CommandBase implements CommandExecutor {
 
         if(Validate.notPermittedBundle(player, area, bundleName)) { return; }
 
+        Collection<Permission> permissions = new HashSet<Permission>();
+        Collection<OfflinePlayer> playerList = new HashSet<OfflinePlayer>();
+
+        for(String t : trustees) {
+            if(t.contains(".")) {
+                permissions.add(new Permission(t));
+            } else {
+                OfflinePlayer p = Bukkit.getOfflinePlayer(t);
+                if (p != null) {
+                    playerList.add(p);
+                } else {
+                    success = false;
+                }
+            }
+        }
+
         for(Flag f : FlagsAPI.getBundle(bundleName)) {
-            Set<String> permissions = new HashSet<String>();
-            Set<String> playerList = new HashSet<String>();
-            for(String t : trustees) {
-                if(t.contains(".")) {
-                    permissions.add(t);
-                }
-                playerList.add(t);
+            // Did the user request the trust list be cleared?
+            if(trustees.isEmpty()) {
+                playerList = area.getPlayerTrust(f);
+                permissions = area.getPermissionTrust(f);
             }
 
-            Map<UUID, String> trustList = area.getPlayerTrustList(f);
-
-            //If playerList is empty, remove everyone
-            for(String p : playerList.isEmpty() && permissions.isEmpty() ? trustList.values() : playerList) {
-                for(UUID u : trustList.keySet()) {
-                    if(trustList.get(u).equals(p)) {
-                        if (!area.removePlayerTrust(f, u, player)) { success = false; }
-                    }
+            for (OfflinePlayer p : playerList) {
+                if (!area.removeTrust(f, p, player)) {
+                    success = false;
                 }
             }
 
-            for(String p : permissions) {
-                if(!area.removePermissionTrust(f, p, player)) { success = false; }
+            for (Permission p : permissions) {
+                if (!area.removeTrust(f, p, player)) {
+                    success = false;
+                }
             }
         }
 

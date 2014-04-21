@@ -7,8 +7,10 @@ import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
@@ -372,12 +374,14 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
 
         Set<String> trustList = new HashSet<String>();
         if(player.hasPermission("flags.view.permtrust")) {
-            Collection<Permission> perms = area.getPermissionTrustList(flag);
-            for(Permission p : perms) {
+            for(Permission p : area.getPermissionTrust(flag)) {
                 trustList.add(p.getName());
             }
         }
-        trustList.addAll(area.getPlayerTrustList(flag).values());
+
+        for(OfflinePlayer p : area.getPlayerTrust(flag)) {
+            trustList.add(p.getName());
+        }
 
         if(Validate.notPlayerFlag(player, flag)
                 || Validate.notArea(player, area)
@@ -405,24 +409,29 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
         if(Validate.notPlayerFlag(player, flag)
                 || Validate.notPermittedFlag(player, area, flag, flag.getName())) { return true; }
 
-        Set<String> permissions = new HashSet<String>();
-        Set<String> playerList = new HashSet<String>();
+        // Parse trust permissions from player permissions
+        boolean success = true;
+        Set<Permission> permissions = new HashSet<Permission>();
+        Set<OfflinePlayer> playerList = new HashSet<OfflinePlayer>();
         for(String t : trustees) {
             if(t.contains(".")) {
-                permissions.add(t);
+                permissions.add(new Permission(t));
+            } else {
+                OfflinePlayer p = Bukkit.getOfflinePlayer(t);
+                if (p != null) {
+                    playerList.add(p);
+                } else {
+                    success = false;
+                }
             }
-            playerList.add(t);
         }
 
-        Set<Player> players = getPlayerList(player, playerList);
-
-        boolean success = true;
-        for(Player p : players) {
-            if(!area.setPlayerTrust(flag, p, player)) { success = false; }
+        for(OfflinePlayer p : playerList) {
+            if(!area.setTrust(flag, p, player)) { success = false; }
         }
 
-        for(String p : permissions) {
-            if(!area.setPermissionTrust(flag, p, player)) { success = false; }
+        for(Permission p : permissions) {
+            if(!area.setTrust(flag, p, player)) { success = false; }
         }
 
         player.sendMessage((success ? Message.SET_TRUST.get() : Message.SET_TRUST_ERROR.get())
@@ -442,28 +451,37 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
             return;
         }
 
-        Set<String> permissions = new HashSet<String>();
-        Set<String> playerList = new HashSet<String>();
+        Collection<Permission> permissions = new HashSet<Permission>();
+        Collection<OfflinePlayer> playerList = new HashSet<OfflinePlayer>();
         for(String t : trustees) {
             if(t.contains(".")) {
-                permissions.add(t);
-            }
-            playerList.add(t);
-        }
-
-        Map<UUID, String> trustList = area.getPlayerTrustList(flag);
-
-        //If playerList is empty, remove everyone
-        for(String p : playerList.isEmpty() && permissions.isEmpty() ? trustList.values() : playerList) {
-            for(UUID u : trustList.keySet()) {
-                if(trustList.get(u).equals(p)) {
-                    if (!area.removePlayerTrust(flag, u, player)) { success = false; }
+                permissions.add(new Permission(t));
+            } else {
+                OfflinePlayer p = Bukkit.getOfflinePlayer(t);
+                if (p != null) {
+                    playerList.add(p);
+                } else {
+                    success = false;
                 }
             }
         }
 
-        for(String p : permissions) {
-            if(!area.removePermissionTrust(flag, p, player)) { success = false; }
+        // Did the user request the trust list be cleared?
+        if(trustees.isEmpty()) {
+            playerList = area.getPlayerTrust(flag);
+            permissions = area.getPermissionTrust(flag);
+        }
+
+        for (OfflinePlayer p : playerList) {
+            if (!area.removeTrust(flag, p, player)) {
+                success = false;
+            }
+        }
+
+        for (Permission p : permissions) {
+            if (!area.removeTrust(flag, p, player)) {
+                success = false;
+            }
         }
 
         player.sendMessage((success ? Message.REMOVE_TRUST.get() : Message.REMOVE_TRUST_ERROR.get())
