@@ -30,6 +30,8 @@ import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 import io.github.alshain01.flags.api.sector.Sector;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.permissions.Permission;
@@ -204,7 +206,7 @@ final class DataStoreMySQL extends DataStore {
     }
 
     @Override
-    public Collection<String> readBundles() {
+    public Set<String> readBundles() {
         final ResultSet results = executeQuery("SELECT DISTINCT BundleName FROM Bundle;");
         Set<String> bundles = new HashSet<String>();
 
@@ -220,7 +222,7 @@ final class DataStoreMySQL extends DataStore {
     }
 
     @Override
-    public Collection<Flag> readBundle(String name) {
+    public Set<Flag> readBundle(String name) {
         final ResultSet results = executeQuery("SELECT * FROM Bundle WHERE BundleName='" + name + "';");
         HashSet<Flag> flags = new HashSet<Flag>();
 
@@ -243,7 +245,7 @@ final class DataStoreMySQL extends DataStore {
     }
 
     @Override
-    public void writeBundle(String bundleName, Collection<Flag> flags) {
+    public void writeBundle(String bundleName, Set<Flag> flags) {
         StringBuilder values = new StringBuilder();
 
         // Clear out any existing version of this bundle.
@@ -369,16 +371,19 @@ final class DataStoreMySQL extends DataStore {
     }
 
     @Override
-    public Map<UUID, String> readPlayerTrust(Area area, Flag flag) {
+    public Set<OfflinePlayer> readPlayerTrust(Area area, Flag flag) {
         String selectString = "SELECT * FROM Trust WHERE AreaPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%';";
 
         ResultSet results = executeQuery(areaBuilder(selectString, area)
                 .replace("%flag%", flag.getName()));
 
-        Map<UUID, String> trustList = new HashMap<UUID, String>();
+        Set<OfflinePlayer> trustList = new HashSet<OfflinePlayer>();
         try {
             while (results.next()) {
-                trustList.put(UUID.fromString(results.getString("TrusteeId")), results.getString("TrusteeName"));
+                OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(results.getString("TrusteeId")));
+                if(player != null) {
+                    trustList.add(player);
+                }
             }
         } catch (SQLException ex) {
             SqlError(ex.getMessage());
@@ -387,7 +392,7 @@ final class DataStoreMySQL extends DataStore {
     }
 
     @Override
-    public Collection<Permission> readPermissionTrust(Area area, Flag flag) {
+    public Set<Permission> readPermissionTrust(Area area, Flag flag) {
         String selectString = "SELECT * FROM PermissionTrust WHERE AreaPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%';";
 
         ResultSet results = executeQuery(areaBuilder(selectString, area)
@@ -405,26 +410,25 @@ final class DataStoreMySQL extends DataStore {
     }
 
     @Override
-    public void writePlayerTrust(Area area, Flag flag, Map<UUID, String> players) {
+    public void writePlayerTrust(Area area, Flag flag, Set<OfflinePlayer> players) {
         // Delete the old list to be replaced
         String deleteString = "DELETE FROM Trust WHERE AreaPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%';";
 
         executeStatement(areaBuilder(deleteString, area)
                 .replace("%flag%", flag.getName()));
 
-        String insertString = "INSERT INTO Trust (AreaPlugin, WorldId, AreaId, FlagName, TrusteeId, TrusteeName)"
-                + "VALUES('%cuboid%', '%world%', '%area%', '%flag%', '%player%', '%playername%');";
+        String insertString = "INSERT INTO Trust (AreaPlugin, WorldId, AreaId, FlagName, TrusteeId)"
+                + "VALUES('%cuboid%', '%world%', '%area%', '%flag%', '%player%');";
 
-        for (UUID u : players.keySet()) {
+        for (OfflinePlayer p : players) {
             executeStatement(areaBuilder(insertString, area)
                     .replace("%flag%", flag.getName())
-                    .replace("%player%", u.toString())
-                    .replace("%playername%", players.get(u)));
+                    .replace("%player%", p.getUniqueId().toString()));
         }
     }
 
     @Override
-    public void writePermissionTrust(Area area, Flag flag, Collection<Permission> permissions) {
+    public void writePermissionTrust(Area area, Flag flag, Set<Permission> permissions) {
         // Delete the old list to be replaced
         String deleteString = "DELETE FROM PermissionTrust WHERE AreaPlugin='%cuboid%' AND WorldId='%world%' AND AreaId='%area%' AND FlagName='%flag%';";
 
@@ -546,7 +550,7 @@ final class DataStoreMySQL extends DataStore {
     }
 
     @Override
-    Collection<String> getAllAreaIds(World world) {
+    Set<String> getAllAreaIds(World world) {
         Set<String> areas = new HashSet<String>();
         ResultSet results = executeQuery("SELECT DISTINCT AreaId FROM Flags;");
         try {

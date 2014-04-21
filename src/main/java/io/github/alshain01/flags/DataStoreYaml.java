@@ -293,12 +293,12 @@ final class DataStoreYaml extends DataStore {
     }
 
     @Override
-    public final Collection<String> readBundles() {
+    public final Set<String> readBundles() {
             return bundle.getKeys(false);
     }
 
     @Override
-	public final Collection<Flag> readBundle(String bundleName) {
+	public final Set<Flag> readBundle(String bundleName) {
 		final HashSet<Flag> flags = new HashSet<Flag>();
 		final List<?> list = bundle.getList(bundleName, new ArrayList<String>());
 
@@ -311,7 +311,7 @@ final class DataStoreYaml extends DataStore {
 	}
 
     @Override
-    public final void writeBundle(String name, Collection<Flag> flags) {
+    public final void writeBundle(String name, Set<Flag> flags) {
         if (flags == null || flags.size() == 0) {
             // Delete the bundle
             bundle.set(name, null);
@@ -419,42 +419,41 @@ final class DataStoreYaml extends DataStore {
     }
 
     @Override
-	public Map<UUID, String> readPlayerTrust(Area area, Flag flag) {
+	public Set<OfflinePlayer> readPlayerTrust(Area area, Flag flag) {
 		final String path = getAreaPath(area) + DELIMETER + flag.getName() + DELIMETER + PLAYER_TRUST_PATH;
-        final Map<UUID, String> playerData = new HashMap<UUID, String>();
-        if(getYml(path).isConfigurationSection(path)) {
-            for(String player : getYml(path).getConfigurationSection(path).getKeys(false)) {
-                playerData.put(UUID.fromString(player), getYml(path).getString(path + DELIMETER + player));
+        final Set<OfflinePlayer> playerData = new HashSet<OfflinePlayer>();
+        if(getYml(path).isList(path)) {
+            for(String pid : getYml(path).getStringList(path)) {
+                OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(pid));
+                if(player != null) {
+                    playerData.add(player);
+                }
             }
         }
 		return playerData;
 	}
 
     @Override
-    public void writePlayerTrust(Area area, Flag flag, Map<UUID, String> players) {
+    public void writePlayerTrust(Area area, Flag flag, Set<OfflinePlayer> players) {
         final String path = getAreaPath(area) + DELIMETER + flag.getName() + DELIMETER + PLAYER_TRUST_PATH;
         final ConfigurationSection trustConfig = getCreatedSection(getYml(path), path);
 
-        // Remove players
-        for(UUID player : readPlayerTrust(area, flag).keySet()) {
-            if(!players.containsKey(player)) {
-                trustConfig.set(player.toString(), null);
-            }
+        List<String> pList = new ArrayList<String>();
+        for(OfflinePlayer op : players) {
+            pList.add(op.getUniqueId().toString());
         }
+        if(pList.isEmpty()) { pList = null; }
 
-        // Add new players
-        for(UUID player : players.keySet()) {
-            trustConfig.set(player.toString(), players.get(player));
-        }
+        trustConfig.set(PLAYER_TRUST_PATH, pList);
 
-        if(players.isEmpty()) {
+        if(pList == null) {
             cleanConfigurationSection(trustConfig);
         }
         saveData = true;
     }
 
     @Override
-    public Collection<Permission> readPermissionTrust(Area area, Flag flag) {
+    public Set<Permission> readPermissionTrust(Area area, Flag flag) {
         final String path = getAreaPath(area) + DELIMETER + flag.getName() + DELIMETER + PERM_TRUST_PATH;
         final Set<Permission> permData = new HashSet<Permission>();
         if(getYml(path).isList(path)) {
@@ -468,7 +467,7 @@ final class DataStoreYaml extends DataStore {
     }
 
     @Override
-    public void writePermissionTrust(Area area, Flag flag, Collection<Permission> permissions) {
+    public void writePermissionTrust(Area area, Flag flag, Set<Permission> permissions) {
         final String path = getAreaPath(area) + DELIMETER + flag.getName();
         ConfigurationSection permConfig = getCreatedSection(getYml(path), path);
 
@@ -801,7 +800,9 @@ final class DataStoreYaml extends DataStore {
                 if (key.contains("Trust") && !key.contains("FlagPermissionTrust") && config.isList(key)) {
                     for (String p : config.getStringList(key)) {
                         OfflinePlayer player = Bukkit.getOfflinePlayer(p);
-                        players.add(player.getName()); // Restores original casing
+                        if(player != null) {
+                            players.add(player.getName()); // Restores original casing
+                        }
                     }
                 }
             }
@@ -829,13 +830,16 @@ final class DataStoreYaml extends DataStore {
         for (ConfigurationSection config : dataconfigs) {
             for (String key : config.getKeys(true)) {
                 if (key.contains("Trust") && !key.contains("FlagPermissionTrust") && config.isList(key)) {
+                    List pList = new ArrayList<String>();
                     for (String p : config.getStringList(key)) {
                         Logger.debug("Writing Player UUID for " + p);
                         UUID u = playerMap.get(p);
                         if(u == null) continue;
                         Logger.debug("UUID: " + u.toString());
-                        Logger.debug("Writing To: " + key.replace("Trust", "FlagPlayerTrust") + DELIMETER + u.toString());
-                        config.set(key.replace("Trust", "FlagPlayerTrust") + DELIMETER + u.toString(), p);
+                        pList.add(u.toString());
+                    }
+                    if(!pList.isEmpty()) {
+                        config.set(key.replace("Trust", "FlagPlayerTrust"), pList);
                     }
                     config.set(key, null);
                 }

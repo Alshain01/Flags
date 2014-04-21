@@ -19,6 +19,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * Primary class for hooking into the API.
@@ -259,7 +260,7 @@ final public class FlagsAPI {
 
         if(name.length() > 36) { name = name.substring(0, 35); }
 
-        getDataStore().writeBundle(name, flags);
+        getDataStore().writeBundle(name, new HashSet<Flag>(flags));
         String permName = "flags.bundle." + name.toLowerCase();
         if(flags == null || flags.size() == 0) {
             if(Bukkit.getPluginManager().getPermission(permName) != null) {

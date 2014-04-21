@@ -236,15 +236,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
     public final Collection<OfflinePlayer> getPlayerTrust(Flag flag) {
         Validate.notNull(flag);
 
-        Map<UUID, String> players = Flags.getDataStore().readPlayerTrust(this, flag);
-        Set<OfflinePlayer> trusted = new HashSet<OfflinePlayer>();
-        for(UUID u : players.keySet()) {
-            OfflinePlayer player = Bukkit.getOfflinePlayer(u);
-            if(player != null) {
-                trusted.add(player);
-            }
-        }
-        return trusted;
+        return Flags.getDataStore().readPlayerTrust(this, flag);
     }
 
     @Override
@@ -259,13 +251,13 @@ abstract class AreaBase implements Area, Comparable<Area> {
         Validate.notNull(flag);
         Validate.notNull(trustee);
 
-        final Map<UUID, String> trustList = Flags.getDataStore().readPlayerTrust(this, flag);
+        final Set<OfflinePlayer> trustList = Flags.getDataStore().readPlayerTrust(this, flag);
 
         // Set player to trusted.
-        if (trustList.containsKey(trustee.getUniqueId())) {
+        if (trustList.contains(Bukkit.getOfflinePlayer(trustee.getUniqueId()))) {
             return false;
         }
-        trustList.put(trustee.getUniqueId(), trustee.getName());
+        trustList.add(trustee);
 
         final FlagPlayerTrustChangedEvent event = new FlagPlayerTrustChangedEvent(this, flag, trustee, true, sender);
         Bukkit.getServer().getPluginManager().callEvent(event);
@@ -283,7 +275,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
         Validate.notNull(flag);
         Validate.notNull(permission);
 
-        final Collection<Permission> trustList = Flags.getDataStore().readPermissionTrust(this, flag);
+        final Set<Permission> trustList = Flags.getDataStore().readPermissionTrust(this, flag);
 
         // Set player to trusted.
         if (trustList.contains(permission)) {
@@ -306,13 +298,13 @@ abstract class AreaBase implements Area, Comparable<Area> {
         Validate.notNull(flag);
         Validate.notNull(trustee);
 
-        final Map<UUID, String> trustList = Flags.getDataStore().readPlayerTrust(this, flag);
+        final Set<OfflinePlayer> trustList = Flags.getDataStore().readPlayerTrust(this, flag);
 
         // Remove player from trusted.
-        if (!trustList.containsKey(trustee.getUniqueId())) {
+        if (!trustList.contains(Bukkit.getOfflinePlayer(trustee.getUniqueId()))) {
             return false;
         }
-        trustList.remove(trustee.getUniqueId());
+        trustList.remove(trustee);
 
         final FlagPlayerTrustChangedEvent event = new FlagPlayerTrustChangedEvent(this, flag, trustee, false, sender);
         Bukkit.getServer().getPluginManager().callEvent(event);
@@ -329,7 +321,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
         Validate.notNull(flag);
         Validate.notNull(permission);
 
-        final Collection<Permission> trustList = Flags.getDataStore().readPermissionTrust(this, flag);
+        final Set<Permission> trustList = Flags.getDataStore().readPermissionTrust(this, flag);
 
         // Remove player from trusted.
         if (!trustList.contains(permission)) {

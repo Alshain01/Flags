@@ -35,6 +35,7 @@ import java.util.*;
 
 import io.github.alshain01.flags.api.sector.Sector;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -96,11 +97,11 @@ public abstract class DataStore {
 
     public abstract boolean update(JavaPlugin plugin);
 
-    public abstract Collection<String> readBundles();
+    public abstract Set<String> readBundles();
 
-	public abstract Collection<Flag> readBundle(String bundleName);
+	public abstract Set<Flag> readBundle(String bundleName);
 
-    public abstract void writeBundle(String bundleName, Collection<Flag> flags);
+    public abstract void writeBundle(String bundleName, Set<Flag> flags);
 
 	public abstract Boolean readFlag(Area area, Flag flag);
 
@@ -114,13 +115,13 @@ public abstract class DataStore {
 
     public abstract void writePrice(Flag flag, EconomyPurchaseType type, double price);
 
-    public abstract Map<UUID, String> readPlayerTrust(Area area, Flag flag);
+    public abstract Set<OfflinePlayer> readPlayerTrust(Area area, Flag flag);
 
-    public abstract Collection<Permission> readPermissionTrust(Area area, Flag flag);
+    public abstract Set<Permission> readPermissionTrust(Area area, Flag flag);
 
-    public abstract void writePlayerTrust(Area area, Flag flag, Map<UUID, String> players);
+    public abstract void writePlayerTrust(Area area, Flag flag, Set<OfflinePlayer> players);
 
-    public abstract void writePermissionTrust(Area area, Flag flag, Collection<Permission> permissions);
+    public abstract void writePermissionTrust(Area area, Flag flag, Set<Permission> permissions);
 
     public abstract boolean readInheritance(Subdividable area);
 
@@ -138,7 +139,7 @@ public abstract class DataStore {
         migrate(source, this);
     }
 
-    abstract Collection<String> getAllAreaIds(World world);
+    abstract Set<String> getAllAreaIds(World world);
 
     private static void migrate(DataStore source, DataStore target) {
         Logger.info("Beginning data migration from " + source.getType().getName() + " to " + target.getType().getName() + ".");
@@ -177,7 +178,7 @@ public abstract class DataStore {
             }
         }
 
-        // Perform the area coversion
+        // Perform the area conversion
         for(Flag f : FlagsAPI.getRegistrar().getFlags()) {
             for(Area a : areas) {
                 //Flags
@@ -193,13 +194,13 @@ public abstract class DataStore {
                 }
 
                 //Player Trust Lists
-                Map<UUID, String> trust = source.readPlayerTrust(a, f);
+                Set<OfflinePlayer> trust = source.readPlayerTrust(a, f);
                 if(!trust.isEmpty()) {
                     target.writePlayerTrust(a, f, trust);
                 }
 
                 //Permission Trust Lists
-                Collection<Permission> permtrust = source.readPermissionTrust(a, f);
+                Set<Permission> permtrust = source.readPermissionTrust(a, f);
                 if(!trust.isEmpty()) {
                     target.writePermissionTrust(a, f, permtrust);
                 }
