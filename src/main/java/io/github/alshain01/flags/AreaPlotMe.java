@@ -34,6 +34,7 @@ import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
 import com.worldcretornica.plotme.Plot;
@@ -88,14 +89,8 @@ final class AreaPlotMe extends AreaRemovable implements Ownable {
     }
 
     @Override
-    public Set<UUID> getOwnerUniqueId() {
-        //TODO: Waiting on PlotMe
-        return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
-    }
-
-    @Override
-    public Set<String> getOwnerName() {
-        if (isArea()) return new HashSet<String>(Arrays.asList(plot.owner));
+    public Set<OfflinePlayer> getOwners() {
+        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(Bukkit.getOfflinePlayer(plot.owner)));
         throw new InvalidAreaException();
     }
 

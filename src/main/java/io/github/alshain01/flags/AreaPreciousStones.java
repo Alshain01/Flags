@@ -35,6 +35,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.util.Vector;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -140,14 +141,8 @@ final class AreaPreciousStones extends AreaRemovable implements Cuboid, Renameab
     }
 
     @Override
-    public Set<UUID> getOwnerUniqueId() {
-        //TODO: Waiting on PreciousStones
-        return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
-    }
-
-    @Override
-    public Set<String> getOwnerName() {
-        if (isArea()) return new HashSet<String>(Arrays.asList(field.getOwner()));
+    public Set<OfflinePlayer> getOwners() {
+        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(Bukkit.getOfflinePlayer(field.getOwner())));
         throw new InvalidAreaException();
     }
 

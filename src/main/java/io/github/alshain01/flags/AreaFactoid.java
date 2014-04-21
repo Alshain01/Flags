@@ -24,6 +24,7 @@
 
 package io.github.alshain01.flags;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -40,7 +41,9 @@ import me.tabinol.factoid.playercontainer.PlayerContainerPlayer;
 import me.tabinol.factoid.playercontainer.PlayerContainerType;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -116,23 +119,11 @@ final class AreaFactoid extends AreaRemovable implements Identifiable, Nameable,
     }
 
     @Override
-    public Set<String> getOwnerName() {
+    public Collection<OfflinePlayer> getOwners() {
         if (isArea()) {
-            Set<String> owners = new HashSet<String>();
+            Set<OfflinePlayer> owners = new HashSet<OfflinePlayer>();
             if (land.getOwner().getContainerType() == PlayerContainerType.PLAYER) {
-                owners.add(((PlayerContainerPlayer)land.getOwner()).getPlayerName());
-            }
-            return owners;
-        }
-        throw new InvalidAreaException();
-    }
-
-    @Override
-    public Set<UUID> getOwnerUniqueId() {
-        if (isArea()) {
-            Set<UUID> owners = new HashSet<UUID>();
-            if (land.getOwner().getContainerType() == PlayerContainerType.PLAYER) {
-                owners.add(((PlayerContainerPlayer) land.getOwner()).getMinecraftUUID());
+                owners.add(Bukkit.getOfflinePlayer(((PlayerContainerPlayer) land.getOwner()).getMinecraftUUID()));
             }
             return owners;
         }

@@ -36,7 +36,9 @@ import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
 import net.t00thpick1.residence.api.ResidenceAPI;
 import net.t00thpick1.residence.api.areas.ResidenceArea;
 import net.t00thpick1.residence.api.events.ResidenceAreaDeletedEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -120,15 +122,9 @@ final class AreaResidence extends AreaRemovable implements Identifiable, Cuboid,
             throw new InvalidAreaException();
     }
 
-    @Override
-    public Set<UUID> getOwnerUniqueId() {
-        //TODO: Waiting on Residence
-        return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
-    }
-
 	@Override
-	public Set<String> getOwnerName() {
-        if (isArea()) return new HashSet<String>(Arrays.asList(residence.getOwner()));
+	public Set<OfflinePlayer> getOwners() {
+        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(Bukkit.getOfflinePlayer(residence.getOwner())));
         throw new InvalidAreaException();
     }
 

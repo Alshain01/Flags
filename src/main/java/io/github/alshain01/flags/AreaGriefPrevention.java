@@ -24,10 +24,7 @@
 
 package io.github.alshain01.flags;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.area.*;
@@ -40,6 +37,7 @@ import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -125,18 +123,11 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
     }
 
     @Override
-    public Set<String> getOwnerName() {
-        if (isArea()) return new HashSet<String>(Arrays.asList(claim.getOwnerName()));
+    public Collection<OfflinePlayer> getOwners() {
+        //TODO: Waiting on GriefPrevention to update to UUID
+        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(Bukkit.getOfflinePlayer(claim.getOwnerName())));
         throw new InvalidAreaException();
     }
-
-    @Override
-    public Set<UUID> getOwnerUniqueId() {
-        //TODO: Waiting on GriefPrevention
-        return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
-    }
-
-
 
 	@Override
 	public boolean isAdminArea() {

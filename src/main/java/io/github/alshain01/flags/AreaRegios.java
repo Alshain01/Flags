@@ -39,6 +39,7 @@ import net.jzx7.regiosapi.regions.Region;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -102,14 +103,8 @@ final class AreaRegios extends AreaRemovable implements Nameable, Ownable {
 	}
 
     @Override
-    public Set<UUID> getOwnerUniqueId() {
-        //TODO: Waiting on Regios
-        return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
-    }
-
-	@Override
-	public Set<String> getOwnerName() {
-        if (isArea()) return new HashSet<String>(Arrays.asList(region.getOwner()));
+	public Set<OfflinePlayer> getOwners() {
+        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(Bukkit.getOfflinePlayer(region.getOwner())));
         throw new InvalidAreaException();
     }
 

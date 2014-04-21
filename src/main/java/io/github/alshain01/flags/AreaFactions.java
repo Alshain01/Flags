@@ -34,7 +34,9 @@ import java.util.UUID;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.area.Renameable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
 import com.massivecraft.factions.entity.BoardColls;
@@ -108,15 +110,9 @@ final class AreaFactions extends AreaRemovable implements Renameable, Ownable {
     }
 
     @Override
-    public Set<UUID> getOwnerUniqueId() {
-        //TODO Waiting on Factions
-        return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
-    }
-
-	@Override
-	public Set<String> getOwnerName() {
-        if (isArea()) return new HashSet<String>(Arrays.asList(faction.getLeader().getName()));
-        throw new InvalidAreaException();
+    public Set<OfflinePlayer> getOwners() {
+        //TODO Waiting on Factions to update to UUID
+        return new HashSet<OfflinePlayer>(Arrays.asList(Bukkit.getOfflinePlayer(faction.getLeader().getName())));
     }
 
 	@Override

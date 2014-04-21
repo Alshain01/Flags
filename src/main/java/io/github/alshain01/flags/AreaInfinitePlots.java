@@ -35,6 +35,7 @@ import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.area.Renameable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
 import uk.co.jacekk.bukkit.infiniteplots.InfinitePlots;
@@ -109,15 +110,9 @@ final class AreaInfinitePlots extends AreaRemovable implements Renameable, Ownab
     }
 
     @Override
-    public Set<UUID> getOwnerUniqueId()
+    public Set<OfflinePlayer> getOwners()
     {
-        if (isArea()) return new HashSet<UUID>(Arrays.asList(plot.getAdmin().getUniqueId()));
-        throw new InvalidAreaException();
-    }
-
-	@Override
-	public Set<String> getOwnerName() {
-        if (isArea()) return new HashSet<String>(Arrays.asList(plot.getAdmin().getName()));
+        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(plot.getAdmin()));
         throw new InvalidAreaException();
     }
 
