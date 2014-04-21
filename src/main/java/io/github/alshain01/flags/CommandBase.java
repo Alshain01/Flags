@@ -7,14 +7,12 @@ import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.area.Subdividable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 abstract class CommandBase {
     protected enum CommandLocation {
@@ -63,7 +61,7 @@ abstract class CommandBase {
                         .replace("{Type}", Message.FLAG.get().toLowerCase());
 
                 if(a instanceof Ownable) {
-                    message = message.replace("{OwnerName}", ((Ownable)a).getOwnerName().toArray()[0].toString());
+                    message = message.replace("{OwnerName}", new ArrayList<OfflinePlayer>(((Ownable) a).getOwners()).get(0).getName());
                 } else {
                     message = message.replace("{OwnerName}", "an administrator");
                 }
@@ -113,7 +111,7 @@ abstract class CommandBase {
                         .replace("{Type}", Message.BUNDLE.get().toLowerCase());
 
                 if(area instanceof Ownable) {
-                    message = message.replace("{OwnerName}", ((Ownable)area).getOwnerName().toArray()[0].toString());
+                    message = message.replace("{OwnerName}", new ArrayList<OfflinePlayer>(((Ownable) area).getOwners()).get(0).getName());
                 } else {
                     message = message.replace("{OwnerName}", "an administrator");
                 }

@@ -38,9 +38,7 @@ import io.github.alshain01.flags.api.event.FlagMessageChangedEvent;
 import io.github.alshain01.flags.api.event.FlagPermissionTrustChangedEvent;
 import io.github.alshain01.flags.api.event.FlagPlayerTrustChangedEvent;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import net.milkbowl.vault.economy.EconomyResponse;
 
@@ -48,8 +46,8 @@ import org.apache.commons.lang.Validate;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
@@ -167,7 +165,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
             }
 
             if(this instanceof Ownable) {
-                message = message.replace("{Owner}", ((Ownable) this).getOwnerName().toArray()[0].toString());
+                message = message.replace("{Owner}", new ArrayList<OfflinePlayer>(((Ownable) this).getOwners()).get(0).getName());
             } else {
                 message = message.replace("{Owner}", "the administrator");
             }
@@ -355,8 +353,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
     public final boolean hasTrust(Flag flag, Player player) {
         Validate.notNull(flag);
         Validate.notNull(player);
-
-        if (this instanceof Ownable && (((Ownable)this).getOwnerName().contains(player.getName().toLowerCase()))) { return true; }
+        if (this instanceof Ownable && (((Ownable)this).getOwners().contains(Bukkit.getOfflinePlayer(player.getUniqueId())))) { return true; }
 
         Map<UUID, String> tl = getPlayerTrustList(flag);
         if(tl.containsKey(player.getUniqueId())) {
@@ -377,8 +374,8 @@ abstract class AreaBase implements Area, Comparable<Area> {
     public boolean hasFlagPermission(Permissible p) {
         Validate.notNull(p);
 
-        if (this instanceof Ownable && p instanceof HumanEntity
-                && ((Ownable)this).getOwnerName().contains(((HumanEntity) p).getName())) {
+        if (this instanceof Ownable && p instanceof Player
+                && (((Ownable)this).getOwners().contains(Bukkit.getOfflinePlayer(((Player)p).getUniqueId())))) {
             return p.hasPermission("flags.command.flag.set");
         }
 
@@ -394,8 +391,8 @@ abstract class AreaBase implements Area, Comparable<Area> {
 	public boolean hasBundlePermission(Permissible p) {
         Validate.notNull(p);
 
-		if (this instanceof Ownable && p instanceof HumanEntity
-				&& ((Ownable)this).getOwnerName().contains(((HumanEntity) p).getName())) {
+		if (this instanceof Ownable && p instanceof Player
+                && (((Ownable)this).getOwners().contains(Bukkit.getOfflinePlayer(((Player)p).getUniqueId())))) {
 			return p.hasPermission("flags.command.bundle.set");
 		}
 
