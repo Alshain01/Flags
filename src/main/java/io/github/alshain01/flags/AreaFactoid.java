@@ -36,6 +36,7 @@ import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
 
 import me.tabinol.factoid.Factoid;
 import me.tabinol.factoid.event.LandDeleteEvent;
+import me.tabinol.factoid.exceptions.FactoidLandException;
 import me.tabinol.factoid.lands.Land;
 import me.tabinol.factoid.playercontainer.PlayerContainerPlayer;
 import me.tabinol.factoid.playercontainer.PlayerContainerType;
@@ -51,7 +52,7 @@ import org.bukkit.event.Listener;
 /**
  * Class for creating areas to manage a Factoid Land.
  */
-final class AreaFactoid extends AreaRemovable implements Identifiable, Nameable, Ownable, Subdividable {
+final class AreaFactoid extends AreaRemovable implements Identifiable, Renameable, Ownable, Subdividable {
     private Land land;
 
     /**
@@ -116,6 +117,15 @@ final class AreaFactoid extends AreaRemovable implements Identifiable, Nameable,
     public String getName() {
         if (isArea()) return land.getName();
         throw new InvalidAreaException();
+    }
+
+    @Override
+    public void setName(String name) {
+        try {
+            Factoid.getLands().renameLand(land.getName(), name);
+        } catch (FactoidLandException ex) {
+            Logger.warning("Invalid Factiod Land Rename Action Detected.");
+        }
     }
 
     @Override
