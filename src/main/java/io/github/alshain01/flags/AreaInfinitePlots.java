@@ -111,13 +111,13 @@ final class AreaInfinitePlots extends AreaRemovable implements Renameable, Ownab
     @Override
     public Set<UUID> getOwnerUniqueId()
     {
-        //TODO: Waiting on InfinitePlots
-        return new HashSet<UUID>(Arrays.asList(UUID.randomUUID()));
+        if (isArea()) return new HashSet<UUID>(Arrays.asList(plot.getAdmin().getUniqueId()));
+        throw new InvalidAreaException();
     }
 
 	@Override
 	public Set<String> getOwnerName() {
-        if (isArea()) return new HashSet<String>(Arrays.asList(plot.getAdmin()));
+        if (isArea()) return new HashSet<String>(Arrays.asList(plot.getAdmin().getName()));
         throw new InvalidAreaException();
     }
 
