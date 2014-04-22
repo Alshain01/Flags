@@ -39,7 +39,6 @@ import io.github.alshain01.flags.api.event.FlagPermissionTrustChangedEvent;
 import io.github.alshain01.flags.api.event.FlagPlayerTrustChangedEvent;
 
 import java.util.*;
-import java.util.jar.Attributes;
 
 import net.milkbowl.vault.economy.EconomyResponse;
 
@@ -406,9 +405,9 @@ abstract class AreaBase implements Area, Comparable<Area> {
             if (this instanceof Subdividable) {
                 if (((Subdividable) this).isSubdivision()) {
                     if (((Subdividable) area).isSubdivision() && ((Subdividable) area).getParent().getId().equals(((Subdividable) this).getParent().getId()))
-                        return AreaRelationship.SISTER_SUBDIVISION;
+                        return AreaRelationship.SIBLING;
                     if (((Subdividable) this).getParent().getId().equals(area.getId()))
-                        return AreaRelationship.SUBDIVISION;
+                        return AreaRelationship.CHILD;
                 } else if (((Subdividable) area).isSubdivision() && ((Subdividable) area).getParent().getId().equals(getId())) {
                     return AreaRelationship.PARENT;
                 }

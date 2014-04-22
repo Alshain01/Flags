@@ -16,7 +16,7 @@ import java.util.UUID;
 @SuppressWarnings("unused")
 public interface Area extends Comparable<Area> {
     public enum AreaRelationship {
-        EQUAL, PARENT, SUBDIVISION, SISTER_SUBDIVISION, UNRELATED;
+        EQUAL, PARENT, CHILD, SIBLING, UNRELATED;
     }
 
     /**
@@ -240,7 +240,7 @@ public interface Area extends Comparable<Area> {
 
     /**
      * Returns the relationship of the provided area to the existing area
-     * This is true such that this is a (PARENT, SUBDIVISION, ETC.) of the provided area.
+     * This is true such that this is a (PARENT, CHILD, ETC.) of the provided area.
      *
      * @param area the area to check the relationship.
      * @return the relationship of the provided area to this one.

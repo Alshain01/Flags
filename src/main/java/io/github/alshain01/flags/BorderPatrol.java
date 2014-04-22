@@ -133,7 +133,7 @@ final class BorderPatrol implements Listener {
 			// If they are the same area, don't bother.
 			if (areaFrom.getRelationship(areaTo) != AreaRelationship.EQUAL) {
                 PlayerChangedAreaEvent event;
-                if((areaFrom.getRelationship(areaTo) == AreaRelationship.SUBDIVISION && ((Subdividable)areaFrom).isInherited()) //AreaFrom is a subdivision of AreaTo and is inheriting
+                if((areaFrom.getRelationship(areaTo) == AreaRelationship.CHILD && ((Subdividable)areaFrom).isInherited()) //AreaFrom is a subdivision of AreaTo and is inheriting
                         || (areaFrom.getRelationship(areaTo) == AreaRelationship.PARENT && ((Subdividable)areaTo).isInherited())) { //AreaTo is a subdivision of AreaFrom and is inheriting
                     //If there is a subdivsion and it is inheriting, call the parent event only.
                     event = new PlayerChangedAreaEvent(e.getPlayer(), areaTo, areaFrom);
