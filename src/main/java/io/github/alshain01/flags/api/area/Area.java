@@ -15,6 +15,10 @@ import java.util.Map;
 import java.util.UUID;
 @SuppressWarnings("unused")
 public interface Area extends Comparable<Area> {
+    public enum AreaRelationship {
+        EQUAL, PARENT, SUBDIVISION, SISTER_SUBDIVISION, UNRELATED;
+    }
+
     /**
      * Returns the system type that this object belongs to.
      *
@@ -235,11 +239,17 @@ public interface Area extends Comparable<Area> {
     public boolean hasBundlePermission(Permissible p);
 
     /**
-     * 0 if the the areas are the same
-     * -1 if the area is a subdivision of the provided area.
-     * 1 if the area is a parent of the provided area.
-     * 2 if they are "sister" subdivisions.
-     * 3 if they are completely unrelated.
+     * Returns the relationship of the provided area to the existing area
+     * This is true such that this is a (PARENT, SUBDIVISION, ETC.) of the provided area.
+     *
+     * @param area the area to check the relationship.
+     * @return the relationship of the provided area to this one.
+     */
+    public AreaRelationship getRelationship(Area area);
+
+    /**
+     * Returns an alphabetic comparison based on the area name
+     * or ID if name is unsupported.
      *
      * @return The value of the comparison.
      */

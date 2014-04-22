@@ -39,6 +39,7 @@ import io.github.alshain01.flags.api.event.FlagPermissionTrustChangedEvent;
 import io.github.alshain01.flags.api.event.FlagPlayerTrustChangedEvent;
 
 import java.util.*;
+import java.util.jar.Attributes;
 
 import net.milkbowl.vault.economy.EconomyResponse;
 
@@ -395,25 +396,36 @@ abstract class AreaBase implements Area, Comparable<Area> {
 	}
 
     @Override
-    final public int compareTo(@Nonnull Area a) {
-        Validate.notNull(a);
-        if ((a.getClass().equals(this.getClass()))) {
-            if (getId().equals(a.getId())) {
-                return 0;
+    final public AreaRelationship getRelationship(Area area) {
+        Validate.notNull(area);
+        if ((area.getClass().equals(this.getClass()))) {
+            if (getId().equals(area.getId())) {
+                return AreaRelationship.EQUAL;
             }
 
             if (this instanceof Subdividable) {
                 if (((Subdividable) this).isSubdivision()) {
-                    if (((Subdividable) a).isSubdivision() && ((Subdividable) a).getParent().getId().equals(((Subdividable) this).getParent().getId()))
-                        return 2;
-                    if (((Subdividable) this).getParent().getId().equals(a.getId()))
-                        return -1;
-                } else if (((Subdividable) a).isSubdivision() && ((Subdividable) a).getParent().getId().equals(getId())) {
-                    return 1;
+                    if (((Subdividable) area).isSubdivision() && ((Subdividable) area).getParent().getId().equals(((Subdividable) this).getParent().getId()))
+                        return AreaRelationship.SISTER_SUBDIVISION;
+                    if (((Subdividable) this).getParent().getId().equals(area.getId()))
+                        return AreaRelationship.SUBDIVISION;
+                } else if (((Subdividable) area).isSubdivision() && ((Subdividable) area).getParent().getId().equals(getId())) {
+                    return AreaRelationship.PARENT;
                 }
             }
         }
-        return 3;
+        return AreaRelationship.UNRELATED;
+    }
+
+    @Override
+    final public int compareTo(@Nonnull Area area) {
+        Validate.notNull(area);
+
+        if (this instanceof Nameable) {
+            if (area instanceof Nameable) return ((Nameable) this).getName().compareTo(((Nameable) area).getName());
+            return ((Nameable) this).getName().compareTo(area.getId());
+        } else if (area instanceof Nameable) return this.getId().compareTo(((Nameable) area).getName());
+        else return this.getId().compareTo(area.getId());
     }
 
     /*
