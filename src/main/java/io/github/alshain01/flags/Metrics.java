@@ -28,11 +28,14 @@
 package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.api.FlagsAPI;
+import io.github.alshain01.flags.api.event.PlayerChangedAreaEvent;
+import io.github.alshain01.flags.api.event.PlayerChangedUniqueAreaEvent;
 import org.bukkit.Bukkit;
 //import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.lang.System;
@@ -60,9 +63,9 @@ static void StartFlagsMetrics(Plugin plugin) {
     try {
         final Metrics metrics = new Metrics(plugin);
 
-            /*
-             * Land System Graph
-             */
+        /*
+         * Land System Graph
+         */
         final Graph systemGraph = metrics.createGraph("Land System");
         systemGraph.addPlotter(new Metrics.Plotter(FlagsAPI.getAreaPlugin().getDisplayName()) {
             @Override
@@ -71,9 +74,9 @@ static void StartFlagsMetrics(Plugin plugin) {
             }
         });
 
-			/*
-			 * Land System by PlayersGraph
-			 */
+        /*
+         * Land System by PlayersGraph
+         */
         final Graph systemPlayersGraph = metrics.createGraph("Land System by Players");
         systemPlayersGraph.addPlotter(new Metrics.Plotter(FlagsAPI.getAreaPlugin().getDisplayName()) {
             @Override
@@ -82,9 +85,9 @@ static void StartFlagsMetrics(Plugin plugin) {
             }
         });
 
-            /*
-             * Database Type
-             */
+        /*
+         * Database Type
+         */
         final Graph dbGraph = metrics.createGraph("Data Storage Type");
         dbGraph.addPlotter(new Metrics.Plotter(Flags.getDataStore().getType().getName()) {
             @Override
@@ -93,10 +96,10 @@ static void StartFlagsMetrics(Plugin plugin) {
             }
         });
 
-            /*
-			 * Border Patrol Status
-			 */
-        final Graph bpGraph = metrics.createGraph("BorderPatrol Enabled");
+        /*
+         * Border Patrol Status
+         */
+        Graph bpGraph = metrics.createGraph("BorderPatrol Enabled");
         bpGraph.addPlotter(new Metrics.Plotter(Flags.getBorderPatrolEnabled() ? "Enabled" : "Disabled") {
             @Override
             public int getValue() {
@@ -104,9 +107,25 @@ static void StartFlagsMetrics(Plugin plugin) {
             }
         });
 
-   			/*
-			 * Economy Graph
-			 */
+        if(Flags.getBorderPatrolEnabled()) {
+            bpGraph = metrics.createGraph("BorderPatrol Listeners");
+            // Get the listeners for both events
+            HashSet<RegisteredListener> registeredListeners = new HashSet<RegisteredListener>(Arrays.asList(PlayerChangedAreaEvent.getHandlerList().getRegisteredListeners()));
+            registeredListeners.addAll(Arrays.asList(PlayerChangedUniqueAreaEvent.getHandlerList().getRegisteredListeners()));
+
+            for (final RegisteredListener listener : registeredListeners) {
+                bpGraph.addPlotter(new Metrics.Plotter(listener.getPlugin().getName()) {
+                    @Override
+                    public int getValue() {
+                        return 1;
+                    }
+                });
+            }
+        }
+
+        /*
+         * Economy Graph
+         */
         final Graph econGraph = metrics.createGraph("Economy Enabled");
         econGraph.addPlotter(new Metrics.Plotter(Flags.getEconomy() != null ? "No" : "Yes") {
             @Override
@@ -115,9 +134,9 @@ static void StartFlagsMetrics(Plugin plugin) {
             }
         });
 
-			/*
-			 * Flag groups installed
-			 */
+        /*
+         * Flag groups installed
+         */
         final Graph groupGraph = metrics.createGraph("Flag Groups");
         for (final String group : FlagsAPI.getRegistrar().getFlagGroups()) {
             groupGraph.addPlotter(new Metrics.Plotter(group) {
