@@ -243,9 +243,7 @@ final public class Flags extends JavaPlugin {
 		@Override
 		public void run() {
 			// Check the handlers to see if anything is registered for Border Patrol
-			final RegisteredListener[] listeners = PlayerChangedAreaEvent.getHandlerList().getRegisteredListeners();
-            final RegisteredListener[] ulisteners = PlayerChangedUniqueAreaEvent.getHandlerList().getRegisteredListeners();
-			if (borderPatrol && (listeners.length == 0 && ulisteners.length == 0)) {
+			if (borderPatrol && (PlayerChangedAreaEvent.getHandlerList().getRegisteredListeners().length == 0)) {
                 borderPatrol = false;
                 PlayerMoveEvent.getHandlerList().unregister(Bukkit.getPluginManager().getPlugin("Flags"));
 				Logger.info("No plugins have registered for Flags' Border Patrol listener. Unregistering PlayerMoveEvent.");

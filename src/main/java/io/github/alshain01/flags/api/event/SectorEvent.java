@@ -8,8 +8,7 @@ import org.bukkit.event.HandlerList;
  * All Sector Events.
  */
 @SuppressWarnings("unused")
-public class SectorEvent extends Event {
-    private static final HandlerList handlers = new HandlerList();
+public abstract class SectorEvent extends Event {
     private final Sector sector;
 
     /**
@@ -29,19 +28,5 @@ public class SectorEvent extends Event {
      */
     public Sector getSector() {
         return sector;
-    }
-
-    /**
-     * Static HandlerList for SectorEvent
-     *
-     * @return A list of event handlers, stored per-event.
-     */
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
     }
 }

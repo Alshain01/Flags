@@ -110,10 +110,7 @@ static void StartFlagsMetrics(Plugin plugin) {
         if(Flags.getBorderPatrolEnabled()) {
             bpGraph = metrics.createGraph("BorderPatrol Listeners");
             // Get the listeners for both events
-            HashSet<RegisteredListener> registeredListeners = new HashSet<RegisteredListener>(Arrays.asList(PlayerChangedAreaEvent.getHandlerList().getRegisteredListeners()));
-            registeredListeners.addAll(Arrays.asList(PlayerChangedUniqueAreaEvent.getHandlerList().getRegisteredListeners()));
-
-            for (final RegisteredListener listener : registeredListeners) {
+            for (final RegisteredListener listener : PlayerChangedAreaEvent.getHandlerList().getRegisteredListeners()) {
                 bpGraph.addPlotter(new Metrics.Plotter(listener.getPlugin().getName()) {
                     @Override
                     public int getValue() {

@@ -9,8 +9,6 @@ import org.bukkit.event.HandlerList;
  */
 @SuppressWarnings("unused")
 public class PlayerChangedUniqueAreaEvent extends PlayerChangedAreaEvent{
-    private static final HandlerList handlers = new HandlerList();
-
     /**
      * Creates a new PlayerChangedUniqueAreaEvent
      *
@@ -23,19 +21,5 @@ public class PlayerChangedUniqueAreaEvent extends PlayerChangedAreaEvent{
      */
     public PlayerChangedUniqueAreaEvent(Player player, Area area, Area areaLeft) {
         super(player, area, areaLeft);
-    }
-
-    /**
-     * Static HandlerList for PlayerChangedAreaEvent
-     *
-     * @return A list of event handlers, stored per-event.
-     */
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
     }
 }

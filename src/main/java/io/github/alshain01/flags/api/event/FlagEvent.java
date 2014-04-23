@@ -5,8 +5,7 @@ import io.github.alshain01.flags.api.area.Area;
 import org.bukkit.event.HandlerList;
 
 @SuppressWarnings("unused")
-public class FlagEvent extends AreaEvent {
-    private static final HandlerList handlers = new HandlerList();
+public abstract class FlagEvent extends AreaEvent {
     private final Flag flag;
 
     /**
@@ -29,19 +28,5 @@ public class FlagEvent extends AreaEvent {
      */
     public Flag getFlag() {
         return flag;
-    }
-
-    /**
-     * Static HandlerList for AreaEvent
-     *
-     * @return A list of event handlers, stored per-event.
-     */
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
     }
 }
