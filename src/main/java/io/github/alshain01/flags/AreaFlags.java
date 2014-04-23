@@ -114,6 +114,26 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Ren
     }
 
     @Override
+    public Location getAdjustedGreaterCorner() {
+        if (isArea()) {
+            Location corner = sector.getGreaterCorner().getLocation();
+            corner.setY(256F);  // Maximum height
+            return corner;
+        }
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public Location getAdjustedLesserCorner() {
+        if (isArea()) {
+            Location corner = sector.getLesserCorner().getLocation();
+            corner.setY(sector.getGreaterCorner().getX() - sector.getDepth());
+            return corner;
+        }
+        throw new InvalidAreaException();
+    }
+
+    @Override
     public boolean isSubdivision() {
         if (isArea()) return sector.getParentID() != null;
         throw new InvalidAreaException();

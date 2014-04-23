@@ -230,4 +230,14 @@ final class AreaPreciousStones extends AreaRemovable implements Cuboid, Renameab
         }
         throw new InvalidAreaException();
     }
+
+    @Override
+    public Location getAdjustedGreaterCorner() {
+        return getGreaterCorner(); // True cuboid
+    }
+
+    @Override
+    public Location getAdjustedLesserCorner() {
+        return getLesserCorner(); // True cuboid
+    }
 }

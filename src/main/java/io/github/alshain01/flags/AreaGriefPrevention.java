@@ -118,7 +118,23 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
 
     @Override
     public Location getLesserCorner() {
-        if (isArea()) return claim.getGreaterBoundaryCorner();
+        if (isArea()) return claim.getLesserBoundaryCorner();
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public Location getAdjustedGreaterCorner() {
+        if (isArea()) {
+            Location corner = claim.getGreaterBoundaryCorner();
+            corner.setY(corner.getY() + claim.getHeight());
+            return corner;
+        }
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public Location getAdjustedLesserCorner() {
+        if (isArea()) return claim.getLesserBoundaryCorner();
         throw new InvalidAreaException();
     }
 
