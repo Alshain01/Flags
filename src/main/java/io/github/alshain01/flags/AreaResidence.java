@@ -194,6 +194,20 @@ final class AreaResidence extends AreaRemovable implements Identifiable, Cuboid,
         throw new InvalidAreaException();
     }
 
+    @Override
+    public Location getAdjustedGreaterCorner() {
+        //TODO Check this is correct
+        if (isArea()) return residence.getHighLocation();
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public Location getAdjustedLesserCorner() {
+        //TODO Check this is correct
+        if (isArea()) return residence.getLowLocation();
+        throw new InvalidAreaException();
+    }
+
     static class Cleaner implements Listener {
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         private static void onResidenceDelete(ResidenceAreaDeletedEvent e) {
