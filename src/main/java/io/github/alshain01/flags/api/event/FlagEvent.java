@@ -2,9 +2,7 @@ package io.github.alshain01.flags.api.event;
 
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.area.Area;
-import org.bukkit.event.HandlerList;
 
-@SuppressWarnings("unused")
 public abstract class FlagEvent extends AreaEvent {
     private final Flag flag;
 
