@@ -196,16 +196,12 @@ final class AreaResidence extends AreaRemovable implements Identifiable, Cuboid,
 
     @Override
     public Location getAdjustedGreaterCorner() {
-        //TODO Check this is correct
-        if (isArea()) return residence.getHighLocation();
-        throw new InvalidAreaException();
+        return getGreaterCorner();
     }
 
     @Override
     public Location getAdjustedLesserCorner() {
-        //TODO Check this is correct
-        if (isArea()) return residence.getLowLocation();
-        throw new InvalidAreaException();
+        return getLesserCorner();
     }
 
     static class Cleaner implements Listener {

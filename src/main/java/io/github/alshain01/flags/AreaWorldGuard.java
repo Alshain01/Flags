@@ -156,21 +156,11 @@ final class AreaWorldGuard extends AreaRemovable implements Nameable, Ownable, C
 
     @Override
     public Location getAdjustedGreaterCorner() {
-        //TODO Check this is correct
-        if (isArea()) {
-            BlockVector point = region.getMaximumPoint();
-            return new Location(getWorld(), point.getBlockX(), point.getBlockY(), point.getBlockZ());
-        }
-        throw new InvalidAreaException();
+        return getGreaterCorner();
     }
 
     @Override
     public Location getAdjustedLesserCorner() {
-        //TODO Check this is correct
-        if (isArea()) {
-            BlockVector point = region.getMinimumPoint();
-            return new Location(getWorld(), point.getBlockX(), point.getBlockY(), point.getBlockZ());
-        }
-        throw new InvalidAreaException();
+        return getLesserCorner();
     }
 }
