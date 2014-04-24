@@ -63,13 +63,12 @@ final class SectorListener implements Listener {
                     Bukkit.getPluginManager().callEvent(new SectorCreateEvent(sectors.add(corner1, corner2)));
                 }
                 createQueue.remove(player.getUniqueId());
-                e.setCancelled(true);
             } else {
                 //Process the first corner
                 player.sendMessage(Message.SECTOR_STARTED.get());
                 createQueue.put(player.getUniqueId(), corner1);
-                e.setCancelled(true);
             }
+            e.setCancelled(true);
         }
     }
 
