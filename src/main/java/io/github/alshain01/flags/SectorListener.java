@@ -30,40 +30,46 @@ final class SectorListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     private void onPlayerInteractEvent(PlayerInteractEvent e) {
-        if(e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.LEFT_CLICK_BLOCK) { return; }
         Player player = e.getPlayer();
-        if(e.getItem() == null || e.getItem().getType() != tool || !player.hasPermission("flags.sector.create")) { return; }
+
+        // Verify this is a sector tool creation
+        if(e.getAction() != Action.RIGHT_CLICK_BLOCK
+                || e.getItem() == null
+                || e.getItem().getType() != tool
+                || !player.hasPermission("flags.sector.create"))
+            return;
+
         Location corner1 = e.getClickedBlock().getLocation();
 
-        if(e.getAction() == Action.LEFT_CLICK_BLOCK) {
-            //Process the first corner
-            player.sendMessage(Message.SECTOR_STARTED.get());
-            createQueue.put(player.getUniqueId(), corner1);
-            e.setCancelled(true);
-        }
+        if(e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            if(createQueue.containsKey(player.getUniqueId())) {
+                // Process the second corner and final creation
+                SectorManager sectors = FlagsAPI.getSectorManager();
+                Location corner2 = createQueue.get(player.getUniqueId());
 
-        if(e.getAction() == Action.RIGHT_CLICK_BLOCK && createQueue.containsKey(player.getUniqueId())) {
-            // Process the second corner and final creation
-            SectorManager sectors = FlagsAPI.getSectorManager();
-            Location corner2 = createQueue.get(player.getUniqueId());
-
-            if(sectors.isOverlap(corner1, corner2)) {
-                UUID parent = sectors.isContained(corner1, corner2);
-                if(parent == null || sectors.get(parent).getParentID() != null) {
-                    // Sector is only partially inside another or is inside another subdivison
-                    player.sendMessage(Message.SECTOR_OVERLAP_ERROR.get());
-                    return;
+                if (sectors.isOverlap(corner1, corner2)) {
+                    UUID parent = sectors.isContained(corner1, corner2);
+                    if (parent == null || sectors.get(parent).getParentID() != null) {
+                        // Sector is only partially inside another or is inside another subdivison
+                        player.sendMessage(Message.SECTOR_OVERLAP_ERROR.get());
+                        return;
+                    }
+                    // Create Subdivision
+                    player.sendMessage(Message.SUBSECTOR_CREATED.get());
+                    Bukkit.getPluginManager().callEvent(new SectorCreateEvent(sectors.add(corner1, corner2, parent)));
+                } else {
+                    // Create Parent Sector
+                    player.sendMessage(Message.SECTOR_CREATED.get());
+                    Bukkit.getPluginManager().callEvent(new SectorCreateEvent(sectors.add(corner1, corner2)));
                 }
-                // Create Subdivision
-                player.sendMessage(Message.SUBSECTOR_CREATED.get());
-                Bukkit.getPluginManager().callEvent(new SectorCreateEvent(sectors.add(corner1, corner2, parent)));
+                createQueue.remove(player.getUniqueId());
+                e.setCancelled(true);
             } else {
-                // Create Parent Sector
-                player.sendMessage(Message.SECTOR_CREATED.get());
-                Bukkit.getPluginManager().callEvent(new SectorCreateEvent(sectors.add(corner1, corner2)));
+                //Process the first corner
+                player.sendMessage(Message.SECTOR_STARTED.get());
+                createQueue.put(player.getUniqueId(), corner1);
+                e.setCancelled(true);
             }
-            createQueue.remove(player.getUniqueId());
-            e.setCancelled(true);
         }
     }
 
