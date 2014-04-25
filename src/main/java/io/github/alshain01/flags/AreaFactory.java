@@ -33,6 +33,7 @@ import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 /**
@@ -303,27 +304,27 @@ public enum AreaFactory {
     abstract boolean hasCuboid(Location location);
     abstract void registerCleaner(Plugin plugin);
 
-    public static Area getAreaAt(AreaPlugin type, Location location){
+    public static Area getAreaAt(@Nonnull AreaPlugin type, @Nonnull Location location){
         return valueOf(type.toString()).getCuboidAt(location);
     }
 
-    public static Area getArea(AreaPlugin type, String name) {
+    public static Area getArea(@Nonnull AreaPlugin type, @Nonnull String name) {
         return valueOf(type.toString()).getCuboidByName(name);
     }
 
-    public static boolean hasArea(AreaPlugin type, Location location) {
+    public static boolean hasArea(@Nonnull AreaPlugin type, @Nonnull Location location) {
         return valueOf(type.toString()).hasCuboid(location);
     }
 
-    public static Area getWildernessArea(World world) {
+    public static Area getWildernessArea(@Nonnull World world) {
         return new AreaWilderness(world);
     }
 
-    public static Area getDefaultArea(World world) {
+    public static Area getDefaultArea(@Nonnull World world) {
         return new AreaDefault(world);
     }
 
-    public static Class<? extends Area> getAreaClass(AreaPlugin type) {
+    public static Class<? extends Area> getAreaClass(@Nonnull AreaPlugin type) {
         return valueOf(type.toString()).getAreaClass();
     }
 
