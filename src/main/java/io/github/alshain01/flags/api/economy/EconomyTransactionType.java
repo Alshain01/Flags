@@ -33,7 +33,7 @@ public enum EconomyTransactionType {
 	WITHDRAW, DEPOSIT;
 
 	/**
-	 * @return The localized message of the transaction type.
+	 * @return the localized message of the transaction type.
 	 */
 	public String getMessage() {
 		return Message.valueOf(toString()).get();

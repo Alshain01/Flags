@@ -63,7 +63,7 @@ public class PlayerChangedAreaEvent extends AreaEvent implements Cancellable {
     /**
      * Gets the player changing areas
      *
-     * @return The Player associated with the event.
+     * @return the Player associated with the event.
      */
     public Player getPlayer() {
         return player;
@@ -72,7 +72,7 @@ public class PlayerChangedAreaEvent extends AreaEvent implements Cancellable {
 	/**
      * Gets the area the player is leaving.
      *
-	 * @return The area the player left to enter this area.
+	 * @return the area the player left to enter this area.
 	 */
 	public Area getAreaLeft() {
 		return exitArea;
@@ -81,7 +81,7 @@ public class PlayerChangedAreaEvent extends AreaEvent implements Cancellable {
     /**
      * Static HandlerList for PlayerChangedAreaEvent
      *
-     * @return A list of event handlers, stored per-event.
+     * @return a list of event handlers, stored per-event.
      */
     public static HandlerList getHandlerList() {
         return handlers;

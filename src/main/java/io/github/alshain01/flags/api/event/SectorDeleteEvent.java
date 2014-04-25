@@ -49,7 +49,7 @@ public class SectorDeleteEvent extends SectorEvent {
     /**
      * Static HandlerList for SectorDeleteEvent
      *
-     * @return A list of event handlers, stored per-event.
+     * @return a list of event handlers, stored per-event.
      */
     public static HandlerList getHandlerList() {
         return handlers;

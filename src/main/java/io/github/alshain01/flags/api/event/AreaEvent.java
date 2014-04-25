@@ -6,7 +6,7 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 
 /**
- * Event that handles all area events.
+ * Superclass for all area based events.
  */
 @SuppressWarnings("WeakerAccess")
 public abstract class AreaEvent extends Event {
@@ -25,7 +25,7 @@ public abstract class AreaEvent extends Event {
     /**
      * Gets the area involved in the event
      *
-     * @return The area associated with the event.
+     * @return the area associated with the event.
      */
     public Area getArea() {
         return area;

@@ -6,7 +6,7 @@ import org.bukkit.event.Event;
 import javax.annotation.Nonnull;
 
 /**
- * All Sector Events.
+ * Superclass for all sector based events.
  */
 public abstract class SectorEvent extends Event {
     private final Sector sector;
@@ -24,7 +24,7 @@ public abstract class SectorEvent extends Event {
     /**
      * Gets the sector being changed
      *
-     * @return The sector associated with the event.
+     * @return the sector associated with the event.
      */
     public Sector getSector() {
         return sector;

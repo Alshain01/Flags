@@ -1,6 +1,7 @@
 package io.github.alshain01.flags.api.sector;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.UUID;
@@ -12,28 +13,28 @@ public interface SectorLocation extends ConfigurationSerializable {
     /**
      * Gets the Bukkit Location for this SectorLocation
      *
-     * @return The Location
+     * @return the Location
      */
     public Location getLocation();
 
     /**
      * Gets the X Block coordinate for this SectorLocation
      *
-     * @return The X coordinate
+     * @return the X coordinate
      */
     public int getX();
 
     /**
      * Gets the Y Block coordinate for this SectorLocation
      *
-     * @return The Y coordinate
+     * @return the Y coordinate
      */
     public int getY();
 
     /**
      * Gets the Z Block coordinate for this SectorLocation
      *
-     * @return The Z coordinate
+     * @return the Z coordinate
      */
     public int getZ();
 
@@ -42,5 +43,5 @@ public interface SectorLocation extends ConfigurationSerializable {
      *
      * @return The unique ID of the world
      */
-    public UUID getWorld();
+    public World getWorld();
 }

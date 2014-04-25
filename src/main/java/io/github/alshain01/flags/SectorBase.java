@@ -1,5 +1,6 @@
 package io.github.alshain01.flags;
 
+import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.sector.Sector;
 import io.github.alshain01.flags.api.sector.SectorLocation;
 import org.bukkit.World;
@@ -59,11 +60,6 @@ final class SectorBase implements Sector {
         return sector;
     }
 
-    /**
-     * Returns a unique identifier for this sector
-     *
-     * @return The id of the sector
-     */
     @Override
     public UUID getID() {
         return id;
@@ -79,83 +75,37 @@ final class SectorBase implements Sector {
         this.name = name;
     }
 
-    /**
-     * Gets the corner where X and Z are greater.
-     *
-     * @return The location of the corner block
-     */
     @Override
     public SectorLocation getGreaterCorner() {
         return greater;
     }
 
-    /**
-     * Gets the corner where X is greater and Z is lesser.
-     *
-     * @return The location of the corner block
-     */
     @Override
     public SectorLocation getGreaterXCorner() {
-        return new SectorLocationBase(greater.getWorld(), greater.getX(), greater.getY(), lesser.getZ());
+        return new SectorLocationBase(greater.getWorld().getUID(), greater.getX(), greater.getY(), lesser.getZ());
     }
 
-    /**
-     * Gets the corner where Z is greater and X is lesser.
-     *
-     * @return The location of the corner block
-     */
     @Override
     public SectorLocation getGreaterZCorner() {
-        return new SectorLocationBase(greater.getWorld(), lesser.getX(), greater.getY(), greater.getZ());
+        return new SectorLocationBase(greater.getWorld().getUID(), lesser.getX(), greater.getY(), greater.getZ());
     }
 
-    /**
-     * Gets the corner where X and Z are lesser.
-     *
-     * @return The location of the corner block
-     */
     public SectorLocation getLesserCorner() {
         return lesser;
     }
 
-    /**
-     * Gets the world the sector is located in
-     *
-     * @return The world the sector is in
-     */
     public World getWorld() {
         return greater.getLocation().getWorld();
     }
 
-    /**
-     * Gets the depth of the sector
-     *
-     * @return The depth of the sector
-     */
     public int getDepth() { return depth; }
 
-    /**
-     * Sets the depth of the sector
-     *
-     * @param depth The new depth of the sector
-     */
     public void setDepth(int depth) { this.depth = depth; }
 
-    /**
-     * Gets the Unique ID of the Parent of this sector
-     *
-     * @return The ID of the parent sector, null if it is a parent sector
-     */
-    public UUID getParentID() {
-        return parent;
+    public Sector getParent() {
+        return FlagsAPI.getSectorManager().get(parent);
     }
 
-    /**
-     * Gets whether the sector contains the provided point
-     *
-     * @param location The location to test conatainent
-     * @return True if the sector contains the point
-     */
     public boolean contains(@Nonnull Location location) {
         int x = location.getBlockX(), z = location.getBlockZ();
 

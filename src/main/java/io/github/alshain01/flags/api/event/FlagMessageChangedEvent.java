@@ -35,15 +35,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Event for that occurs when a message is set, changed or removed.
+ * Event for that occurs when a message is set, changed, or removed.
  */
 @SuppressWarnings("unused")
 public class FlagMessageChangedEvent extends FlagEvent implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 
 	private final String message;
-	private final CommandSender sender;
-
 	private boolean cancel = false;
 
 	/**
@@ -60,22 +58,14 @@ public class FlagMessageChangedEvent extends FlagEvent implements Cancellable {
 	 * 
 	 */
 	public FlagMessageChangedEvent(@Nonnull Area area, @Nonnull Flag flag, @Nullable String message, @Nullable CommandSender sender) {
-		super(area, flag);
+		super(area, flag, sender);
 		this.message = message;
-		this.sender = sender;
 	}
-
-    /**
-     * Gets the CommandSender requesting the flag change
-     *
-     * @return The CommandSender. Null if no sender involved (caused by plug-in).
-     */
-    public CommandSender getSender() { return sender; }
 
 	/**
      * Gets the new message being set
      *
-	 * @return The new message (null if being removed).
+	 * @return the new message (null if being removed).
 	 */
 	public String getMessage() {
 		return message;
@@ -84,7 +74,7 @@ public class FlagMessageChangedEvent extends FlagEvent implements Cancellable {
     /**
      * Static HandlerList for FlagMessageChangedEvent
      *
-     * @return A list of event handlers, stored per-event.
+     * @return a list of event handlers, stored per-event.
      */
     public static HandlerList getHandlerList() {
         return handlers;

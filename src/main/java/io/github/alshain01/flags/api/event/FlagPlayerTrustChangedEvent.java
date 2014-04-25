@@ -44,7 +44,6 @@ public class FlagPlayerTrustChangedEvent extends FlagEvent implements Cancellabl
 	private static final HandlerList handlers = new HandlerList();
 
 	private final OfflinePlayer trustee;
-	private final CommandSender sender;
 	private final boolean value;
 
 	private boolean cancel = false;
@@ -62,19 +61,9 @@ public class FlagPlayerTrustChangedEvent extends FlagEvent implements Cancellabl
 	 *            The sender changing the trust.
 	 */
 	public FlagPlayerTrustChangedEvent(@Nonnull Area area, @Nonnull Flag flag, @Nonnull OfflinePlayer trustee, boolean isTrusted, @Nullable CommandSender sender) {
-		super(area, flag);
+		super(area, flag, sender);
 		this.trustee = trustee;
-		this.sender = sender;
 		value = isTrusted;
-	}
-
-    /**
-     * Gets the CommandSender requesting the trust change
-     *
-     * @return The CommandSender. Null if no sender involved (caused by plug-in).
-     */
-	public CommandSender getSender() {
-		return sender;
 	}
 
 	/**
@@ -89,7 +78,7 @@ public class FlagPlayerTrustChangedEvent extends FlagEvent implements Cancellabl
 	/**
      * Gets whether the player is gaining or losing trust
      *
-	 * @return True if the player is being added, false if being removed.
+	 * @return true if the player is being added, false if being removed.
 	 */
 	public boolean isTrusted() {
 		return value;
@@ -98,7 +87,7 @@ public class FlagPlayerTrustChangedEvent extends FlagEvent implements Cancellabl
     /**
      * Static HandlerList for FlagPlayerTrustChangedEvent
      *
-     * @return A list of event handlers, stored per-event.
+     * @return a list of event handlers, stored per-event.
      */
     public static HandlerList getHandlerList() {
         return handlers;

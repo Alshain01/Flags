@@ -44,7 +44,6 @@ public class FlagPermissionTrustChangedEvent extends FlagEvent implements Cancel
     private static final HandlerList handlers = new HandlerList();
 
     private final Permission permission;
-    private final CommandSender sender;
     private final boolean value;
 
     private boolean cancel = false;
@@ -62,25 +61,15 @@ public class FlagPermissionTrustChangedEvent extends FlagEvent implements Cancel
      *            The sender changing the trust.
      */
     public FlagPermissionTrustChangedEvent(@Nonnull Area area, @Nonnull Flag flag, @Nonnull Permission permission, boolean isTrusted, @Nullable CommandSender sender) {
-        super(area, flag);
+        super(area, flag, sender);
         this.permission = permission;
-        this.sender = sender;
         value = isTrusted;
-    }
-
-    /**
-     * Gets the CommandSender requesting the trust change
-     *
-     * @return The CommandSender. Null if no sender involved (caused by plug-in).
-     */
-    public CommandSender getSender() {
-        return sender;
     }
 
     /**
      * Gets the permission node whos trust is changing
      *
-     * @return The permission node
+     * @return the permission node
      */
     public Permission getTrustee() {
         return permission;
@@ -89,7 +78,7 @@ public class FlagPermissionTrustChangedEvent extends FlagEvent implements Cancel
     /**
      * Gets whether the player is gaining or losing trust
      *
-     * @return True if the player is being added, false if being removed.
+     * @return true if the node is being added, false if being removed.
      */
     public boolean isTrusted() {
         return value;
@@ -98,7 +87,7 @@ public class FlagPermissionTrustChangedEvent extends FlagEvent implements Cancel
     /**
      * Static HandlerList for FlagPlayerTrustChangedEvent
      *
-     * @return A list of event handlers, stored per-event.
+     * @return a list of event handlers, stored per-event.
      */
     public static HandlerList getHandlerList() {
         return handlers;

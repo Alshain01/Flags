@@ -30,33 +30,32 @@ import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
 import javax.annotation.Nonnull;
 
 /**
- * Interface that defines area types that can be subdivided into parent/child
- * subdivisions.
+ * Defines areas that can be subdivided into parent/child subdivisions.
  */
 @SuppressWarnings("unused")
 public interface Subdividable extends Area {
     /**
      * Checks if the area is a subdivision.
      *
-     * @return True if the are is a subdivision of another area.
+     * @return true if the are is a subdivision of another area.
      * @throws InvalidAreaException
      */
     public boolean isSubdivision();
 
     /**
-     * Returns whether the provided area is a parent of this area.
+     * Gets if the provided area is a parent of this area.
      *
      * @param area The potential parent area
-     * @return True if the area is a parent.
+     * @return true if the area is a parent.
      * @throws InvalidAreaException
      * @throws InvalidSubdivisionException
      */
     public boolean isParent(@Nonnull Area area);
 
     /**
-     * Returns the parent of a subdivision area
+     * Gets the parent of a subdivision area
      *
-     * @return The parent of this area
+     * @return the parent of this area
      * @throws InvalidAreaException
      * @throws InvalidSubdivisionException
      */
@@ -74,9 +73,9 @@ public interface Subdividable extends Area {
     public void transformParent();
 
     /**
-     * Checks if the subdivision is inheriting flags from it's parent
+     * Gets if the subdivision is inheriting flags from it's parent
      *
-     * @return True if the area is inheriting.
+     * @return true if the area is inheriting.
      * @throws InvalidAreaException
      * @throws InvalidSubdivisionException
      */

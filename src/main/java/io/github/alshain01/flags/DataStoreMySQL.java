@@ -526,7 +526,7 @@ final class DataStoreMySQL extends DataStore {
                 .replace("%lx%", String.valueOf(sector.getLesserCorner().getX()))
                 .replace("%ly%", String.valueOf(sector.getLesserCorner().getY()))
                 .replace("%lz%", String.valueOf(sector.getLesserCorner().getZ()))
-                .replace("%parent%", sector.getParentID() != null ? sector.getParentID().toString() : "null");
+                .replace("%parent%", sector.getParent() != null ? sector.getParent().getID().toString() : "null");
         executeStatement(insertString);
     }
 

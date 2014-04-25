@@ -29,13 +29,12 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 
 /**
- * Interface that defines area types that can be placed under siege by the land
- * management system
+ * Defines areas that can be placed under siege by the area plugin
  */
 @SuppressWarnings("unused")
 public interface Siegeable extends Area {
 	/**
-	 * Checks if the area is under siege. (Grief Prevention Feature)
+	 * Checks if the area is under siege.
 	 * 
 	 * @return true if the area is under siege
      * @throws InvalidAreaException

@@ -49,14 +49,14 @@ public enum EconomyPurchaseType {
 	}
 
 	/**
-	 * @return The localized name of the purchase type
+	 * @return the localized name of the purchase type
 	 */
 	public String getLocal() {
 		return io.github.alshain01.flags.Message.valueOf(toString()).get();
 	}
 
 	/**
-	 * @return True if the refund setting is true for this type
+	 * @return true if the refund setting is true for this type
 	 */
 	public boolean isRefundable() {
 		return refundable;

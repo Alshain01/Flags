@@ -41,7 +41,6 @@ import javax.annotation.Nullable;
 public class FlagChangedEvent extends FlagEvent implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 
-	private final CommandSender sender;
 	private final Boolean value;
 
 	private boolean cancel = false;
@@ -59,24 +58,14 @@ public class FlagChangedEvent extends FlagEvent implements Cancellable {
 	 *            The value the flag is being set to.
 	 */
 	public FlagChangedEvent(@Nonnull Area area, @Nonnull Flag flag, @Nullable CommandSender sender, @Nullable Boolean value) {
-        super(area, flag);
-		this.sender = sender;
+        super(area, flag, sender);
 		this.value = value;
 	}
-
-    /**
-     * Gets the CommandSender requesting the flag change
-     *
-     * @return The CommandSender. Null if no sender involved (caused by plug-in).
-     */
-    public CommandSender getSender() {
-        return sender;
-    }
 
 	/**
      * Gets the new value the flag is changing to
      *
-	 * @return The new value of the flag if being set, null if being removed.
+	 * @return the new value of the flag if being set, null if being removed.
 	 */
 	public Boolean getNewValue() {
 		return value;
@@ -85,7 +74,7 @@ public class FlagChangedEvent extends FlagEvent implements Cancellable {
     /**
      * Static HandlerList for FlagChangedEvent
      *
-     * @return A list of event handlers, stored per-event.
+     * @return a list of event handlers, stored per-event.
      */
     public static HandlerList getHandlerList() {
         return handlers;

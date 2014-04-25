@@ -14,9 +14,9 @@ import java.util.UUID;
 @SuppressWarnings("unused")
 public interface Sector extends ConfigurationSerializable, Comparable<Sector> {
     /**
-     * Returns a unique identifier for this sector
+     * Gets a unique identifier for this sector
      *
-     * @return The id of the sector
+     * @return the id of the sector
      */
     public UUID getID();
 
@@ -37,21 +37,21 @@ public interface Sector extends ConfigurationSerializable, Comparable<Sector> {
     /**
      * Gets the corner where X and Z are greater.
      *
-     * @return The location of the corner block
+     * @return the location of the corner block
      */
     public SectorLocation getGreaterCorner();
 
     /**
      * Gets the corner where X is greater and Z is lesser.
      *
-     * @return The location of the corner block
+     * @return the location of the corner block
      */
     public SectorLocation getGreaterXCorner();
 
     /**
      * Gets the corner where Z is greater and X is lesser.
      *
-     * @return The location of the corner block
+     * @return the location of the corner block
      */
     public SectorLocation getGreaterZCorner();
 
@@ -65,14 +65,14 @@ public interface Sector extends ConfigurationSerializable, Comparable<Sector> {
     /**
      * Gets the world the sector is located in
      *
-     * @return The world the sector is in
+     * @return the world the sector is in
      */
     public World getWorld();
 
     /**
      * Gets the depth of the sector
      *
-     * @return The depth of the sector
+     * @return the depth of the sector
      */
     public int getDepth();
 
@@ -84,36 +84,38 @@ public interface Sector extends ConfigurationSerializable, Comparable<Sector> {
     public void setDepth(int depth);
 
     /**
-     * Gets the Unique ID of the Parent of this sector
+     * Gets the parent of this sector
      *
-     * @return The ID of the parent sector, null if it is a parent sector
+     * @return the parent sector, null if it is a parent sector
      */
-    public UUID getParentID() ;
+    public Sector getParent() ;
 
     /**
-     * Gets whether the sector contains the provided point
+     * Gets if the sector contains the provided point
      *
      * @param location The location to test containment
-     * @return True if the sector contains the point
+     * @return true if the sector contains the point
      */
     public boolean contains(@Nonnull Location location);
 
     /**
-     * Gets whether the sector fully contains a provided cuboid.
+     * Gets if the sector fully contains a provided cuboid.
      *
      * @param corner1 One corner of the cuboid
      * @param corner2 The diagonal opposite of corner1
-     * @return True if the cuboid lies completely within this sector
+     * @return true if the cuboid lies completely within this sector
+     * @see #overlaps(org.bukkit.Location, org.bukkit.Location)
      */
     public boolean contains(@Nonnull Location corner1, @Nonnull Location corner2);
 
     /**
-     * Gets whether the sector overlaps the provided cuboid in any way.
+     * Gets if the sector overlaps the provided cuboid in any way.
      * Includes partial overlapping or fully contained.
      *
      * @param corner1 One corner of the cuboid
      * @param corner2 The diagonal opposite of corner1
-     * @return True if the cuboid overlaps this sector
+     * @return true if the cuboid overlaps this sector
+     * @see #contains(org.bukkit.Location, org.bukkit.Location)
      */
     public boolean overlaps(@Nonnull Location corner1, @Nonnull Location corner2);
 }

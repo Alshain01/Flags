@@ -1,18 +1,17 @@
 package io.github.alshain01.flags.api.area;
 
 import java.util.UUID;
+import io.github.alshain01.flags.api.exception.InvalidAreaException;
 
 /**
- * Interface that defines if the land system provides UUID for cuboids.
+ * Defines if the area plugin provides UUID for areas.
  */
 public interface Identifiable extends Area {
     /**
-     * Returns a unique id of the cuboid area,
-     * if supported by the cuboid system.
-     * Otherwise null.
+     * Returns a unique id of the area, if supported by the cuboid system.
      *
-     * @return The UUID for the area or null.
-     * @throws io.github.alshain01.flags.api.exception.InvalidAreaException
+     * @return the UUID for the area
+     * @throws InvalidAreaException
      */
     public UUID getUniqueId();
 }

@@ -66,10 +66,10 @@ final class SectorManagerBase implements SectorManager {
     @Override
     public void delete(@Nonnull UUID id) {
         Sector sector = get(id);
-        if(sector.getParentID() == null) {
+        if(sector.getParent() == null) {
             // Removing parent shoudld remove subdivisions
             for(Sector s : sectors.values()) {
-                if(s.getParentID().equals(id)) {
+                if(s.getParent().getID().equals(id)) {
                     Bukkit.getPluginManager().callEvent(new SectorDeleteEvent(s));
                     sectors.remove(s.getID());
                 }
@@ -92,7 +92,7 @@ final class SectorManagerBase implements SectorManager {
     public boolean deleteTopLevel(@Nonnull Location location) {
         Sector sector = getAt(location);
         if(sector == null) { return false; }
-        UUID id = sector.getParentID() != null ? sector.getParentID() : sector.getID();
+        UUID id = sector.getParent() != null ? sector.getParent().getID() : sector.getID();
         delete(id);
         return true;
     }
@@ -107,7 +107,7 @@ final class SectorManagerBase implements SectorManager {
         Sector foundParent = null;
         for(Sector s : sectors.values()) {
             if(s.contains(location)) {
-                if(s.getParentID() == null) { // Check for subdivisions
+                if(s.getParent() == null) { // Check for subdivisions
                     foundParent = s;
                 } else {
                     return s;

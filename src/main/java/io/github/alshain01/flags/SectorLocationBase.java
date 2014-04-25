@@ -3,6 +3,7 @@ package io.github.alshain01.flags;
 import io.github.alshain01.flags.api.sector.SectorLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,7 +83,7 @@ final class SectorLocationBase implements SectorLocation {
     }
 
     @Override
-    public UUID getWorld() {
-        return world;
+    public World getWorld() {
+        return Bukkit.getWorld(world);
     }
 }

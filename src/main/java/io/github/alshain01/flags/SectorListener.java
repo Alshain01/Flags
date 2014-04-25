@@ -49,7 +49,7 @@ final class SectorListener implements Listener {
 
                 if (sectors.isOverlap(corner1, corner2)) {
                     UUID parent = sectors.isContained(corner1, corner2);
-                    if (parent == null || sectors.get(parent).getParentID() != null) {
+                    if (parent == null || sectors.get(parent).getParent() != null) {
                         // Sector is only partially inside another or is inside another subdivison
                         player.sendMessage(Message.SECTOR_OVERLAP_ERROR.get());
                         return;

@@ -34,7 +34,7 @@ public enum EconomyBaseValue {
     private boolean set;
 
 	/**
-	 * @return True if the BaseFlagValue is set to this type.
+	 * @return true if the BaseFlagValue is set to this type.
 	 */
 	public boolean isSet() {
         return this.set;
@@ -50,7 +50,7 @@ public enum EconomyBaseValue {
     /**
      * Gets the enumerated value of the active setting
      *
-     * @return The current option selected
+     * @return the current option selected
      */
     public static EconomyBaseValue getSetting() {
         for(EconomyBaseValue v : EconomyBaseValue.values()) {
