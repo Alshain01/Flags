@@ -24,10 +24,8 @@
 
 package io.github.alshain01.flags;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import com.sk89q.worldedit.BlockVector;
 import io.github.alshain01.flags.api.AreaPlugin;

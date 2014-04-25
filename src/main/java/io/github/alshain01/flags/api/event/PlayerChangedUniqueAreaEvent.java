@@ -2,7 +2,8 @@ package io.github.alshain01.flags.api.event;
 
 import io.github.alshain01.flags.api.area.Area;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
+
+import javax.annotation.Nonnull;
 
 /**
  * Event that occurs when a player first enters a new area that is not an inheriting subdivision.
@@ -18,7 +19,7 @@ public class PlayerChangedUniqueAreaEvent extends PlayerChangedAreaEvent{
      * @param areaLeft
      *            The area the player is leaving
      */
-    public PlayerChangedUniqueAreaEvent(Player player, Area area, Area areaLeft) {
+    public PlayerChangedUniqueAreaEvent(@Nonnull Player player, @Nonnull Area area, @Nonnull Area areaLeft) {
         super(player, area, areaLeft);
     }
 }

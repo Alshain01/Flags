@@ -34,12 +34,13 @@ import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.util.Vector;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+
+import javax.annotation.Nonnull;
 
 /**
  * Class for creating areas to manage a PreciousStones Field.
@@ -133,7 +134,7 @@ final class AreaPreciousStones extends AreaRemovable implements Cuboid, Renameab
     }
 
     @Override
-    public void setName(String name) {
+    public void setName(@Nonnull String name) {
         if (isArea())
             field.setName(name);
         else
@@ -164,9 +165,8 @@ final class AreaPreciousStones extends AreaRemovable implements Cuboid, Renameab
     }
 
     @Override
-    public boolean isParent(Area area) {
+    public boolean isParent(@Nonnull Area area) {
         if (isSubdivision()) {
-            Validate.notNull(area);
             return area instanceof AreaPreciousStones && field.isParent()
                     && field.getChildren().contains(((AreaPreciousStones) area).field);
         }

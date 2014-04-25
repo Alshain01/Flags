@@ -2,6 +2,7 @@ package io.github.alshain01.flags.api.sector;
 
 import org.bukkit.Location;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -16,7 +17,7 @@ public interface SectorManager {
      * @param corner2 The diagonal opposite of corner 1
      * @return The new sector
      */
-    public Sector add(Location corner1, Location corner2);
+    public Sector add(@Nonnull Location corner1, @Nonnull Location corner2);
 
     /**
      * Adds a new subdivision sector
@@ -26,14 +27,14 @@ public interface SectorManager {
      * @param parent The UUID of the parent claim
      * @return The new sector
      */
-    public Sector add(Location corner1, Location corner2, UUID parent);
+    public Sector add(@Nonnull Location corner1, @Nonnull Location corner2, @Nonnull UUID parent);
 
     /**
      * Deletes a sector
      *
      * @param id The UUID of the sector to delete
      */
-    public void delete(UUID id);
+    public void delete(@Nonnull UUID id);
 
     /**
      * Deletes a sector by location
@@ -41,7 +42,7 @@ public interface SectorManager {
      * @param location A location contained within the sector to delete
      * @return true if successfully removed.
      */
-    public boolean delete(Location location);
+    public boolean delete(@Nonnull Location location);
 
     /**
      * Removes the top level csector and all subsectors
@@ -49,7 +50,7 @@ public interface SectorManager {
      * @param location A location contained within the sector to delete
      * @return true if successfully removed
      */
-    public boolean deleteTopLevel(Location location);
+    public boolean deleteTopLevel(@Nonnull Location location);
 
     /**
      * Gets sector by UUID
@@ -57,7 +58,7 @@ public interface SectorManager {
      * @param uid The UUID of the sector to retrieve
      * @return the sector
      */
-    public Sector get(UUID uid);
+    public Sector get(@Nonnull UUID uid);
 
     /**
      * Gets a sector at a specified location
@@ -65,7 +66,7 @@ public interface SectorManager {
      * @param location A location contained within the sector to retrieve
      * @return the sector
      */
-    public Sector getAt(Location location);
+    public Sector getAt(@Nonnull Location location);
 
     /**
      * Gets a collection of all sectors.
@@ -81,7 +82,7 @@ public interface SectorManager {
      * @param corner2 The diagonal opposite of corner 1
      * @return true if the potential sector would overlap an existing sector
      */
-    public boolean isOverlap(Location corner1, Location corner2);
+    public boolean isOverlap(@Nonnull Location corner1, @Nonnull Location corner2);
 
     /**
      * Gets if a potential sector would be fully contained by an existing sector.
@@ -90,6 +91,6 @@ public interface SectorManager {
      * @param corner2 The diagonal opposite of corner 1
      * @return true if the potential sector would be fully contained by an existing sector.
      */
-    public UUID isContained(Location corner1, Location corner2);
+    public UUID isContained(@Nonnull Location corner1, @Nonnull Location corner2);
 }
 

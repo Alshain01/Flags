@@ -101,7 +101,7 @@ public abstract class DataStore {
 
 	public abstract Set<Flag> readBundle(String bundleName);
 
-    public abstract void writeBundle(String bundleName, Set<Flag> flags);
+    public abstract void writeBundle(String bundleName, Collection<Flag> flags);
 
 	public abstract Boolean readFlag(Area area, Flag flag);
 

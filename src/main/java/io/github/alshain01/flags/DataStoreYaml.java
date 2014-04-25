@@ -311,7 +311,7 @@ final class DataStoreYaml extends DataStore {
 	}
 
     @Override
-    public final void writeBundle(String name, Set<Flag> flags) {
+    public final void writeBundle(String name, Collection<Flag> flags) {
         if (flags == null || flags.size() == 0) {
             // Delete the bundle
             bundle.set(name, null);
@@ -830,7 +830,7 @@ final class DataStoreYaml extends DataStore {
         for (ConfigurationSection config : dataconfigs) {
             for (String key : config.getKeys(true)) {
                 if (key.contains("Trust") && !key.contains("FlagPermissionTrust") && config.isList(key)) {
-                    List pList = new ArrayList<String>();
+                    List<String> pList = new ArrayList<String>();
                     for (String p : config.getStringList(key)) {
                         Logger.debug("Writing Player UUID for " + p);
                         UUID u = playerMap.get(p);

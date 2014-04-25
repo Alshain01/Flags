@@ -32,6 +32,9 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.permissions.Permission;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Event that occurs when a permission trust is added or removed.
  */
@@ -58,7 +61,7 @@ public class FlagPermissionTrustChangedEvent extends FlagEvent implements Cancel
      * @param sender
      *            The sender changing the trust.
      */
-    public FlagPermissionTrustChangedEvent(Area area, Flag flag, Permission permission, boolean isTrusted, CommandSender sender) {
+    public FlagPermissionTrustChangedEvent(@Nonnull Area area, @Nonnull Flag flag, @Nonnull Permission permission, boolean isTrusted, @Nullable CommandSender sender) {
         super(area, flag);
         this.permission = permission;
         this.sender = sender;

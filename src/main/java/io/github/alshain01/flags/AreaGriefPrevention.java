@@ -34,7 +34,6 @@ import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
 import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -42,6 +41,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
+import javax.annotation.Nonnull;
 
 /**
  * Class for creating areas to manage a Grief Prevention Claim.
@@ -158,7 +159,7 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
     }
 
     @Override
-    public boolean canSiege(Player player) {
+    public boolean canSiege(@Nonnull Player player) {
         if (isArea()) return claim.canSiege(player);
         throw new InvalidAreaException();
     }
@@ -176,9 +177,8 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
     }
 
     @Override
-    public boolean isParent(Area area) {
+    public boolean isParent(@Nonnull Area area) {
         if (isSubdivision()) {
-            Validate.notNull(area);
             return area instanceof AreaGriefPrevention && claim.parent.equals(((AreaGriefPrevention) area).claim);
         }
         throw new InvalidSubdivisionException();

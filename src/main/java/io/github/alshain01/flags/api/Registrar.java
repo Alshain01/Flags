@@ -26,10 +26,11 @@ package io.github.alshain01.flags.api;
 
 import java.util.*;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.Permissible;
+
+import javax.annotation.Nonnull;
 
 /**
  * Class for handling the registration of new flags
@@ -47,8 +48,7 @@ public final class Registrar {
 	 *            The flag to retrieve.
 	 * @return The flag requested or null if it does not exist.
 	 */
-	public Flag getFlag(String flag) {
-        Validate.notNull(flag);
+	public Flag getFlag(@Nonnull String flag) {
         return isFlag(flag) ? flagStore.get(flag).clone() : null;
 	}
 
@@ -74,11 +74,11 @@ public final class Registrar {
      *
      * @return A list of names of all the flags registered.
      */
-    public Collection<String> getPermittedFlagGroups(Permissible p) {
+    public Collection<String> getPermittedFlagGroups(@Nonnull Permissible permissible) {
         final Set<String> groups = new HashSet<String>();
 
         for (final Flag flag : flagStore.values()) {
-            if(p.hasPermission(flag.getPermission()) && !groups.contains(flag.getGroup())) {
+            if(permissible.hasPermission(flag.getPermission()) && !groups.contains(flag.getGroup())) {
                 groups.add(flag.getGroup());
             }
         }
@@ -94,8 +94,7 @@ public final class Registrar {
 	 *            The flag to retrieve.
 	 * @return The flag requested or null if it does not exist.
 	 */
-	public Flag getFlagIgnoreCase(String flag) {
-        Validate.notNull(flag);
+	public Flag getFlagIgnoreCase(@Nonnull String flag) {
 		for (final Flag f : getFlags()) {
 			if (f.getName().equalsIgnoreCase(flag)) {
 				return f.clone();
@@ -127,8 +126,7 @@ public final class Registrar {
      *
      * @return A set of all the flags in the group.
      */
-    public Collection<Flag> getGroup(String group) {
-        Validate.notNull(group);
+    public Collection<Flag> getGroup(@Nonnull String group) {
         final Set<Flag> flags = new HashSet<Flag>();
 
         for (final Flag flag : flagStore.values()) {
@@ -145,12 +143,11 @@ public final class Registrar {
      *
      * @return A set of all the flags in the group.
      */
-    public Collection<Flag> getPermittedFlagGroup(Permissible p, String group) {
-        Validate.notNull(p);
+    public Collection<Flag> getPermittedFlagGroup(@Nonnull Permissible permissible, @Nonnull String group) {
         final Set<Flag> flags = new HashSet<Flag>();
 
         for(Flag f : getGroup(group)) {
-            if(p.hasPermission(f.getPermission())) {
+            if(permissible.hasPermission(f.getPermission())) {
                 flags.add(f.clone());
             }
         }
@@ -180,13 +177,13 @@ public final class Registrar {
     /**
      * Gets a map of flag sets ordered by group that are permitted for use
      *
-     * @param p The permissibile to check
+     * @param permissible The permissibile to check
      * @return A map of all the flags for all groups.
      */
-    public Map<String, Collection<Flag>> getPermittedFlagsByGroup(Permissible p) {
+    public Map<String, Collection<Flag>> getPermittedFlagsByGroup(@Nonnull Permissible permissible) {
         Map<String, Collection<Flag>> flagMap = new HashMap<String, Collection<Flag>>();
         for(Flag f : flagStore.values()) {
-            if(p.hasPermission(f.getPermission())) {
+            if(permissible.hasPermission(f.getPermission())) {
                 if(flagMap.containsKey(f.getGroup())) {
                     Collection<Flag> flags = flagMap.get(f.getGroup());
                     flags.add(f.clone());
@@ -238,8 +235,7 @@ public final class Registrar {
      *
      * @return A set of all the flags the permissible may change
      */
-    public Collection<Flag> getPermittedFlags(Permissible permissible) {
-        Validate.notNull(permissible);
+    public Collection<Flag> getPermittedFlags(@Nonnull Permissible permissible) {
         final Set<Flag> flags = new HashSet<Flag>();
         for(final Flag flag : flagStore.values()) {
             if(permissible.hasPermission(flag.getPermission())) {
@@ -254,8 +250,7 @@ public final class Registrar {
      *
      * @return A set of all the flags the permissible may bypass
      */
-    public Collection<Flag> getBypassedFlags(Permissible permissible) {
-        Validate.notNull(permissible);
+    public Collection<Flag> getBypassedFlags(@Nonnull Permissible permissible) {
         final Set<Flag> flags = new HashSet<Flag>();
         for(final Flag flag : flagStore.values()) {
             if(permissible.hasPermission(flag.getBypassPermission())) {
@@ -272,8 +267,7 @@ public final class Registrar {
 	 *            The flag name
 	 * @return True if the flag name has been registered
 	 */
-	public boolean isFlag(String flag) {
-        Validate.notNull(flag);
+	public boolean isFlag(@Nonnull String flag) {
 		return flagStore.containsKey(flag);
 	}
 
@@ -290,11 +284,7 @@ public final class Registrar {
 	 *            The group the flag belongs in.
 	 * @return The flag if the flag was successfully registered. Null otherwise.
 	 */
-	public Flag registerFlag(String name, String description, boolean def, String group) {
-        Validate.notNull(name);
-        Validate.notNull(description);
-        Validate.notNull(group);
-
+	public Flag registerFlag(@Nonnull String name, @Nonnull String description, boolean def, @Nonnull String group) {
         if(name.length() > 36) { name = name.substring(0, 35); }
 
 		if (flagStore.containsKey(name)) {
@@ -324,14 +314,8 @@ public final class Registrar {
 	 *            The default message for wilderness areas.
 	 * @return The flag if the flag was successfully registered. Null otherwise.
 	 */
-	public Flag registerFlag(String name, String description, boolean def,
-                             String group, String areaMessage, String wildernessMessage) {
-        Validate.notNull(name);
-        Validate.notNull(description);
-        Validate.notNull(group);
-        Validate.notNull(areaMessage);
-        Validate.notNull(wildernessMessage);
-
+	public Flag registerFlag(@Nonnull String name, @Nonnull String description, boolean def,
+                             @Nonnull String group, @Nonnull String areaMessage, @Nonnull String wildernessMessage) {
         if(name.length() > 36) { name = name.substring(0, 35); }
 
 		if (flagStore.containsKey(name)) {
@@ -355,10 +339,7 @@ public final class Registrar {
      *            The group the flags belong in.
      * @return The set of flags if the flags were successfully registered. May be null or empty.
      */
-    public Collection<Flag> registerFlag(ConfigurationSection data, String group) {
-        Validate.notNull(data);
-        Validate.notNull(group);
-
+    public Collection<Flag> registerFlag(@Nonnull ConfigurationSection data, @Nonnull String group) {
         Set<Flag> flags = new HashSet<Flag>();
         for (final String f : data.getKeys(false)) {
             final ConfigurationSection flagSection = data.getConfigurationSection(f);

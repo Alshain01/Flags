@@ -6,6 +6,7 @@ import org.bukkit.World;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -74,7 +75,7 @@ final class SectorBase implements Sector {
     }
 
     @Override
-    public void setName(String name) {
+    public void setName(@Nullable String name) {
         this.name = name;
     }
 
@@ -155,7 +156,7 @@ final class SectorBase implements Sector {
      * @param location The location to test conatainent
      * @return True if the sector contains the point
      */
-    public boolean contains(Location location) {
+    public boolean contains(@Nonnull Location location) {
         int x = location.getBlockX(), z = location.getBlockZ();
 
         // Greater will always have a higher X and Y due to constructor
@@ -175,7 +176,7 @@ final class SectorBase implements Sector {
      * @param corner2 The diagonal opposite of corner1
      * @return True if the cuboid lies completely within this sector
      */
-    public boolean contains(Location corner1, Location corner2) {
+    public boolean contains(@Nonnull Location corner1, @Nonnull Location corner2) {
         return !(!corner1.getWorld().equals(this.getWorld()) || !corner2.getWorld().equals(this.getWorld()))
                 && isLesser(getGreaterCorner(corner1, corner2), greater) && isGreater (getLesserCorner(corner1, corner2), lesser);
     }
@@ -188,7 +189,7 @@ final class SectorBase implements Sector {
      * @param corner2 The diagonal opposite of corner1
      * @return True if the cuboid overlaps this sector
      */
-    public boolean overlaps(Location corner1, Location corner2) {
+    public boolean overlaps(@Nonnull Location corner1, @Nonnull Location corner2) {
         //Find the lesser/greater corners
         Sector testSector = new SectorBase(corner1, corner2, 25);
 
@@ -200,16 +201,7 @@ final class SectorBase implements Sector {
 
     @Override
     public int compareTo(@Nonnull Sector s) {
-        if(this.getID().equals(s.getID())) {
-            return 0;
-        } else if (this.getParentID() != null && this.getParentID().equals(s.getID())) {
-            return -1;
-        } else if (s.getParentID() != null && s.getParentID().equals(this.getID())) {
-            return 1;
-        } else if (this.getParentID() != null && s.getParentID() != null && s.getParentID().equals(this.getParentID())) {
-            return 2;
-        }
-        return 3;
+        return id.compareTo(s.getID());
     }
 
     /*

@@ -1,6 +1,5 @@
 package io.github.alshain01.flags;
 
-import com.massivecraft.factions.Perm;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;

@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 final class SectorManagerBase implements SectorManager {
@@ -38,7 +39,7 @@ final class SectorManagerBase implements SectorManager {
     }
 
     @Override
-    public Sector add(Location corner1, Location corner2) {
+    public Sector add(@Nonnull Location corner1, @Nonnull Location corner2) {
         UUID newID;
         do {
             newID = UUID.randomUUID();
@@ -51,7 +52,7 @@ final class SectorManagerBase implements SectorManager {
     }
 
     @Override
-    public Sector add(Location corner1, Location corner2, UUID parent) {
+    public Sector add(@Nonnull Location corner1, @Nonnull Location corner2, @Nonnull UUID parent) {
         UUID newID;
         do {
             newID = UUID.randomUUID();
@@ -63,7 +64,7 @@ final class SectorManagerBase implements SectorManager {
     }
 
     @Override
-    public void delete(UUID id) {
+    public void delete(@Nonnull UUID id) {
         Sector sector = get(id);
         if(sector.getParentID() == null) {
             // Removing parent shoudld remove subdivisions
@@ -80,7 +81,7 @@ final class SectorManagerBase implements SectorManager {
     }
 
     @Override
-    public boolean delete(Location location) {
+    public boolean delete(@Nonnull Location location) {
         Sector sector = getAt(location);
         if(sector == null) { return false; }
         delete(sector.getID());
@@ -88,7 +89,7 @@ final class SectorManagerBase implements SectorManager {
     }
 
     @Override
-    public boolean deleteTopLevel(Location location) {
+    public boolean deleteTopLevel(@Nonnull Location location) {
         Sector sector = getAt(location);
         if(sector == null) { return false; }
         UUID id = sector.getParentID() != null ? sector.getParentID() : sector.getID();
@@ -97,12 +98,12 @@ final class SectorManagerBase implements SectorManager {
     }
 
     @Override
-    public Sector get(UUID uid) {
+    public Sector get(@Nonnull UUID uid) {
         return sectors.get(uid);
     }
 
     @Override
-    public Sector getAt(Location location) {
+    public Sector getAt(@Nonnull Location location) {
         Sector foundParent = null;
         for(Sector s : sectors.values()) {
             if(s.contains(location)) {
@@ -122,7 +123,7 @@ final class SectorManagerBase implements SectorManager {
     }
 
     @Override
-    public boolean isOverlap(Location corner1, Location corner2) {
+    public boolean isOverlap(@Nonnull Location corner1, @Nonnull Location corner2) {
         for(Sector s : sectors.values()) {
             if(s.overlaps(corner1, corner2)) {
                 return true;
@@ -132,7 +133,7 @@ final class SectorManagerBase implements SectorManager {
     }
 
     @Override
-    public UUID isContained(Location corner1, Location corner2) {
+    public UUID isContained(@Nonnull Location corner1, @Nonnull Location corner2) {
         for(Sector s : sectors.values()) {
             if(s.contains(corner1, corner2)) {
                 return s.getID();

@@ -29,9 +29,7 @@ package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.event.PlayerChangedAreaEvent;
-import io.github.alshain01.flags.api.event.PlayerChangedUniqueAreaEvent;
 import org.bukkit.Bukkit;
-//import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;

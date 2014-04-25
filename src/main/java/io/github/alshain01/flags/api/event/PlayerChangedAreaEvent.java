@@ -30,6 +30,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+
 /**
  * Event that occurs when a player first enters a new area.
  */
@@ -52,7 +54,7 @@ public class PlayerChangedAreaEvent extends AreaEvent implements Cancellable {
 	 * @param areaLeft
 	 *            The area the player is leaving
 	 */
-	public PlayerChangedAreaEvent(Player player, Area area, Area areaLeft) {
+	public PlayerChangedAreaEvent(@Nonnull Player player, @Nonnull Area area, @Nonnull Area areaLeft) {
 		super(area);
 		this.player = player;
 		exitArea = areaLeft;

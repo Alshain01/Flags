@@ -27,6 +27,8 @@ package io.github.alshain01.flags.api.area;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
 
+import javax.annotation.Nonnull;
+
 /**
  * Interface that defines area types that can be subdivided into parent/child
  * subdivisions.
@@ -49,7 +51,7 @@ public interface Subdividable extends Area {
      * @throws InvalidAreaException
      * @throws InvalidSubdivisionException
      */
-    public boolean isParent(Area area);
+    public boolean isParent(@Nonnull Area area);
 
     /**
      * Returns the parent of a subdivision area

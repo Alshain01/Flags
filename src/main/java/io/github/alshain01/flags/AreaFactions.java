@@ -29,7 +29,6 @@ import io.github.alshain01.flags.api.AreaPlugin;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.area.Renameable;
@@ -43,6 +42,8 @@ import com.massivecraft.factions.entity.BoardColls;
 import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.FactionColls;
 import com.massivecraft.mcore.ps.PS;
+
+import javax.annotation.Nonnull;
 
 /**
  * Class for creating areas to manage a Factions Territory.
@@ -102,7 +103,7 @@ final class AreaFactions extends AreaRemovable implements Renameable, Ownable {
     }
 
     @Override
-    public void setName(String name) {
+    public void setName(@Nonnull String name) {
         if (isArea())
             faction.setName(name);
         else

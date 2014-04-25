@@ -41,13 +41,14 @@ import me.tabinol.factoid.lands.Land;
 import me.tabinol.factoid.playercontainer.PlayerContainerPlayer;
 import me.tabinol.factoid.playercontainer.PlayerContainerType;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
+import javax.annotation.Nonnull;
 
 /**
  * Class for creating areas to manage a Factoid Land.
@@ -120,7 +121,7 @@ final class AreaFactoid extends AreaRemovable implements Identifiable, Renameabl
     }
 
     @Override
-    public void setName(String name) {
+    public void setName(@Nonnull String name) {
         try {
             Factoid.getLands().renameLand(land.getName(), name);
         } catch (FactoidLandException ex) {
@@ -158,8 +159,7 @@ final class AreaFactoid extends AreaRemovable implements Identifiable, Renameabl
     }
 
     @Override
-    public boolean isParent(Area area) {
-        Validate.notNull(area);
+    public boolean isParent(@Nonnull Area area) {
         if (isSubdivision()) return area instanceof AreaFactoid && land.getParent().getUUID().equals(((Identifiable)area).getUniqueId());
         throw new InvalidSubdivisionException();
     }
@@ -198,7 +198,7 @@ final class AreaFactoid extends AreaRemovable implements Identifiable, Renameabl
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         private static void onRegionDelete(LandDeleteEvent e) {
             // Cleanup the database, keep the file from growing too large.
-            AreaFactoid area = new AreaFactoid(e.getLand());
+            new AreaFactoid(e.getLand()).remove();
         }
     }
 }

@@ -29,7 +29,6 @@ import io.github.alshain01.flags.api.economy.EconomyBaseValue;
 import io.github.alshain01.flags.DataStore.DataStoreType;
 import io.github.alshain01.flags.api.event.PlayerChangedAreaEvent;
 
-import io.github.alshain01.flags.api.event.PlayerChangedUniqueAreaEvent;
 import io.github.alshain01.flags.api.sector.SectorManager;
 import net.milkbowl.vault.economy.Economy;
 
@@ -39,7 +38,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;

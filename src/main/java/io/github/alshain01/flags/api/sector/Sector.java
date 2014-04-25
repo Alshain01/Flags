@@ -4,6 +4,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 /**
@@ -30,7 +32,7 @@ public interface Sector extends ConfigurationSerializable, Comparable<Sector> {
      *
      * @param name the name of the sector.
      */
-    public void setName(String name);
+    public void setName(@Nullable String name);
 
     /**
      * Gets the corner where X and Z are greater.
@@ -91,10 +93,10 @@ public interface Sector extends ConfigurationSerializable, Comparable<Sector> {
     /**
      * Gets whether the sector contains the provided point
      *
-     * @param location The location to test conatainent
+     * @param location The location to test containment
      * @return True if the sector contains the point
      */
-    public boolean contains(Location location);
+    public boolean contains(@Nonnull Location location);
 
     /**
      * Gets whether the sector fully contains a provided cuboid.
@@ -103,7 +105,7 @@ public interface Sector extends ConfigurationSerializable, Comparable<Sector> {
      * @param corner2 The diagonal opposite of corner1
      * @return True if the cuboid lies completely within this sector
      */
-    public boolean contains(Location corner1, Location corner2);
+    public boolean contains(@Nonnull Location corner1, @Nonnull Location corner2);
 
     /**
      * Gets whether the sector overlaps the provided cuboid in any way.
@@ -113,5 +115,5 @@ public interface Sector extends ConfigurationSerializable, Comparable<Sector> {
      * @param corner2 The diagonal opposite of corner1
      * @return True if the cuboid overlaps this sector
      */
-    public boolean overlaps(Location corner1, Location corner2);
+    public boolean overlaps(@Nonnull Location corner1, @Nonnull Location corner2);
 }

@@ -18,8 +18,9 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.HashSet;
 
 /**
  * Primary class for hooking into the API.
@@ -44,8 +45,8 @@ final public class FlagsAPI {
      * @param cuboidSystem The cuboid system detected
      * @param data The datastore to be used
      */
-    public static void initialize(Plugin plugin, AreaPlugin cuboidSystem, SectorManager sectors, DataStore data) {
-        Validate.notNull(data); // Prevents plugins from using this method.
+    public static void initialize(@Nonnull Plugin plugin, @Nonnull AreaPlugin cuboidSystem, @Nullable SectorManager sectors, @Nonnull DataStore data) {
+        Validate.notNull(data); // Prevents plugins from using this method since DataStore implementations are private.
         activeSystem = cuboidSystem;
         dataStore = data;
         sectorManager = sectors;
@@ -75,8 +76,8 @@ final public class FlagsAPI {
      *
      * @param data The data store to close
      */
-    public static void close(DataStore data) {
-        Validate.notNull(data); // Prevents plugins from using this method.
+    public static void close(@Nonnull DataStore data) {
+        Validate.notNull(data); // Prevents plugins from using this method since DataStore implementations are private.
         registrar = null;
         activeSystem = null;
         dataStore = null;
@@ -118,7 +119,7 @@ final public class FlagsAPI {
      *            The world for which to request the default area.
      * @return The area for setting default settings for areas in the world.
      */
-    public static Area getDefaultArea(World world) {
+    public static Area getDefaultArea(@Nonnull World world) {
         return AreaFactory.getDefaultArea(world);
     }
 
@@ -129,7 +130,7 @@ final public class FlagsAPI {
      *            The world for which to request the wilderness area.
      * @return The area for setting wilderness settings in the world.
      */
-    public static Area getWildernessArea(World world) {
+    public static Area getWildernessArea(@Nonnull World world) {
         return AreaFactory.getWildernessArea(world);
     }
 
@@ -140,7 +141,7 @@ final public class FlagsAPI {
      *            The location to request an area.
      * @return True if there is an area present at the location.
      */
-    public static boolean hasArea(Location location) {
+    public static boolean hasArea(@Nonnull Location location) {
         return AreaFactory.hasArea(activeSystem, location);
     }
 
@@ -162,8 +163,7 @@ final public class FlagsAPI {
      * @return The Area requested, may be null in cases of invalid cuboid system
      *         selection.
      */
-    public static Area getArea(String id) {
-        Validate.notNull(id);
+    public static Area getArea(@Nonnull String id) {
         return AreaFactory.getArea(activeSystem, id);
     }
 
@@ -175,8 +175,7 @@ final public class FlagsAPI {
      *            The location for which to request an area.
      * @return An area from the configured cuboid system or the wilderness area if no area is defined.
      */
-    public static Area getAreaAt(Location location) {
-        Validate.notNull(location);
+    public static Area getAreaAt(@Nonnull Location location) {
         if(!AreaFactory.hasArea(activeSystem, location)) return getWildernessArea(location.getWorld());
         Area area = AreaFactory.getAreaAt(activeSystem, location);
         if(area instanceof Subdividable && ((Subdividable) area).isSubdivision() && ((Subdividable) area).isInherited())
@@ -191,8 +190,7 @@ final public class FlagsAPI {
      *            The location for which to request an area.
      * @return An area from the configured cuboid system or the wilderness area if no area is defined.
      */
-    public static Area getAbsoluteAreaAt(Location location) {
-        Validate.notNull(location);
+    public static Area getAbsoluteAreaAt(@Nonnull Location location) {
         if(!AreaFactory.hasArea(activeSystem, location)) return getWildernessArea(location.getWorld());
         return AreaFactory.getAreaAt(activeSystem, location);
     }
@@ -222,8 +220,7 @@ final public class FlagsAPI {
      *            A string bundle name.
      * @return True if the string is a valid bundle name.
      */
-    public static boolean isBundle(String bundle) {
-        Validate.notNull(bundle);
+    public static boolean isBundle(@Nonnull String bundle) {
         return getBundleNames().contains(bundle.toLowerCase());
     }
 
@@ -235,8 +232,7 @@ final public class FlagsAPI {
      * @return A list containing the bundle. Null if it doesn't exist.
      * @throws IllegalArgumentException
      */
-    public static Collection<Flag> getBundle(String bundle) {
-        Validate.notNull(bundle);
+    public static Collection<Flag> getBundle(@Nonnull String bundle) {
         if(!isBundle(bundle)) { throw new IllegalArgumentException("The provided bundle name does not exist."); }
         return getDataStore().readBundle(bundle.toLowerCase());
     }
@@ -247,20 +243,18 @@ final public class FlagsAPI {
      * @param name
      *            The bundle name
      * @param flags
-     *            A list of flags in the bundle.
+     *            A list of flags in the bundle. May be null to remove the bundle but if not null, may not contain null elements.
+     * @throws IllegalArgumentException
      */
-    public static void setBundle(String name, Collection<Flag> flags) {
-        Validate.notNull(name);
-
+    public static void setBundle(@Nonnull String name, @Nullable Collection<Flag> flags) {
         if(flags != null) {
-            // The main variable may be null to remove
-            // but not the elements
+            // The main variable may be null to remove but not the elements
             Validate.noNullElements(flags);
         }
 
         if(name.length() > 36) { name = name.substring(0, 35); }
 
-        getDataStore().writeBundle(name, new HashSet<Flag>(flags));
+        getDataStore().writeBundle(name, flags);
         String permName = "flags.bundle." + name.toLowerCase();
         if(flags == null || flags.size() == 0) {
             if(Bukkit.getPluginManager().getPermission(permName) != null) {
@@ -273,9 +267,7 @@ final public class FlagsAPI {
         }
     }
 
-    private static void addPermission(String name) {
-        Validate.notNull(name);
-
+    private static void addPermission(@Nonnull String name) {
         Logger.debug("Registering Bundle Permissions: " + name);
         final Permission perm = new Permission("flags.bundle." + name.toLowerCase(),
                 "Grants ability to use the bundle " + name, PermissionDefault.FALSE);
@@ -300,8 +292,7 @@ final public class FlagsAPI {
      * @return True if the player is in pvp combat, false is not or if cuboid system is
      *         unsupported.
      */
-    public static boolean inPvpCombat(Player player) {
-        Validate.notNull(player);
+    public static boolean inPvpCombat(@Nonnull Player player) {
         return activeSystem == AreaPlugin.GRIEF_PREVENTION
                 && GriefPrevention.instance.dataStore.getPlayerData(player.getName()).inPvpCombat();
     }
@@ -314,7 +305,7 @@ final public class FlagsAPI {
      *
      * @return true if the version provided is compatible
      */
-    public static boolean checkAPI(String version) {
+    public static boolean checkAPI(@Nonnull String version) {
         try {
             final String bukkitVersion = Bukkit.getServer().getBukkitVersion();
             final float apiVersion = Float.valueOf(bukkitVersion.substring(0, 3));

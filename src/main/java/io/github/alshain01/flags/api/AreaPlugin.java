@@ -32,6 +32,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 
 /**
@@ -93,7 +94,7 @@ public enum AreaPlugin {
      *
      * @return The enumeration. AreaPlugin.FLAGS if no matches found.
      */
-    public static AreaPlugin getByName(String name) {
+    public static AreaPlugin getByName(@Nonnull String name) {
         for (final AreaPlugin p : AreaPlugin.values()) {
             if (name.equalsIgnoreCase(p.getName())) {
                 return p;

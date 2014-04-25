@@ -27,6 +27,8 @@ package io.github.alshain01.flags.api.event;
 import io.github.alshain01.flags.api.sector.Sector;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+
 /**
  * Event that occurs when a sector is created.
  */
@@ -40,7 +42,7 @@ public class SectorCreateEvent extends SectorEvent {
      * @param sector
      *            The sector being created.
      */
-    public SectorCreateEvent(Sector sector) {
+    public SectorCreateEvent(@Nonnull Sector sector) {
         super(sector);
     }
 

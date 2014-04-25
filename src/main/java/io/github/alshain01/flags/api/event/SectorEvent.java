@@ -2,7 +2,8 @@ package io.github.alshain01.flags.api.event;
 
 import io.github.alshain01.flags.api.sector.Sector;
 import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+
+import javax.annotation.Nonnull;
 
 /**
  * All Sector Events.
@@ -16,7 +17,7 @@ public abstract class SectorEvent extends Event {
      * @param sector
      *            The sector being changed.
      */
-    public SectorEvent(Sector sector) {
+    public SectorEvent(@Nonnull Sector sector) {
         this.sector = sector;
     }
 

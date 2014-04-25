@@ -27,6 +27,8 @@ package io.github.alshain01.flags.api.event;
 import io.github.alshain01.flags.api.sector.Sector;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+
 /**
  * Event that occurs when a sector is deleted.
  */
@@ -40,7 +42,7 @@ public class SectorDeleteEvent extends SectorEvent {
      * @param sector
      *            The sector being deleted.
      */
-    public SectorDeleteEvent(Sector sector) {
+    public SectorDeleteEvent(@Nonnull Sector sector) {
         super(sector);
     }
 

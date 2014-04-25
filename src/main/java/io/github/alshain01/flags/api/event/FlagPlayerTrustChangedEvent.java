@@ -32,6 +32,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Event that occurs when a trustee is added or removed.
  */
@@ -58,7 +61,7 @@ public class FlagPlayerTrustChangedEvent extends FlagEvent implements Cancellabl
 	 * @param sender
 	 *            The sender changing the trust.
 	 */
-	public FlagPlayerTrustChangedEvent(Area area, Flag flag, OfflinePlayer trustee, boolean isTrusted, CommandSender sender) {
+	public FlagPlayerTrustChangedEvent(@Nonnull Area area, @Nonnull Flag flag, @Nonnull OfflinePlayer trustee, boolean isTrusted, @Nullable CommandSender sender) {
 		super(area, flag);
 		this.trustee = trustee;
 		this.sender = sender;

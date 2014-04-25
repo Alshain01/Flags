@@ -2,6 +2,8 @@ package io.github.alshain01.flags.api.area;
 
 import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.Flag;
+import io.github.alshain01.flags.api.exception.InvalidAreaException;
+
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -10,13 +12,13 @@ import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.Map;
-import java.util.UUID;
+
 @SuppressWarnings("unused")
 public interface Area extends Comparable<Area> {
     public enum AreaRelationship {
-        EQUAL, PARENT, CHILD, SIBLING, UNRELATED;
+        EQUAL, PARENT, CHILD, SIBLING, UNRELATED
     }
 
     /**
@@ -37,7 +39,7 @@ public interface Area extends Comparable<Area> {
      * Gets the cuboid system's ID for this area.
      *
      * @return the area's ID in the format provided by the cuboid system.
-     * @throws io.github.alshain01.flags.api.exception.InvalidAreaException
+     * @throws InvalidAreaException
      */
     public String getId();
 
@@ -45,7 +47,7 @@ public interface Area extends Comparable<Area> {
      * Gets the world for the area.
      *
      * @return the world associated with the area.
-     * @throws io.github.alshain01.flags.api.exception.InvalidAreaException
+     * @throws InvalidAreaException
      */
     public World getWorld();
 
@@ -58,7 +60,7 @@ public interface Area extends Comparable<Area> {
      * @return The state of the flag or the inherited state of the flag from
      *         defaults if not defined.
      */
-    public boolean getState(Flag flag);
+    public boolean getState(@Nonnull Flag flag);
 
     /**
      * Gets the state of the flag for this area.
@@ -71,7 +73,7 @@ public interface Area extends Comparable<Area> {
      * @return The state of the flag or the inherited state of the flag from
      *         defaults if not defined.
      */
-    public Boolean getState(Flag flag, boolean absolute);
+    public Boolean getState(@Nonnull Flag flag, boolean absolute);
 
     /**
      * Sets the state of the flag for this area.
@@ -85,7 +87,7 @@ public interface Area extends Comparable<Area> {
      *            no associated player or console.
      * @return False if the event was canceled.
      */
-    public boolean setState(Flag flag, Boolean state, CommandSender sender);
+    public boolean setState(@Nonnull Flag flag, @Nullable Boolean state, @Nullable CommandSender sender);
 
     /**
      * Gets the message associated with a player flag. Translates the color
@@ -95,7 +97,7 @@ public interface Area extends Comparable<Area> {
      *            The flag to retrieve the message for.
      * @return The message associated with the flag.
      */
-    public String getMessage(Flag flag);
+    public String getMessage(@Nonnull Flag flag);
 
     /**
      * Gets the message associated with a player flag and parses {AreaType}, {AreaName},
@@ -107,7 +109,7 @@ public interface Area extends Comparable<Area> {
      *            The player who's name will be inserted into the message.
      * @return The message associated with the flag.
      */
-    public String getMessage(Flag flag, String playerName);
+    public String getMessage(@Nonnull Flag flag, @Nonnull String playerName);
 
     /**
      * Gets the message associated with a player flag.
@@ -119,7 +121,7 @@ public interface Area extends Comparable<Area> {
      *            and {World} and translate color codes
      * @return The message associated with the flag.
      */
-    public String getMessage(Flag flag, boolean parse);
+    public String getMessage(@Nonnull Flag flag, boolean parse);
 
     /**
      * Sets or removes the message associated with a player flag.
@@ -133,7 +135,7 @@ public interface Area extends Comparable<Area> {
      *            or console.
      * @return True if successful
      */
-    public boolean setMessage(Flag flag, String message, CommandSender sender);
+    public boolean setMessage(@Nonnull Flag flag, @Nullable String message, @Nullable CommandSender sender);
 
     /**
      * Gets a list of trusted players
@@ -142,7 +144,7 @@ public interface Area extends Comparable<Area> {
      *            The flag to retrieve the trust list for.
      * @return The list of players
      */
-    public Collection<OfflinePlayer> getPlayerTrust(Flag flag);
+    public Collection<OfflinePlayer> getPlayerTrust(@Nonnull Flag flag);
 
     /**
      * Gets a list of trusted permissions
@@ -151,7 +153,7 @@ public interface Area extends Comparable<Area> {
      *            The flag to retrieve the trust list for.
      * @return The list of permissions
      */
-    public Collection<Permission> getPermissionTrust(Flag flag);
+    public Collection<Permission> getPermissionTrust(@Nonnull Flag flag);
 
     /**
      * Adds player to a the trust list.
@@ -165,7 +167,7 @@ public interface Area extends Comparable<Area> {
      *            or console.
      * @return True if successful.
      */
-    public boolean setTrust(Flag flag, OfflinePlayer trustee, CommandSender sender);
+    public boolean setTrust(@Nonnull Flag flag, @Nonnull OfflinePlayer trustee, @Nullable CommandSender sender);
 
     /**
      * Adds permission to a the trust list.
@@ -179,7 +181,7 @@ public interface Area extends Comparable<Area> {
      *            or console.
      * @return True if successful.
      */
-    public boolean setTrust(Flag flag, Permission permission, CommandSender sender);
+    public boolean setTrust(@Nonnull Flag flag, @Nonnull Permission permission, @Nullable CommandSender sender);
 
     /**
      * Removes a player from the trust list.
@@ -193,7 +195,7 @@ public interface Area extends Comparable<Area> {
      *            or console.
      * @return True if successful.
      */
-    public boolean removeTrust(Flag flag, OfflinePlayer trustee, CommandSender sender);
+    public boolean removeTrust(@Nonnull Flag flag, @Nonnull OfflinePlayer trustee, @Nullable CommandSender sender);
 
     /**
      * Removes a permission from the trust list.
@@ -207,7 +209,7 @@ public interface Area extends Comparable<Area> {
      *            or console.
      * @return True if successful.
      */
-    public boolean removeTrust(Flag flag, Permission permission, CommandSender sender);
+    public boolean removeTrust(@Nonnull Flag flag, @Nonnull Permission permission, @Nullable CommandSender sender);
 
     /**
      * Returns true if the provided player is the area owner, has explicit trust, or permission trust.
@@ -218,25 +220,25 @@ public interface Area extends Comparable<Area> {
      *            The player to check trust for.
      * @return The list of permissions
      */
-    public boolean hasTrust(Flag flag, Player player);
+    public boolean hasTrust(@Nonnull Flag flag, @Nonnull Player player);
 
     /**
      * Checks the players permission to set flags at this location.
      *
-     * @param p
+     * @param permission
      *            The player to check.
      * @return true if the player has permissions.
      */
-    public boolean hasFlagPermission(Permissible p);
+    public boolean hasFlagPermission(@Nonnull Permissible permission);
 
     /**
      * Checks the players permission to set bundles at this location
      *
-     * @param p
+     * @param permission
      *            The player to check.
      * @return true if the player has permissions.
      */
-    public boolean hasBundlePermission(Permissible p);
+    public boolean hasBundlePermission(@Nonnull Permissible permission);
 
     /**
      * Returns the relationship of the provided area to the existing area
@@ -245,7 +247,7 @@ public interface Area extends Comparable<Area> {
      * @param area the area to check the relationship.
      * @return the relationship of the provided area to this one.
      */
-    public AreaRelationship getRelationship(Area area);
+    public AreaRelationship getRelationship(@Nonnull Area area);
 
     /**
      * Returns an alphabetic comparison based on the area name

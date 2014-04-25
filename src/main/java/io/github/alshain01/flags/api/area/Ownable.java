@@ -3,7 +3,6 @@ package io.github.alshain01.flags.api.area;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Collection;
-import java.util.UUID;
 
 /**
  * Interface that defines if the land system allows cuboids to be owned by players.

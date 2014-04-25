@@ -31,6 +31,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Event for that occurs when a message is set, changed or removed.
  */
@@ -56,7 +59,7 @@ public class FlagMessageChangedEvent extends FlagEvent implements Cancellable {
 	 *            The sender changing the trust.
 	 * 
 	 */
-	public FlagMessageChangedEvent(Area area, Flag flag, String message, CommandSender sender) {
+	public FlagMessageChangedEvent(@Nonnull Area area, @Nonnull Flag flag, @Nullable String message, @Nullable CommandSender sender) {
 		super(area, flag);
 		this.message = message;
 		this.sender = sender;

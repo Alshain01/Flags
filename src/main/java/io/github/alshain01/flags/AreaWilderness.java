@@ -33,12 +33,13 @@ import java.util.UUID;
 import io.github.alshain01.flags.api.area.Identifiable;
 import io.github.alshain01.flags.api.area.Nameable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.permissions.Permissible;
+
+import javax.annotation.Nonnull;
 
 /**
  * Class for creating areas to manage a AreaWilderness.
@@ -107,30 +108,24 @@ final class AreaWilderness extends AreaBase implements Nameable, Identifiable {
     }
 
     @Override
-    public boolean hasFlagPermission(Permissible p) {
-        Validate.notNull(p);
+    public boolean hasFlagPermission(@Nonnull Permissible p) {
         return p.hasPermission("flags.area.flag.wilderness");
     }
 
     @Override
-    public boolean hasBundlePermission(Permissible p) {
-        Validate.notNull(p);
+    public boolean hasBundlePermission(@Nonnull Permissible p) {
         return p.hasPermission("flags.area.bundle.wilderness");
     }
 
     @Override
-    public Boolean getState(Flag flag, boolean absolute) {
-        Validate.notNull(flag);
-
+    public Boolean getState(@Nonnull Flag flag, boolean absolute) {
         final Boolean value = super.getState(flag, true);
         if (absolute) return value;
         return value != null ? value : flag.getDefault();
     }
 
     @Override
-    public String getMessage(Flag flag, boolean parse) {
-        Validate.notNull(flag);
-
+    public String getMessage(@Nonnull Flag flag, boolean parse) {
         String message = Flags.getDataStore().readMessage(this, flag);
 
         if (message == null) {

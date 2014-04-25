@@ -3,6 +3,8 @@ package io.github.alshain01.flags.api.event;
 import io.github.alshain01.flags.api.area.Area;
 import org.bukkit.event.Event;
 
+import javax.annotation.Nonnull;
+
 /**
  * Event that handles all area events.
  */
@@ -16,7 +18,7 @@ public abstract class AreaEvent extends Event {
      * @param area
      *            The area involved in the event.
      */
-    public AreaEvent(Area area) {
+    public AreaEvent(@Nonnull Area area) {
         this.area = area;
     }
 

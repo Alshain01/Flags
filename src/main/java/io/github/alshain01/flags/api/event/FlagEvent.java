@@ -3,6 +3,8 @@ package io.github.alshain01.flags.api.event;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.area.Area;
 
+import javax.annotation.Nonnull;
+
 public abstract class FlagEvent extends AreaEvent {
     private final Flag flag;
 
@@ -14,7 +16,7 @@ public abstract class FlagEvent extends AreaEvent {
      * @param flag
      *            The flag involved in the event.
      */
-    public FlagEvent(Area area, Flag flag) {
+    public FlagEvent(@Nonnull Area area, @Nonnull Flag flag) {
         super(area);
         this.flag = flag;
     }

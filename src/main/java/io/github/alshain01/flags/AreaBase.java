@@ -42,8 +42,6 @@ import java.util.*;
 
 import net.milkbowl.vault.economy.EconomyResponse;
 
-import org.apache.commons.lang.Validate;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -53,6 +51,7 @@ import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Class for base functions of a specific area.
@@ -61,23 +60,19 @@ abstract class AreaBase implements Area, Comparable<Area> {
     AreaBase() { }
 
     @Override
-    public boolean getState(Flag flag) {
+    public boolean getState(@Nonnull Flag flag) {
         return getState(flag, false);
     }
 
     @Override
-    public Boolean getState(Flag flag, boolean absolute) {
-        Validate.notNull(flag);
-
+    public Boolean getState(@Nonnull Flag flag, boolean absolute) {
         Boolean value = Flags.getDataStore().readFlag(this, flag);
         if (absolute) { return value; }
         return value != null ? value : new AreaDefault(getWorld()).getState(flag, false);
     }
 
     @Override
-    public final boolean setState(Flag flag, Boolean value, CommandSender sender) {
-        Validate.notNull(flag);
-
+    public final boolean setState(@Nonnull Flag flag, @Nullable Boolean value, @Nullable CommandSender sender) {
         // Check to see if this can be paid for
         EconomyTransactionType transaction = null;
         if (Flags.getEconomy() != null // No economy
@@ -133,20 +128,17 @@ abstract class AreaBase implements Area, Comparable<Area> {
     }
 
     @Override
-    public final String getMessage(Flag flag) {
+    public final String getMessage(@Nonnull Flag flag) {
         return getMessage(flag, true);
     }
 
     @Override
-    public final String getMessage(Flag flag, String playerName) {
-        Validate.notNull(playerName);
+    public final String getMessage(@Nonnull Flag flag, @Nonnull String playerName) {
         return getMessage(flag, true).replace("{Player}", playerName);
     }
 
     @Override
-    public String getMessage(Flag flag, boolean parse) {
-        Validate.notNull(flag);
-
+    public String getMessage(@Nonnull Flag flag, boolean parse) {
 		String message = Flags.getDataStore().readMessage(this, flag);
 
 		if (message == null) {
@@ -175,9 +167,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
 	}
 
     @Override
-    public final boolean setMessage(Flag flag, String message, CommandSender sender) {
-        Validate.notNull(flag);
-
+    public final boolean setMessage(@Nonnull Flag flag, @Nullable String message, @Nullable CommandSender sender) {
         EconomyTransactionType transaction = null;
 
         // Check to see if this is a purchase or deposit
@@ -233,24 +223,17 @@ abstract class AreaBase implements Area, Comparable<Area> {
     }
 
     @Override
-    public final Collection<OfflinePlayer> getPlayerTrust(Flag flag) {
-        Validate.notNull(flag);
-
+    public final Collection<OfflinePlayer> getPlayerTrust(@Nonnull Flag flag) {
         return Flags.getDataStore().readPlayerTrust(this, flag);
     }
 
     @Override
-    public final Collection<Permission> getPermissionTrust(Flag flag) {
-        Validate.notNull(flag);
-
+    public final Collection<Permission> getPermissionTrust(@Nonnull Flag flag) {
         return Flags.getDataStore().readPermissionTrust(this, flag);
     }
 
     @Override
-    public final boolean setTrust(Flag flag, OfflinePlayer trustee, CommandSender sender) {
-        Validate.notNull(flag);
-        Validate.notNull(trustee);
-
+    public final boolean setTrust(@Nonnull Flag flag, @Nonnull OfflinePlayer trustee, @Nullable CommandSender sender) {
         final Set<OfflinePlayer> trustList = Flags.getDataStore().readPlayerTrust(this, flag);
 
         // Set player to trusted.
@@ -271,10 +254,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
 
 
     @Override
-    public final boolean setTrust(Flag flag, Permission permission, CommandSender sender) {
-        Validate.notNull(flag);
-        Validate.notNull(permission);
-
+    public final boolean setTrust(@Nonnull Flag flag, @Nonnull Permission permission, @Nullable CommandSender sender) {
         final Set<Permission> trustList = Flags.getDataStore().readPermissionTrust(this, flag);
 
         // Set player to trusted.
@@ -294,10 +274,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
     }
 
     @Override
-    public final boolean removeTrust(Flag flag, OfflinePlayer trustee, CommandSender sender) {
-        Validate.notNull(flag);
-        Validate.notNull(trustee);
-
+    public final boolean removeTrust(@Nonnull Flag flag, @Nonnull OfflinePlayer trustee, @Nullable CommandSender sender) {
         final Set<OfflinePlayer> trustList = Flags.getDataStore().readPlayerTrust(this, flag);
 
         // Remove player from trusted.
@@ -317,10 +294,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
     }
 
     @Override
-    public final boolean removeTrust(Flag flag, Permission permission, CommandSender sender) {
-        Validate.notNull(flag);
-        Validate.notNull(permission);
-
+    public final boolean removeTrust(@Nonnull Flag flag, @Nonnull Permission permission, @Nullable CommandSender sender) {
         final Set<Permission> trustList = Flags.getDataStore().readPermissionTrust(this, flag);
 
         // Remove player from trusted.
@@ -340,9 +314,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
     }
 
     @Override
-    public final boolean hasTrust(Flag flag, Player player) {
-        Validate.notNull(flag);
-        Validate.notNull(player);
+    public final boolean hasTrust(@Nonnull Flag flag, @Nonnull Player player) {
         if (this instanceof Ownable && (((Ownable)this).getOwners().contains(Bukkit.getOfflinePlayer(player.getUniqueId())))) { return true; }
 
         Collection<OfflinePlayer> tl = getPlayerTrust(flag);
@@ -361,9 +333,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
     }
 
     @Override
-    public boolean hasFlagPermission(Permissible p) {
-        Validate.notNull(p);
-
+    public boolean hasFlagPermission(@Nonnull Permissible p) {
         if (this instanceof Ownable && p instanceof Player
                 && (((Ownable)this).getOwners().contains(Bukkit.getOfflinePlayer(((Player)p).getUniqueId())))) {
             return p.hasPermission("flags.command.flag.set");
@@ -378,9 +348,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
     }
 
     @Override
-	public boolean hasBundlePermission(Permissible p) {
-        Validate.notNull(p);
-
+	public boolean hasBundlePermission(@Nonnull Permissible p) {
 		if (this instanceof Ownable && p instanceof Player
                 && (((Ownable)this).getOwners().contains(Bukkit.getOfflinePlayer(((Player)p).getUniqueId())))) {
 			return p.hasPermission("flags.command.bundle.set");
@@ -395,8 +363,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
 	}
 
     @Override
-    final public AreaRelationship getRelationship(Area area) {
-        Validate.notNull(area);
+    final public AreaRelationship getRelationship(@Nonnull Area area) {
         if ((area.getClass().equals(this.getClass()))) {
             if (getId().equals(area.getId())) {
                 return AreaRelationship.EQUAL;
@@ -418,8 +385,6 @@ abstract class AreaBase implements Area, Comparable<Area> {
 
     @Override
     final public int compareTo(@Nonnull Area area) {
-        Validate.notNull(area);
-
         if (this instanceof Nameable) {
             if (area instanceof Nameable) return ((Nameable) this).getName().compareTo(((Nameable) area).getName());
             return ((Nameable) this).getName().compareTo(area.getId());

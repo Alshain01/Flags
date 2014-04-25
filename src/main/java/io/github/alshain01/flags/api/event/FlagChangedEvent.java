@@ -31,6 +31,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Event that occurs when a flag value is set or removed.
  */
@@ -55,7 +58,7 @@ public class FlagChangedEvent extends FlagEvent implements Cancellable {
 	 * @param value
 	 *            The value the flag is being set to.
 	 */
-	public FlagChangedEvent(Area area, Flag flag, CommandSender sender, Boolean value) {
+	public FlagChangedEvent(@Nonnull Area area, @Nonnull Flag flag, @Nullable CommandSender sender, @Nullable Boolean value) {
         super(area, flag);
 		this.sender = sender;
 		this.value = value;

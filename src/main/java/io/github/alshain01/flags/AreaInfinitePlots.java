@@ -29,7 +29,6 @@ import io.github.alshain01.flags.api.AreaPlugin;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.area.Renameable;
@@ -41,6 +40,8 @@ import org.bukkit.World;
 import uk.co.jacekk.bukkit.infiniteplots.InfinitePlots;
 import uk.co.jacekk.bukkit.infiniteplots.plot.Plot;
 import uk.co.jacekk.bukkit.infiniteplots.plot.PlotLocation;
+
+import javax.annotation.Nonnull;
 
 /**
  * Class for creating areas to manage a InfinitePlots Plot.
@@ -102,7 +103,7 @@ final class AreaInfinitePlots extends AreaRemovable implements Renameable, Ownab
     }
 
     @Override
-    public void setName(String name) {
+    public void setName(@Nonnull String name) {
         if (isArea())
             plot.setName(name);
         else

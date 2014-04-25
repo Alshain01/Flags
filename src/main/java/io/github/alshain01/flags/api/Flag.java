@@ -27,7 +27,6 @@ package io.github.alshain01.flags.api;
 import io.github.alshain01.flags.Logger;
 import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -200,8 +199,7 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
 	 *            The PurchaseType to getType for this flag
 	 * @return The price of the purchase.
 	 */
-	public double getPrice(EconomyPurchaseType type) {
-        Validate.notNull(type);
+	public double getPrice(@Nonnull EconomyPurchaseType type) {
         return FlagsAPI.getDataStore().readPrice(this, type);
 	}
 
@@ -222,8 +220,7 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
 	 * @param price
 	 *            The new price of the purchase.
 	 */
-	public void setPrice(EconomyPurchaseType type, double price) {
-        Validate.notNull(type);
+	public void setPrice(@Nonnull EconomyPurchaseType type, double price) {
 		FlagsAPI.getDataStore().writePrice(this, type, price);
 	}
 
@@ -240,7 +237,6 @@ public final class Flag implements ConfigurationSerializable, Comparable<Flag>, 
 
     @Override
     public int compareTo(@Nonnull Flag flag) {
-        Validate.notNull(flag);
         return this.name.compareTo(flag.getName());
     }
 }

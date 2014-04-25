@@ -8,13 +8,13 @@ import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
 
 import io.github.alshain01.flags.api.sector.Sector;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Renameable, Subdividable {
@@ -83,7 +83,7 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Ren
     }
 
     @Override
-    public void setName(String name) {
+    public void setName(@Nonnull String name) {
         if(isArea())
             sector.setName(name);
         else
@@ -140,8 +140,7 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Ren
     }
 
     @Override
-    public boolean isParent(Area area) {
-        Validate.notNull(area);
+    public boolean isParent(@Nonnull Area area) {
         if (isSubdivision()) return area instanceof AreaFlags && getParent().getId().equals(String.valueOf(area.getId()));
         throw new InvalidSubdivisionException();
     }

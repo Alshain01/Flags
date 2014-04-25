@@ -43,6 +43,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nonnull;
+
 /**
  * Class for creating areas to manage a Residence Claimed Residences.
  */
@@ -115,7 +117,7 @@ final class AreaResidence extends AreaRemovable implements Identifiable, Cuboid,
     }
 
     @Override
-    public void setName(String name) {
+    public void setName(@Nonnull String name) {
         if (isArea())
             residence.rename(name);
         else
@@ -146,7 +148,7 @@ final class AreaResidence extends AreaRemovable implements Identifiable, Cuboid,
     }
 
     @Override
-    public boolean isParent(Area area) {
+    public boolean isParent(@Nonnull Area area) {
         if (isSubdivision()) return area instanceof AreaResidence &&
                     residence.getParent().equals(((AreaResidence) area).residence);
         throw new InvalidSubdivisionException();
