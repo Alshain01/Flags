@@ -98,7 +98,7 @@ final class AreaFactoid extends AreaRemovable implements Identifiable, Renameabl
     }
 
     @Override
-    public AreaPlugin getCuboidPlugin() {
+    public AreaPlugin getAreaPlugin() {
         return AreaPlugin.FACTOID;
     }
 

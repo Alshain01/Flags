@@ -92,7 +92,7 @@ final class AreaInfinitePlots extends AreaRemovable implements Renameable, Ownab
     }
 
     @Override
-    public AreaPlugin getCuboidPlugin() {
+    public AreaPlugin getAreaPlugin() {
         return AreaPlugin.INFINITEPLOTS;
     }
 

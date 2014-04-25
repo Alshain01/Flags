@@ -102,7 +102,7 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
     }
 
     @Override
-    public AreaPlugin getCuboidPlugin() {
+    public AreaPlugin getAreaPlugin() {
         return AreaPlugin.GRIEF_PREVENTION;
     }
 

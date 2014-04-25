@@ -92,7 +92,7 @@ final class AreaFactions extends AreaRemovable implements Renameable, Ownable {
     }
 
     @Override
-    public AreaPlugin getCuboidPlugin() {
+    public AreaPlugin getAreaPlugin() {
         return AreaPlugin.FACTIONS;
     }
 

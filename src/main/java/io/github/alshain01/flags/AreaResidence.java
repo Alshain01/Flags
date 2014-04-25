@@ -106,7 +106,7 @@ final class AreaResidence extends AreaRemovable implements Identifiable, Cuboid,
     }
 
     @Override
-    public AreaPlugin getCuboidPlugin() {
+    public AreaPlugin getAreaPlugin() {
         return AreaPlugin.RESIDENCE;
     }
 

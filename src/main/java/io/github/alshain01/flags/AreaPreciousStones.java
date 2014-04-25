@@ -123,7 +123,7 @@ final class AreaPreciousStones extends AreaRemovable implements Cuboid, Renameab
     }
 
     @Override
-    public AreaPlugin getCuboidPlugin() {
+    public AreaPlugin getAreaPlugin() {
         return AreaPlugin.PRECIOUSSTONES;
     }
 

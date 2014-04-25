@@ -27,9 +27,8 @@ package io.github.alshain01.flags.api.area;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 
 /**
- * Interface that defines if the land system allows for administrator areas.
- * Administrator areas are special areas that differ from areas normal players
- * create.
+ * Defines if the land system allows for administrator areas.
+ * Administrator areas are special areas that differ from areas normal players create.
  */
 public interface Administrator extends Area {
 	/**

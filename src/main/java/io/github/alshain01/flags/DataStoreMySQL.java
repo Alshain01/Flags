@@ -116,7 +116,7 @@ final class DataStoreMySQL extends DataStore {
 
     String areaBuilder(String query, Area area) {
         return query
-                .replace("%cuboid%", area.getCuboidPlugin().getCuboidName())
+                .replace("%cuboid%", area.getAreaPlugin().getCuboidName())
                 .replace("%world%", area.getWorld().getName())
                 .replace("%area%", area.getId());
     }

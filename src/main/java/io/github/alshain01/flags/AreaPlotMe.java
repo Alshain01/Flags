@@ -83,7 +83,7 @@ final class AreaPlotMe extends AreaRemovable implements Ownable {
     }
 
     @Override
-    public AreaPlugin getCuboidPlugin() {
+    public AreaPlugin getAreaPlugin() {
         return AreaPlugin.PLOTME;
     }
 

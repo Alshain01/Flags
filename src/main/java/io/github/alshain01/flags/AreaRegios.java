@@ -108,7 +108,7 @@ final class AreaRegios extends AreaRemovable implements Nameable, Ownable {
     }
 
     @Override
-    public AreaPlugin getCuboidPlugin() {
+    public AreaPlugin getAreaPlugin() {
         return AreaPlugin.REGIOS;
     }
 

@@ -93,7 +93,7 @@ final class AreaDefault extends AreaBase implements Nameable, Identifiable {
     }
 
     @Override
-    public AreaPlugin getCuboidPlugin() {
+    public AreaPlugin getAreaPlugin() {
         return AreaPlugin.DEFAULT;
     }
 

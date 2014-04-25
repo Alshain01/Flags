@@ -286,7 +286,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
         if (flag != null) {
             // Return the single flag requested
             player.sendMessage(Message.GET_FLAG.get()
-                    .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
+                    .replace("{AreaType}", area.getAreaPlugin().getCuboidName().toLowerCase())
                     .replace("{Flag}", flag.getName())
                     .replace("{Value}", getFormattedValue(area.getState(flag, false)).toLowerCase()));
             return;
@@ -294,7 +294,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
 
         // No flag provided, list all set flags for the area
         StringBuilder message = new StringBuilder(Message.GET_ALL_FLAGS.get()
-                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase()));
+                .replace("{AreaType}", area.getAreaPlugin().getCuboidName().toLowerCase()));
         boolean first = true; // Governs whether we insert a comma or not (true means no)
         Boolean value;
         Area defaultArea = new AreaDefault(player.getWorld());
@@ -327,7 +327,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
         // Set the flag
         if(area.setState(flag, value, player)) {
             player.sendMessage(Message.SET_FLAG.get()
-                    .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
+                    .replace("{AreaType}", area.getAreaPlugin().getCuboidName().toLowerCase())
                     .replace("{Flag}", flag.getName())
                     .replace("{Value}", getFormattedValue(value).toLowerCase()));
         }
@@ -344,7 +344,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
 
             if(area.setState(flag, null, player)) {
                 player.sendMessage(Message.REMOVE_FLAG.get()
-                        .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
+                        .replace("{AreaType}", area.getAreaPlugin().getCuboidName().toLowerCase())
                         .replace("{Flag}", flag.getName()));
             }
             return;
@@ -361,7 +361,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
         }
 
         player.sendMessage((success ? Message.REMOVE_ALL_FLAGS.get() : Message.REMOVE_ALL_FLAGS_ERROR.get())
-                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase()));
+                .replace("{AreaType}", area.getAreaPlugin().getCuboidName().toLowerCase()));
     }
 
     /*
@@ -385,11 +385,11 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
 
         if(Validate.notPlayerFlag(player, flag)
                 || Validate.notArea(player, area)
-                || Validate.notTrustList(player, trustList, area.getCuboidPlugin().getCuboidName(), flag.getName())) { return; }
+                || Validate.notTrustList(player, trustList, area.getAreaPlugin().getCuboidName(), flag.getName())) { return; }
 
         // List all set flags
         message = new StringBuilder(Message.GET_TRUST.get()
-                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
+                .replace("{AreaType}", area.getAreaPlugin().getCuboidName().toLowerCase())
                 .replace("{Flag}", flag.getName()));
 
         for (String p : trustList) {
@@ -435,7 +435,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
         }
 
         player.sendMessage((success ? Message.SET_TRUST.get() : Message.SET_TRUST_ERROR.get())
-                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
+                .replace("{AreaType}", area.getAreaPlugin().getCuboidName().toLowerCase())
                 .replace("{Flag}", flag.getName()));
         return true;
     }
@@ -447,7 +447,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
         if(Validate.notPlayerFlag(player, flag)
                 || Validate.notPermittedFlag(player, area, flag, flag.getName())) { return; }
 
-        if(Validate.notTrustList(player, trustees, area.getCuboidPlugin().getCuboidName(), flag.getName())) {
+        if(Validate.notTrustList(player, trustees, area.getAreaPlugin().getCuboidName(), flag.getName())) {
             return;
         }
 
@@ -485,7 +485,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
         }
 
         player.sendMessage((success ? Message.REMOVE_TRUST.get() : Message.REMOVE_TRUST_ERROR.get())
-                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
+                .replace("{AreaType}", area.getAreaPlugin().getCuboidName().toLowerCase())
                 .replace("{Flag}", flag.getName()));
     }
 

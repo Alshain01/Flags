@@ -60,7 +60,7 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Ren
     }
 
     @Override
-    public AreaPlugin getCuboidPlugin() {
+    public AreaPlugin getAreaPlugin() {
         return AreaPlugin.FLAGS;
     }
 

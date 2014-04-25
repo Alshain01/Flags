@@ -56,7 +56,7 @@ abstract class CommandBase {
             if(p instanceof CommandSender) {
                 String message = a instanceof AreaWilderness || a instanceof AreaDefault
                         ? Message.WILDERNESS_PERM_ERROR.get() : Message.AREA_PERM_ERROR.get()
-                        .replace("{AreaType}", a.getCuboidPlugin().getCuboidName())
+                        .replace("{AreaType}", a.getAreaPlugin().getCuboidName())
                         .replace("{Type}", Message.FLAG.get().toLowerCase());
 
                 if(a instanceof Ownable) {
@@ -106,7 +106,7 @@ abstract class CommandBase {
             if(p instanceof CommandSender) {
                 String message = ((area instanceof AreaWilderness || area instanceof AreaDefault)
                         ? Message.WILDERNESS_PERM_ERROR.get() : Message.AREA_PERM_ERROR.get())
-                        .replace("{AreaType}", area.getCuboidPlugin().getCuboidName())
+                        .replace("{AreaType}", area.getAreaPlugin().getCuboidName())
                         .replace("{Type}", Message.BUNDLE.get().toLowerCase());
 
                 if(area instanceof Ownable) {

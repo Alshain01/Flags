@@ -94,7 +94,7 @@ final class AreaWilderness extends AreaBase implements Nameable, Identifiable {
     }
 
     @Override
-    public AreaPlugin getCuboidPlugin() { return AreaPlugin.WILDERNESS; }
+    public AreaPlugin getAreaPlugin() { return AreaPlugin.WILDERNESS; }
 
     @Override
     public org.bukkit.World getWorld() {

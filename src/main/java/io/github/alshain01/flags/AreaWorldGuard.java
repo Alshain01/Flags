@@ -107,7 +107,7 @@ final class AreaWorldGuard extends AreaRemovable implements Nameable, Ownable, C
     }
 
     @Override
-    public AreaPlugin getCuboidPlugin() {
+    public AreaPlugin getAreaPlugin() {
         return AreaPlugin.WORLDGUARD;
     }
 

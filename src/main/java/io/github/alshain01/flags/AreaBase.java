@@ -148,7 +148,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
 		if (parse) {
 			message = message
                     .replace("{World}", getWorld().getName())
-                    .replace("{AreaType}", getCuboidPlugin().getCuboidName().toLowerCase());
+                    .replace("{AreaType}", getAreaPlugin().getCuboidName().toLowerCase());
 
             if(this instanceof Nameable) {
                 message = message.replace("{AreaName}", ((Nameable)this).getName());

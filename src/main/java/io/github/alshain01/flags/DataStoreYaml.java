@@ -487,7 +487,7 @@ final class DataStoreYaml extends DataStore {
 
     @Override
     public boolean readInheritance(Subdividable area) {
-        String path = area.getCuboidPlugin().getName() + DELIMETER + area.getWorld().getUID().toString() + DELIMETER + area.getId();
+        String path = area.getAreaPlugin().getName() + DELIMETER + area.getWorld().getUID().toString() + DELIMETER + area.getId();
         if (!area.isSubdivision()) return false;
         if(!data.isConfigurationSection(path)) return true;
 
@@ -498,7 +498,7 @@ final class DataStoreYaml extends DataStore {
     @Override
     public void writeInheritance(Subdividable area, boolean value) {
         if (area.isSubdivision()) {
-            String path = area.getCuboidPlugin().getName() + DELIMETER + area.getWorld().getUID().toString() + DELIMETER + area.getId();
+            String path = area.getAreaPlugin().getName() + DELIMETER + area.getWorld().getUID().toString() + DELIMETER + area.getId();
             data.set(path +  DELIMETER + INHERIT_PATH, value);
             saveData = true;
         }
@@ -558,7 +558,7 @@ final class DataStoreYaml extends DataStore {
     }
 
     private String getAreaPath(Area area) {
-        return area.getCuboidPlugin().getName() + "." + area.getWorld().getUID().toString() + "." + area.getId();
+        return area.getAreaPlugin().getName() + "." + area.getWorld().getUID().toString() + "." + area.getId();
     }
 
     private ConfigurationSection getCreatedSection(YamlConfiguration config, String path) {

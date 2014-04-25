@@ -187,7 +187,7 @@ final class CommandBundle extends CommandBase implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.SET_BUNDLE.get() : Message.SET_MULTIPLE_FLAGS_ERROR.get())
-                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
+                .replace("{AreaType}", area.getAreaPlugin().getCuboidName().toLowerCase())
                 .replace("{Bundle}", bundleName)
                 .replace("{Value}", getFormattedValue(value).toLowerCase()));
     }
@@ -204,7 +204,7 @@ final class CommandBundle extends CommandBase implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.REMOVE_BUNDLE.get() : Message.REMOVE_ALL_FLAGS.get())
-                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
+                .replace("{AreaType}", area.getAreaPlugin().getCuboidName().toLowerCase())
                 .replace("{Bundle}", bundleName));
     }
 
@@ -244,7 +244,7 @@ final class CommandBundle extends CommandBase implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.SET_TRUST.get() : Message.SET_TRUST_ERROR.get())
-                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
+                .replace("{AreaType}", area.getAreaPlugin().getCuboidName().toLowerCase())
                 .replace("{Flag}", bundleName));
         return true;
     }
@@ -292,7 +292,7 @@ final class CommandBundle extends CommandBase implements CommandExecutor {
         }
 
         player.sendMessage((success ? Message.REMOVE_TRUST.get() : Message.REMOVE_TRUST_ERROR.get())
-                .replace("{AreaType}", area.getCuboidPlugin().getCuboidName().toLowerCase())
+                .replace("{AreaType}", area.getAreaPlugin().getCuboidName().toLowerCase())
                 .replace("{Flag}", bundleName));
     }
 
