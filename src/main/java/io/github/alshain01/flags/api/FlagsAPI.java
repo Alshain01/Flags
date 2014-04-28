@@ -178,8 +178,12 @@ final public class FlagsAPI {
     public static Area getAreaAt(@Nonnull Location location) {
         if(!AreaFactory.hasArea(activeSystem, location)) return getWildernessArea(location.getWorld());
         Area area = AreaFactory.getAreaAt(activeSystem, location);
-        if(area instanceof Subdividable && ((Subdividable) area).isSubdivision() && ((Subdividable) area).isInherited())
-            ((Subdividable) area).transformParent();
+        if(area instanceof Subdividable) {
+            Subdividable sub = (Subdividable) area;
+            while (sub.isSubdivision() && sub.isInherited())
+                sub.transformParent();
+            return sub;
+        }
         return area;
     }
 
