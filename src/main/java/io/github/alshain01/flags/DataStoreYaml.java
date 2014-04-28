@@ -248,6 +248,8 @@ final class DataStoreYaml extends DataStore {
             updateMigrateBundles();
             updateMigratePrices();
 
+            PlayerCache.rebuild();
+
            // Convert Sectors
             if(sectors != null) {
                 // Convert old sector location to serialized form.
@@ -793,53 +795,16 @@ final class DataStoreYaml extends DataStore {
     }
 
     private boolean updateConvertPlayers(ConfigurationSection[] dataconfigs) {
-        Logger.info("Converting Player Names to UUID.");
-        Set<String> players = new HashSet<String>(); // Use a set to prevent duplicates
-        for (ConfigurationSection config : dataconfigs) {
-            for (String key : config.getKeys(true)) {
-                if (key.contains("Trust") && !key.contains("FlagPermissionTrust") && config.isList(key)) {
-                    for (String p : config.getStringList(key)) {
-                        OfflinePlayer player = Bukkit.getOfflinePlayer(p);
-                        if(player != null) {
-                            players.add(player.getName()); // Restores original casing
-                        }
-                    }
-                }
-            }
-        }
-
-        Map<String, UUID> playerMap = new HashMap<String, UUID>();
-        boolean imported = false;
-        int count = 0;
-        while (!imported && count < 5) {
-            try {
-                Logger.debug("Fetching Player UUID");
-                playerMap = new UUIDFetcher(new ArrayList<String>(players)).call();
-                imported = true;
-            } catch (Exception ex) {
-                count++;
-                if (count < 5)
-                    Logger.warning("Failed to import UUID list for player trust. Retrying.");
-                else {
-                    Logger.error("Failed to import UUID list after 5 attempts." + ex.getMessage());
-                    return false;
-                }
-            }
-        }
-
-        // Add the new players to the cache
-        PlayerCache.cachePlayers(playerMap);
-
         for (ConfigurationSection config : dataconfigs) {
             for (String key : config.getKeys(true)) {
                 if (key.contains("Trust") && !key.contains("FlagPermissionTrust") && config.isList(key)) {
                     List<String> pList = new ArrayList<String>();
                     for (String p : config.getStringList(key)) {
                         Logger.debug("Writing Player UUID for " + p);
-                        UUID u = playerMap.get(p);
-                        if(u == null) continue;
-                        Logger.debug("UUID: " + u.toString());
-                        pList.add(u.toString());
+                        OfflinePlayer player = PlayerCache.getOfflinePlayer(p);
+                        if(player == null) continue;
+                        Logger.debug("UUID: " + player.getUniqueId().toString());
+                        pList.add(player.getUniqueId().toString());
                     }
                     if(!pList.isEmpty()) {
                         config.set(key.replace("Trust", "FlagPlayerTrust"), pList);

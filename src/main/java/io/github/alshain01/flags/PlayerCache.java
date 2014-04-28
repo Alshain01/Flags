@@ -32,6 +32,12 @@ class PlayerCache implements Listener {
         }
     }
 
+    static void rebuild() {
+        for(OfflinePlayer p : Bukkit.getOfflinePlayers()) {
+            cache.set(p.getName(), p.getUniqueId());
+        }
+    }
+
     static OfflinePlayer getOfflinePlayer(String name) {
         if(cache.getKeys(false).contains(name))
             return Bukkit.getOfflinePlayer((UUID.fromString(cache.getString(name))));
