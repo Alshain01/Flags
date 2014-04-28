@@ -180,7 +180,7 @@ final public class FlagsAPI {
         Area area = AreaFactory.getAreaAt(activeSystem, location);
         if(area instanceof Subdividable) {
             Subdividable sub = (Subdividable) area;
-            while (sub.isSubdivision() && sub.isInherited())
+            while (sub.isInherited())
                 sub.transformParent();
             return sub;
         }
