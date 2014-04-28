@@ -136,13 +136,13 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Ren
     @Override
     public boolean isSubdivision() {
         if (isArea()) return sector.getParent() != null;
-        throw new InvalidAreaException();
+        return false;
     }
 
     @Override
     public boolean isParent(@Nonnull Area area) {
         if (isSubdivision()) return area instanceof AreaFlags && getParent().getId().equals(String.valueOf(area.getId()));
-        throw new InvalidSubdivisionException();
+        return false;
     }
 
     @Override
@@ -163,7 +163,7 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Ren
     @Override
     public boolean isInherited() {
         if (isSubdivision()) return Flags.getDataStore().readInheritance(this);
-        throw new InvalidSubdivisionException();
+        return false;
     }
 
     @Override

@@ -155,13 +155,13 @@ final class AreaFactoid extends AreaRemovable implements Identifiable, Renameabl
     @Override
     public boolean isSubdivision() {
         if (isArea()) return land.getParent() != null;
-        throw new InvalidAreaException();
+        return false;
     }
 
     @Override
     public boolean isParent(@Nonnull Area area) {
         if (isSubdivision()) return area instanceof AreaFactoid && land.getParent().getUUID().equals(((Identifiable)area).getUniqueId());
-        throw new InvalidSubdivisionException();
+        return false;
     }
 
     @Override
@@ -182,7 +182,7 @@ final class AreaFactoid extends AreaRemovable implements Identifiable, Renameabl
     @Override
     public boolean isInherited() {
         if (isSubdivision()) return Flags.getDataStore().readInheritance(this);
-        throw new InvalidSubdivisionException();
+        return false;
     }
 
     @Override

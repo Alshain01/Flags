@@ -161,7 +161,7 @@ final class AreaPreciousStones extends AreaRemovable implements Cuboid, Renameab
     @Override
     public boolean isSubdivision() {
         if (isArea()) return field.isChild();
-        throw new InvalidAreaException();
+        return false;
     }
 
     @Override
@@ -170,7 +170,7 @@ final class AreaPreciousStones extends AreaRemovable implements Cuboid, Renameab
             return area instanceof AreaPreciousStones && field.isParent()
                     && field.getChildren().contains(((AreaPreciousStones) area).field);
         }
-        throw new InvalidSubdivisionException();
+        return false;
     }
 
     @Override
@@ -191,7 +191,7 @@ final class AreaPreciousStones extends AreaRemovable implements Cuboid, Renameab
 	@Override
 	public boolean isInherited() {
         if (isSubdivision()) return Flags.getDataStore().readInheritance(this);
-        throw new InvalidSubdivisionException();
+        return false;
 	}
 
 	@Override

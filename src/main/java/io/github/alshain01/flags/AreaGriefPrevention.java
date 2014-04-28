@@ -173,15 +173,14 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
     @Override
     public boolean isSubdivision() {
         if (isArea()) return claim.parent != null;
-        throw new InvalidAreaException();
+        return false;
     }
 
     @Override
     public boolean isParent(@Nonnull Area area) {
-        if (isSubdivision()) {
+        if (isSubdivision())
             return area instanceof AreaGriefPrevention && claim.parent.equals(((AreaGriefPrevention) area).claim);
-        }
-        throw new InvalidSubdivisionException();
+        return false;
     }
 
     @Override
@@ -202,7 +201,7 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
     @Override
     public boolean isInherited() {
         if (isSubdivision()) return Flags.getDataStore().readInheritance(this);
-        throw new InvalidSubdivisionException();
+        return false;
     }
 
     @Override

@@ -36,19 +36,18 @@ import javax.annotation.Nonnull;
 public interface Subdividable extends Area {
     /**
      * Checks if the area is a subdivision.
+     * Returns false if isArea would be false.
      *
      * @return true if the are is a subdivision of another area.
-     * @throws InvalidAreaException
      */
     public boolean isSubdivision();
 
     /**
      * Gets if the provided area is a parent of this area.
+     * Returns false if isSubdivision() would be false.
      *
      * @param area The potential parent area
      * @return true if the area is a parent.
-     * @throws InvalidAreaException
-     * @throws InvalidSubdivisionException
      */
     public boolean isParent(@Nonnull Area area);
 
@@ -73,11 +72,10 @@ public interface Subdividable extends Area {
     public void transformParent();
 
     /**
-     * Gets if the subdivision is inheriting flags from it's parent
+     * Gets if the subdivision is inheriting flags from it's parent.
+     * Returns false if isSubdivision() would be false.
      *
      * @return true if the area is inheriting.
-     * @throws InvalidAreaException
-     * @throws InvalidSubdivisionException
      */
 	public boolean isInherited();
 
