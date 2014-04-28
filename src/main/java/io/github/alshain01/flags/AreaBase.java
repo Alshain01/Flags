@@ -364,18 +364,18 @@ abstract class AreaBase implements Area, Comparable<Area> {
 
     @Override
     final public AreaRelationship getRelationship(@Nonnull Area area) {
-        if ((area.getClass().equals(this.getClass()))) {
-            if (getId().equals(area.getId())) {
-                return AreaRelationship.EQUAL;
-            }
+        if (area.getClass().equals(this.getClass())) {
+            if (getId().equals(area.getId())) return AreaRelationship.EQUAL;
 
             if (this instanceof Subdividable) {
-                if (((Subdividable) this).isSubdivision()) {
-                    if (((Subdividable) area).isSubdivision() && ((Subdividable) area).getParent().getId().equals(((Subdividable) this).getParent().getId()))
+                Subdividable thisSub = (Subdividable) this;
+                Subdividable areaSub = (Subdividable) area; // The earlier class check guarantees this cast
+                if (thisSub.isSubdivision()) {
+                    if (areaSub.isSubdivision() && areaSub.getParent().getId().equals(thisSub.getParent().getId()))
                         return AreaRelationship.SIBLING;
-                    if (((Subdividable) this).getParent().getId().equals(area.getId()))
+                    if (thisSub.getParent().getId().equals(area.getId()))
                         return AreaRelationship.CHILD;
-                } else if (((Subdividable) area).isSubdivision() && ((Subdividable) area).getParent().getId().equals(getId())) {
+                } else if (areaSub.isSubdivision() && areaSub.getParent().getId().equals(getId())) {
                     return AreaRelationship.PARENT;
                 }
             }

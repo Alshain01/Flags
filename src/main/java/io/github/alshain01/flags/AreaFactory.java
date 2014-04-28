@@ -304,6 +304,14 @@ public enum AreaFactory {
     abstract boolean hasCuboid(Location location);
     abstract void registerCleaner(Plugin plugin);
 
+    /**
+     * Gets the area at the specified location for the specified AreaPlugin.
+     * Note that this will be invalid if the AreaPlugin is not active.
+     *
+     * @param type The area plugin to retrieve
+     * @param location The location to get the area at.
+     * @return the area for the plugin at the specified location.
+     */
     public static Area getAreaAt(@Nonnull AreaPlugin type, @Nonnull Location location){
         return valueOf(type.toString()).getCuboidAt(location);
     }

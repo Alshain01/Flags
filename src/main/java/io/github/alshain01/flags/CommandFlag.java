@@ -540,14 +540,14 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
                 || Validate.notSubdivision(player, area)) {
             return;
         }
-
+        Subdividable sub = (Subdividable) area;
         if(value == null) {
-            value = !((Subdividable)area).isInherited();
+            value = !sub.isInherited();
         }
 
-        ((Subdividable)area).setInherited(value);
+        sub.setInherited(value);
         player.sendMessage(Message.SET_INHERITED.get()
-                .replace("{Value}", getFormattedValue(((Subdividable) area).isInherited()).toLowerCase()));
+                .replace("{Value}", getFormattedValue(sub.isInherited()).toLowerCase()));
     }
 
     /*
