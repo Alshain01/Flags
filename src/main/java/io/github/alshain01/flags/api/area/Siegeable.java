@@ -35,7 +35,7 @@ import javax.annotation.Nonnull;
 public interface Siegeable extends Area {
 	/**
 	 * Checks if the area is under siege.
-     * Returns false if isArea() would be false.
+     * Returns false if {@link #isArea()} would be false.
 	 * 
 	 * @return true if the area is under siege
 	 */
@@ -43,7 +43,7 @@ public interface Siegeable extends Area {
 
     /**
      * Checks if the area can be sieged by a specific player.
-     * Returns false if isArea() would be false.
+     * Returns false if {@link #isArea()} would be false.
      *
      * @return true if the area can be sieged by the player
      */

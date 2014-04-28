@@ -56,7 +56,7 @@ public interface Area extends Comparable<Area> {
 
     /**
      * Gets the state of the flag for this area following the inheritance path.
-     * Equivalent to #getState(flag, false);
+     * Equivalent to getState(flag, false);
      *
      * @param flag
      *            The flag to retrieve the state for.
@@ -95,7 +95,7 @@ public interface Area extends Comparable<Area> {
     /**
      * Gets the message associated with a player flag. Translates the color
      * codes and populates instances of {AreaType}, {Owner}, {AreaName}, and {World}
-     * Equivalent to #getMessage(flag, true);
+     * Equivalent to getMessage(flag, true);
      *
      * @param flag
      *            The flag to retrieve the message for.
