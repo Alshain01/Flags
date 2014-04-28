@@ -36,7 +36,7 @@ import javax.annotation.Nonnull;
 public interface Subdividable extends Area {
     /**
      * Checks if the area is a subdivision.
-     * Returns false if isArea would be false.
+     * Returns false if isArea() would be false.
      *
      * @return true if the are is a subdivision of another area.
      */

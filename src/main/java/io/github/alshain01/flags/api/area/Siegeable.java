@@ -35,17 +35,17 @@ import javax.annotation.Nonnull;
 public interface Siegeable extends Area {
 	/**
 	 * Checks if the area is under siege.
+     * Returns false if isArea() would be false.
 	 * 
 	 * @return true if the area is under siege
-     * @throws InvalidAreaException
 	 */
 	public boolean isUnderSiege();
 
     /**
      * Checks if the area can be sieged by a specific player.
+     * Returns false if isArea() would be false.
      *
      * @return true if the area can be sieged by the player
-     * @throws InvalidAreaException
      */
     public boolean canSiege(@Nonnull Player player);
 }

@@ -33,9 +33,9 @@ import io.github.alshain01.flags.api.exception.InvalidAreaException;
 public interface Administrator extends Area {
 	/**
 	 * Checks if the area is an Administrator area defined by the system.
+     * Returns false if isArea() would be false.
 	 * 
 	 * @return true if the area is an administrator area
-     * @throws InvalidAreaException
 	 */
 	public boolean isAdminArea();
 }

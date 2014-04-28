@@ -149,19 +149,19 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
 	@Override
 	public boolean isAdminArea() {
         if (isArea()) return claim.isAdminClaim();
-        throw new InvalidAreaException();
+        return false;
     }
 
 	@Override
 	public boolean isUnderSiege() {
         if (isArea()) return claim.siegeData != null;
-        throw new InvalidAreaException();
+        return false;
     }
 
     @Override
     public boolean canSiege(@Nonnull Player player) {
         if (isArea()) return claim.canSiege(player);
-        throw new InvalidAreaException();
+        return false;
     }
 
     @Override
