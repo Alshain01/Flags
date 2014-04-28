@@ -33,7 +33,6 @@ import java.util.Set;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.area.Renameable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -113,7 +112,7 @@ final class AreaFactions extends AreaRemovable implements Renameable, Ownable {
     @Override
     public Set<OfflinePlayer> getOwners() {
         //TODO Waiting on Factions to update to UUID
-        return new HashSet<OfflinePlayer>(Arrays.asList(Bukkit.getOfflinePlayer(faction.getLeader().getName())));
+        return new HashSet<OfflinePlayer>(Arrays.asList(PlayerCache.getOfflinePlayer(faction.getLeader().getName())));
     }
 
 	@Override

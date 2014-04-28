@@ -133,7 +133,7 @@ final class DataStoreYaml extends DataStore {
 
     void reload(boolean enableAutoSave) {
         File yamlConfigFile = new File(dataFolder, CONFIG_FILE);
-        YamlConfiguration yamlConfig =YamlConfiguration.loadConfiguration(yamlConfigFile);
+        YamlConfiguration yamlConfig = YamlConfiguration.loadConfiguration(yamlConfigFile);
         if(!yamlConfig.isInt(AUTO_SAVE_PATH)) {
             yamlConfig.set(AUTO_SAVE_PATH, 60);
             try {
@@ -826,6 +826,9 @@ final class DataStoreYaml extends DataStore {
                 }
             }
         }
+
+        // Add the new players to the cache
+        PlayerCache.cachePlayers(playerMap);
 
         for (ConfigurationSection config : dataconfigs) {
             for (String key : config.getKeys(true)) {

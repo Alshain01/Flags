@@ -7,7 +7,6 @@ import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.economy.EconomyPurchaseType;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -417,7 +416,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
             if(t.contains(".")) {
                 permissions.add(new Permission(t));
             } else {
-                OfflinePlayer p = Bukkit.getOfflinePlayer(t);
+                OfflinePlayer p = PlayerCache.getOfflinePlayer(t);
                 if (p != null) {
                     playerList.add(p);
                 } else {
@@ -457,7 +456,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
             if(t.contains(".")) {
                 permissions.add(new Permission(t));
             } else {
-                OfflinePlayer p = Bukkit.getOfflinePlayer(t);
+                OfflinePlayer p = PlayerCache.getOfflinePlayer(t);
                 if (p != null) {
                     playerList.add(p);
                 } else {

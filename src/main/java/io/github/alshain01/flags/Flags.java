@@ -53,9 +53,12 @@ final public class Flags extends JavaPlugin {
     // Made static to access from enumerations and lower hefty method calls
     private static DataStore dataStore;
     private static Economy economy = null;
+    private PlayerCache playerCache;
 
     // Made static for use by API
     private static boolean borderPatrol = false;
+
+
 
 	/**
 	 * Called when this plug-in is enabled
@@ -63,7 +66,7 @@ final public class Flags extends JavaPlugin {
 	@Override
 	public void onEnable() {
         PluginManager pm = getServer().getPluginManager();
-
+        playerCache = new PlayerCache(this);
 
         // Set up the plugin's configuration file
         saveDefaultConfig();
@@ -137,6 +140,7 @@ final public class Flags extends JavaPlugin {
         // Static cleanup
         dataStore = null;
         economy = null;
+        playerCache.write();
         this.getLogger().info("Flags Has Been Disabled.");
     }
 

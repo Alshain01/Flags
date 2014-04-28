@@ -4,8 +4,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
-import java.util.UUID;
-
 /**
  * Provides a "load safe" location for sector coordinates.
  */

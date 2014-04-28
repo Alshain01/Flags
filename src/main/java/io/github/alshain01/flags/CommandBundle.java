@@ -3,7 +3,6 @@ package io.github.alshain01.flags;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -222,7 +221,7 @@ final class CommandBundle extends CommandBase implements CommandExecutor {
             if(t.contains(".")) {
                 permissions.add(new Permission(t));
             } else {
-                OfflinePlayer p = Bukkit.getOfflinePlayer(t);
+                OfflinePlayer p = PlayerCache.getOfflinePlayer(t);
                 if (p != null) {
                     playerList.add(p);
                 } else {
@@ -262,7 +261,7 @@ final class CommandBundle extends CommandBase implements CommandExecutor {
             if(t.contains(".")) {
                 permissions.add(new Permission(t));
             } else {
-                OfflinePlayer p = Bukkit.getOfflinePlayer(t);
+                OfflinePlayer p = PlayerCache.getOfflinePlayer(t);
                 if (p != null) {
                     playerList.add(p);
                 } else {

@@ -89,7 +89,7 @@ final class AreaPlotMe extends AreaRemovable implements Ownable {
 
     @Override
     public Set<OfflinePlayer> getOwners() {
-        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(Bukkit.getOfflinePlayer(plot.owner)));
+        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(PlayerCache.getOfflinePlayer(plot.owner)));
         throw new InvalidAreaException();
     }
 

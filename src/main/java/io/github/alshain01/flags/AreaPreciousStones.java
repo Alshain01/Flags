@@ -143,7 +143,7 @@ final class AreaPreciousStones extends AreaRemovable implements Cuboid, Renameab
 
     @Override
     public Set<OfflinePlayer> getOwners() {
-        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(Bukkit.getOfflinePlayer(field.getOwner())));
+        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(PlayerCache.getOfflinePlayer(field.getOwner())));
         throw new InvalidAreaException();
     }
 

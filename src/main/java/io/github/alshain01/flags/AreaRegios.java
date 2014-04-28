@@ -103,7 +103,7 @@ final class AreaRegios extends AreaRemovable implements Nameable, Ownable {
 
     @Override
 	public Set<OfflinePlayer> getOwners() {
-        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(Bukkit.getOfflinePlayer(region.getOwner())));
+        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(PlayerCache.getOfflinePlayer(region.getOwner())));
         throw new InvalidAreaException();
     }
 

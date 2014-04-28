@@ -142,7 +142,7 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
     @Override
     public Collection<OfflinePlayer> getOwners() {
         //TODO: Waiting on GriefPrevention to update to UUID
-        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(Bukkit.getOfflinePlayer(claim.getOwnerName())));
+        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(PlayerCache.getOfflinePlayer(claim.getOwnerName())));
         throw new InvalidAreaException();
     }
 

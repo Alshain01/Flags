@@ -33,7 +33,6 @@ import io.github.alshain01.flags.api.area.Cuboid;
 import io.github.alshain01.flags.api.area.Nameable;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -116,7 +115,7 @@ final class AreaWorldGuard extends AreaRemovable implements Nameable, Ownable, C
         if (isArea()) {
             Set<OfflinePlayer> owners = new HashSet<OfflinePlayer>();
             for(String player : region.getOwners().getPlayers())
-                owners.add(Bukkit.getOfflinePlayer(player));
+                owners.add(PlayerCache.getOfflinePlayer(player));
 
             return owners;
         }
