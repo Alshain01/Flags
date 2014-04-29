@@ -29,7 +29,6 @@ import java.util.UUID;
 import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.api.area.Identifiable;
-import io.github.alshain01.flags.api.area.Nameable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -41,7 +40,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage server defaults.
  */
-final class AreaDefault extends AreaBase implements Nameable, Identifiable {
+final class AreaDefault extends AreaBase implements Identifiable {
 	private final World world;
 
 	/**

@@ -6,7 +6,7 @@ import io.github.alshain01.flags.api.exception.InvalidAreaException;
 /**
  * Defines if the land system allows cuboids names to be changed after creation.
  */
-public interface Renameable extends Nameable {
+public interface Renameable extends Area {
     /**
      * Sets the name of the cuboid.
      *

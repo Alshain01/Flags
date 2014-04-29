@@ -83,6 +83,12 @@ final class AreaPlotMe extends AreaRemovable implements Ownable {
     }
 
     @Override
+    public String getName() {
+        return this.getId();
+    }
+
+
+    @Override
     public AreaPlugin getAreaPlugin() {
         return AreaPlugin.PLOTME;
     }

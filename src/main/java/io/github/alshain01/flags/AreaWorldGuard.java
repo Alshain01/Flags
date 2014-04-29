@@ -30,7 +30,6 @@ import java.util.Set;
 import com.sk89q.worldedit.BlockVector;
 import io.github.alshain01.flags.api.AreaPlugin;
 import io.github.alshain01.flags.api.area.Cuboid;
-import io.github.alshain01.flags.api.area.Nameable;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import org.bukkit.Location;
@@ -44,7 +43,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 /**
  * Class for creating areas to manage a WorldGuard Region.
  */
-final class AreaWorldGuard extends AreaRemovable implements Nameable, Ownable, Cuboid {
+final class AreaWorldGuard extends AreaRemovable implements Ownable, Cuboid {
 	private final ProtectedRegion region;
 	private final World world;
 

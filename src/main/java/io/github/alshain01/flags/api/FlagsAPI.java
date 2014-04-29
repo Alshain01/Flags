@@ -1,5 +1,6 @@
 package io.github.alshain01.flags.api;
 
+import io.github.alshain01.flags.AreaCache;
 import io.github.alshain01.flags.AreaFactory;
 import io.github.alshain01.flags.DataStore;
 import io.github.alshain01.flags.Logger;
@@ -28,6 +29,7 @@ import java.util.Collection;
 @SuppressWarnings("unused")
 final public class FlagsAPI {
     private static Registrar registrar = new Registrar();
+    private static AreaCache areaCache = new AreaCache();
     private static AreaPlugin activeSystem;
     private static DataStore dataStore;
     private static SectorManager sectorManager;
@@ -82,6 +84,7 @@ final public class FlagsAPI {
         activeSystem = null;
         dataStore = null;
         sectorManager = null;
+        areaCache = null;
     }
 
     /**
@@ -120,7 +123,7 @@ final public class FlagsAPI {
      * @return The area for setting default settings for areas in the world.
      */
     public static Area getDefaultArea(@Nonnull World world) {
-        return AreaFactory.getDefaultArea(world);
+        return areaCache.getDefault(world);
     }
 
     /**
@@ -131,7 +134,7 @@ final public class FlagsAPI {
      * @return The area for setting wilderness settings in the world.
      */
     public static Area getWildernessArea(@Nonnull World world) {
-        return AreaFactory.getWildernessArea(world);
+        return areaCache.getWilderness(world);
     }
 
     /**

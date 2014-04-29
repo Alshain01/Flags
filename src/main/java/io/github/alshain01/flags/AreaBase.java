@@ -25,9 +25,9 @@ http://creativecommons.org/licenses/by-nc/3.0/
 package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.api.Flag;
+import io.github.alshain01.flags.api.FlagsAPI;
 import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.area.Administrator;
-import io.github.alshain01.flags.api.area.Nameable;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.economy.EconomyBaseValue;
@@ -67,8 +67,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
     @Override
     public Boolean getState(@Nonnull Flag flag, boolean absolute) {
         Boolean value = Flags.getDataStore().readFlag(this, flag);
-        if (absolute) { return value; }
-        return value != null ? value : new AreaDefault(getWorld()).getState(flag, false);
+        return absolute || value != null ? value : FlagsAPI.getWildernessArea(getWorld()).getState(flag, false);
     }
 
     @Override
@@ -91,8 +90,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
                     || EconomyBaseValue.PLUGIN.isSet()
                     && (getState(flag, true) == null || getState(flag, true) != flag.getDefault())
                     || EconomyBaseValue.DEFAULT.isSet()
-                    && getState(flag, true) != new AreaDefault(
-                    ((Player) sender).getLocation().getWorld())
+                    && getState(flag, true) != FlagsAPI.getDefaultArea(((Player) sender).getLocation().getWorld())
                     .getState(flag, true))) {
                 // The flag is being set, see if the player can afford it.
                 if (isFundingLow(EconomyPurchaseType.FLAG, flag,
@@ -142,19 +140,14 @@ abstract class AreaBase implements Area, Comparable<Area> {
 		String message = Flags.getDataStore().readMessage(this, flag);
 
 		if (message == null) {
-			message = new AreaDefault(getWorld()).getMessage(flag);
+			message = FlagsAPI.getDefaultArea(getWorld()).getMessage(flag);
 		}
 
 		if (parse) {
 			message = message
                     .replace("{World}", getWorld().getName())
-                    .replace("{AreaType}", getAreaPlugin().getCuboidName().toLowerCase());
-
-            if(this instanceof Nameable) {
-                message = message.replace("{AreaName}", ((Nameable)this).getName());
-            } else {
-                message = message.replace("{AreaName}", getId());
-            }
+                    .replace("{AreaType}", getAreaPlugin().getCuboidName().toLowerCase())
+                    .replace("{AreaName}", this.getName());
 
             if(this instanceof Ownable) {
                 message = message.replace("{Owner}", new ArrayList<OfflinePlayer>(((Ownable) this).getOwners()).get(0).getName());
@@ -385,11 +378,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
 
     @Override
     final public int compareTo(@Nonnull Area area) {
-        if (this instanceof Nameable) {
-            if (area instanceof Nameable) return ((Nameable) this).getName().compareTo(((Nameable) area).getName());
-            return ((Nameable) this).getName().compareTo(area.getId());
-        } else if (area instanceof Nameable) return this.getId().compareTo(((Nameable) area).getName());
-        else return this.getId().compareTo(area.getId());
+        return this.getName().compareTo(area.getName());
     }
 
     /*

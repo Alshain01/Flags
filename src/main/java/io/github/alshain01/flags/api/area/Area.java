@@ -47,6 +47,14 @@ public interface Area extends Comparable<Area> {
     public String getId();
 
     /**
+     * Returns the name of the area defined in the area plugin.
+     *
+     * @return The name of the area
+     * @throws InvalidAreaException
+     */
+    public String getName();
+
+    /**
      * Gets the world in which area resides.
      *
      * @return the world in which area resides.

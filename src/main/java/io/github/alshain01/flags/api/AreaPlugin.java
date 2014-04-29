@@ -112,14 +112,6 @@ public enum AreaPlugin {
     }
 
     /**
-     * Gets if the cuboid plugin supports nameable areas
-     * @return true if the cuboid plugin supports nameable areas.
-     */
-    public boolean isNameable() {
-        return Nameable.class.isAssignableFrom(AreaFactory.getAreaClass(this));
-    }
-
-    /**
      * Gets if the cuboid plugin supports changing the name of areas after their creation
      * @return true if the cuboid plugin supports renaming areas.
      */

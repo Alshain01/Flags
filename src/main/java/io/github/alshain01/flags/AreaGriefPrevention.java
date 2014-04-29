@@ -96,6 +96,11 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
     }
 
     @Override
+    public String getName() {
+        return this.getId();
+    }
+
+    @Override
     public UUID getUniqueId() {
         if (isArea()) return claim.getUUID();
         throw new InvalidAreaException();
@@ -148,20 +153,17 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
 
 	@Override
 	public boolean isAdminArea() {
-        if (isArea()) return claim.isAdminClaim();
-        return false;
+        return isArea() && claim.isAdminClaim();
     }
 
 	@Override
 	public boolean isUnderSiege() {
-        if (isArea()) return claim.siegeData != null;
-        return false;
+        return isArea() && claim.siegeData != null;
     }
 
     @Override
     public boolean canSiege(@Nonnull Player player) {
-        if (isArea()) return claim.canSiege(player);
-        return false;
+        return isArea() && claim.canSiege(player);
     }
 
     @Override
@@ -172,15 +174,12 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
 
     @Override
     public boolean isSubdivision() {
-        if (isArea()) return claim.parent != null;
-        return false;
+        return isArea() && claim.parent != null;
     }
 
     @Override
     public boolean isParent(@Nonnull Area area) {
-        if (isSubdivision())
-            return area instanceof AreaGriefPrevention && claim.parent.equals(((AreaGriefPrevention) area).claim);
-        return false;
+        return isSubdivision() && area instanceof AreaGriefPrevention && claim.parent.equals(((AreaGriefPrevention) area).claim);
     }
 
     @Override
@@ -200,8 +199,7 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
 
     @Override
     public boolean isInherited() {
-        if (isSubdivision()) return Flags.getDataStore().readInheritance(this);
-        return false;
+        return isSubdivision() && Flags.getDataStore().readInheritance(this);
     }
 
     @Override

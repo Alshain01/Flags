@@ -24,7 +24,6 @@
 
 package io.github.alshain01.flags.api.area;
 
-import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 
@@ -42,10 +41,10 @@ public interface Siegeable extends Area {
 	public boolean isUnderSiege();
 
     /**
-     * Checks if the area can be sieged by a specific player.
+     * Checks if the area can be under siege by a specific player.
      * Returns false if {@link #isArea()} would be false.
      *
-     * @return true if the area can be sieged by the player
+     * @return true if the area can be under siege by the player
      */
     public boolean canSiege(@Nonnull Player player);
 }
