@@ -66,27 +66,13 @@ public interface Area extends Comparable<Area> {
 
     /**
      * Gets the state of the flag for this area or the default flag if not set.
-     * Equivalent to getState(flag, false);
      *
      * @param flag
      *            The flag to retrieve the state for.
      * @return The state of the flag
      *         defaults if not defined.
-     * @see #getState(Flag, boolean)
      */
     public boolean getState(@Nonnull Flag flag);
-
-    /**
-     * Gets the state of the flag for this area.
-     *
-     * @param flag
-     *            The flag to retrieve the state for.
-     * @param absolute
-     *            Whether to return the exact value of the flag or default flag state if none exists.
-     *            True may return null, False will always return a boolean value.
-     * @return the state of the flag or the default state of the flag if not defined.
-     */
-    public Boolean getState(@Nonnull Flag flag, boolean absolute);
 
     /**
      * Gets the absolute state of the flag for this area.
@@ -114,14 +100,24 @@ public interface Area extends Comparable<Area> {
     /**
      * Gets the message associated with a player flag. Translates the color
      * codes and populates instances of {AreaType}, {Owner}, {AreaName}, and {World}
-     * Equivalent to getMessage(flag, true);
+     * This follows the Flag inheritance path
      *
      * @param flag
      *            The flag to retrieve the message for.
      * @return the message associated with the flag.
-     * @see #getMessage(Flag, boolean)
      */
     public String getMessage(@Nonnull Flag flag);
+
+    /**
+     * Gets the message associated with a player flag. Translates the color
+     * codes and populates instances of {AreaType}, {Owner}, {AreaName}, and {World}
+     *
+     *
+     * @param flag
+     *            The flag to retrieve the message for.
+     * @return the message associated with the flag.
+     */
+    public String getAbsoluteMessage(@Nonnull Flag flag);
 
     /**
      * Gets the message associated with a player flag and parses {AreaType}, {AreaName},
@@ -136,16 +132,34 @@ public interface Area extends Comparable<Area> {
     public String getMessage(@Nonnull Flag flag, @Nonnull String playerName);
 
     /**
-     * Gets the message associated with a player flag.
+     * Gets the message associated with a player flag and parses {AreaType}, {AreaName},
+     * {Owner}, {World}, and {Player}.
      *
      * @param flag
      *            The flag to retrieve the message for.
-     * @param parse
-     *            True to populate instances of {AreaType}, {Owner}, {AreaName},
-     *            and {World} and translate color codes
+     * @param playerName
+     *            The player who's name will be inserted into the message.
      * @return The message associated with the flag.
      */
-    public String getMessage(@Nonnull Flag flag, boolean parse);
+    public String getAbsoluteMessage(@Nonnull Flag flag, @Nonnull String playerName);
+
+    /**
+     * Gets the message associated with a player flag and returns it as-is.
+     *
+     * @param flag
+     *            The flag to retrieve the message for.
+     * @return The message associated with the flag.
+     */
+    public String getRawMessage(@Nonnull Flag flag);
+
+    /**
+     * Gets the message associated with a player flag and returns it as-is.
+     *
+     * @param flag
+     *            The flag to retrieve the message for.
+     * @return The message associated with the flag.
+     */
+    public String getAbsoluteRawMessage(@Nonnull Flag flag);
 
     /**
      * Sets or removes the message associated with a player flag.

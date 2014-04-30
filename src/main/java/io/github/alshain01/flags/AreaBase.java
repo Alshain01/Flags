@@ -69,10 +69,9 @@ abstract class AreaBase implements Area, Comparable<Area> {
         return getState(flag, true);
     }
 
-    @Override
-    public Boolean getState(@Nonnull Flag flag, boolean absolute) {
+    private Boolean getState(@Nonnull Flag flag, boolean absolute) {
         Boolean value = Flags.getDataStore().readFlag(this, flag);
-        return absolute || value != null ? value : FlagsAPI.getWildernessArea(getWorld()).getState(flag, false);
+        return absolute || value != null ? value : FlagsAPI.getWildernessArea(getWorld()).getState(flag);
     }
 
     @Override
@@ -96,7 +95,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
                     && (getState(flag, true) == null || getState(flag, true) != flag.getDefault())
                     || EconomyBaseValue.DEFAULT.isSet()
                     && getState(flag, true) != FlagsAPI.getDefaultArea(((Player) sender).getLocation().getWorld())
-                    .getState(flag, true))) {
+                    .getAbsoluteState(flag))) {
                 // The flag is being set, see if the player can afford it.
                 if (isFundingLow(EconomyPurchaseType.FLAG, flag,
                         (Player) sender)) {
@@ -132,19 +131,40 @@ abstract class AreaBase implements Area, Comparable<Area> {
 
     @Override
     public final String getMessage(@Nonnull Flag flag) {
-        return getMessage(flag, true);
+        return getMessage(flag, false, true);
+    }
+
+    @Override
+    public final String getAbsoluteMessage(@Nonnull Flag flag) {
+        return getMessage(flag, true, true);
     }
 
     @Override
     public final String getMessage(@Nonnull Flag flag, @Nonnull String playerName) {
-        return getMessage(flag, true).replace("{Player}", playerName);
+        return getMessage(flag, false, true).replace("{Player}", playerName);
     }
 
     @Override
-    public String getMessage(@Nonnull Flag flag, boolean parse) {
+    public final String getAbsoluteMessage(@Nonnull Flag flag, @Nonnull String playerName) {
+        String message = getMessage(flag, true, true);
+        return message == null ? null : message.replace("{Player}", playerName);
+    }
+
+    @Override
+    public final String getRawMessage(@Nonnull Flag flag) {
+        return getMessage(flag, false, false);
+    }
+
+    @Override
+    public final String getAbsoluteRawMessage(@Nonnull Flag flag) {
+        return getMessage(flag, true, false);
+    }
+
+    private String getMessage(@Nonnull Flag flag, boolean absolute, boolean parse) {
 		String message = Flags.getDataStore().readMessage(this, flag);
 
 		if (message == null) {
+            if(absolute) return null;
 			message = FlagsAPI.getDefaultArea(getWorld()).getMessage(flag);
 		}
 
@@ -184,7 +204,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
                 // have
                 // (if they are just correcting caps, don't charge, I hate
                 // discouraging bad spelling & grammar)
-                if (!getMessage(flag, false).equalsIgnoreCase(message)) {
+                if (!getAbsoluteRawMessage(flag).equalsIgnoreCase(message)) {
                     if (isFundingLow(EconomyPurchaseType.MESSAGE, flag, (Player) sender)) {
                         return false;
                     }
@@ -195,7 +215,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
                 if (EconomyPurchaseType.MESSAGE.isRefundable()) {
                     // Make sure the message we are refunding isn't identical to
                     // the default message
-                    if (!getMessage(flag, false).equals(
+                    if (!getAbsoluteRawMessage(flag).equals(
                             flag.getDefaultAreaMessage())) {
                         transaction = EconomyTransactionType.DEPOSIT;
                     }
