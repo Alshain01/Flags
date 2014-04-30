@@ -152,7 +152,7 @@ final class AreaResidence extends AreaRemovable implements Identifiable, Cuboid,
     }
 
     @Override
-    public Area getParent() {
+    public Subdividable getParent() {
         if (isSubdivision()) return new AreaResidence(residence.getParent());
         throw new InvalidSubdivisionException();
     }

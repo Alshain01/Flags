@@ -58,7 +58,7 @@ public interface Subdividable extends Area {
      * @throws InvalidAreaException
      * @throws InvalidSubdivisionException
      */
-    public Area getParent();
+    public Subdividable getParent();
 
     /**
      * Transforms this Area instance into it's own parent

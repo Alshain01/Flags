@@ -163,7 +163,7 @@ final class AreaFactoid extends AreaRemovable implements Identifiable, Renameabl
     }
 
     @Override
-    public Area getParent() {
+    public Subdividable getParent() {
         if (isSubdivision()) return new AreaFactoid(land.getParent());
         throw new InvalidSubdivisionException();
     }

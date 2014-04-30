@@ -183,7 +183,7 @@ final class AreaGriefPrevention extends AreaRemovable implements Administrator, 
     }
 
     @Override
-    public Area getParent() {
+    public Subdividable getParent() {
         if (isSubdivision()) return new AreaGriefPrevention(claim.parent);
         throw new InvalidSubdivisionException();
     }

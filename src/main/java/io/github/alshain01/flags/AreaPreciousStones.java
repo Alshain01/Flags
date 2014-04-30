@@ -171,7 +171,7 @@ final class AreaPreciousStones extends AreaRemovable implements Cuboid, Renameab
     }
 
     @Override
-    public Area getParent() {
+    public Subdividable getParent() {
         if (isSubdivision()) return new AreaPreciousStones(field.getParent());
         throw new InvalidSubdivisionException();
     }

@@ -144,7 +144,7 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Ren
     }
 
     @Override
-    public Area getParent() {
+    public Subdividable getParent() {
         if (isSubdivision()) return new AreaFlags(sector.getParent());
         throw new InvalidSubdivisionException();
     }
