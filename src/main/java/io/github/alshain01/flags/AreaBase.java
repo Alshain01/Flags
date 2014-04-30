@@ -65,6 +65,11 @@ abstract class AreaBase implements Area, Comparable<Area> {
     }
 
     @Override
+    public Boolean getAbsoluteState(@Nonnull Flag flag) {
+        return getState(flag, true);
+    }
+
+    @Override
     public Boolean getState(@Nonnull Flag flag, boolean absolute) {
         Boolean value = Flags.getDataStore().readFlag(this, flag);
         return absolute || value != null ? value : FlagsAPI.getWildernessArea(getWorld()).getState(flag, false);
@@ -378,8 +383,11 @@ abstract class AreaBase implements Area, Comparable<Area> {
 
     @Override
     final public int compareTo(@Nonnull Area area) {
-        return this.getName().compareTo(area.getName());
+        return this.getId().compareTo(area.getId());
     }
+
+    @Override
+    final public int compareNameTo(@Nonnull Area area) { return this.getName().compareTo(area.getName()); }
 
     /*
      * Checks to make sure the player can afford the item. If false, the player

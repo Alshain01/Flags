@@ -48,6 +48,8 @@ public interface Area extends Comparable<Area> {
 
     /**
      * Returns the name of the area defined in the area plugin.
+     * On very few systems this will return the id if name is unsupported.
+     * Depending on the system this has the potential to be null if not set.
      *
      * @return The name of the area
      * @throws InvalidAreaException
@@ -63,12 +65,12 @@ public interface Area extends Comparable<Area> {
     public World getWorld();
 
     /**
-     * Gets the state of the flag for this area following the inheritance path.
+     * Gets the state of the flag for this area or the default flag if not set.
      * Equivalent to getState(flag, false);
      *
      * @param flag
      *            The flag to retrieve the state for.
-     * @return The state of the flag or the inherited state of the flag from
+     * @return The state of the flag
      *         defaults if not defined.
      * @see #getState(Flag, boolean)
      */
@@ -80,11 +82,20 @@ public interface Area extends Comparable<Area> {
      * @param flag
      *            The flag to retrieve the state for.
      * @param absolute
-     *            Whether to return the exact value of the flag or inherited flag state if none exists.
+     *            Whether to return the exact value of the flag or default flag state if none exists.
      *            True may return null, False will always return a boolean value.
-     * @return the state of the flag or the inherited state of the flag from defaults if not defined.
+     * @return the state of the flag or the default state of the flag if not defined.
      */
     public Boolean getState(@Nonnull Flag flag, boolean absolute);
+
+    /**
+     * Gets the absolute state of the flag for this area.
+     *
+     * @param flag
+     *            The flag to retrieve the state for.
+     * @return the state of the flag or null if not defined.
+     */
+    public Boolean getAbsoluteState(@Nonnull Flag flag);
 
     /**
      * Sets the state of the flag for this area.
@@ -263,10 +274,17 @@ public interface Area extends Comparable<Area> {
     public AreaRelationship getRelationship(@Nonnull Area area);
 
     /**
-     * Returns an alphabetic comparison based on the area name or ID if name is unsupported.
+     * Returns an alphabetic comparison based on the area ID.
      *
      * @return The value of the comparison.
      */
     @Override
     public int compareTo(@Nonnull Area a);
+
+    /**
+     * Returns an alphabetic comparison based on the area name.
+     *
+     * @return The value of the comparison.
+     */
+    public int compareNameTo(@Nonnull Area a);
 }

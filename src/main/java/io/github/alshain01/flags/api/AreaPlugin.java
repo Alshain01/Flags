@@ -104,7 +104,15 @@ public enum AreaPlugin {
     }
 
     /**
-     * Gets if the cuboid plugin supports subdivisions
+     * Gets if the plugin is the currently active plugin
+     * @return true if the plugin is active
+     */
+    public boolean isActive() {
+        return this == FlagsAPI.getAreaPlugin();
+    }
+
+    /**
+     * Gets if the plugin supports subdivisions
      * @return true if the cuboid plugin supports subdivisions.
      */
     public boolean isSubdividable() {
@@ -112,7 +120,7 @@ public enum AreaPlugin {
     }
 
     /**
-     * Gets if the cuboid plugin supports changing the name of areas after their creation
+     * Gets if the plugin supports changing the name of areas after their creation
      * @return true if the cuboid plugin supports renaming areas.
      */
     public boolean isRenameable() {
@@ -120,7 +128,7 @@ public enum AreaPlugin {
     }
 
     /**
-     * Gets if the cuboid plugin supports administrator areas
+     * Gets if the plugin supports administrator areas
      * @return true if the cuboid plugin supports administrator areas.
      */
     public boolean isAdministrator() {
@@ -128,7 +136,7 @@ public enum AreaPlugin {
     }
 
     /**
-     * Gets if the cuboid plugin supports players owning areas
+     * Gets if the plugin supports players owning areas
      * @return true if the cuboid plugin supports players owning areas.
      */
     public boolean isOwnable() {
@@ -136,7 +144,7 @@ public enum AreaPlugin {
     }
 
     /**
-     * Gets if the cuboid plugin supports siegeable areas
+     * Gets if the plugin supports siegeable areas
      * @return true if the cuboid plugin supports siegeable areas.
      */
     public boolean isSiegeable() {
@@ -144,7 +152,7 @@ public enum AreaPlugin {
     }
 
     /**
-     * Gets if the cuboid plugin identifies areas by UUID
+     * Gets if the plugin identifies areas by UUID
      * @return true if the cuboid plugin identifies areas by UUID.
      */
     public boolean isIdentifiable() {
@@ -152,17 +160,17 @@ public enum AreaPlugin {
     }
 
     /**
-     * Gets if the cuboid plugin uses only rectangle based cuboids
+     * Gets if the plugin uses only rectangle or cuboid land divisions
      * @return true if the cuboid plugin uses rectangle based cuboids.
      */
-    public boolean isRectangular() {
+    public boolean isCuboid() {
         return Cuboid.class.isAssignableFrom(AreaFactory.getAreaClass(this));
     }
 
     /**
      * Instruct the enum to reload the cuboid names from the yaml file.
      */
-    public static void loadNames() {
+    static void loadNames() {
         Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Flags");
         File messageFile = new File(plugin.getDataFolder(), "message.yml");
         if (!messageFile.exists()) {
