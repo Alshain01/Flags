@@ -333,18 +333,15 @@ abstract class AreaBase implements Area, Comparable<Area> {
 
     @Override
     public final boolean hasTrust(@Nonnull Flag flag, @Nonnull Player player) {
-        if (this instanceof Ownable && (((Ownable)this).getOwners().contains(Bukkit.getOfflinePlayer(player.getUniqueId())))) { return true; }
+        if (player.hasPermission(flag.getBypassPermission())) return true;
+        if (this instanceof Ownable && (((Ownable)this).getOwners().contains(Bukkit.getOfflinePlayer(player.getUniqueId())))) return true;
 
         Collection<OfflinePlayer> tl = getPlayerTrust(flag);
-        if(tl.contains(Bukkit.getOfflinePlayer(player.getUniqueId()))) {
-            return true;
-        }
+        if(tl.contains(Bukkit.getOfflinePlayer(player.getUniqueId()))) return true;
 
         Collection<Permission> pTl = getPermissionTrust(flag);
         for(Permission p : pTl) {
-            if(player.hasPermission(p)) {
-                return true;
-            }
+            if(player.hasPermission(p)) return true;
         }
 
         return false;
