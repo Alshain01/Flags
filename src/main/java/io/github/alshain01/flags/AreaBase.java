@@ -242,13 +242,40 @@ abstract class AreaBase implements Area, Comparable<Area> {
 
     @Override
     public final Collection<OfflinePlayer> getPlayerTrust(@Nonnull Flag flag) {
-        return Flags.getDataStore().readPlayerTrust(this, flag);
+        return getPlayerTrust(flag, false);
+    }
+
+    @Override
+    public final Collection<OfflinePlayer> getAbsolutePlayerTrust(@Nonnull Flag flag) {
+        return getPlayerTrust(flag, true);
+    }
+
+    Collection<OfflinePlayer> getPlayerTrust(@Nonnull Flag flag, boolean absolute) {
+        Collection<OfflinePlayer> trust = Flags.getDataStore().readPlayerTrust(this, flag);
+        if(!absolute && !(this instanceof AreaWilderness) && !(this instanceof AreaDefault)) {
+            trust.addAll(FlagsAPI.getDefaultArea(getWorld()).getPlayerTrust(flag));
+        }
+        return trust;
     }
 
     @Override
     public final Collection<Permission> getPermissionTrust(@Nonnull Flag flag) {
-        return Flags.getDataStore().readPermissionTrust(this, flag);
+        return getPermissionTrust(flag, false);
     }
+
+    @Override
+    public final Collection<Permission> getAbsolutePermissionTrust(@Nonnull Flag flag) {
+        return getPermissionTrust(flag, true);
+    }
+
+    Collection<Permission> getPermissionTrust(@Nonnull Flag flag, boolean absolute) {
+        Collection<Permission> trust = Flags.getDataStore().readPermissionTrust(this, flag);
+        if(!absolute && !(this instanceof AreaWilderness) && !(this instanceof AreaDefault)) {
+            trust.addAll(FlagsAPI.getDefaultArea(getWorld()).getPermissionTrust(flag));
+        }
+        return trust;
+    }
+
 
     @Override
     public final boolean setTrust(@Nonnull Flag flag, @Nonnull OfflinePlayer trustee, @Nullable CommandSender sender) {

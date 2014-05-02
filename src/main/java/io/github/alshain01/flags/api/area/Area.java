@@ -176,7 +176,8 @@ public interface Area extends Comparable<Area> {
     public boolean setMessage(@Nonnull Flag flag, @Nullable String message, @Nullable CommandSender sender);
 
     /**
-     * Gets a list of trusted players
+     * Gets a list of trusted players including those trusted in the world defaults
+     * Wilderness and Default areas will be absolute with this method.
      *
      * @param flag
      *            The flag to retrieve the trust list for.
@@ -185,13 +186,31 @@ public interface Area extends Comparable<Area> {
     public Collection<OfflinePlayer> getPlayerTrust(@Nonnull Flag flag);
 
     /**
-     * Gets a collection of trusted permissions
+     * Gets a list of trusted players not including those trusted in world defaults
+     *
+     * @param flag
+     *            The flag to retrieve the trust list for.
+     * @return The list of players
+     */
+    public Collection<OfflinePlayer> getAbsolutePlayerTrust(@Nonnull Flag flag);
+
+    /**
+     * Gets a collection of trusted permissions including those trusted in world defaults
      *
      * @param flag
      *            The flag to retrieve the trust for.
      * @return the collection of trusted permissions
      */
     public Collection<Permission> getPermissionTrust(@Nonnull Flag flag);
+
+    /**
+     * Gets a collection of trusted permissions not including those trusted in world defaults
+     *
+     * @param flag
+     *            The flag to retrieve the trust for.
+     * @return the collection of trusted permissions
+     */
+    public Collection<Permission> getAbsolutePermissionTrust(@Nonnull Flag flag);
 
     /**
      * Adds player to a the trust.
