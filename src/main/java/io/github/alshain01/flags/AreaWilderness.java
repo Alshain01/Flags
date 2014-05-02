@@ -117,17 +117,18 @@ final class AreaWilderness extends AreaBase implements Identifiable {
     }
 
     @Override
-    public Boolean getState(@Nonnull Flag flag, boolean absolute) {
+    Boolean getState(@Nonnull Flag flag, boolean absolute) {
         final Boolean value = super.getState(flag, true);
         if (absolute) return value;
         return value != null ? value : flag.getDefault();
     }
 
     @Override
-    public String getMessage(@Nonnull Flag flag, boolean parse) {
+    String getMessage(@Nonnull Flag flag, boolean absolute, boolean parse) {
         String message = Flags.getDataStore().readMessage(this, flag);
 
         if (message == null) {
+            if(absolute) return null;
             message = flag.getDefaultWildernessMessage();
         }
 

@@ -118,7 +118,7 @@ final class AreaDefault extends AreaBase implements Identifiable {
     }
 
     @Override
-    public Boolean getState(@Nonnull Flag flag, boolean absolute) {
+    Boolean getState(@Nonnull Flag flag, boolean absolute) {
         final Boolean value = super.getState(flag, true);
         if (absolute) return value;
         return value != null ? value : flag.getDefault();
@@ -134,9 +134,9 @@ final class AreaDefault extends AreaBase implements Identifiable {
 	 * @return The message associated with the flag.
 	 */
 	@Override
-	public String getMessage(@Nonnull Flag flag, boolean parse) {
+	String getMessage(@Nonnull Flag flag, boolean absolute, boolean parse) {
 		// We are ignore parse here. We just want to override it.
 		final String message = Flags.getDataStore().readMessage(this, flag);
-		return message != null ? message : flag.getDefaultAreaMessage();
+		return absolute || message != null ? message : flag.getDefaultAreaMessage();
 	}
 }

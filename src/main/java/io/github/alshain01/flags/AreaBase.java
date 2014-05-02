@@ -69,7 +69,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
         return getState(flag, true);
     }
 
-    private Boolean getState(@Nonnull Flag flag, boolean absolute) {
+    Boolean getState(@Nonnull Flag flag, boolean absolute) {
         Boolean value = Flags.getDataStore().readFlag(this, flag);
         return absolute || value != null ? value : FlagsAPI.getWildernessArea(getWorld()).getState(flag);
     }
@@ -160,7 +160,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
         return getMessage(flag, true, false);
     }
 
-    private String getMessage(@Nonnull Flag flag, boolean absolute, boolean parse) {
+    String getMessage(@Nonnull Flag flag, boolean absolute, boolean parse) {
 		String message = Flags.getDataStore().readMessage(this, flag);
 
 		if (message == null) {
