@@ -170,7 +170,7 @@ final class CommandBundle extends CommandBase implements CommandExecutor {
         for(Flag flag : bundle) {
             player.sendMessage(Message.GET_BUNDLE.get()
                     .replace("{Bundle}", flag.getName())
-                    .replace("{Value}", getFormattedValue(area.getState(flag, false))));
+                    .replace("{Value}", getFormattedValue(area.getState(flag))));
         }
     }
 

@@ -287,7 +287,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
             player.sendMessage(Message.GET_FLAG.get()
                     .replace("{AreaType}", area.getAreaPlugin().getCuboidName().toLowerCase())
                     .replace("{Flag}", flag.getName())
-                    .replace("{Value}", getFormattedValue(area.getState(flag, false)).toLowerCase()));
+                    .replace("{Value}", getFormattedValue(area.getState(flag)).toLowerCase()));
             return;
         }
 
@@ -299,12 +299,12 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
         Area defaultArea = new AreaDefault(player.getWorld());
 
         for(Flag f : FlagsAPI.getRegistrar().getFlags()) {
-            value = area.getState(f, true);
+            value = area.getAbsoluteState(f);
 
             // Output the flag name
             if (value != null) {
                 if ((area instanceof AreaDefault && value != f.getDefault())
-                        || (!(area instanceof AreaDefault) && value != defaultArea.getState(f, false))){
+                        || (!(area instanceof AreaDefault) && value != defaultArea.getState(f))){
                     if (!first) { message.append(", ");	}
                     else { first = false; }
                     message.append(f.getName());
@@ -321,7 +321,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
         if(Validate.notPermittedFlag(player, area, flag, flag.getName())) { return; }
 
         // Acquire the value (maybe)
-        if(value == null) {	value = !area.getState(flag, false); }
+        if(value == null) {	value = !area.getState(flag); }
 
         // Set the flag
         if(area.setState(flag, value, player)) {
@@ -352,7 +352,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
         // Removing all flags if the player has permission
         boolean success = true;
         for(Flag f : FlagsAPI.getRegistrar().getFlags()) {
-            if(area.getState(f, true) != null) {
+            if(area.getAbsoluteState(f) != null) {
                 if (!player.hasPermission(f.getPermission()) || !area.setState(f, null, player)) {
                     success = false;
                 }
