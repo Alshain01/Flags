@@ -37,7 +37,11 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import uk.co.jacekk.bukkit.infiniteplots.InfinitePlots;
+import uk.co.jacekk.bukkit.infiniteplots.event.PlotUnclaimedEvent;
 import uk.co.jacekk.bukkit.infiniteplots.plot.Plot;
 import uk.co.jacekk.bukkit.infiniteplots.plot.PlotLocation;
 
@@ -75,6 +79,16 @@ final class AreaInfinitePlots extends AreaRemovable implements Renameable, Ownab
 		plot = InfinitePlots.getInstance().getPlotManager()
 				.getPlotAt(new PlotLocation(world.getName(), X, Z));
 	}
+
+    /**
+     * Creates an instance of AreaInfinitePlots using an exiting plot
+     *
+     * @param plot
+     *            The plot to create the area for
+     */
+    public AreaInfinitePlots(Plot plot) {
+        this.plot = plot;
+    }
 
 	/**
 	 * Gets if there is a plot at the location.
@@ -126,5 +140,12 @@ final class AreaInfinitePlots extends AreaRemovable implements Renameable, Ownab
 	@Override
 	public boolean isArea() {
         return plot != null;
+    }
+
+    static class Cleaner implements Listener {
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        private static void onPlotUnclaimed(PlotUnclaimedEvent e) {
+            new AreaInfinitePlots(e.getPlot()).remove();
+        }
     }
 }

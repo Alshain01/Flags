@@ -186,7 +186,9 @@ public enum AreaFactory {
             return AreaInfinitePlots.hasPlot(location);
         }
 
-        void registerCleaner(Plugin plugin) { }
+        void registerCleaner(Plugin plugin) {
+            Bukkit.getPluginManager().registerEvents(new AreaInfinitePlots.Cleaner(), plugin);
+        }
     },
 
     PLOTME {
