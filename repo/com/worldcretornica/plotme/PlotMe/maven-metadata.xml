@@ -3,9 +3,9 @@
     <groupId>com.worldcretornica.plotme</groupId>
     <artifactId>PlotMe</artifactId>
     <versioning>
-        <release>0.13b</release>
+        <release>0.13e</release>
         <versions>
-            <version>0.13b</version>
+            <version>0.13e</version>
         </versions>
         <lastUpdated>20140331000000</lastUpdated>
     </versioning>
