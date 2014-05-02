@@ -24,6 +24,7 @@
 
 package io.github.alshain01.flags;
 
+import com.massivecraft.factions.event.FactionsEventDisband;
 import io.github.alshain01.flags.api.AreaPlugin;
 
 import java.util.Arrays;
@@ -32,7 +33,9 @@ import java.util.Set;
 
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.area.Renameable;
+import io.github.alshain01.flags.api.event.SectorDeleteEvent;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -41,6 +44,9 @@ import com.massivecraft.factions.entity.BoardColls;
 import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.FactionColls;
 import com.massivecraft.mcore.ps.PS;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 
@@ -63,18 +69,31 @@ final class AreaFactions extends AreaRemovable implements Renameable, Ownable {
 	}
 
 	/**
-	 * Creates an instance of AreaFactions based on a Bukkit World and
-	 * faction ID
-	 * 
-	 * @param factionID
-	 *            The faction ID
-	 * @param world
-	 *            The Bukkit world
-	 */
-	public AreaFactions(World world, String factionID) {
-		faction = FactionColls.get().getForWorld(world.getName()).get(factionID);
-		this.world = world;
-	}
+     * Creates an instance of AreaFactions based on a Bukkit World and
+     * faction ID
+     *
+     * @param factionID
+     *            The faction ID
+     * @param world
+     *            The Bukkit world
+     */
+    public AreaFactions(World world, String factionID) {
+        faction = FactionColls.get().getForWorld(world.getName()).get(factionID);
+        this.world = world;
+    }
+
+    /**
+     * Creates an instance of AreaFactions from the faction object
+     *
+     * @param faction
+     *            The faction
+     * @param world
+     *            The Bukkit world
+     */
+    public AreaFactions(Faction faction, World world) {
+        this.faction = faction;
+        this.world = world;
+    }
 
     /**
      * Gets if there is a territory at the location.
@@ -124,5 +143,14 @@ final class AreaFactions extends AreaRemovable implements Renameable, Ownable {
 	@Override
 	public boolean isArea() {
         return world != null && faction != null;
+    }
+
+    static class Cleaner implements Listener {
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        private static void onSectorDelete(FactionsEventDisband e) {
+            for(World w : Bukkit.getWorlds()) {
+                new AreaFactions(e.getFaction(), w).remove();
+            }
+        }
     }
 }

@@ -98,7 +98,9 @@ public enum AreaFactory {
             return AreaFactions.hasTerritory(location);
         }
 
-        void registerCleaner(Plugin plugin) { }
+        void registerCleaner(Plugin plugin) {
+            Bukkit.getPluginManager().registerEvents(new AreaFactions.Cleaner(), plugin);
+        }
     },
 
     FACTOID {
