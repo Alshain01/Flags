@@ -34,7 +34,7 @@ class PlayerCache implements Listener {
 
     static void rebuild() {
         for(OfflinePlayer p : Bukkit.getOfflinePlayers()) {
-            cache.set(p.getName(), p.getUniqueId());
+            cache.set(p.getName(), p.getUniqueId().toString());
         }
     }
 
@@ -46,14 +46,14 @@ class PlayerCache implements Listener {
 
     static void cachePlayer(String name, UUID pID) {
         if(!cache.getKeys(false).contains(name) || !pID.equals(UUID.fromString(cache.getString(name)))) {
-            cache.set(name, pID.toString());
-
             // Remove any previous names associated with this UUID
             for(String pName : cache.getKeys(false)) {
                 if(UUID.fromString(cache.getString(pName)).equals(pID)) {
-                    cache.set(pName, false);
+                    cache.set(pName, null);
                 }
             }
+
+            cache.set(name, pID.toString());
         }
     }
 

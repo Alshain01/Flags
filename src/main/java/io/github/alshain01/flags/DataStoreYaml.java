@@ -802,10 +802,27 @@ final class DataStoreYaml extends DataStore {
                     for (String p : config.getStringList(key)) {
                         Logger.debug("Writing Player UUID for " + p);
                         OfflinePlayer player = PlayerCache.getOfflinePlayer(p);
-                        if(player == null) continue;
-                        Logger.debug("UUID: " + player.getUniqueId().toString());
-                        pList.add(player.getUniqueId().toString());
+                        if(player != null) {
+                            pList.add(player.getUniqueId().toString());
+                            Logger.debug("UUID: " + player.getUniqueId().toString());
+                            continue;
+                        }
+
+                        Logger.info("Failed to find Offline Player for " + p + ".  Attempting to Fetch UUID.");
+                        try {
+                            UUID fetchedUid = UUIDFetcher.getUUIDOf(p);
+                            if(fetchedUid != null) {
+                                pList.add(fetchedUid.toString());
+                                PlayerCache.cachePlayer(p, fetchedUid);
+                                Logger.info("Fetched UUID for " + p + ": " + fetchedUid.toString());
+                            } else {
+                                Logger.warning("Failed to fetch UUID for: " + p);
+                            }
+                        } catch (Exception ex) {
+                            Logger.warning("Exception occurred attempting to acquire UUID for: " + p);
+                        }
                     }
+
                     if(!pList.isEmpty()) {
                         config.set(key.replace("Trust", "FlagPlayerTrust"), pList);
                     }
