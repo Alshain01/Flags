@@ -64,7 +64,7 @@
 		<dependency>
 			<groupId>com.worldcretornica.plotme</groupId>
 			<artifactId>PlotMe</artifactId>
-			<version>0.13e</version>
+			<version>0.13f</version>
 			<optional>true</optional>
 		</dependency>
 		
