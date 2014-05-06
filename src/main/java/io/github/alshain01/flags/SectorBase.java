@@ -1,8 +1,12 @@
 package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.api.FlagsAPI;
+import io.github.alshain01.flags.api.event.FlagPermissionTrustChangedEvent;
+import io.github.alshain01.flags.api.event.SectorChangeOwnerEvent;
 import io.github.alshain01.flags.api.sector.Sector;
 import io.github.alshain01.flags.api.sector.SectorLocation;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.Location;
 
@@ -18,22 +22,31 @@ import java.util.UUID;
 final class SectorBase implements Sector {
     private final UUID id;
     private final UUID parent;
+    private UUID owner;
     private String name;
     private final SectorLocation greater, lesser;
     private int depth;
 
-    SectorBase(UUID id, Location corner1, Location corner2, int depth) {
-        this(id, corner1, corner2, depth, null);
+    SectorBase(UUID id, Location corner1, Location corner2, int depth, OfflinePlayer owner) {
+        this(id, corner1, corner2, depth, null, owner);
     }
 
     private SectorBase(Location corner1, Location corner2, int depth) {
-        this(UUID.randomUUID(), corner1, corner2, depth);
+        this.id = UUID.randomUUID();
+        parent = null;
+        this.depth = depth;
+        this.owner = UUID.randomUUID();
+
+        //Find the lesser/greater corners
+        greater = getGreaterCorner(corner1, corner2);
+        lesser = getLesserCorner(corner1, corner2);
     }
 
-    SectorBase(UUID id, Location corner1, Location corner2, int depth, UUID parentID) {
+    SectorBase(UUID id, Location corner1, Location corner2, int depth, UUID parentID, OfflinePlayer owner) {
         this.id = id;
         parent = parentID;
         this.depth = depth;
+        this.owner = owner.getUniqueId();
 
         //Find the lesser/greater corners
         greater = getGreaterCorner(corner1, corner2);
@@ -68,6 +81,24 @@ final class SectorBase implements Sector {
     @Override
     public String getName() {
         return name != null ? name : "unnamed sector";
+    }
+
+    @Override
+    public OfflinePlayer getOwner() {
+        return Bukkit.getOfflinePlayer(owner);
+    }
+
+    @Override
+    public void setOwner(OfflinePlayer player) {
+        if(parent == null) {
+            this.owner = player.getUniqueId();
+        } else {
+            final SectorChangeOwnerEvent event = new SectorChangeOwnerEvent(this, player);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            if (!event.isCancelled()) {
+                this.getParent().setOwner(player);
+            }
+        }
     }
 
     @Override

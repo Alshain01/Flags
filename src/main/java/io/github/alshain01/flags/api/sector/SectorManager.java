@@ -1,6 +1,7 @@
 package io.github.alshain01.flags.api.sector;
 
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -15,9 +16,10 @@ public interface SectorManager {
      *
      * @param corner1 The first corner
      * @param corner2 The diagonal opposite of corner 1
+     * @param owner The owner of the new area
      * @return The new sector
      */
-    public Sector add(@Nonnull Location corner1, @Nonnull Location corner2);
+    public Sector add(@Nonnull Location corner1, @Nonnull Location corner2, @Nonnull OfflinePlayer owner);
 
     /**
      * Adds a new subdivision sector

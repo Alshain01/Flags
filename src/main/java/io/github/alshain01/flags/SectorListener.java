@@ -60,7 +60,7 @@ final class SectorListener implements Listener {
                 } else {
                     // Create Parent Sector
                     player.sendMessage(Message.SECTOR_CREATED.get());
-                    Bukkit.getPluginManager().callEvent(new SectorCreateEvent(sectors.add(corner1, corner2)));
+                    Bukkit.getPluginManager().callEvent(new SectorCreateEvent(sectors.add(corner1, corner2, e.getPlayer())));
                 }
                 createQueue.remove(player.getUniqueId());
             } else {

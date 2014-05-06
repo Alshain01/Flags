@@ -9,15 +9,19 @@ import io.github.alshain01.flags.api.exception.InvalidSubdivisionException;
 
 import io.github.alshain01.flags.api.sector.Sector;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.UUID;
 
-final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Renameable, Subdividable {
+final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Renameable, Ownable, Subdividable {
     private Sector sector;
 
     /**
@@ -93,6 +97,12 @@ final class AreaFlags extends AreaRemovable implements Identifiable, Cuboid, Ren
     @Override
     public World getWorld() {
         if (isArea()) return sector.getWorld();
+        throw new InvalidAreaException();
+    }
+
+    @Override
+    public Collection<OfflinePlayer> getOwners() {
+        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(sector.getOwner()));
         throw new InvalidAreaException();
     }
 

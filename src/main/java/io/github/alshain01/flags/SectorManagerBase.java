@@ -7,6 +7,7 @@ import io.github.alshain01.flags.api.sector.SectorManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
 import javax.annotation.Nonnull;
@@ -39,13 +40,13 @@ final class SectorManagerBase implements SectorManager {
     }
 
     @Override
-    public Sector add(@Nonnull Location corner1, @Nonnull Location corner2) {
+    public Sector add(@Nonnull Location corner1, @Nonnull Location corner2, OfflinePlayer owner) {
         UUID newID;
         do {
             newID = UUID.randomUUID();
         } while (sectors.containsKey(newID));
 
-        Sector s = new SectorBase(newID, corner1, corner2, defaultDepth);
+        Sector s = new SectorBase(newID, corner1, corner2, defaultDepth, owner);
         sectors.put(s.getID(), s);
         dataStore.writeSector(s);
         return s;
@@ -57,7 +58,9 @@ final class SectorManagerBase implements SectorManager {
         do {
             newID = UUID.randomUUID();
         } while (sectors.containsKey(newID));
-        Sector s = new SectorBase(newID, corner1, corner2, defaultDepth, parent);
+
+        Sector p = sectors.get(parent); // Use the parent's owner
+        Sector s = new SectorBase(newID, corner1, corner2, defaultDepth, parent, p.getOwner());
         sectors.put(s.getID(), s);
         dataStore.writeSector(s);
         return s;

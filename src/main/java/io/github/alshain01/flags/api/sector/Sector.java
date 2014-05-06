@@ -1,6 +1,7 @@
 package io.github.alshain01.flags.api.sector;
 
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
@@ -26,6 +27,20 @@ public interface Sector extends ConfigurationSerializable, Comparable<Sector> {
      * @return the name of the sector.
      */
     public String getName();
+
+    /**
+     * Gets the owner of this sector.
+     *
+     * @return the owner of the sector.
+     */
+    public OfflinePlayer getOwner();
+
+    /**
+     * Sets the owner of this sector.
+     *
+     * @param player the new owner of the sector.
+     */
+    public void setOwner(OfflinePlayer player);
 
     /**
      * Sets the name of the sector.
