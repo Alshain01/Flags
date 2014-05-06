@@ -82,7 +82,7 @@ final class AreaWilderness extends AreaBase implements Identifiable {
 
     @Override
     public String getId() {
-        if(isArea()) return world.getName();
+        if(isArea()) return world.getUID().toString();
         throw new InvalidAreaException();
     }
 
