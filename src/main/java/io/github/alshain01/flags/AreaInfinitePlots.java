@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.github.alshain01.flags.api.area.Cuboid;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.area.Renameable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
@@ -50,7 +51,7 @@ import javax.annotation.Nonnull;
 /**
  * Class for creating areas to manage a InfinitePlots Plot.
  */
-final class AreaInfinitePlots extends AreaRemovable implements Renameable, Ownable {
+final class AreaInfinitePlots extends AreaRemovable implements Cuboid, Renameable, Ownable {
 	private final Plot plot;
 
 	/**
@@ -135,6 +136,28 @@ final class AreaInfinitePlots extends AreaRemovable implements Renameable, Ownab
 	public World getWorld() {
         if (isArea()) return plot.getLocation().getWorld();
         throw new InvalidAreaException();
+    }
+
+    @Override
+    public Location getLesserCorner() {
+        int[] coordinates = plot.getBuildLimits();
+        return new Location(getWorld(), coordinates[0], 0, coordinates[1]);
+    }
+
+    @Override
+    public Location getGreaterCorner() {
+        int[] coordinates = plot.getBuildLimits();
+        return new Location(getWorld(), coordinates[2], 255, coordinates[3]);
+    }
+
+    @Override
+    public Location getAdjustedLesserCorner() {
+        return getLesserCorner();
+    }
+
+    @Override
+    public Location getAdjustedGreaterCorner() {
+        return getGreaterCorner();
     }
 
 	@Override
