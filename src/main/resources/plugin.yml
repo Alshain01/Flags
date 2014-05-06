@@ -178,6 +178,12 @@ permissions:
     children:
       flags.command.sector: true
 
+  flags.command.sector.setowner:
+    description: Grants the ability to change a sector's owner.
+    default: op
+    children:
+      flags.command.sector: true
+
   flags.sector.create:
     description: Grants the ability to create sectors.
     default: op

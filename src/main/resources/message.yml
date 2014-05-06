@@ -85,6 +85,7 @@ SECTOR_STARTED: '&bSector corner set, right click the opposite corner.'
 NO_SECTOR_ERROR: '&cStand in the Sector you wish to delete.'
 SUBSECTOR_CREATED: '&bSubsector Created.'
 SECTOR_NAME_CHANGED: '&bChanged sector name to &e{Name}&b.'
+SECTOR_OWNER_CHANGED: '&bThis sector is now owned by &e{Player}&b.'
   
 # Help Messages
 HELP_HEADER: '&e---------&f {Type}: {Group} ({Page}/{TotalPages})&e--------------------'
