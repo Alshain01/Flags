@@ -1,9 +1,6 @@
 package io.github.alshain01.flags.api;
 
-import io.github.alshain01.flags.AreaCache;
-import io.github.alshain01.flags.AreaFactory;
-import io.github.alshain01.flags.DataStore;
-import io.github.alshain01.flags.Logger;
+import io.github.alshain01.flags.*;
 import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.area.Subdividable;
 import io.github.alshain01.flags.api.sector.SectorManager;
@@ -11,6 +8,7 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
@@ -56,7 +54,6 @@ final public class FlagsAPI {
 
         ConfigurationSerialization.registerClass(Flag.class);
         new onServerEnabledTask().runTask(plugin);
-
     }
 
     /*
@@ -327,5 +324,14 @@ final public class FlagsAPI {
         }
     }
 
-
+    /**
+     * Gets a player by name from Flags' list of cached player names.
+     * May not be up to date.
+     *
+     * @param name the name of the player to retrieve
+     * @return the cached player
+     */
+    public OfflinePlayer getCachedOfflinePlayer(String name) {
+        return PlayerCache.getOfflinePlayer(name);
+    }
 }

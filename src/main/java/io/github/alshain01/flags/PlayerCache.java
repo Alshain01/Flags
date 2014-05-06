@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
-class PlayerCache implements Listener {
+public class PlayerCache implements Listener {
     private static File dataFile;
     private static YamlConfiguration cache;
 
@@ -38,7 +38,7 @@ class PlayerCache implements Listener {
         }
     }
 
-    static OfflinePlayer getOfflinePlayer(String name) {
+    public static OfflinePlayer getOfflinePlayer(String name) {
         if(cache.getKeys(false).contains(name))
             return Bukkit.getOfflinePlayer((UUID.fromString(cache.getString(name))));
         return null;
