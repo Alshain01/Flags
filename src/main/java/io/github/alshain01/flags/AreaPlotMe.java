@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.github.alshain01.flags.api.AreaPlugin;
+import io.github.alshain01.flags.api.area.Cuboid;
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.exception.InvalidAreaException;
 import org.bukkit.Bukkit;
@@ -42,7 +43,7 @@ import com.worldcretornica.plotme.PlotManager;
 /**
  * Class for creating areas to manage a PlotMe Plot.
  */
-final class AreaPlotMe extends AreaRemovable implements Ownable {
+final class AreaPlotMe extends AreaRemovable implements Cuboid, Ownable {
 	private final Plot plot;
 
 	/**
@@ -96,6 +97,26 @@ final class AreaPlotMe extends AreaRemovable implements Ownable {
     public Set<OfflinePlayer> getOwners() {
         if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(Bukkit.getOfflinePlayer(plot.ownerId)));
         throw new InvalidAreaException();
+    }
+
+    @Override
+    public Location getGreaterCorner() {
+        return PlotManager.getPlotTopLoc(getWorld(), getId());
+    }
+
+    @Override
+    public Location getLesserCorner() {
+        return PlotManager.getPlotTopLoc(getWorld(), getId());
+    }
+
+    @Override
+    public Location getAdjustedGreaterCorner() {
+        return getGreaterCorner();
+    }
+
+    @Override
+    public Location getAdjustedLesserCorner() {
+        return getLesserCorner();
     }
 
 	@Override
