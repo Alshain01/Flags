@@ -114,7 +114,7 @@ final class AreaWorldGuard extends AreaRemovable implements Ownable, Cuboid {
         if (isArea()) {
             Set<OfflinePlayer> owners = new HashSet<OfflinePlayer>();
             for(String player : region.getOwners().getPlayers())
-                owners.add(PlayerCache.getOfflinePlayer(player));
+                owners.add(CachedOfflinePlayer.getOfflinePlayer(player));
 
             return owners;
         }

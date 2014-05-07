@@ -125,7 +125,7 @@ final class AreaResidence extends AreaRemovable implements Identifiable, Cuboid,
 
 	@Override
 	public Set<OfflinePlayer> getOwners() {
-        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(PlayerCache.getOfflinePlayer(residence.getOwner())));
+        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(CachedOfflinePlayer.getOfflinePlayer(residence.getOwner())));
         throw new InvalidAreaException();
     }
 

@@ -221,7 +221,7 @@ final class CommandBundle extends CommandBase implements CommandExecutor {
             if(t.contains(".")) {
                 permissions.add(new Permission(t));
             } else {
-                OfflinePlayer p = PlayerCache.getOfflinePlayer(t);
+                OfflinePlayer p = CachedOfflinePlayer.getOfflinePlayer(t);
                 if (p != null) {
                     playerList.add(p);
                 } else {
@@ -261,7 +261,7 @@ final class CommandBundle extends CommandBase implements CommandExecutor {
             if(t.contains(".")) {
                 permissions.add(new Permission(t));
             } else {
-                OfflinePlayer p = PlayerCache.getOfflinePlayer(t);
+                OfflinePlayer p = CachedOfflinePlayer.getOfflinePlayer(t);
                 if (p != null) {
                     playerList.add(p);
                 } else {

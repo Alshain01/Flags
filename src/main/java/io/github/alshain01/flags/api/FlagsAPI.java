@@ -27,7 +27,7 @@ import java.util.Collection;
 @SuppressWarnings("unused")
 final public class FlagsAPI {
     private static Registrar registrar = new Registrar();
-    private static AreaCache areaCache = new AreaCache();
+    private static CachedArea areaCache = new CachedArea();
     private static AreaPlugin activeSystem;
     private static DataStore dataStore;
     private static SectorManager sectorManager;
@@ -332,6 +332,6 @@ final public class FlagsAPI {
      * @return the cached player
      */
     public OfflinePlayer getCachedOfflinePlayer(String name) {
-        return PlayerCache.getOfflinePlayer(name);
+        return CachedOfflinePlayer.getOfflinePlayer(name);
     }
 }

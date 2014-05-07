@@ -90,7 +90,7 @@ final class CommandSector implements CommandExecutor {
                     return true;
                 }
 
-                OfflinePlayer player = PlayerCache.getOfflinePlayer(args[1]);
+                OfflinePlayer player = CachedOfflinePlayer.getOfflinePlayer(args[1]);
                 if(player == null) {
                     sender.sendMessage(Message.PLAYER_NOT_FOUND_ERROR.get().replace("{Player}", args[1]));
                     return true;

@@ -10,7 +10,7 @@ import java.util.UUID;
 /**
  * Defines a self-caching mechanism for areas.  Objects are created and cached upon first usage.
  */
-public class AreaCache {
+public class CachedArea {
     Map<UUID, AreaDefault> defaultCache = new HashMap<UUID, AreaDefault>();
     Map<UUID, AreaWilderness> wildernessCache = new HashMap<UUID, AreaWilderness>();
 

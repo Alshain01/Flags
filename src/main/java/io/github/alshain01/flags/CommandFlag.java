@@ -416,7 +416,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
             if(t.contains(".")) {
                 permissions.add(new Permission(t));
             } else {
-                OfflinePlayer p = PlayerCache.getOfflinePlayer(t);
+                OfflinePlayer p = CachedOfflinePlayer.getOfflinePlayer(t);
                 if (p != null) {
                     playerList.add(p);
                 } else {
@@ -456,7 +456,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
             if(t.contains(".")) {
                 permissions.add(new Permission(t));
             } else {
-                OfflinePlayer p = PlayerCache.getOfflinePlayer(t);
+                OfflinePlayer p = CachedOfflinePlayer.getOfflinePlayer(t);
                 if (p != null) {
                     playerList.add(p);
                 } else {

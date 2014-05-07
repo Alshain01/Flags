@@ -102,7 +102,7 @@ final class AreaRegios extends AreaRemovable implements Ownable {
 
     @Override
 	public Set<OfflinePlayer> getOwners() {
-        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(PlayerCache.getOfflinePlayer(region.getOwner())));
+        if (isArea()) return new HashSet<OfflinePlayer>(Arrays.asList(CachedOfflinePlayer.getOfflinePlayer(region.getOwner())));
         throw new InvalidAreaException();
     }
 

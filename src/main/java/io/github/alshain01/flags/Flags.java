@@ -65,7 +65,7 @@ final public class Flags extends JavaPlugin {
 	@Override
 	public void onEnable() {
         PluginManager pm = getServer().getPluginManager();
-        new PlayerCache(this); // Sets up an anonymous listener
+        new CachedOfflinePlayer(this); // Sets up an anonymous listener
 
         // Set up the plugin's configuration file
         saveDefaultConfig();
@@ -139,7 +139,7 @@ final public class Flags extends JavaPlugin {
         // Static cleanup
         dataStore = null;
         economy = null;
-        PlayerCache.write();
+        CachedOfflinePlayer.write();
         this.getLogger().info("Flags Has Been Disabled.");
     }
 

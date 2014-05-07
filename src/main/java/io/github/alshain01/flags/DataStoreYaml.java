@@ -248,7 +248,7 @@ final class DataStoreYaml extends DataStore {
             updateMigrateBundles();
             updateMigratePrices();
 
-            PlayerCache.rebuild();
+            CachedOfflinePlayer.rebuild();
 
            // Convert Sectors
             if(sectors != null) {
@@ -801,7 +801,7 @@ final class DataStoreYaml extends DataStore {
                     List<String> pList = new ArrayList<String>();
                     for (String p : config.getStringList(key)) {
                         Logger.debug("Writing Player UUID for " + p);
-                        OfflinePlayer player = PlayerCache.getOfflinePlayer(p);
+                        OfflinePlayer player = CachedOfflinePlayer.getOfflinePlayer(p);
                         if(player != null) {
                             pList.add(player.getUniqueId().toString());
                             Logger.debug("UUID: " + player.getUniqueId().toString());
@@ -813,7 +813,7 @@ final class DataStoreYaml extends DataStore {
                             UUID fetchedUid = UUIDFetcher.getUUIDOf(p);
                             if(fetchedUid != null) {
                                 pList.add(fetchedUid.toString());
-                                PlayerCache.cachePlayer(p, fetchedUid);
+                                CachedOfflinePlayer.cachePlayer(p, fetchedUid);
                                 Logger.info("Fetched UUID for " + p + ": " + fetchedUid.toString());
                             } else {
                                 Logger.warning("Failed to fetch UUID for: " + p);
