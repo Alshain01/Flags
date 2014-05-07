@@ -37,7 +37,7 @@ import javax.annotation.Nonnull;
 @SuppressWarnings("unused")
 public class SectorChangeOwnerEvent extends SectorEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-    private OfflinePlayer newOwner;
+    private final OfflinePlayer newOwner;
     private boolean cancel = false;
 
     /**

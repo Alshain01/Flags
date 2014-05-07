@@ -168,8 +168,7 @@ final class AreaResidence extends AreaRemovable implements Identifiable, Cuboid,
 
     @Override
 	public boolean isInherited() {
-        if (isSubdivision()) return Flags.getDataStore().readInheritance(this);
-        return false;
+        return isSubdivision() && Flags.getDataStore().readInheritance(this);
 	}
 
     @Override

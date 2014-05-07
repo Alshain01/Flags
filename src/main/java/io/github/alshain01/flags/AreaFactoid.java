@@ -125,7 +125,7 @@ final class AreaFactoid extends AreaRemovable implements Identifiable, Renameabl
         try {
             Factoid.getLands().renameLand(land.getName(), name);
         } catch (FactoidLandException ex) {
-            Logger.warning("Invalid Factiod Land Rename Action Detected.");
+            Logger.warning("Invalid Factoid Land Rename Action Detected.");
         }
     }
 

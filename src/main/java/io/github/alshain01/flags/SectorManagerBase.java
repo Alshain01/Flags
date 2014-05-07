@@ -40,7 +40,7 @@ final class SectorManagerBase implements SectorManager {
     }
 
     @Override
-    public Sector add(@Nonnull Location corner1, @Nonnull Location corner2, OfflinePlayer owner) {
+    public Sector add(@Nonnull Location corner1, @Nonnull Location corner2, @Nonnull OfflinePlayer owner) {
         UUID newID;
         do {
             newID = UUID.randomUUID();

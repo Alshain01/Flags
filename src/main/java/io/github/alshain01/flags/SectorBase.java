@@ -1,7 +1,6 @@
 package io.github.alshain01.flags;
 
 import io.github.alshain01.flags.api.FlagsAPI;
-import io.github.alshain01.flags.api.event.FlagPermissionTrustChangedEvent;
 import io.github.alshain01.flags.api.event.SectorChangeOwnerEvent;
 import io.github.alshain01.flags.api.sector.Sector;
 import io.github.alshain01.flags.api.sector.SectorLocation;
@@ -19,6 +18,7 @@ import java.util.UUID;
 /**
  * Defines a Sector cuboid.
  */
+@SuppressWarnings("unchecked")
 final class SectorBase implements Sector {
     private final UUID id;
     private final UUID parent;

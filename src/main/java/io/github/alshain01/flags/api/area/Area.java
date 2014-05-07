@@ -39,7 +39,7 @@ public interface Area extends Comparable<Area> {
     public boolean isArea();
 
     /**
-     * Gets the area plugin's ID for this area.
+     * Gets the area plugins ID for this area.
      *
      * @return the area's ID in the format provided by the area plugin.
      * @throws InvalidAreaException
