@@ -41,7 +41,7 @@ import java.util.UUID;
  * Flag extension plugins should consider using FlagsAPI instead of this class.
  */
 @SuppressWarnings("unused") // They are used, just through valueOf()
-public enum AreaFactory {
+public enum FactoryArea {
     DEFAULT{
         Class<? extends Area> getAreaClass() {
             return AreaDefault.class;

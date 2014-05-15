@@ -171,7 +171,7 @@ public abstract class DataStore {
             areas.add(new AreaWilderness(w));
             areas.add(new AreaDefault(w));
             for(String id : source.getAllAreaIds(w)) {
-                Area area = AreaFactory.getArea(FlagsAPI.getAreaPlugin(), id);
+                Area area = FactoryArea.getArea(FlagsAPI.getAreaPlugin(), id);
                 if(area != null && area.isArea()) {
                     areas.add(area);
                 }

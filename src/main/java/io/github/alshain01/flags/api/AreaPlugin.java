@@ -24,7 +24,7 @@
 
 package io.github.alshain01.flags.api;
 
-import io.github.alshain01.flags.AreaFactory;
+import io.github.alshain01.flags.FactoryArea;
 import io.github.alshain01.flags.Logger;
 import io.github.alshain01.flags.api.area.*;
 import org.bukkit.Bukkit;
@@ -116,7 +116,7 @@ public enum AreaPlugin {
      * @return true if the cuboid plugin supports subdivisions.
      */
     public boolean isSubdividable() {
-        return Subdividable.class.isAssignableFrom(AreaFactory.getAreaClass(this));
+        return Subdividable.class.isAssignableFrom(FactoryArea.getAreaClass(this));
     }
 
     /**
@@ -124,7 +124,7 @@ public enum AreaPlugin {
      * @return true if the cuboid plugin supports renaming areas.
      */
     public boolean isRenameable() {
-        return Renameable.class.isAssignableFrom(AreaFactory.getAreaClass(this));
+        return Renameable.class.isAssignableFrom(FactoryArea.getAreaClass(this));
     }
 
     /**
@@ -132,7 +132,7 @@ public enum AreaPlugin {
      * @return true if the cuboid plugin supports administrator areas.
      */
     public boolean isAdministrator() {
-        return Administrator.class.isAssignableFrom(AreaFactory.getAreaClass(this));
+        return Administrator.class.isAssignableFrom(FactoryArea.getAreaClass(this));
     }
 
     /**
@@ -140,7 +140,7 @@ public enum AreaPlugin {
      * @return true if the cuboid plugin supports players owning areas.
      */
     public boolean isOwnable() {
-        return Ownable.class.isAssignableFrom(AreaFactory.getAreaClass(this));
+        return Ownable.class.isAssignableFrom(FactoryArea.getAreaClass(this));
     }
 
     /**
@@ -148,7 +148,7 @@ public enum AreaPlugin {
      * @return true if the cuboid plugin supports siegeable areas.
      */
     public boolean isSiegeable() {
-        return Siegeable.class.isAssignableFrom(AreaFactory.getAreaClass(this));
+        return Siegeable.class.isAssignableFrom(FactoryArea.getAreaClass(this));
     }
 
     /**
@@ -156,7 +156,7 @@ public enum AreaPlugin {
      * @return true if the cuboid plugin identifies areas by UUID.
      */
     public boolean isIdentifiable() {
-        return Identifiable.class.isAssignableFrom(AreaFactory.getAreaClass(this));
+        return Identifiable.class.isAssignableFrom(FactoryArea.getAreaClass(this));
     }
 
     /**
@@ -164,13 +164,13 @@ public enum AreaPlugin {
      * @return true if the cuboid plugin uses rectangle based cuboids.
      */
     public boolean isCuboid() {
-        return Cuboid.class.isAssignableFrom(AreaFactory.getAreaClass(this));
+        return Cuboid.class.isAssignableFrom(FactoryArea.getAreaClass(this));
     }
 
     /**
-     * Instruct the enum to reload the cuboid names from the yaml file.
+     * Instruct the enum to reload the localizations into cache.
      */
-    static void loadNames() {
+    public static void loadNames() {
         Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Flags");
         File messageFile = new File(plugin.getDataFolder(), "message.yml");
         if (!messageFile.exists()) {

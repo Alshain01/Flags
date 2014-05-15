@@ -557,7 +557,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
         if(Validate.noEconomyInstalled(sender)) { return; }
 
         sender.sendMessage(Message.GET_PRICE.get()
-                .replace("{PurchaseType}", type.getLocal().toLowerCase())
+                .replace("{PurchaseType}", type.getLocalized().toLowerCase())
                 .replace("{Flag}", flag.getName())
                 .replace("{Price}", Flags.getEconomy().format(flag.getPrice(type))));
     }
@@ -572,7 +572,7 @@ final class CommandFlag extends CommandBase implements CommandExecutor, Listener
 
         flag.setPrice(type, p);
         sender.sendMessage(Message.SET_PRICE.get()
-                .replace("{PurchaseType}", type.getLocal().toLowerCase())
+                .replace("{PurchaseType}", type.getLocalized().toLowerCase())
                 .replace("{Flag}", flag.getName())
                 .replace("{Price}", price));
         return true;

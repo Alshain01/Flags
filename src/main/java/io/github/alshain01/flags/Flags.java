@@ -100,7 +100,7 @@ final public class Flags extends JavaPlugin {
 
         // Load Cleanable Listener
         if(getConfig().getBoolean("AreaCleaner")) {
-            AreaFactory.registerCleaner(areaPlugin, this);
+            FactoryArea.registerCleaner(areaPlugin, this);
         }
 
         // Configure the updater

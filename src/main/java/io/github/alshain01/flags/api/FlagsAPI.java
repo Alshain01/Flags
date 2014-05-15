@@ -3,6 +3,7 @@ package io.github.alshain01.flags.api;
 import io.github.alshain01.flags.*;
 import io.github.alshain01.flags.api.area.Area;
 import io.github.alshain01.flags.api.area.Subdividable;
+import io.github.alshain01.flags.api.economy.EconomyTransactionType;
 import io.github.alshain01.flags.api.sector.SectorManager;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.apache.commons.lang.Validate;
@@ -51,6 +52,7 @@ final public class FlagsAPI {
         dataStore = data;
         sectorManager = sectors;
         AreaPlugin.loadNames();
+        EconomyTransactionType.loadLocalized();
 
         ConfigurationSerialization.registerClass(Flag.class);
         new onServerEnabledTask().runTask(plugin);
@@ -142,7 +144,7 @@ final public class FlagsAPI {
      * @return True if there is an area present at the location.
      */
     public static boolean hasArea(@Nonnull Location location) {
-        return AreaFactory.hasArea(activeSystem, location);
+        return FactoryArea.hasArea(activeSystem, location);
     }
 
     /**
@@ -164,7 +166,7 @@ final public class FlagsAPI {
      *         selection.
      */
     public static Area getArea(@Nonnull String id) {
-        return AreaFactory.getArea(activeSystem, id);
+        return FactoryArea.getArea(activeSystem, id);
     }
 
     /**
@@ -176,8 +178,8 @@ final public class FlagsAPI {
      * @return An area from the configured cuboid system or the wilderness area if no area is defined.
      */
     public static Area getAreaAt(@Nonnull Location location) {
-        if(!AreaFactory.hasArea(activeSystem, location)) return getWildernessArea(location.getWorld());
-        Area area = AreaFactory.getAreaAt(activeSystem, location);
+        if(!FactoryArea.hasArea(activeSystem, location)) return getWildernessArea(location.getWorld());
+        Area area = FactoryArea.getAreaAt(activeSystem, location);
         if(area instanceof Subdividable) {
             Subdividable sub = (Subdividable) area;
             while (sub.isInherited())
@@ -195,8 +197,8 @@ final public class FlagsAPI {
      * @return An area from the configured cuboid system or the wilderness area if no area is defined.
      */
     public static Area getAbsoluteAreaAt(@Nonnull Location location) {
-        if(!AreaFactory.hasArea(activeSystem, location)) return getWildernessArea(location.getWorld());
-        return AreaFactory.getAreaAt(activeSystem, location);
+        if(!FactoryArea.hasArea(activeSystem, location)) return getWildernessArea(location.getWorld());
+        return FactoryArea.getAreaAt(activeSystem, location);
     }
 
     /**

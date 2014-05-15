@@ -442,7 +442,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
 
         if (price > Flags.getEconomy().getBalance(player.getName())) {
             player.sendMessage(Message.LOW_FUNDS.get()
-                    .replace("{PurchaseType}", product.getLocal().toLowerCase())
+                    .replace("{PurchaseType}", product.getLocalized().toLowerCase())
                     .replace("{Price}", Flags.getEconomy().format(price))
                     .replace("{Flag}", flag.getName()));
             return true;
@@ -462,7 +462,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
                 : Flags.getEconomy().depositPlayer(player.getName(), price); // Deposit
 
         if (r.transactionSuccess()) {
-            player.sendMessage(transaction.getMessage().replace("{Price}", Flags.getEconomy().format(price)));
+            player.sendMessage(transaction.getLocalized().replace("{Price}", Flags.getEconomy().format(price)));
             return false;
         }
 

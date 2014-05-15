@@ -24,7 +24,13 @@
 
 package io.github.alshain01.flags.api.economy;
 
-import io.github.alshain01.flags.Message;
+import io.github.alshain01.flags.Logger;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
+
+import java.io.File;
 
 /**
  * Enumeration for handling withdrawal and deposit
@@ -32,10 +38,35 @@ import io.github.alshain01.flags.Message;
 public enum EconomyTransactionType {
 	WITHDRAW, DEPOSIT;
 
+    private String localization;
+
 	/**
-	 * @return the localized message of the transaction type.
+	 * @return the localized name of the transaction type.
 	 */
-	public String getMessage() {
-		return Message.valueOf(toString()).get();
+	public String getLocalized() {
+		return localization;
 	}
+
+    /**
+     * Instruct the enum to reload the cuboid names from the yaml file.
+     */
+    public static void loadLocalized() {
+        Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Flags");
+        File messageFile = new File(plugin.getDataFolder(), "message.yml");
+        if (!messageFile.exists()) {
+            plugin.saveResource("message.yml", false);
+        }
+
+        YamlConfiguration defaults = YamlConfiguration.loadConfiguration(plugin.getResource("message.yml"));
+        YamlConfiguration messages = YamlConfiguration.loadConfiguration(messageFile);
+        messages.setDefaults(defaults);
+
+        for (EconomyTransactionType t : EconomyTransactionType.values()) {
+            try {
+                t.localization = ChatColor.translateAlternateColorCodes('&', messages.getString(t.toString()));
+            } catch (NullPointerException ex) {
+                Logger.warning("Failed to load message " + t.toString());
+            }
+        }
+    }
 }

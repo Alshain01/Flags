@@ -23,7 +23,13 @@
  */
 package io.github.alshain01.flags.api.economy;
 
+import io.github.alshain01.flags.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
+
+import java.io.File;
 
 /**
  * Enumeration for handling the purchasable product type
@@ -41,6 +47,7 @@ public enum EconomyPurchaseType {
 		return null;
 	}
 
+    private String localization;
     private final boolean refundable;
 
 	EconomyPurchaseType() {
@@ -51,8 +58,8 @@ public enum EconomyPurchaseType {
 	/**
 	 * @return the localized name of the purchase type
 	 */
-	public String getLocal() {
-		return io.github.alshain01.flags.Message.valueOf(toString()).get();
+	public String getLocalized() {
+		return localization;
 	}
 
 	/**
@@ -61,4 +68,27 @@ public enum EconomyPurchaseType {
 	public boolean isRefundable() {
 		return refundable;
 	}
+
+    /**
+     * Instruct the enum to reload the localization from the yaml file.
+     */
+    public static void loadLocalized() {
+        Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Flags");
+        File messageFile = new File(plugin.getDataFolder(), "message.yml");
+        if (!messageFile.exists()) {
+            plugin.saveResource("message.yml", false);
+        }
+
+        YamlConfiguration defaults = YamlConfiguration.loadConfiguration(plugin.getResource("message.yml"));
+        YamlConfiguration messages = YamlConfiguration.loadConfiguration(messageFile);
+        messages.setDefaults(defaults);
+
+        for (EconomyPurchaseType t : EconomyPurchaseType.values()) {
+            try {
+                t.localization = ChatColor.translateAlternateColorCodes('&', messages.getString(t.toString()));
+            } catch (NullPointerException ex) {
+                Logger.warning("Failed to load message " + t.toString());
+            }
+        }
+    }
 }

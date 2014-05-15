@@ -33,7 +33,7 @@ import java.io.File;
 /**
  * Class for retrieving localized messages.
  */
-public enum Message {
+enum Message {
     // General Translations
     VALUE_COLOR_TRUE, VALUE_COLOR_FALSE, FLAG, BUNDLE, COMMAND, INDEX, ERROR,
 
