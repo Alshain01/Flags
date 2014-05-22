@@ -30,6 +30,7 @@ import io.github.alshain01.flags.api.AreaPlugin;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import io.github.alshain01.flags.api.area.Ownable;
 import io.github.alshain01.flags.api.area.Renameable;
@@ -129,8 +130,7 @@ final class AreaFactions extends AreaRemovable implements Renameable, Ownable {
 
     @Override
     public Set<OfflinePlayer> getOwners() {
-        //TODO Waiting on Factions to update to UUID
-        return new HashSet<OfflinePlayer>(Arrays.asList(CachedOfflinePlayer.getOfflinePlayer(faction.getLeader().getName())));
+        return new HashSet<OfflinePlayer>(Arrays.asList(Bukkit.getOfflinePlayer(UUID.fromString(faction.getLeader().getId()))));
     }
 
 	@Override
