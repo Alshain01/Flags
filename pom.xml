@@ -105,7 +105,7 @@
 
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
-            <artifactId>Vault</artifactId>
+            <artifactId>VaultAPI</artifactId>
             <version>RELEASE</version>
             <optional>true</optional>
         </dependency>

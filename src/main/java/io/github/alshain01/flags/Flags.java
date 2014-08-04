@@ -36,12 +36,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -271,4 +274,14 @@ final public class Flags extends JavaPlugin {
         }
 		return null;
 	}
+
+    public YamlConfiguration getResourceConfig(String file) {
+        try {
+            return YamlConfiguration.loadConfiguration(new InputStreamReader(this.getResource(file), "UTF8"));
+        } catch (UnsupportedEncodingException ex) {
+            Logger.error("Failed to read internal resource file " + file);
+            Logger.error(ex.getMessage());
+        }
+        return new YamlConfiguration();
+    }
 }

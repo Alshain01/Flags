@@ -25,6 +25,7 @@
 package io.github.alshain01.flags.api;
 
 import io.github.alshain01.flags.FactoryArea;
+import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.Logger;
 import io.github.alshain01.flags.api.area.*;
 import org.bukkit.Bukkit;
@@ -177,7 +178,7 @@ public enum AreaPlugin {
             plugin.saveResource("message.yml", false);
         }
 
-        YamlConfiguration defaults = YamlConfiguration.loadConfiguration(plugin.getResource("message.yml"));
+        YamlConfiguration defaults = ((Flags)plugin).getResourceConfig("message.yml");
         YamlConfiguration messages = YamlConfiguration.loadConfiguration(messageFile);
         messages.setDefaults(defaults);
 

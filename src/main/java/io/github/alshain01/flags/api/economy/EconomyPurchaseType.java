@@ -23,6 +23,7 @@
  */
 package io.github.alshain01.flags.api.economy;
 
+import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -79,7 +80,7 @@ public enum EconomyPurchaseType {
             plugin.saveResource("message.yml", false);
         }
 
-        YamlConfiguration defaults = YamlConfiguration.loadConfiguration(plugin.getResource("message.yml"));
+        YamlConfiguration defaults = ((Flags)plugin).getResourceConfig("message.yml");
         YamlConfiguration messages = YamlConfiguration.loadConfiguration(messageFile);
         messages.setDefaults(defaults);
 

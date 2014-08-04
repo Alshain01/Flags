@@ -78,7 +78,7 @@ enum Message {
             plugin.saveResource("message.yml", false);
         }
 
-        YamlConfiguration defaults = YamlConfiguration.loadConfiguration(plugin.getResource("message.yml"));
+        YamlConfiguration defaults = ((Flags)plugin).getResourceConfig("message.yml");
         YamlConfiguration messages = YamlConfiguration.loadConfiguration(messageFile);
         messages.setDefaults(defaults);
 

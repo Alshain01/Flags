@@ -440,7 +440,7 @@ abstract class AreaBase implements Area, Comparable<Area> {
     private static boolean isFundingLow(EconomyPurchaseType product, Flag flag, Player player) {
         final double price = flag.getPrice(product);
 
-        if (price > Flags.getEconomy().getBalance(player.getName())) {
+        if (price > Flags.getEconomy().getBalance(player)) {
             player.sendMessage(Message.LOW_FUNDS.get()
                     .replace("{PurchaseType}", product.getLocalized().toLowerCase())
                     .replace("{Price}", Flags.getEconomy().format(price))
@@ -458,8 +458,8 @@ abstract class AreaBase implements Area, Comparable<Area> {
         final double price = flag.getPrice(product);
 
         final EconomyResponse r = transaction == EconomyTransactionType.WITHDRAW ? Flags
-                .getEconomy().withdrawPlayer(player.getName(), price) // Withdrawal
-                : Flags.getEconomy().depositPlayer(player.getName(), price); // Deposit
+                .getEconomy().withdrawPlayer(player, price) // Withdrawal
+                : Flags.getEconomy().depositPlayer(player, price); // Deposit
 
         if (r.transactionSuccess()) {
             player.sendMessage(transaction.getLocalized().replace("{Price}", Flags.getEconomy().format(price)));
